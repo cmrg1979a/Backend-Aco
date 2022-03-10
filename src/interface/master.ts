@@ -1,0 +1,32 @@
+export interface postMaster {
+  nro_master: string;
+  code_master: string;
+  id_cot: string;
+  id_modality: string;
+  id_shipment: string;
+  id_incoterms: string;
+  id_port_begin: string;
+  id_port_end: string;
+  id_operador: string;
+  fecha_eta: string;
+  fecha_etd: string;
+  fecha_disponibilidad: string;
+  ganancia_pricing: string;
+  ganancia_operaciones: string;
+  id_agent: string;
+  id_consigner: string;
+  id_notify: string;
+  id_aerolinea: string;
+  id_coloader: string;
+  id_naviera: string;
+  nro_mbl: string;
+  id_motonave: string;
+  nro_viaje: string;
+  bultos: string;
+  peso: string;
+  volumen: string;
+  id_conditions: string;
+  id_moneda: string;
+  monto: string;
+  status: string;
+}

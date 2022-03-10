@@ -1,0 +1,35 @@
+export interface postPricing {
+  id_marketing: String;
+  id_entitie: String;
+  //contacto: String;
+  idsentido: String;
+  idtipocarga: String;
+  idincoterms: String;
+  idorigen: String;
+  iddestino: String;
+  numerobultos: String;
+  peso: String;
+  volumen: String;
+  monto: String;
+  statusQuote: String;
+  serviciocotizacion: Array<any>;
+  costocotizacion: Array<any>;
+  notacosto: Array<any>;
+  contenedores: Array<any>;
+  ventascasillerodetalles: Array<any>;
+  idVendedor: String;
+  descripcionMercancia: String;
+  idProvincia: String;
+  idDistrito: String;
+  fullflag: String;
+  cif: String;
+  seguro: String;
+  statusUpdated: boolean;
+  proveedor: String;
+  telefonoproveedor: String;
+  direccionproveedor: String;
+  impuestos: Array<any>;
+  fecha_fin: String;
+  tiempo_transito: String;
+  ganancia: String;
+}

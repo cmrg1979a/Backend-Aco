@@ -1,0 +1,24 @@
+import { Router } from "express";
+const router: Router = Router();
+
+import { TokenValidation } from "../libs/verifyToken";
+
+import {
+  setMaster,
+  getMasterList,
+  getMasterId,
+  editMaster,
+  lockMaster,
+  lockMasterAdm,
+  nullMaster,
+} from "../controllers/master.controller";
+
+router.post("/setMaster", TokenValidation, setMaster);
+router.post("/editMaster/:id", TokenValidation, editMaster);
+router.post("/getMasterList", TokenValidation, getMasterList);
+router.post("/getMasterId/:id", TokenValidation, getMasterId);
+router.post("/lockMaster/:id", TokenValidation, lockMaster);
+router.post("/lockMasterAdm/:id", TokenValidation, lockMasterAdm);
+router.post("/nullMaster/:id", TokenValidation, nullMaster);
+
+export default router;
