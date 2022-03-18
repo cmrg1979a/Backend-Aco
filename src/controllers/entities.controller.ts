@@ -5,18 +5,15 @@ import { postEntities } from "../interface/postEntitie";
 
 export const getEntitiesList = async (req: Request, res: Response) => {
   const conn = await connect();
-  const { id_role } = req.body;
+  let role;
 
-  var role;
-
-  if (id_role == 18) {
+  if (req.body.id_role == 18) {
     role = 11;
   } else {
-    role = id_role;
+    role = req.body.id_role;
   }
   await conn.query(
-    "SELECT * FROM view_entitie_list where statusEntitieRole <> 0 and statusEntitie <> 0 and statusRole <> 0 and id_role = ?",
-    [role],
+    `SELECT * FROM view_entitie_list where statusEntitieRole <> 0 and statusEntitie <> 0 and statusRole <> 0 and id_role =  ${role} and id_branch = ${req.body.id_branch ? req.body.id_branch : 'id_branch'} `,
     (err, rows) => {
       if (!err) {
         res.json({
@@ -120,6 +117,7 @@ export const addEntitie = async (req: Request, res: Response) => {
     "INSERT INTO Table_Entities SET ?",
     [dataObj],
     (err, rows, fields) => {
+      // console.log(dataObj);
       if (!err) {
         var data = JSON.parse(JSON.stringify(rows));
         conn.query(

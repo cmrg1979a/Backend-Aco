@@ -16,7 +16,7 @@ export const setQuote = async (req: Request, res: Response) => {
       var datanro = JSON.parse(JSON.stringify(rowsss));
 
       conn.query(
-        "INSERT INTO Table_Quote (id_marketing, id_entitie, id_modality, id_shipment, id_incoterms, id_port_begin, id_port_end, nro_bultos, peso, volumen, quote, monto, statusQuote, status, id_vendedor, descripcionMercancia, idProvincia, idDistrito, fullflag, seguro, proveedor, telefonoproveedor, direccionproveedor, date_end, tiempo_transito, ganancia) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        "INSERT INTO Table_Quote (id_marketing, id_entitie, id_modality, id_shipment, id_incoterms, id_port_begin, id_port_end, nro_bultos, peso, volumen, quote, monto, statusQuote, status, id_vendedor, descripcionMercancia, idProvincia, idDistrito, fullflag, seguro, proveedor, telefonoproveedor, direccionproveedor, date_end, tiempo_transito, ganancia,id_branch) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
         [
           dataObj.id_marketing,
           dataObj.id_entitie,
@@ -44,6 +44,7 @@ export const setQuote = async (req: Request, res: Response) => {
           dataObj.fecha_fin,
           dataObj.tiempo_transito,
           dataObj.ganancia,
+          dataObj.id_branch,
         ],
         (err, rowssss, fields) => {
           if (!err) {
@@ -136,7 +137,13 @@ export const setQuote = async (req: Request, res: Response) => {
               dataObj.ventascasillerodetalles.map((item: any) => {
                 conn.query(
                   "INSERT INTO Quote_SalesDetails (id_quote, id_quoteSales, description, monto, status) VALUES (?,?,?,?,?)",
-                  [dataquote.insertId, item.id_quoteSales, item.description, item.monto, item.status],
+                  [
+                    dataquote.insertId,
+                    item.id_quoteSales,
+                    item.description,
+                    item.monto,
+                    item.status,
+                  ],
                   (err, rowsssss, fields) => {
                     if (!err) {
                     } else {
@@ -187,32 +194,38 @@ export const setQuote = async (req: Request, res: Response) => {
 
 export const getQuoteStatus = async (req: Request, res: Response) => {
   const conn = await connect();
-  await conn.query("SELECT * FROM view_QuoteStatus", (err, rows, fields) => {
-    if (!err) {
-      res.json({
-        status: 200,
-        statusBol: true,
-        data: rows,
-      });
-    } else {
-      console.log(err);
+  await conn.query(
+    `SELECT * FROM view_QuoteStatus where id_branch = ${req.body.id_branch ? req.body.id_branch : 'id_branch'} `,
+    (err, rows, fields) => {
+      if (!err) {
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
     }
-  });
+  );
 };
 
 export const getQuoteList = async (req: Request, res: Response) => {
   const conn = await connect();
-  await conn.query("SELECT * FROM view_listQuote", (err, rows, fields) => {
-    if (!err) {
-      res.json({
-        status: 200,
-        statusBol: true,
-        data: rows,
-      });
-    } else {
-      console.log(err);
+  await conn.query(
+    `SELECT * FROM view_listQuote where id_branch = ${req.body.id_branch ? req.body.id_branch : 'id_branch'} `,
+    (err, rows, fields) => {
+      if (!err) {
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
     }
-  });
+  );
 };
 
 export const getQuoteId = async (req: Request, res: Response) => {
@@ -446,7 +459,6 @@ export const putQuote = async (req: Request, res: Response) => {
                     );
                   }
                 });
-
               } else if (dataObj.statusUpdated == true) {
                 conn.query(
                   "DELETE FROM Quote_Services where id_quote = ?",
@@ -476,9 +488,6 @@ export const putQuote = async (req: Request, res: Response) => {
                   }
                 );
               }
-
-
-
 
               if (dataObj.statusUpdated == false) {
                 dataObj.costocotizacion.map((item: any) => {
@@ -610,7 +619,13 @@ export const putQuote = async (req: Request, res: Response) => {
                   if (item.id) {
                     conn.query(
                       "UPDATE Quote_SalesDetails set id_quoteSales = ?, description = ?, monto = ?, status= ? where id = ?",
-                      [item.id_quoteSales, item.description, item.monto, item.status, item.id],
+                      [
+                        item.id_quoteSales,
+                        item.description,
+                        item.monto,
+                        item.status,
+                        item.id,
+                      ],
                       (err, rowsssss, fields) => {
                         if (!err) {
                         } else {
@@ -621,7 +636,13 @@ export const putQuote = async (req: Request, res: Response) => {
                   } else {
                     conn.query(
                       "INSERT INTO Quote_SalesDetails (id_quote, id_quoteSales, description, monto, status) VALUES (?,?,?,?,?)",
-                      [id_quote, item.id_quoteSales, item.description, item.monto, item.status],
+                      [
+                        id_quote,
+                        item.id_quoteSales,
+                        item.description,
+                        item.monto,
+                        item.status,
+                      ],
                       (err, rowsssss, fields) => {
                         if (!err) {
                         } else {
@@ -632,8 +653,6 @@ export const putQuote = async (req: Request, res: Response) => {
                   }
                 });
               }
-
-
 
               dataObj.notacosto.map((item: any) => {
                 if (item.id) {
@@ -695,7 +714,7 @@ export const putQuote = async (req: Request, res: Response) => {
 export const getReportsRangeDays = async (req: Request, res: Response) => {
   const conn = await connect();
   await conn.query(
-    "SELECT * FROM view_QuoteReportRangeDays",
+    `SELECT * FROM (SELECT @pid:=${req.body.id_branch}) alias, view_QuoteReportRangeDays2`,
     (err, rows, fields) => {
       if (!err) {
         res.json({
@@ -712,10 +731,10 @@ export const getReportsRangeDays = async (req: Request, res: Response) => {
 
 export const getModulesEntities = async (req: Request, res: Response) => {
   const conn = await connect();
-  const { id_module } = req.body;
+  // const { id_module } = req.body;
   await conn.query(
-    "SELECT * FROM view_modulesEntities WHERE id_modules = ?",
-    [id_module],
+    `SELECT * FROM view_modulesEntities WHERE 
+    id_modules = ${req.body.id_module} and id_branch = ${req.body.id_branch ? req.body.id_branch : 'id_branch'}  `,
     (err, rows, fields) => {
       if (!err) {
         res.json({
@@ -1025,30 +1044,36 @@ export const putInstructivo = async (req: Request, res: Response) => {
 
 export const getQuoteCalls = async (req: Request, res: Response) => {
   const conn = await connect();
-  await conn.query("SELECT * FROM view_quoteCalls", (err, rows, fields) => {
-    if (!err) {
-      res.json({
-        status: 200,
-        statusBol: true,
-        data: rows,
-      });
-    } else {
-      console.log(err);
+  await conn.query(
+    `SELECT * FROM view_quoteCalls WHERE id_branch = ${req.body.id_branch ? req.body.id_branch : 'id_branch'} `,
+    (err, rows, fields) => {
+      if (!err) {
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
     }
-  });
+  );
 };
 
 export const getMarketingList = async (req: Request, res: Response) => {
   const conn = await connect();
-  await conn.query("SELECT * FROM view_marketingList", (err, rows, fields) => {
-    if (!err) {
-      res.json({
-        status: 200,
-        statusBol: true,
-        data: rows,
-      });
-    } else {
-      console.log(err);
+  await conn.query(
+    `SELECT * FROM view_marketingList where id_branch = ${req.body.id_branch ? req.body.id_branch : 'id_branch'}  or escomunflag`,
+    (err, rows, fields) => {
+      if (!err) {
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
     }
-  });
+  );
 };

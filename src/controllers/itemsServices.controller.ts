@@ -4,10 +4,10 @@ import { connect } from "../routes/database";
 
 export const getItemsServices = async (req: Request, res: Response) => {
   const conn = await connect();
-  const { id_modality, id_shipment, id_incoterms } = req.body;
+  const { id_modality, id_shipment, id_incoterms, id_branch } = req.body;
   conn.query(
-    "SELECT * FROM view_itemsServices where status <> 0 and id_modality = ? and id_shipment = ? and id_incoterms = ? group by id_begend order by id_begend asc",
-    [id_modality, id_shipment, id_incoterms],
+    "SELECT * FROM view_itemsServices where status <> 0 and id_modality = ? and id_shipment = ? and id_incoterms = ? and id_branch = ? group by id_begend order by id_begend asc",
+    [id_modality, id_shipment, id_incoterms, id_branch],
     (err, rows, fields) => {
       if (!err) {
         let datanew = JSON.parse(JSON.stringify(rows));
@@ -63,10 +63,10 @@ export const getItemsServices = async (req: Request, res: Response) => {
 
 export const getItemsServicesDetails = async (req: Request, res: Response) => {
   const conn = await connect();
-  const { id_modality, id_shipment, id_incoterms } = req.body;
+  const { id_modality, id_shipment, id_incoterms, id_branch } = req.body;
   conn.query(
-    "SELECT * FROM view_itemsServices where status <> 0 and id_modality = ? and id_shipment = ? and id_incoterms = ? group by id_begend order by id_begend asc",
-    [id_modality, id_shipment, id_incoterms],
+    "SELECT * FROM view_itemsServices where status <> 0 and id_modality = ? and id_shipment = ? and id_incoterms = ? and id_branch = ? group by id_begend order by id_begend asc",
+    [id_modality, id_shipment, id_incoterms, id_branch],
     (err, rows, fields) => {
       if (!err) {
         let datanew = JSON.parse(JSON.stringify(rows));

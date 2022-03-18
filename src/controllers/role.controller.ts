@@ -5,8 +5,8 @@ export const getModuleRole = async (req: Request, res: Response) => {
   const conn = await connect();
   const { id_module } = req.body;
   await conn.query(
-    "SELECT * FROM view_moduleRole where id_module = ? and status <> 0",
-    [id_module],
+    `SELECT * FROM view_moduleRole where id_module = ${req.body.id_module} and status <> 0 and id_branch = ${req.body.id_branch ? req.body.id_branch : 'id_branch'} `,
+
     (err, rows, fields) => {
       if (!err) {
         res.json({
@@ -40,13 +40,13 @@ export const getRole = async (req: Request, res: Response) => {
   );
 };
 
-
 export const editRole = async (req: Request, res: Response) => {
   const conn = await connect();
   const { id_entities } = req.params;
-  const {id_role} = req.body;
+  const { id_role } = req.body;
   await conn.query(
-    "UPDATE Entities_Role set id_role = ? where id_entities = ?", [id_role, id_entities],
+    "UPDATE Entities_Role set id_role = ? where id_entities = ?",
+    [id_role, id_entities],
     (err, rows, fields) => {
       if (!err) {
         res.json({

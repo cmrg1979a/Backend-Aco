@@ -32,4 +32,5 @@ export interface postPricing {
   fecha_fin: String;
   tiempo_transito: String;
   ganancia: String;
+  id_branch: String;
 }
