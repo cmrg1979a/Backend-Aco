@@ -5,7 +5,7 @@ export const getModuleRole = async (req: Request, res: Response) => {
   const conn = await connect();
   const { id_module } = req.body;
   await conn.query(
-    `SELECT * FROM view_moduleRole where id_module = ${req.body.id_module} and status <> 0 and id_branch = ${req.body.id_branch ? req.body.id_branch : 'id_branch'} `,
+    `SELECT * FROM view_moduleRole where id_module = ${req.body.id_module} and status <> 0`,
 
     (err, rows, fields) => {
       if (!err) {

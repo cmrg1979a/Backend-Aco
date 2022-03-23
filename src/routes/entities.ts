@@ -11,6 +11,7 @@ import {
   editEntitie,
   getPhones,
   getContacts,
+  validationDocument,
 } from "../controllers/entities.controller";
 
 router.post("/getEntitiesList", TokenValidation, getEntitiesList);
@@ -21,5 +22,10 @@ router.post("/addEntities", TokenValidation, addEntities);
 router.post("/editEntitie/:id", TokenValidation, editEntitie);
 router.post("/getPhone/:id_entitie", TokenValidation, getPhones);
 router.post("/getContacts/:id_entitie", TokenValidation, getContacts);
+router.get(
+  "/validationDocument",
+  TokenValidation,
+  validationDocument
+);
 
 export default router;

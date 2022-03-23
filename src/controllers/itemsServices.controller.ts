@@ -6,11 +6,13 @@ export const getItemsServices = async (req: Request, res: Response) => {
   const conn = await connect();
   const { id_modality, id_shipment, id_incoterms, id_branch } = req.body;
   conn.query(
-    "SELECT * FROM view_itemsServices where status <> 0 and id_modality = ? and id_shipment = ? and id_incoterms = ? and id_branch = ? group by id_begend order by id_begend asc",
+    "SELECT * FROM view_itemsServices where status <> 0 and id_modality = ? and id_shipment = ? and id_incoterms = ?  and id_branch = ? group by id_begend order by id_begend asc",
     [id_modality, id_shipment, id_incoterms, id_branch],
     (err, rows, fields) => {
       if (!err) {
         let datanew = JSON.parse(JSON.stringify(rows));
+        // console.log(datanew);
+
         let dataServiceList;
         new Promise<void>((resolver, rechazar) => {
           datanew.map((item: any) => {
@@ -59,6 +61,8 @@ export const getItemsServices = async (req: Request, res: Response) => {
       }
     }
   );
+  conn.releaseConnection;
+  
 };
 
 export const getItemsServicesDetails = async (req: Request, res: Response) => {

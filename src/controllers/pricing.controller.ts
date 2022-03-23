@@ -16,7 +16,7 @@ export const setQuote = async (req: Request, res: Response) => {
       var datanro = JSON.parse(JSON.stringify(rowsss));
 
       conn.query(
-        "INSERT INTO Table_Quote (id_marketing, id_entitie, id_modality, id_shipment, id_incoterms, id_port_begin, id_port_end, nro_bultos, peso, volumen, quote, monto, statusQuote, status, id_vendedor, descripcionMercancia, idProvincia, idDistrito, fullflag, seguro, proveedor, telefonoproveedor, direccionproveedor, date_end, tiempo_transito, ganancia,id_branch) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        "INSERT INTO Table_Quote (id_marketing, id_entitie, id_modality, id_shipment, id_incoterms, id_port_begin, id_port_end, nro_bultos, peso, volumen, quote, monto, statusQuote, status, id_vendedor, descripcionMercancia, idProvincia, idDistrito, fullflag, seguro, proveedor, telefonoproveedor, direccionproveedor, date_end, tiempo_transito, ganancia,id_branch,id_pricing) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
         [
           dataObj.id_marketing,
           dataObj.id_entitie,
@@ -45,6 +45,7 @@ export const setQuote = async (req: Request, res: Response) => {
           dataObj.tiempo_transito,
           dataObj.ganancia,
           dataObj.id_branch,
+          dataObj.idPricing,
         ],
         (err, rowssss, fields) => {
           if (!err) {
@@ -195,7 +196,9 @@ export const setQuote = async (req: Request, res: Response) => {
 export const getQuoteStatus = async (req: Request, res: Response) => {
   const conn = await connect();
   await conn.query(
-    `SELECT * FROM view_QuoteStatus where id_branch = ${req.body.id_branch ? req.body.id_branch : 'id_branch'} `,
+    `SELECT * FROM view_QuoteStatus where id_branch = ${
+      req.body.id_branch ? req.body.id_branch : "id_branch"
+    } `,
     (err, rows, fields) => {
       if (!err) {
         res.json({
@@ -213,7 +216,9 @@ export const getQuoteStatus = async (req: Request, res: Response) => {
 export const getQuoteList = async (req: Request, res: Response) => {
   const conn = await connect();
   await conn.query(
-    `SELECT * FROM view_listQuote where id_branch = ${req.body.id_branch ? req.body.id_branch : 'id_branch'} `,
+    `SELECT * FROM view_listQuote where id_branch = ${
+      req.body.id_branch ? req.body.id_branch : "id_branch"
+    } `,
     (err, rows, fields) => {
       if (!err) {
         res.json({
@@ -347,7 +352,7 @@ export const putQuote = async (req: Request, res: Response) => {
 
         console.log("paso 1");
         conn.query(
-          "UPDATE Table_Quote set id_marketing = ?, id_entitie = ?, id_modality = ?, id_shipment = ?, id_incoterms = ?, id_port_begin = ?, id_port_end = ?, nro_bultos = ?, peso = ?, volumen = ?, monto = ?, statusQuote = ?, id_vendedor = ?, descripcionMercancia = ?, idProvincia = ?, idDistrito = ?, fullflag = ?, seguro = ?, proveedor = ?, telefonoproveedor = ?, direccionproveedor = ?, date_end = ?, tiempo_transito = ?, ganancia = ? where id = ?",
+          "UPDATE Table_Quote set id_marketing = ?, id_entitie = ?, id_modality = ?, id_shipment = ?, id_incoterms = ?, id_port_begin = ?, id_port_end = ?, nro_bultos = ?, peso = ?, volumen = ?, monto = ?, statusQuote = ?, id_vendedor = ?, descripcionMercancia = ?, idProvincia = ?, idDistrito = ?, fullflag = ?, seguro = ?, proveedor = ?, telefonoproveedor = ?, direccionproveedor = ?, date_end = ?, tiempo_transito = ?, ganancia = ? , id_pricing = ? where id = ?",
           [
             dataObj.id_marketing,
             dataObj.id_entitie,
@@ -374,6 +379,7 @@ export const putQuote = async (req: Request, res: Response) => {
             dataObj.fecha_fin,
             dataObj.tiempo_transito,
             dataObj.ganancia,
+            dataObj.idPricing,
             id_quote,
           ],
           (err, rowssss, fields) => {
@@ -734,7 +740,7 @@ export const getModulesEntities = async (req: Request, res: Response) => {
   // const { id_module } = req.body;
   await conn.query(
     `SELECT * FROM view_modulesEntities WHERE 
-    id_modules = ${req.body.id_module} and id_branch = ${req.body.id_branch ? req.body.id_branch : 'id_branch'}  `,
+    id_modules = ${req.body.id_module}   `,
     (err, rows, fields) => {
       if (!err) {
         res.json({
@@ -1045,7 +1051,9 @@ export const putInstructivo = async (req: Request, res: Response) => {
 export const getQuoteCalls = async (req: Request, res: Response) => {
   const conn = await connect();
   await conn.query(
-    `SELECT * FROM view_quoteCalls WHERE id_branch = ${req.body.id_branch ? req.body.id_branch : 'id_branch'} `,
+    `SELECT * FROM view_quoteCalls WHERE id_branch = ${
+      req.body.id_branch ? req.body.id_branch : "id_branch"
+    } `,
     (err, rows, fields) => {
       if (!err) {
         res.json({
@@ -1063,7 +1071,9 @@ export const getQuoteCalls = async (req: Request, res: Response) => {
 export const getMarketingList = async (req: Request, res: Response) => {
   const conn = await connect();
   await conn.query(
-    `SELECT * FROM view_marketingList where id_branch = ${req.body.id_branch ? req.body.id_branch : 'id_branch'}  or escomunflag`,
+    `SELECT * FROM view_marketingList where id_branch = ${
+      req.body.id_branch ? req.body.id_branch : "id_branch"
+    }  or escomunflag`,
     (err, rows, fields) => {
       if (!err) {
         res.json({

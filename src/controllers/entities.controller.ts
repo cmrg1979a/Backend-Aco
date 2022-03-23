@@ -13,7 +13,9 @@ export const getEntitiesList = async (req: Request, res: Response) => {
     role = req.body.id_role;
   }
   await conn.query(
-    `SELECT * FROM view_entitie_list where statusEntitieRole <> 0 and statusEntitie <> 0 and statusRole <> 0 and id_role =  ${role} and id_branch = ${req.body.id_branch ? req.body.id_branch : 'id_branch'} `,
+    `SELECT * FROM view_entitie_list where statusEntitieRole <> 0 and statusEntitie <> 0 and statusRole <> 0 and id_role =  ${role} and id_branch = ${
+      req.body.id_branch ? req.body.id_branch : "id_branch"
+    } `,
     (err, rows) => {
       if (!err) {
         res.json({
@@ -117,7 +119,7 @@ export const addEntitie = async (req: Request, res: Response) => {
     "INSERT INTO Table_Entities SET ?",
     [dataObj],
     (err, rows, fields) => {
-      // console.log(dataObj);
+      console.log(dataObj);
       if (!err) {
         var data = JSON.parse(JSON.stringify(rows));
         conn.query(
@@ -280,4 +282,66 @@ export const editEntitie = async (req: Request, res: Response) => {
       }
     }
   );
+};
+
+export const validationDocument = async (req: Request, res: Response) => {
+  const conn = await connect();
+  let validation = await conn.query(
+    `SELECT COUNT(*)as cantidad FROM Table_Entities WHERE document = '${req.query.document}' limit 1`,
+    (err, rows, fields) => {
+      let cant: JSON;
+      cant = JSON.parse(JSON.stringify(rows));
+      if (cant[0].cantidad > 0) {
+        res.json({
+          status: 200,
+          statusBol: true,
+          msg: "El documento ya se encuentra registrado.",
+        });
+      } else {
+        res.json({
+          status: 200,
+          statusBol: false,
+          msg: "",
+        });
+      }
+    }
+  );
+
+  // console.log(validation);
+
+  // const dataObj: postEntities = req.body;
+  // const id = req.params.id;
+
+  // await conn.query(
+  //   "UPDATE Table_Entities SET ? WHERE id = ?",
+  //   [dataObj, id],
+  //   (err, rows, fields) => {
+  //     if (!err) {
+  //       var data = JSON.parse(JSON.stringify(rows));
+  //       if (
+  //         dataObj.phone != "" ||
+  //         dataObj.phone != null ||
+  //         dataObj.phone != "0"
+  //       ) {
+  //         conn.query(
+  //           "UPDATE Table_Phones SET phone = ? where id_entitie = ?",
+  //           [dataObj.phone, id],
+  //           (err, rowss, fields) => {
+  //             if (!err) {
+  //               res.json({
+  //                 status: 200,
+  //                 statusBol: true,
+  //                 data: rowss,
+  //               });
+  //             } else {
+  //               console.log(err);
+  //             }
+  //           }
+  //         );
+  //       }
+  //     } else {
+  //       console.log(err);
+  //     }
+  //   }
+  // );
 };
