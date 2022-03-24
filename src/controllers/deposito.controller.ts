@@ -50,6 +50,7 @@ export const setFile = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };

@@ -22,6 +22,7 @@ export const setHouse = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -44,6 +45,7 @@ export const getHouseList = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -66,6 +68,7 @@ export const getHouseListAll = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -88,6 +91,7 @@ export const getHouseListId = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -110,6 +114,7 @@ export const getHouseServices = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -132,6 +137,7 @@ export const getHouseBitacora = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -154,6 +160,7 @@ export const getHouseContainers = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -177,6 +184,7 @@ export const setHouseEdit = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };

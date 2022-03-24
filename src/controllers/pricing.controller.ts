@@ -209,6 +209,7 @@ export const getQuoteStatus = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -229,6 +230,7 @@ export const getQuoteList = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -307,6 +309,7 @@ export const getQuoteId = async (req: Request, res: Response) => {
                 statusBol: true,
                 data: datanew,
               });
+              conn.end();
             }, 800);
           }
         );
@@ -333,6 +336,7 @@ export const delQuote = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -713,6 +717,7 @@ export const putQuote = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -731,6 +736,7 @@ export const getReportsRangeDays = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -751,6 +757,7 @@ export const getModulesEntities = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -775,6 +782,7 @@ export const setCalls = async (req: Request, res: Response) => {
           data: err,
         });
       }
+      conn.end();
     }
   );
 };
@@ -799,6 +807,7 @@ export const setPath = async (req: Request, res: Response) => {
           data: err,
         });
       }
+      conn.end();
     }
   );
 };
@@ -824,6 +833,7 @@ export const putPath = async (req: Request, res: Response) => {
           data: err,
         });
       }
+      conn.end();
     }
   );
 };
@@ -849,6 +859,7 @@ export const deletePath = async (req: Request, res: Response) => {
           data: err,
         });
       }
+      conn.end();
     }
   );
 };
@@ -874,6 +885,7 @@ export const updateCalls = async (req: Request, res: Response) => {
           data: err,
         });
       }
+      conn.end();
     }
   );
 };
@@ -895,6 +907,7 @@ export const getCalls = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -915,6 +928,7 @@ export const getCallsId = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -994,6 +1008,7 @@ export const getInstructivoId = async (req: Request, res: Response) => {
                 statusBol: true,
                 data: datanew,
               });
+              conn.end();
             }, 900);
           }
         );
@@ -1044,6 +1059,7 @@ export const putInstructivo = async (req: Request, res: Response) => {
           error: err,
         });
       }
+      conn.end();
     }
   );
 };
@@ -1064,6 +1080,7 @@ export const getQuoteCalls = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -1084,6 +1101,7 @@ export const getMarketingList = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };

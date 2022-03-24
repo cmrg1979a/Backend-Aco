@@ -21,6 +21,7 @@ export const setServices = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -41,6 +42,7 @@ export const deleteServices = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -61,6 +63,7 @@ export const activeServices = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -81,6 +84,7 @@ export const inactiveServices = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -101,6 +105,7 @@ export const editServices = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };

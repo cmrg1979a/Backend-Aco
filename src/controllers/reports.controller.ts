@@ -56,6 +56,7 @@ export const getControlFileAll = async (req: Request, res: Response) => {
             statusBol: true,
             data: req.app.locals.itemsHouse,
           });
+          conn.end();
         }, 1000);
         req.app.locals.itemsHouse = [];
       });
@@ -99,6 +100,7 @@ export const getControlFileAllMaster = async (req: Request, res: Response) => {
             statusBol: true,
             data: req.app.locals.itemsHouse,
           });
+          conn.end();
         }, 1000);
         req.app.locals.itemsHouse = [];
       });
@@ -189,6 +191,7 @@ export const getControlFileAllFilter = async (req: Request, res: Response) => {
               statusBol: true,
               data: req.app.locals.itemsHouse,
             });
+            conn.end();
           }, 1000);
         });
       } else {
@@ -257,6 +260,7 @@ export const getTotales = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -285,6 +289,7 @@ export const getTotalesAll = async (req: Request, res: Response) => {
     } else {
       console.log(err);
     }
+    conn.end();
   });
 };
 
@@ -345,6 +350,7 @@ export const getControlFileAllFilterMaster = async (
             statusBol: true,
             data: req.app.locals.itemsHouse,
           });
+          conn.end();
         }, 1000);
       });
     } else {
@@ -469,6 +475,7 @@ export const pdfInstructivo = async (req: Request, res: Response) => {
             }
           });
       }
+      conn.end();
     }
   );
 };
@@ -535,41 +542,42 @@ export const pdfSolicitud = async (req: Request, res: Response) => {
           .create(data, options)
           .toFile(
             "files/SOLICITUD_EXPEDIENTE_" +
-            expediente +
-            "_" +
-            nameProveedor +
-            "_" +
-            number +
-            ".pdf",
+              expediente +
+              "_" +
+              nameProveedor +
+              "_" +
+              number +
+              ".pdf",
             function (err: any, data: any) {
               if (err) {
                 res.send(err);
               } else {
                 res.download(
                   "/SOLICITUD_EXPEDIENTE_" +
-                  expediente +
-                  "_" +
-                  nameProveedor +
-                  "_" +
-                  number +
-                  ".pdf"
-                );
-                res.send({
-                  msg: "File created successfully",
-                  path: path.join(
-                    "/SOLICITUD_EXPEDIENTE_" +
                     expediente +
                     "_" +
                     nameProveedor +
                     "_" +
                     number +
                     ".pdf"
+                );
+                res.send({
+                  msg: "File created successfully",
+                  path: path.join(
+                    "/SOLICITUD_EXPEDIENTE_" +
+                      expediente +
+                      "_" +
+                      nameProveedor +
+                      "_" +
+                      number +
+                      ".pdf"
                   ),
                 });
               }
             }
           );
       }
+      conn.end();
     }
   );
 };
@@ -762,6 +770,7 @@ export const createdPDF = async (req: Request, res: Response) => {
                 }
               }
             );
+            conn.end();
           }, 1000);
         });
       } else {
@@ -835,13 +844,9 @@ export const test = async (req: Request, res: Response) => {
   );
 };
 
-
-export const getReportFileDetails = async (
-  req: Request,
-  res: Response
-) => {
+export const getReportFileDetails = async (req: Request, res: Response) => {
   const conn = await connect();
-  const { dateDesde, dateHasta } = req.body
+  const { dateDesde, dateHasta } = req.body;
 
   await conn.query(
     `SELECT vhl.*, vt.total_abonado, ROUND((vhl.montoIngreso - if(vt.total_abonado is null,0,vt.total_abonado)),2) as porCobrar, ve.monto as montoEgreso, (vhl.montoIngreso - ve.monto) as ganancia_global, ROUND((ve.monto - if(vp.montoPagado is null,0,vp.montoPagado)),2) as porPagar FROM view_houseListAll vhl left outer join view_tAbonado vt on vhl.id = vt.id_house left outer join view_totalesEgresos ve on vhl.id = ve.id_house left outer join view_totalesPagados vp on vhl.id = vp.id_house where vhl.fecha_disponibilidad >= '${dateDesde}' and vhl.fecha_disponibilidad <= '${dateHasta}' `,
@@ -952,6 +957,7 @@ export const getReportFileDetails = async (
               statusBol: true,
               data: req.app.locals.itemsHouse,
             });
+            conn.end();
           }, 5000);
         });
       } else {
@@ -961,10 +967,6 @@ export const getReportFileDetails = async (
   );
 };
 
-
-
-
-
 export const pdfFD = async (req: Request, res: Response) => {
   let ejs = require("ejs");
   let pdf = require("html-pdf");
@@ -973,7 +975,8 @@ export const pdfFD = async (req: Request, res: Response) => {
   const conn = await connect();
   const {
     itemsDetails,
-    fecha, expedientes,
+    fecha,
+    expedientes,
     ganancia,
     cobrado,
     porCobrar,
@@ -994,7 +997,7 @@ export const pdfFD = async (req: Request, res: Response) => {
       porPagar,
       fechaYHora,
       dateDesde,
-      dateHasta
+      dateHasta,
     },
     (err: any, data: any) => {
       if (err) {
@@ -1019,19 +1022,16 @@ export const pdfFD = async (req: Request, res: Response) => {
               if (err) {
                 res.send(err);
               } else {
-                res.download(
-                  "/REPORTE_FILES_DETALLADO_" + fecha + ".pdf"
-                );
+                res.download("/REPORTE_FILES_DETALLADO_" + fecha + ".pdf");
                 res.send({
                   msg: "File created successfully",
-                  path: path.join(
-                    "/REPORTE_FILES_DETALLADO_" + fecha + ".pdf"
-                  ),
+                  path: path.join("/REPORTE_FILES_DETALLADO_" + fecha + ".pdf"),
                 });
               }
             }
           );
       }
+      conn.end();
     }
   );
 };

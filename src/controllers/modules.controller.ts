@@ -17,6 +17,7 @@ export const getModules = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -50,6 +51,7 @@ export const getEntitieModules = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -84,6 +86,7 @@ export const getMenuModules = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -115,6 +118,7 @@ export const getGroupList = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };

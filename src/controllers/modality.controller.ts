@@ -4,7 +4,7 @@ import { connect } from "../routes/database";
 export const getModality = async (req: Request, res: Response) => {
   const conn = await connect();
   await conn.query(
-    "SELECT * FROM view_modalityList where status <> 0", 
+    "SELECT * FROM view_modalityList where status <> 0",
     (err, rows, fields) => {
       if (!err) {
         res.json({
@@ -15,6 +15,7 @@ export const getModality = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };

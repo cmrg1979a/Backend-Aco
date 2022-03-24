@@ -40,6 +40,7 @@ export const getBitacoraList = async (req: Request, res: Response) => {
               statusBol: true,
               data: req.app.locals.itemsBitacoraList,
             });
+            conn.end();
           }, 800);
         });
       } else {
@@ -64,6 +65,7 @@ export const getBitacoraLineal = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };

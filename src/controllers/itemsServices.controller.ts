@@ -21,7 +21,6 @@ export const getItemsServices = async (req: Request, res: Response) => {
               [id_modality, id_shipment, id_incoterms, item.id_begend],
               (err, rows, fields) => {
                 dataServiceList = JSON.parse(JSON.stringify(rows));
-
                 dataServiceList.sort((a: any, b: any) => {
                   if (a.position < b.position) {
                     return -1;
@@ -54,6 +53,7 @@ export const getItemsServices = async (req: Request, res: Response) => {
               statusBol: true,
               data: req.app.locals.itemsService,
             });
+            conn.end();
           }, 800);
         });
       } else {
@@ -61,8 +61,6 @@ export const getItemsServices = async (req: Request, res: Response) => {
       }
     }
   );
-  conn.releaseConnection;
-  
 };
 
 export const getItemsServicesDetails = async (req: Request, res: Response) => {
@@ -113,6 +111,7 @@ export const getItemsServicesDetails = async (req: Request, res: Response) => {
               statusBol: true,
               data: req.app.locals.itemsService,
             });
+            conn.end();
           }, 1000);
         });
       } else {
@@ -140,6 +139,7 @@ export const getItemsServicesList = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };

@@ -26,6 +26,7 @@ export const getEntitiesList = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -46,6 +47,7 @@ export const getEntitiesListId = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -66,6 +68,7 @@ export const getEntitiesListIc = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -86,6 +89,7 @@ export const getPhones = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -106,6 +110,7 @@ export const getContacts = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -164,6 +169,7 @@ export const addEntitie = async (req: Request, res: Response) => {
           msg: err,
         });
       }
+      conn.end();
     }
   );
 };
@@ -240,6 +246,7 @@ export const addEntities = async (req: Request, res: Response) => {
           msg: err,
         });
       }
+      conn.end();
     }
   );
 };
@@ -280,6 +287,7 @@ export const editEntitie = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -304,6 +312,7 @@ export const validationDocument = async (req: Request, res: Response) => {
           msg: "",
         });
       }
+      conn.end();
     }
   );
 

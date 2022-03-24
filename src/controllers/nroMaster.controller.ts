@@ -14,5 +14,6 @@ export const getNroMaster = async (req: Request, res: Response) => {
     } else {
       console.log(err);
     }
+    conn.end();
   });
 };

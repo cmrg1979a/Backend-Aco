@@ -3,9 +3,10 @@ import { connect } from "../routes/database";
 
 export const getTown = async (req: Request, res: Response) => {
   const conn = await connect();
-  const {idCity} = req.body;
+  const { idCity } = req.body;
   await conn.query(
-    "SELECT * FROM view_townList where id_city = ? and status <> 0",[idCity], 
+    "SELECT * FROM view_townList where id_city = ? and status <> 0",
+    [idCity],
     (err, rows, fields) => {
       if (!err) {
         res.json({
@@ -16,6 +17,7 @@ export const getTown = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };

@@ -16,6 +16,7 @@ export const getVersion = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };

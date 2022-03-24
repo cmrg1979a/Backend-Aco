@@ -21,6 +21,7 @@ export const setMaster = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -44,6 +45,7 @@ export const editMaster = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -67,6 +69,7 @@ export const nullMaster = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -89,6 +92,7 @@ export const lockMaster = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -111,6 +115,7 @@ export const lockMasterAdm = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -128,6 +133,7 @@ export const getMasterList = async (req: Request, res: Response) => {
     } else {
       console.log(err);
     }
+    conn.end();
   });
 };
 
@@ -147,6 +153,7 @@ export const getMasterId = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };

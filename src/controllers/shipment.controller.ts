@@ -17,6 +17,7 @@ export const getShipment = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };

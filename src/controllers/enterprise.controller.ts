@@ -16,6 +16,6 @@ export const getBracnh = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
-    }
+      conn.end(); }
   );
 };

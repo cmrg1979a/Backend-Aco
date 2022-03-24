@@ -21,6 +21,7 @@ export const setControl = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -57,6 +58,7 @@ export const setIngresos = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -94,6 +96,7 @@ export const setEgresos = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -116,6 +119,7 @@ export const getIngresosList = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -138,6 +142,7 @@ export const getEgresosList = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -160,6 +165,7 @@ export const getEgresosExpediente = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -183,6 +189,7 @@ export const getEgresosProveedorList = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -205,6 +212,7 @@ export const getTotalesProveedor = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -227,6 +235,7 @@ export const delEgresos = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -249,6 +258,7 @@ export const delIngresos = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -266,6 +276,7 @@ export const getControlList = async (req: Request, res: Response) => {
     } else {
       console.log(err);
     }
+    conn.end();
   });
 };
 
@@ -300,6 +311,7 @@ export const editIngreso = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -336,6 +348,7 @@ export const editEgreso = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };

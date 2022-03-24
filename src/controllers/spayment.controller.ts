@@ -45,6 +45,7 @@ export const setSPaymentPro = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -75,6 +76,7 @@ export const putSPaymentPro = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -97,6 +99,7 @@ export const getSPaymentPro = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -119,6 +122,7 @@ export const getListInvoice = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -141,6 +145,7 @@ export const getListInvoiceExp = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -163,6 +168,7 @@ export const delInvoice = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -185,6 +191,7 @@ export const delDebsClient = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -205,6 +212,7 @@ export const getRequestPayment = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -230,6 +238,7 @@ export const getRequestPaymentConceptos = async (
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -299,6 +308,7 @@ export const getDebsToPayAdmin = async (req: Request, res: Response) => {
               statusBol: true,
               data: req.app.locals.itemsdpa,
             });
+            conn.end();
           }, 3000);
         });
       } else {
@@ -306,10 +316,7 @@ export const getDebsToPayAdmin = async (req: Request, res: Response) => {
       }
     }
   );
-
-
 };
-
 
 export const getDebsToPay = async (req: Request, res: Response) => {
   const conn = await connect();
@@ -393,6 +400,7 @@ GROUP BY cpt.id_proveedor, cpt.id_house order by total_pagar desc`,
               statusBol: true,
               data: req.app.locals.itemsdp,
             });
+            conn.end();
           }, 30000);
         });
       } else {
@@ -400,8 +408,6 @@ GROUP BY cpt.id_proveedor, cpt.id_house order by total_pagar desc`,
       }
     }
   );
-
-
 
   /*  await conn.query(
     `SELECT cpt.*, SUM(cpt.total) AS total_pagar, 
@@ -548,6 +554,7 @@ GROUP BY cpt.id_proveedor, cpt.id_house order by total_pagar desc
             statusBol: true,
             data: req.app.locals.itemsService,
           });
+          conn.end();
         }, 30000);
       });
     } else {
@@ -664,6 +671,7 @@ GROUP BY vc.id_consigner, vc.id_house
               statusBol: true,
               data: req.app.locals.itemsdeb,
             });
+            conn.end();
           }, 30000);
         });
       } else {
@@ -787,8 +795,8 @@ GROUP BY vc.id_consigner, vc.id_house
               statusBol: true,
               data: req.app.locals.itemsService,
             });
+            conn.end();
           }, 30000);
-
         });
       } else {
         console.log(err);
@@ -829,6 +837,7 @@ export const getDebsClient = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -849,6 +858,7 @@ export const getDebsClientList = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -867,6 +877,7 @@ export const setSPaymentConceptos = async (req: Request, res: Response) => {
         } else {
           console.log(err);
         }
+        conn.end();
       }
     );
   });
@@ -924,6 +935,7 @@ export const setSPaymentFile = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 
@@ -970,6 +982,7 @@ export const setInvoice = async (req: Request, res: Response) => {
           },
         });
       }
+      conn.end();
     }
   );
 };
@@ -1010,6 +1023,7 @@ export const setDebsClient = async (req: Request, res: Response) => {
           },
         });
       }
+      conn.end();
     }
   );
 };
@@ -1046,6 +1060,7 @@ export const setCheckDebsClient = async (req: Request, res: Response) => {
           },
         });
       }
+      conn.end();
     }
   );
 };
@@ -1125,6 +1140,7 @@ export const pdfcxp = async (req: Request, res: Response) => {
             }
           );
       }
+      conn.end();
     }
   );
 };
@@ -1266,29 +1282,30 @@ export const pdfcxpD = async (req: Request, res: Response) => {
           .create(data, options)
           .toFile(
             "files/REPORTE_DETALLADO_DE_CUENTAS_POR_PAGAR_FECHA_" +
-            fecha +
-            ".pdf",
+              fecha +
+              ".pdf",
             function (err: any, data: any) {
               if (err) {
                 res.send(err);
               } else {
                 res.download(
                   "/REPORTE_DETALLADO_DE_CUENTAS_POR_PAGAR_FECHA_" +
-                  fecha +
-                  ".pdf"
+                    fecha +
+                    ".pdf"
                 );
                 res.send({
                   msg: "File created successfully",
                   path: path.join(
                     "/REPORTE_DETALLADO_DE_CUENTAS_POR_PAGAR_FECHA_" +
-                    fecha +
-                    ".pdf"
+                      fecha +
+                      ".pdf"
                   ),
                 });
               }
             }
           );
       }
+      conn.end();
     }
   );
 };
@@ -1351,29 +1368,30 @@ export const pdfcxcD = async (req: Request, res: Response) => {
           .create(data, options)
           .toFile(
             "files/REPORTE_DETALLADO_DE_CUENTAS_POR_COBRAR_FECHA_" +
-            fecha +
-            ".pdf",
+              fecha +
+              ".pdf",
             function (err: any, data: any) {
               if (err) {
                 res.send(err);
               } else {
                 res.download(
                   "/REPORTE_DETALLADO_DE_CUENTAS_POR_COBRAR_FECHA_" +
-                  fecha +
-                  ".pdf"
+                    fecha +
+                    ".pdf"
                 );
                 res.send({
                   msg: "File created successfully",
                   path: path.join(
                     "/REPORTE_DETALLADO_DE_CUENTAS_POR_COBRAR_FECHA_" +
-                    fecha +
-                    ".pdf"
+                      fecha +
+                      ".pdf"
                   ),
                 });
               }
             }
           );
       }
+      conn.end();
     }
   );
 };

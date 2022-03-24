@@ -34,7 +34,7 @@ export const getMultiplicador = async (req: Request, res: Response) => {
   await conn.query(
     "SELECT * FROM view_multiplicadorList where id_shipment = ? and status <> 0 and code <> ? and code <> ? and code <> ? and code <> ? and id_branch = ? ",
     [id_shipment, code7, code10, code9, code8, id_branch],
-    
+
     (err, rows, fields) => {
       // console.log(code7);
       // console.log(code10);
@@ -50,6 +50,7 @@ export const getMultiplicador = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };

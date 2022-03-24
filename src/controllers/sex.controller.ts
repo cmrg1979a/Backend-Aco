@@ -4,7 +4,7 @@ import { connect } from "../routes/database";
 export const getSex = async (req: Request, res: Response) => {
   const conn = await connect();
   await conn.query(
-    "SELECT * FROM view_sexList where status <> 0", 
+    "SELECT * FROM view_sexList where status <> 0",
     (err, rows, fields) => {
       if (!err) {
         res.json({
@@ -15,6 +15,7 @@ export const getSex = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };

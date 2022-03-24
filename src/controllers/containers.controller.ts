@@ -5,7 +5,9 @@ import { postContainers } from "../interface/containers";
 export const getContainers = async (req: Request, res: Response) => {
   const conn = await connect();
   await conn.query(
-    `SELECT * FROM view_containersList where status <> 0 and id_branch = ${req.body.id_branch ? req.body.id_branch : 'id_branch'}  `,
+    `SELECT * FROM view_containersList where status <> 0 and id_branch = ${
+      req.body.id_branch ? req.body.id_branch : "id_branch"
+    }  `,
     (err, rows, fields) => {
       if (!err) {
         res.json({
@@ -16,6 +18,7 @@ export const getContainers = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -36,6 +39,7 @@ export const setHouseContainers = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -56,6 +60,7 @@ export const deleteContainers = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };

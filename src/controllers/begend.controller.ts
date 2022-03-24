@@ -5,7 +5,9 @@ export const getBegEndList = async (req: Request, res: Response) => {
   const conn = await connect();
 
   await conn.query(
-    `SELECT * FROM view_begendList where status <> 0 and id_branch = ${req.body.id_branch ? req.body.id_branch : 'id_branch'}  `,
+    `SELECT * FROM view_begendList where status <> 0 and id_branch = ${
+      req.body.id_branch ? req.body.id_branch : "id_branch"
+    }  `,
     (err, rows, fields) => {
       if (!err) {
         res.json({
@@ -16,6 +18,7 @@ export const getBegEndList = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };

@@ -21,6 +21,7 @@ export const setBitacora = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
@@ -41,6 +42,7 @@ export const deleteBitacora = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+      conn.end();
     }
   );
 };
