@@ -219,3 +219,32 @@ export const getRegularizar = async (req: Request, res: Response) => {
     }
   );
 };
+
+export const getVerInvoiceAdmin = async (req: Request, res: Response) => {
+  const conn = await connect();
+  let objData = req.params;
+  conn.query(
+    `SELECT * FROM (SELECT @pid:=${objData.id}) alias, view_InvoiceAdminVer;`,
+    (err, rows, field) => {
+      if (!err) {
+        let datanew = JSON.parse(JSON.stringify(rows));
+        conn.query(
+          `SELECT * FROM (SELECT @pid:=${objData.id}) alias,view_InvoiceAdminDetailsVer;`, 
+          (err, rowss, fields) => {
+            datanew.push({ details: rowss });
+            setTimeout(function () {
+              res.json({
+                status: 200,
+                statusBol: true,
+                data: datanew,
+              });
+              conn.end();
+            }, 800);
+          }
+        );
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
