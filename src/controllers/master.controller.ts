@@ -21,7 +21,9 @@ export const setMaster = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
-      conn.end();
+      setTimeout(() => {
+        conn.end();
+      }, 9000);
     }
   );
 };
@@ -45,7 +47,9 @@ export const editMaster = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
-      conn.end();
+      setTimeout(() => {
+        conn.end();
+      }, 9000);
     }
   );
 };
@@ -69,7 +73,9 @@ export const nullMaster = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
-      conn.end();
+      setTimeout(() => {
+        conn.end();
+      }, 9000);
     }
   );
 };
@@ -92,7 +98,9 @@ export const lockMaster = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
-      conn.end();
+      setTimeout(() => {
+        conn.end();
+      }, 9000);
     }
   );
 };
@@ -115,7 +123,9 @@ export const lockMasterAdm = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
-      conn.end();
+      setTimeout(() => {
+        conn.end();
+      }, 9000);
     }
   );
 };
@@ -133,7 +143,9 @@ export const getMasterList = async (req: Request, res: Response) => {
     } else {
       console.log(err);
     }
-    conn.end();
+    setTimeout(() => {
+      conn.end();
+    }, 9000);
   });
 };
 
@@ -153,7 +165,9 @@ export const getMasterId = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
-      conn.end();
+      setTimeout(() => {
+        conn.end();
+      }, 9000);
     }
   );
 };

@@ -60,6 +60,7 @@ import spaymentRoute from "./routes/spayment";
 import { connect } from "routes/database";
 import versionRoute from "./routes/version";
 import modulesPaysRoutes from "./routes/modulesPays";
+import perfomanceRoutes from "./routes/perfomance";
 
 // settings
 app.set("port", 9200);
@@ -248,5 +249,6 @@ app.use(filesRoute);
 app.use(spaymentRoute);
 app.use(versionRoute);
 app.use(modulesPaysRoutes);
+app.use(perfomanceRoutes);
 
 export default app;

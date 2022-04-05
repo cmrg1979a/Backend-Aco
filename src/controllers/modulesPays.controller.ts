@@ -5,9 +5,10 @@ export const setInvoiceAdmin = async (req: Request, res: Response) => {
   const conn = await connect();
 
   const dataObj = req.body;
+  const dataDetails = req.body.detalle;
 
   conn.query(
-    "INSERT INTO Table_InvoiceAdmin (type_payment, id_expediente, id_proveedor, fecha, nro_factura, nro_serie, id_coins, monto, type_igv, igv, total, status, id_path) values (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+    "INSERT INTO Table_InvoiceAdmin (type_payment, id_expediente, id_proveedor, fecha, nro_factura, nro_serie, id_coins, monto, type_igv, igv, status, id_path,id_proformance) values (?,?,?,?,?,?,?,?,?,?,?,?,?)",
     [
       dataObj.type_payment,
       dataObj.id_expediente,
@@ -19,12 +20,35 @@ export const setInvoiceAdmin = async (req: Request, res: Response) => {
       dataObj.monto,
       dataObj.type_igv,
       dataObj.igv,
-      dataObj.total,
+      // dataObj.total,
       dataObj.status,
       dataObj.id_path,
+      dataObj.id_proformance,
     ],
     (err, rows, fields) => {
       if (!err) {
+        var data = JSON.parse(JSON.stringify(rows));
+        dataDetails.map((item: any) => {
+          conn.query(
+            "INSERT INTO 	table_DetailsInvoiceAdmin(id_invoice,concepto,monto,igv,total,afecto,status) VALUES (?,?,?,?,?,?,?)",
+            [
+              data.insertId,
+              item.concepto,
+              item.monto,
+              item.total - item.monto,
+              item.total,
+              item.afecto == "true" ? 1 : 0,
+              1,
+            ],
+            (err, rowss, fields) => {
+              if (!err) {
+              } else {
+                console.log(err);
+              }
+            }
+          );
+        });
+
         res.json({
           status: 200,
           statusBol: true,
@@ -33,6 +57,8 @@ export const setInvoiceAdmin = async (req: Request, res: Response) => {
           },
         });
       } else {
+        console.log(err);
+
         res.json({
           status: 400,
           statusBol: false,
@@ -41,7 +67,9 @@ export const setInvoiceAdmin = async (req: Request, res: Response) => {
           },
         });
       }
-      conn.end();
+      setTimeout(() => {
+        conn.end();
+      }, 6000);
     }
   );
 };

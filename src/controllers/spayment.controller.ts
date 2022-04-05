@@ -45,7 +45,9 @@ export const setSPaymentPro = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
-      conn.end();
+      setTimeout(() => {
+        conn.end();
+      }, 9000);
     }
   );
 };

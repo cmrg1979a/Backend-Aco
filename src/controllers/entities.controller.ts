@@ -169,7 +169,9 @@ export const addEntitie = async (req: Request, res: Response) => {
           msg: err,
         });
       }
-      conn.end();
+      setTimeout(() => {
+        conn.end();
+      }, 9000);
     }
   );
 };
@@ -246,7 +248,9 @@ export const addEntities = async (req: Request, res: Response) => {
           msg: err,
         });
       }
-      conn.end();
+      setTimeout(() => {
+        conn.end();
+      }, 9000);
     }
   );
 };
@@ -287,7 +291,9 @@ export const editEntitie = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
-      conn.end();
+      setTimeout(() => {
+        conn.end();
+      }, 9000);
     }
   );
 };
