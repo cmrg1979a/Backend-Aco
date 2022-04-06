@@ -61,6 +61,8 @@ import { connect } from "routes/database";
 import versionRoute from "./routes/version";
 import modulesPaysRoutes from "./routes/modulesPays";
 import perfomanceRoutes from "./routes/perfomance";
+import monthRoutes from "./routes/month";
+import yearRoutes from "./routes/year";
 
 // settings
 app.set("port", 9200);
@@ -72,9 +74,14 @@ app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(express.static("files"));
 
-
 app.use(bodyParser.json({ limit: "200mb" }));
-app.use(bodyParser.urlencoded({ limit: "200mb", extended: true, parameterLimit: 1000000 }));
+app.use(
+  bodyParser.urlencoded({
+    limit: "200mb",
+    extended: true,
+    parameterLimit: 1000000,
+  })
+);
 
 var ruta;
 var type;
@@ -250,5 +257,7 @@ app.use(spaymentRoute);
 app.use(versionRoute);
 app.use(modulesPaysRoutes);
 app.use(perfomanceRoutes);
+app.use(monthRoutes);
+app.use(yearRoutes);
 
 export default app;
