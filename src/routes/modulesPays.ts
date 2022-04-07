@@ -10,6 +10,7 @@ import {
   getRegularizar,
   paymentInvoiceAdmin,
   getVerInvoiceAdmin,
+  setUpdateInvoiceAdmin,
 } from "../controllers/modulesPays.controller";
 
 router.post("/setInvoiceAdmin", TokenValidation, setInvoiceAdmin);
@@ -19,5 +20,10 @@ router.post("/delPro", TokenValidation, delPro);
 router.post("/getRegularizar", TokenValidation, getRegularizar);
 router.post("/paymentInvoiceAdmin/:id", TokenValidation, paymentInvoiceAdmin);
 router.get("/getVerInvoiceAdmin/:id", TokenValidation, getVerInvoiceAdmin);
+router.put(
+  "/setUpdateInvoiceAdmin",
+  TokenValidation,
+  setUpdateInvoiceAdmin
+);
 
 export default router;

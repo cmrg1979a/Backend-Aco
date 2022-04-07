@@ -8,7 +8,7 @@ export const setInvoiceAdmin = async (req: Request, res: Response) => {
   const dataDetails = req.body.detalle;
 
   conn.query(
-    "INSERT INTO Table_InvoiceAdmin (type_payment, id_expediente, id_proveedor, fecha, nro_factura, nro_serie, id_coins, monto, type_igv, igv, status, id_path,id_proformance) values (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+    "INSERT INTO Table_InvoiceAdmin (type_payment, id_expediente, id_proveedor, fecha, nro_factura, nro_serie, id_coins, monto, type_igv, igv, status, id_path,id_proformance,id_month,id_year) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
     [
       dataObj.type_payment,
       dataObj.id_expediente,
@@ -24,6 +24,8 @@ export const setInvoiceAdmin = async (req: Request, res: Response) => {
       dataObj.status,
       dataObj.id_path,
       dataObj.id_proformance,
+      dataObj.id_month,
+      dataObj.id_year,
     ],
     (err, rows, fields) => {
       if (!err) {
@@ -229,7 +231,7 @@ export const getVerInvoiceAdmin = async (req: Request, res: Response) => {
       if (!err) {
         let datanew = JSON.parse(JSON.stringify(rows));
         conn.query(
-          `SELECT * FROM (SELECT @pid:=${objData.id}) alias,view_InvoiceAdminDetailsVer;`, 
+          `SELECT * FROM (SELECT @pid:=${objData.id}) alias,view_InvoiceAdminDetailsVer;`,
           (err, rowss, fields) => {
             datanew.push({ details: rowss });
             setTimeout(function () {
@@ -245,6 +247,116 @@ export const getVerInvoiceAdmin = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
+    }
+  );
+};
+
+export const setUpdateInvoiceAdmin = async (req: Request, res: Response) => {
+  const conn = await connect();
+
+  const dataObj = req.body;
+  const dataDetails = req.body.detalle;
+  /*
+ 
+*/
+  conn.query(
+    ` update Table_InvoiceAdmin 
+      SET
+      id_proveedor=${dataObj.id_proveedor},
+      fecha='${dataObj.fecha}',
+      nro_factura='${dataObj.nro_factura}',
+      nro_serie='${dataObj.nro_serie}',
+      id_coins=${dataObj.id_coins},
+      monto=${dataObj.monto},
+      status=${dataObj.status},
+      id_proformance=${dataObj.id_proformance},
+      id_month=${dataObj.id_month},
+      id_year=${dataObj.id_year},
+      updated_at = now()
+      WHERE id = ${dataObj.id};
+    `,
+    (err, rows, fields) => {
+      if (!err) {
+        var data = JSON.parse(JSON.stringify(rows));
+        dataDetails.forEach((element) => {
+          if (element.id) {
+            ` 
+              UDPATE table_DetailsInvoiceAdmin
+              set 
+              concepto= ${element.concepto},
+              monto= ${element.monto},
+              igv= ${element.total - element.monto},
+              total= ${element.total},
+              afecto= ${element.afecto},
+              status  = ${element.afecto},
+              updated_at = now()
+              where id = ${element.id}
+            `;
+          } else {
+            console.log("llego");
+
+            conn.query(
+              "INSERT INTO table_DetailsInvoiceAdmin(id_invoice,concepto,monto,igv,total,afecto,status) VALUES (?,?,?,?,?,?,?)",
+              [
+                dataObj.id,
+                element.concepto,
+                element.monto,
+                element.total - element.monto,
+                element.total,
+                element.afecto == "true" || 1 ? 1 : 0,
+                1,
+              ],
+              (err, rowss, fields) => {
+                if (!err) {
+                } else {
+                  console.log(err);
+                }
+              }
+            );
+          }
+        });
+        // dataDetails.map((item: any) => {
+        //   conn.query(
+        //     "UPDATE table_DetailsInvoiceAdmin(id_invoice,concepto,monto,igv,total,afecto,status) VALUES (?,?,?,?,?,?,?)",
+        //     [
+        //       data.insertId,
+        //       item.concepto,
+        //       item.monto,
+        //       item.total - item.monto,
+        //       item.total,
+        //       item.afecto == "true" ? 1 : 0,
+        //       1,
+        //     ],
+        //     (err, rowss, fields) => {
+        //       if (!err) {
+        //       } else {
+        //         console.log(err);
+        //       }
+        //     }
+        //   );
+        // });
+
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: {
+            msg: "Registro completo",
+          },
+        });
+      } else {
+        console.log(err);
+
+        res.json({
+          status: 400,
+          statusBol: false,
+          data: {
+            msg: "Registro no aceptado",
+          },
+        });
+      }
+      setTimeout(() => {
+        conn.end();
+      }, 9000);
     }
   );
 };
