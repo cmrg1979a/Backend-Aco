@@ -15,6 +15,8 @@ import {
   setInvoiceAdminCxC,
   getVerInvoiceAdminCxC,
   setUpdateInvoiceAdminCxC,
+  delProCxC,
+  paymentInvoiceAdminCxC,
 } from "../controllers/modulesPays.controller";
 
 router.post("/setInvoiceAdmin", TokenValidation, setInvoiceAdmin);
@@ -23,14 +25,24 @@ router.post("/getInvoiceAdmin", TokenValidation, getInvoiceAdmin);
 router.post("/delPro", TokenValidation, delPro);
 router.post("/getRegularizar", TokenValidation, getRegularizar);
 router.post("/paymentInvoiceAdmin/:id", TokenValidation, paymentInvoiceAdmin);
+router.post(
+  "/paymentInvoiceAdminCxC/:id",
+  TokenValidation,
+  paymentInvoiceAdminCxC
+);
 router.get("/getVerInvoiceAdmin/:id", TokenValidation, getVerInvoiceAdmin);
 router.put("/setUpdateInvoiceAdmin", TokenValidation, setUpdateInvoiceAdmin);
 router.post("/getInvoiceAdminCxC", TokenValidation, getInvoiceAdminCxC);
 router.post("/setInvoiceAdminCxC", TokenValidation, setInvoiceAdminCxC);
-router.get("/getVerInvoiceAdminCxC/:id", TokenValidation, getVerInvoiceAdminCxC);
+router.get(
+  "/getVerInvoiceAdminCxC/:id",
+  TokenValidation,
+  getVerInvoiceAdminCxC
+);
 router.put(
   "/setUpdateInvoiceAdminCxC",
   TokenValidation,
   setUpdateInvoiceAdminCxC
 );
+router.post("/delProCxC", TokenValidation, delProCxC);
 export default router;

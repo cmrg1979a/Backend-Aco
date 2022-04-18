@@ -6,29 +6,34 @@ import { postEntities } from "../interface/postEntitie";
 export const getEntitiesList = async (req: Request, res: Response) => {
   const conn = await connect();
   let role;
-
+  let sql;
   if (req.body.id_role == 18) {
     role = 11;
   } else {
     role = req.body.id_role;
   }
-  await conn.query(
-    `SELECT * FROM view_entitie_list where statusEntitieRole <> 0 and statusEntitie <> 0 and statusRole <> 0 and id_role =  ${role} and id_branch = ${
+  if (req.body.id_role == 28) {
+    sql = `SELECT * FROM view_entitie_list where statusEntitieRole <> 0 and statusEntitie <> 0 and statusRole <> 0 and id_role =  ${role} and id_branch = ${
       req.body.id_branch ? req.body.id_branch : "id_branch"
-    } `,
-    (err, rows) => {
-      if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
-      } else {
-        console.log(err);
-      }
-      conn.end();
+    } or es_operativa`;
+  } else {
+    sql = `SELECT * FROM view_entitie_list where statusEntitieRole <> 0 and statusEntitie <> 0 and statusRole <> 0 and id_role =  ${role} and id_branch = ${
+      req.body.id_branch ? req.body.id_branch : "id_branch"
+    } `;
+  }
+
+  await conn.query(sql, (err, rows) => {
+    if (!err) {
+      res.json({
+        status: 200,
+        statusBol: true,
+        data: rows,
+      });
+    } else {
+      console.log(err);
     }
-  );
+    conn.end();
+  });
 };
 
 export const getEntitiesListId = async (req: Request, res: Response) => {
@@ -171,7 +176,7 @@ export const addEntitie = async (req: Request, res: Response) => {
       }
       setTimeout(() => {
         conn.end();
-      }, 9000);
+      }, 15000);
     }
   );
 };
@@ -184,7 +189,7 @@ export const addEntities = async (req: Request, res: Response) => {
   const dataContacts = req.body.dataContacts;
 
   await conn.query(
-    "INSERT INTO Table_Entities (names,surname,second_surname,tradename,business_name,birthday,document,address,notes,status,phone,id_pais,id_state,id_city,id_town,id_sex,id_document,id_branch) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+    "INSERT INTO Table_Entities (names,surname,second_surname,tradename,business_name,birthday,document,address,notes,status,phone,id_pais,id_state,id_city,id_town,id_sex,id_document,id_branch,esoperativa) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
     [
       dataObj.names,
       dataObj.surname,
@@ -204,6 +209,7 @@ export const addEntities = async (req: Request, res: Response) => {
       dataObj.id_sex,
       dataObj.id_document,
       dataObj.id_branch,
+      0,
     ],
     (err, rows, fields) => {
       if (!err) {

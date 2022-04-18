@@ -205,7 +205,7 @@ export const getRegularizar = async (req: Request, res: Response) => {
   const conn = await connect();
 
   await conn.query(
-    "SELECT * FROM view_regularizarPro where pagado = 1 ",
+    "SELECT * FROM view_regularizarPro where pagado = 1 AND ajusteflag = 0",
 
     (err, rows, fields) => {
       if (!err) {
@@ -437,7 +437,6 @@ export const setInvoiceAdminCxC = async (req: Request, res: Response) => {
   );
 };
 
-
 export const getVerInvoiceAdminCxC = async (req: Request, res: Response) => {
   const conn = await connect();
   let objData = req.params;
@@ -550,6 +549,79 @@ export const setUpdateInvoiceAdminCxC = async (req: Request, res: Response) => {
       setTimeout(() => {
         conn.end();
       }, 9000);
+    }
+  );
+};
+
+export const paymentInvoiceAdminCxC = async (req: Request, res: Response) => {
+  const conn = await connect();
+
+  const id = req.params.id;
+  const dataObj = req.body;
+
+  conn.query(
+    "UPDATE Table_InvoiceAdminCxC SET id_pago = ?, fecha_pago = ?, factura_pago = ?, serie_pago = ?, id_bank_pago = ?, id_coin_pago = ?, monto_pago = ?, status = ? where id = ?",
+    [
+      dataObj.id_pago,
+      dataObj.fecha_pago,
+      dataObj.factura_pago,
+      dataObj.serie_pago,
+      dataObj.id_bank_pago,
+      dataObj.id_coin_pago,
+      dataObj.monto_pago,
+      dataObj.status,
+      id,
+    ],
+    (err, rows, fields) => {
+      if (!err) {
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: {
+            msg: "Registro completo",
+          },
+        });
+      } else {
+        res.json({
+          status: 400,
+          statusBol: false,
+          data: {
+            msg: "Registro no aceptado",
+          },
+        });
+      }
+      conn.end();
+    }
+  );
+};
+
+export const delProCxC = async (req: Request, res: Response) => {
+  const conn = await connect();
+
+  const dataObj = req.body;
+
+  conn.query(
+    "UPDATE Table_InvoiceAdminCxC SET status = 0 where id = ?",
+    [dataObj.id],
+    (err, rows, fields) => {
+      if (!err) {
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: {
+            msg: "Registro completo",
+          },
+        });
+      } else {
+        res.json({
+          status: 400,
+          statusBol: false,
+          data: {
+            msg: "Registro no aceptado",
+          },
+        });
+      }
+      conn.end();
     }
   );
 };

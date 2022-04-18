@@ -249,7 +249,14 @@ export const getDebsToPayAdmin = async (req: Request, res: Response) => {
   const conn = await connect();
 
   conn.query(
-    `SELECT vli.*, sum(vli.total) as total_deuda FROM view_listInvoiceAdmin vli where vli.status = 1 group by vli.id_proveedor `,
+    `
+      SELECT 
+      vli.*, 
+      sum(vli.total) as total_deuda, 
+      if(SUM(monto_pago) IS NULL,0,SUM(monto_pago) ) AS total_pagado,
+      sum(vli.total) - if(SUM(monto_pago) IS NULL,0,SUM(monto_pago) )  AS pendiente_pago
+      FROM view_listInvoiceAdmin vli where vli.status = 1 group by vli.id_proveedor;
+    `,
     (err, rows, fields) => {
       if (!err) {
         let datanew = JSON.parse(JSON.stringify(rows));
@@ -290,6 +297,8 @@ export const getDebsToPayAdmin = async (req: Request, res: Response) => {
                   created_at: item.created_at,
                   updated_at: item.updated_at,
                   paymentName: item.paymentName,
+                  total_pagado: item.total_pagado,
+                  pendiente_pago: item.pendiente_pago,
                   nro_master: item.nro_master,
                   nameConsigner: item.nameConsigner,
                   nameCoins: item.nameCoins,
@@ -324,7 +333,7 @@ export const getDebsToPay = async (req: Request, res: Response) => {
   const conn = await connect();
 
   conn.query(
-    `select * from view_reportDebsToPay where restante_pagar > 0`,
+    `select * from view_reportDebsToPay where restante_pagar > 0 and pagado = 0`,
     (err, rows, fields) => {
       if (!err) {
         let datanew = JSON.parse(JSON.stringify(rows));
@@ -332,19 +341,20 @@ export const getDebsToPay = async (req: Request, res: Response) => {
         new Promise<void>((resolver, rechazar) => {
           datanew.map((item: any) => {
             conn.query(
-              `SELECT cpt.*, SUM(cpt.total) AS total_pagar, 
-(SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.pagado = 1 AND cpp.llegada LIKE '%%') AS total_pagado,
-(SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.llegada LIKE '1') AS total_pagar_llegada,
-(SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.pagado = 1 AND cpp.llegada LIKE '1') AS total_pagado_llegada,
-(SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.llegada LIKE '0') AS total_pagar_no_llegada,
-(SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.pagado = 1 AND cpp.llegada LIKE '0') AS total_pagado_no_llegada,
-(SUM(cpt.total) - (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.pagado = 1 AND cpp.llegada LIKE '%%')) AS restante_pagar,
-((SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.llegada LIKE '1') - (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp 
-WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.pagado = 1 AND cpp.llegada LIKE '1')) AS restante_llegada,
-((SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.llegada LIKE '0') - (SELECT if(SUM(total) IS NULL,0,
-SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.pagado = 1 AND cpp.llegada LIKE '0')) AS restante_no_llegada
-FROM view_cppro_totales cpt WHERE cpt.llegada LIKE '%%' and cpt.id_proveedor = ${item.id_proveedor}
-GROUP BY cpt.id_proveedor, cpt.id_house order by total_pagar desc`,
+              `SELECT cpt.*,
+              IF (cpt.ajusteflag =1,0,SUM(cpt.total)) AS total_pagar, 
+              (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND  cpp.pagado = 1 AND cpp.llegada LIKE '%%') AS total_pagado,
+              (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND  cpp.llegada LIKE '1') AS total_pagar_llegada,
+              (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND  cpp.pagado = 1 AND cpp.llegada LIKE '1') AS total_pagado_llegada,
+              (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.llegada LIKE '0') AS total_pagar_no_llegada,
+              (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.pagado = 1 AND cpp.llegada LIKE '0') AS total_pagado_no_llegada,
+              (IF (cpt.ajusteflag =1,0,SUM(cpt.total))  - (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.pagado = 1 AND cpp.llegada LIKE '%%')) AS restante_pagar,
+              ((SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.llegada LIKE '1') - (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp 
+              WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.pagado = 1 AND cpp.llegada LIKE '1')) AS restante_llegada,
+              ((SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.llegada LIKE '0') - (SELECT if(SUM(total) IS NULL,0,
+              SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.pagado = 1 AND cpp.llegada LIKE '0')) AS restante_no_llegada
+              FROM view_cppro_totales cpt WHERE cpt.llegada LIKE '%%' and cpt.id_proveedor = ${item.id_proveedor} and cpt.pagado =0
+              GROUP BY cpt.id_proveedor, cpt.id_house order by total_pagar desc`,
               (err, rows, fields) => {
                 dataServiceList = JSON.parse(JSON.stringify(rows));
                 dataServiceList.sort((a: any, b: any) => {
@@ -581,9 +591,7 @@ export const getReportAccounts = async (req: Request, res: Response) => {
   const conn = await connect();
 
   conn.query(
-    `SELECT * FROM view_reportAccounts vra where vra.restante_pagar > 0
-
-`,
+    `SELECT * FROM view_reportAccounts vra where vra.restante_pagar > 0  order by vra.id_consigner ASC`,
     (err, rows, fields) => {
       if (!err) {
         let datanew = JSON.parse(JSON.stringify(rows));
@@ -593,20 +601,19 @@ export const getReportAccounts = async (req: Request, res: Response) => {
           datanew.map((item: any) => {
             conn.query(
               `SELECT vc.*, (SUM(vc.total)) AS total_pagar, ((if(vt.total_abonado IS NULL, 0, vt.total_abonado))) AS total_abonado,
-((SUM(vc.total) - (if(vt.total_abonado IS NULL, 0, vt.total_abonado)))) AS restante_pagar,
-IF((SELECT (SUM(vcc.total)) AS total_pagar_llegada FROM view_cxc_totales vcc WHERE vcc.llegada = 1 AND vcc.id_consigner = vc.id_consigner GROUP BY vcc.id_consigner ) 
-IS NULL, 0, (SELECT (SUM(vcc.total)) AS total_pagar_llegada FROM view_cxc_totales vcc WHERE vcc.llegada = 1 AND vcc.id_consigner = vc.id_consigner GROUP BY vcc.id_consigner ))
-AS total_pagar_llegada,
-IF((SELECT (SUM(vcc.total)) AS total_pagar_llegada FROM view_cxc_totales vcc WHERE vcc.llegada = 0 AND vcc.id_consigner = vc.id_consigner GROUP BY vcc.id_consigner ) 
-IS NULL, 0, (SELECT (SUM(vcc.total)) AS total_pagar_llegada FROM view_cxc_totales vcc WHERE vcc.llegada = 0 AND vcc.id_consigner = vc.id_consigner GROUP BY vcc.id_consigner ))
-AS total_pagar_no_llegada
-FROM view_cxc_totales vc 
-LEFT OUTER JOIN view_tAbonado vt
-ON vc.id_house = vt.id_house
-where vc.id_consigner = ${item.id_consigner}
-GROUP BY vc.id_consigner, vc.id_house
-
-`,
+              ((SUM(vc.total) - (if(vt.total_abonado IS NULL, 0, vt.total_abonado)))) AS restante_pagar,
+              IF((SELECT (SUM(vcc.total)) AS total_pagar_llegada FROM view_cxc_totales vcc WHERE vcc.llegada = 1 AND vcc.id_consigner = vc.id_consigner GROUP BY vcc.id_consigner ) 
+              IS NULL, 0, (SELECT (SUM(vcc.total)) AS total_pagar_llegada FROM view_cxc_totales vcc WHERE vcc.llegada = 1 AND vcc.id_consigner = vc.id_consigner GROUP BY vcc.id_consigner ))
+              AS total_pagar_llegada,
+              IF((SELECT (SUM(vcc.total)) AS total_pagar_llegada FROM view_cxc_totales vcc WHERE vcc.llegada = 0 AND vcc.id_consigner = vc.id_consigner GROUP BY vcc.id_consigner ) 
+              IS NULL, 0, (SELECT (SUM(vcc.total)) AS total_pagar_llegada FROM view_cxc_totales vcc WHERE vcc.llegada = 0 AND vcc.id_consigner = vc.id_consigner GROUP BY vcc.id_consigner ))
+              AS total_pagar_no_llegada
+              FROM view_cxc_totales vc 
+              LEFT OUTER JOIN view_tAbonado vt
+              ON vc.id_house = vt.id_house
+              where vc.id_consigner = ${item.id_consigner}
+              GROUP BY vc.id_consigner, vc.id_house
+              `,
               (err, rows, fields) => {
                 dataServiceList = JSON.parse(JSON.stringify(rows));
 
@@ -665,7 +672,7 @@ GROUP BY vc.id_consigner, vc.id_house
           });
           req.app.locals.itemsdeb = [];
           resolver();
-          console.log(resolver);
+          // console.log(resolver);
         }).then(() => {
           setTimeout(() => {
             res.json({
@@ -937,7 +944,9 @@ export const setSPaymentFile = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
-      conn.end();
+      setTimeout(() => {
+        conn.end();
+      }, 9000);
     }
   );
 
@@ -984,7 +993,9 @@ export const setInvoice = async (req: Request, res: Response) => {
           },
         });
       }
-      conn.end();
+      setTimeout(() => {
+        conn.end();
+      }, 9000);
     }
   );
 };
@@ -1025,7 +1036,9 @@ export const setDebsClient = async (req: Request, res: Response) => {
           },
         });
       }
-      conn.end();
+      setTimeout(() => {
+        conn.end();
+      }, 9000);
     }
   );
 };
@@ -1062,7 +1075,9 @@ export const setCheckDebsClient = async (req: Request, res: Response) => {
           },
         });
       }
-      conn.end();
+      setTimeout(() => {
+        conn.end();
+      }, 9000);
     }
   );
 };
