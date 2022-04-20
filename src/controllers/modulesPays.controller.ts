@@ -272,6 +272,7 @@ export const setUpdateInvoiceAdmin = async (req: Request, res: Response) => {
       id_proformance=${dataObj.id_proformance},
       id_month=${dataObj.id_month},
       id_year=${dataObj.id_year},
+      id_path=${dataObj.id_path},
       updated_at = now()
       WHERE id = ${dataObj.id};
     `,
