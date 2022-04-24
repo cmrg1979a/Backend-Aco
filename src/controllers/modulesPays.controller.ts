@@ -256,9 +256,8 @@ export const setUpdateInvoiceAdmin = async (req: Request, res: Response) => {
 
   const dataObj = req.body;
   const dataDetails = req.body.detalle;
-  /*
- 
-*/
+  let path = isNaN(+dataObj.id_path);
+
   conn.query(
     ` update Table_InvoiceAdmin 
       SET
@@ -272,7 +271,7 @@ export const setUpdateInvoiceAdmin = async (req: Request, res: Response) => {
       id_proformance=${dataObj.id_proformance},
       id_month=${dataObj.id_month},
       id_year=${dataObj.id_year},
-      id_path=${dataObj.id_path},
+      id_path=${path ? "id_path" : dataObj.id_path},
       updated_at = now()
       WHERE id = ${dataObj.id};
     `,
@@ -280,22 +279,31 @@ export const setUpdateInvoiceAdmin = async (req: Request, res: Response) => {
       if (!err) {
         var data = JSON.parse(JSON.stringify(rows));
         dataDetails.forEach((element) => {
-          if (element.id) {
-            ` 
-              UDPATE table_DetailsInvoiceAdmin
-              set 
-              concepto= ${element.concepto},
-              monto= ${element.monto},
-              igv= ${element.total - element.monto},
-              total= ${element.total},
-              afecto= ${element.afecto},
-              status  = ${element.afecto},
-              updated_at = now()
-              where id = ${element.id}
-            `;
+          if (element.id != 0 || !element.id) {
+            conn.query(
+              ` 
+              UPDATE table_DetailsInvoiceAdmin
+              SET 
+              concepto=?,monto=?,igv=?,total=?,afecto=?,status=?,updated_at = now()
+              WHERE id = ?
+            `,
+              [
+                element.concepto,
+                element.monto,
+                element.total - element.monto,
+                element.total,
+                element.afecto,
+                element.status,
+                element.id,
+              ],
+              (err, rowss, fields) => {
+                if (!err) {
+                } else {
+                  console.log(err);
+                }
+              }
+            );
           } else {
-            console.log("llego");
-
             conn.query(
               "INSERT INTO table_DetailsInvoiceAdmin(id_invoice,concepto,monto,igv,total,afecto,status) VALUES (?,?,?,?,?,?,?)",
               [
@@ -337,7 +345,7 @@ export const setUpdateInvoiceAdmin = async (req: Request, res: Response) => {
       }
       setTimeout(() => {
         conn.end();
-      }, 9000);
+      }, 10000);
     }
   );
 };
@@ -476,6 +484,7 @@ export const setUpdateInvoiceAdminCxC = async (req: Request, res: Response) => {
     ` update Table_InvoiceAdminCxC 
       SET
       id_cliente=${dataObj.id_cliente},
+      id_expediente = ${dataObj.id_expediente},
       fecha='${dataObj.fecha}',
       nro_factura='${dataObj.nro_factura}',
       nro_serie='${dataObj.nro_serie}',
@@ -492,22 +501,30 @@ export const setUpdateInvoiceAdminCxC = async (req: Request, res: Response) => {
       if (!err) {
         var data = JSON.parse(JSON.stringify(rows));
         dataDetails.forEach((element) => {
-          if (element.id) {
-            ` 
-              UDPATE table_DetailsInvoiceAdmin
-              set 
-              concepto= ${element.concepto},
-              monto= ${element.monto},
-              igv= ${element.total - element.monto},
-              total= ${element.total},
-              afecto= ${element.afecto},
-              status  = ${element.afecto},
-              updated_at = now()
-              where id = ${element.id}
-            `;
+          if (element.id != 0 || !element.id) {
+            conn.query(
+              ` UDPATE table_DetailsInvoiceAdmin
+              SET 
+              concepto=?,monto=?,igv=?,total=?,afecto=?,status=?,updated_at = now()
+              WHERE id = ?
+            `,
+              [
+                element.concepto,
+                element.monto,
+                element.total - element.monto,
+                element.total,
+                element.afecto,
+                element.status,
+                element.id,
+              ],
+              (err, rowss, fields) => {
+                if (!err) {
+                } else {
+                  console.log(err);
+                }
+              }
+            );
           } else {
-            console.log("llego");
-
             conn.query(
               "INSERT INTO table_DetailsInvoiceAdminCxC(id_invoice,concepto,monto,igv,total,afecto,status) VALUES (?,?,?,?,?,?,?)",
               [
