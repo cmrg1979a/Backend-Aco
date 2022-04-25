@@ -366,3 +366,37 @@ export const validationDocument = async (req: Request, res: Response) => {
   //   }
   // );
 };
+
+export const CargarClientes = async (req: Request, res: Response) => {
+  const conn = await connect();
+  await conn.query("SELECT * FROM view_cargarClientes", (err, rows, fields) => {
+    if (!err) {
+      res.json({
+        status: 200,
+        statusBol: true,
+        data: rows,
+      });
+      conn.end();
+    } else {
+      console.log(err);
+      conn.end();
+    }
+  });
+};
+
+export const CargarProveedores = async (req: Request, res: Response) => {
+  const conn = await connect();
+  await conn.query("SELECT * FROM view_cargarProveedor", (err, rows, fields) => {
+    if (!err) {
+      res.json({
+        status: 200,
+        statusBol: true,
+        data: rows,
+      });
+      conn.end();
+    } else {
+      console.log(err);
+      conn.end();
+    }
+  });
+};

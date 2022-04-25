@@ -301,3 +301,259 @@ export const getVerPagosPorProveedor = async (req: Request, res: Response) => {
     }
   );
 };
+
+export const setPayForCustomer = async (req: Request, res: Response) => {
+  const conn = await connect();
+  const dataObj = req.body.details;
+  const id_path = req.body.id_path;
+  const id_cuenta = req.body.id_cuenta;
+  dataObj.map((item: any) => {
+    conn.query(
+      "INSERT INTO detailsPaysInvoiceAdminCxC (id_invoiceadmin,id_pago,monto,id_cuenta,status) values (?,?,?,?,?)",
+      [item.id, id_path, item.max_pagar, id_cuenta, 1],
+      (err, rows, fields) => {
+        if (!err) {
+        } else {
+          console.log(err);
+        }
+      }
+    );
+    // if (item.cktotal == 1 || item.monto_pagar == item.max_pagar) {
+    //   conn.query(
+    //     "UPDATE Table_InvoiceAdminCxC set status = ? where id = ? and 1 = ?"
+    //   ),
+    //     [2, item.id, item.cktotal],
+    //     (err, rows, fields) => {
+    //       if (!err) {
+    //       } else {
+    //         console.log(err);
+    //       }
+    //     };
+    // }
+  });
+
+  setTimeout(() => {
+    res.json({
+      status: 200,
+      statusBol: true,
+      data: {
+        msg: "Registro completo",
+      },
+    });
+    conn.end();
+  }, 9000);
+};
+
+export const getListarPayForCustomer = async (req: Request, res: Response) => {
+  const conn = await connect();
+  conn.query(
+    `
+    SELECT 
+      distinct
+      ia.id id,
+       dia.id_pago as id_pago,
+       substring(dia.created_at,1,10) AS fecha,
+       substring(dia.created_at,12,17) AS hora,
+       CASE when e.tradename IS NULL then e.names when e.tradename = '' then e.names ELSE e.tradename end proveedor,
+       ia.monto AS monto,
+       b.name banco,
+       bd.nrocuenta nrocuenta,
+       c.symbol moneda_simbolo,
+       c.name moneda
+       FROM detailsPaysInvoiceAdminCxC dia
+       INNER JOIN Table_InvoiceAdminCxC ia ON dia.id_invoiceadmin = ia.id 
+       INNER JOIN Table_Entities e ON e.id = ia.id_cliente
+       LEFT JOIN bank_details bd ON dia.id_cuenta = bd.id 
+       LEFT JOIN Table_Banks b ON bd.id_bank = b.id
+       LEFT JOIN Table_Coins c ON ia.id_coins = c.id
+       ORDER BY fecha DESC;
+     
+  `,
+    (err, rows, fields) => {
+      if (!err) {
+        let datanew = JSON.parse(JSON.stringify(rows));
+        let details;
+        new Promise<void>((resolver, rechazar) => {
+          datanew.map((item: any, index) => {
+            conn.query(
+              ` SELECT 
+                hc.code_house expediente,
+                CASE when e.tradename IS NULL then e.names when e.tradename = '' then e.names ELSE e.tradename end cliente,
+                dia.monto,
+                ia.nro_factura factura,
+                ia.nro_serie serie,
+                c.symbol moneda_simbolo,
+                c.name moneda
+                FROM Table_InvoiceAdminCxC ia
+                LEFT JOIN Table_Coins c ON ia.id_coins = c.id
+                INNER JOIN detailsPaysInvoiceAdminCxC dia  ON dia.id_invoiceadmin = ia.id 
+                LEFT JOIN Table_HouseControl hc ON ia.id_expediente = hc.id
+                LEFT JOIN Table_Entities e ON e.id = hc.id_consigner
+                WHERE dia.id_pago = ${item.id_pago} `,
+              (err, rows, fields) => {
+                details = JSON.parse(JSON.stringify(rows));
+                let dataTes = [];
+                let dataPre = [];
+                dataTes.push(details);
+                dataPre.push({
+                  id: item.id,
+                  index: index,
+                  id_pago: item.id_pago,
+                  fecha: item.fecha,
+                  hora: item.hora,
+                  proveedor: item.proveedor,
+                  monto: item.monto,
+                  banco: item.banco,
+                  nrocuenta: item.nrocuenta,
+                  moneda_simbolo: item.moneda_simbolo,
+                  moneda: item.moneda,
+                  details: dataTes[0],
+                });
+                req.app.locals.itemsdp.push(dataPre[0]);
+              }
+            );
+          });
+          req.app.locals.itemsdp = [];
+          resolver();
+        }).then(() => {
+          setTimeout(() => {
+            res.json({
+              status: 200,
+              statusBol: true,
+              data: req.app.locals.itemsdp,
+            });
+            conn.end();
+          }, 7000);
+        });
+
+        // conn.end();
+      } else {
+        console.log(err);
+        conn.end();
+      }
+    }
+  );
+};
+export const getVerPagosPorCustomer = async (req: Request, res: Response) => {
+  const conn = await connect();
+  const { id } = req.query;
+  conn.query(
+    `
+    SELECT 
+		distinct
+		bd.id id_bank,
+		p.name documento,
+		p.path link_documento,
+		e.id id_proveedor,
+    dia.id_pago as id_pago,
+    substring(dia.created_at,1,10) AS fecha,
+    CASE when e.tradename IS NULL then e.names when e.tradename = '' then e.names ELSE e.tradename end proveedor,
+    b.name banco,
+    bd.nrocuenta nrocuenta,
+    c.symbol moneda_simbolo,
+    dia.id_pago,
+    c.name moneda
+    FROM detailsPaysInvoiceAdminCxC dia
+    INNER JOIN Table_InvoiceAdminCxC ia ON dia.id_invoiceadmin = ia.id 
+    INNER JOIN Table_Entities e ON e.id = ia.id_cliente
+    LEFT JOIN bank_details bd ON dia.id_cuenta = bd.id 
+    LEFT JOIN Table_Banks b ON bd.id_bank = b.id
+    LEFT JOIN Table_Coins c ON ia.id_coins = c.id
+    LEFT JOIN Table_AllPath p ON dia.id_pago = p.id
+    WHERE dia.id_pago = ${id}    
+  `,
+    (err, rows, fields) => {
+      if (!err) {
+        let datanew = JSON.parse(JSON.stringify(rows));
+
+        let details;
+        new Promise<void>((resolver, rechazar) => {
+          datanew.map((item: any) => {
+            conn.query(
+              `select e.id AS id_cliente,
+              e.tradename AS tradename_cliente,
+              hc.id AS id_house,
+              hc.code_house AS codigo_house,
+              ec.id AS id_cliente,
+              ec.tradename AS tradename_cliente,
+              ap.id AS id_pago,
+              ap.name AS descripcion_pago,
+              ap.path AS documento_pago,
+              ia.id AS id,
+              ia.id_expediente AS id_expediente,
+              substr(ia.fecha,1,10) AS fecha,
+              ia.monto AS monto_pagar,
+              (select if((sum(dpiv.monto) is null),0,sum(dpiv.monto)) from detailsPaysInvoiceAdminCxC dpiv where (dpiv.id_invoiceadmin = ia.id)) AS monto_pagado,
+              (ia.monto - (select if((sum(dpiv.monto) is null),0,sum(dpiv.monto)) from detailsPaysInvoiceAdminCxC dpiv where (dpiv.id_invoiceadmin = ia.id))) AS monto_deuda,(ia.monto - (select if((sum(dpiv.monto) is null),0,sum(dpiv.monto)) from detailsPaysInvoiceAdminCxC dpiv where (dpiv.id_invoiceadmin = ia.id))) AS max_pagar,(case when (tsp.status = 3) then 'Pagado' when (tsp.status = 2) then 'Pendiente' else 'Activo' end) AS statusPago,if((tsp.monto is null),0,tsp.monto) AS monto_cobrado_cliente,true AS cktotal from (((((Table_InvoiceAdminCxC ia left join Table_Entities e on((ia.id_cliente = e.id))) left join Table_HouseControl hc on((ia.id_expediente = hc.id))) left join Table_Entities ec on((hc.id_consigner = ec.id))) left join Table_AllPath ap on((ia.id_path = ap.id))) left join Table_SPaymentPro tsp on((tsp.id_house = hc.id))) where ( (0 <> ia.status) AND 
+              ia.id IN (SELECT pays.id_invoiceadmin FROM detailsPaysInvoiceAdminCxC pays WHERE pays.id_pago =  ${item.id_pago}))`,
+              //
+              (err, rows, fields) => {
+                console.log(item);
+
+                details = JSON.parse(JSON.stringify(rows));
+                let dataTes = [];
+                let dataPre = [];
+                dataTes.push(details);
+                dataPre.push({
+                  id_bank: item.id_bank,
+                  documento: item.documento,
+                  link_documento: item.link_documento,
+                  id_cliente: item.id_cliente,
+                  id_pago: item.id_pago,
+                  fecha: item.fecha,
+                  proveedor: item.proveedor,
+                  banco: item.banco,
+                  nrocuenta: item.nrocuenta,
+                  moneda_simbolo: item.moneda_simbolo,
+                  moneda: item.moneda,
+                  details: dataTes[0],
+                });
+                req.app.locals.itemsdp.push(dataPre[0]);
+              }
+            );
+          });
+          req.app.locals.itemsdp = [];
+          resolver();
+        }).then(() => {
+          setTimeout(() => {
+            res.json({
+              status: 200,
+              statusBol: true,
+              data: req.app.locals.itemsdp,
+            });
+            conn.end();
+          }, 800);
+        });
+        // conn.end();
+      } else {
+        console.log(err);
+        conn.end();
+      }
+    }
+  );
+};
+export const getListaPagosXProveedorCxC = async (
+  req: Request,
+  res: Response
+) => {
+  let id = req.params.id_cliente;
+  console.log(id);
+
+  const conn = await connect();
+  await conn.query(
+    `SELECT * FROM (SELECT @pid:=${id}) alias,view_listado_banco_cliente`,
+    (err, rows, fields) => {
+      if (!err) {
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+        });
+        conn.end();
+      } else {
+        console.log(err);
+        conn.end();
+      }
+    }
+  );
+};

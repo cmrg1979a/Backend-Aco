@@ -9,6 +9,10 @@ import {
   getListBanksDetailsCargar,
   getListar,
   getVerPagosPorProveedor,
+  setPayForCustomer,
+  getListarPayForCustomer,
+  getVerPagosPorCustomer,
+  getListaPagosXProveedorCxC,
 } from "../controllers/banks.controller";
 
 router.post("/getBanksList", TokenValidation, getBanksList);
@@ -30,4 +34,16 @@ router.get(
   getVerPagosPorProveedor
 );
 
+router.post("/setPayForCustomer", TokenValidation, setPayForCustomer);
+router.get(
+  "/getListarPayForCustomer",
+  TokenValidation,
+  getListarPayForCustomer
+);
+router.get("/getVerPagosPorCustomer", TokenValidation, getVerPagosPorCustomer);
+router.get(
+  "/getListaPagosXProveedorCxC/:id_cliente",
+  TokenValidation,
+  getListaPagosXProveedorCxC
+);
 export default router;
