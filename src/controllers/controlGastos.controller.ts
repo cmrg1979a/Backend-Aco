@@ -93,10 +93,11 @@ export const setEgresos = async (req: Request, res: Response) => {
           statusBol: true,
           data: rows,
         });
+        conn.end();
       } else {
         console.log(err);
+        conn.end();
       }
-      conn.end();
     }
   );
 };

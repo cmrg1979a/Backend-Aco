@@ -271,6 +271,7 @@ export const setUpdateInvoiceAdmin = async (req: Request, res: Response) => {
       id_proformance=${dataObj.id_proformance},
       id_month=${dataObj.id_month},
       id_year=${dataObj.id_year},
+      id_expediente = ${dataObj.id_expediente},
       id_path=${path ? "id_path" : dataObj.id_path},
       updated_at = now()
       WHERE id = ${dataObj.id};
@@ -480,31 +481,45 @@ export const setUpdateInvoiceAdminCxC = async (req: Request, res: Response) => {
 
   const dataObj = req.body;
   const dataDetails = req.body.detalle;
+  let path = isNaN(+dataObj.id_path);
   conn.query(
     ` update Table_InvoiceAdminCxC 
       SET
-      id_cliente=${dataObj.id_cliente},
-      id_expediente = ${dataObj.id_expediente},
-      fecha='${dataObj.fecha}',
-      nro_factura='${dataObj.nro_factura}',
-      nro_serie='${dataObj.nro_serie}',
-      id_coins=${dataObj.id_coins},
-      monto=${dataObj.monto},
-      status=${dataObj.status},
-      id_proformance=${dataObj.id_proformance},
-      id_month=${dataObj.id_month},
-      id_year=${dataObj.id_year},
+      id_cliente=?,
+      id_expediente =?,
+      fecha=?,
+      nro_factura=?,
+      nro_serie=?,
+      id_coins=?,
+      monto=?,
+      status=?,
+      id_proformance=?,
+      id_month=?,
+      id_year=?,id_path=${path ? "id_path" : dataObj.id_path},
       updated_at = now()
-      WHERE id = ${dataObj.id};
+      WHERE id = ?;
     `,
+    [
+      dataObj.id_cliente,
+      dataObj.id_expediente,
+      dataObj.fecha,
+      dataObj.nro_factura,
+      dataObj.nro_serie,
+      dataObj.id_coins,
+      dataObj.monto,
+      dataObj.status,
+      dataObj.id_proformance,
+      dataObj.id_month,
+      dataObj.id_year,
+      dataObj.id,
+    ],
     (err, rows, fields) => {
       if (!err) {
         var data = JSON.parse(JSON.stringify(rows));
         dataDetails.forEach((element) => {
           if (element.id != 0 || !element.id) {
             conn.query(
-              ` UDPATE table_DetailsInvoiceAdmin
-              SET 
+              ` UPDATE table_DetailsInvoiceAdminCxC SET 
               concepto=?,monto=?,igv=?,total=?,afecto=?,status=?,updated_at = now()
               WHERE id = ?
             `,

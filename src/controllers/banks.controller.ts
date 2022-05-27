@@ -57,6 +57,21 @@ export const setPayForProveedor = async (req: Request, res: Response) => {
       [item.id, id_path, item.max_pagar, id_cuenta, 1],
       (err, rows, fields) => {
         if (!err) {
+          if (item.cktotal == 1 || item.monto_deuda == item.max_pagar) {
+            conn.query(
+              `
+              UPDATE Table_InvoiceAdmin SET monto_pago=?,status=?
+              WHERE id = ?
+              `,
+              [item.monto_pagar, 2, item.id],
+              (err, rowss, fields) => {
+                if (!err) {
+                } else {
+                  console.log(err);
+                }
+              }
+            );
+          }
         } else {
           console.log(err);
         }
@@ -242,8 +257,9 @@ export const getVerPagosPorProveedor = async (req: Request, res: Response) => {
         new Promise<void>((resolver, rechazar) => {
           datanew.map((item: any) => {
             conn.query(
-              ` select e.id AS id_proveedor,
+              ` SELECT e.id AS id_proveedor,
               e.tradename AS tradename_proveedor,
+              ia.nro_factura AS nro_factura,
               hc.id AS id_house,
               hc.code_house AS codigo_house,
               ec.id AS id_cliente,
@@ -252,11 +268,29 @@ export const getVerPagosPorProveedor = async (req: Request, res: Response) => {
               ap.name AS descripcion_pago,
               ap.path AS documento_pago,
               ia.id AS id,
-              ia.id_expediente AS id_expediente,
-              substr(ia.fecha,1,10) AS fecha,
+              ia.id_expediente AS id_expediente, SUBSTR(ia.fecha,1,10) AS fecha,
               ia.monto AS monto_pagar,
-              (select if((sum(dpiv.monto) is null),0,sum(dpiv.monto)) from detailsPaysInvoiceAdmin dpiv where (dpiv.id_invoiceadmin = ia.id)) AS monto_pagado,(ia.monto - (select if((sum(dpiv.monto) is null),0,sum(dpiv.monto)) from detailsPaysInvoiceAdmin dpiv where (dpiv.id_invoiceadmin = ia.id))) AS monto_deuda,(ia.monto - (select if((sum(dpiv.monto) is null),0,sum(dpiv.monto)) from detailsPaysInvoiceAdmin dpiv where (dpiv.id_invoiceadmin = ia.id))) AS max_pagar,(case when (tsp.status = 3) then 'Pagado' when (tsp.status = 2) then 'Pendiente' else 'Activo' end) AS statusPago,if((tsp.monto is null),0,tsp.monto) AS monto_cobrado_cliente,true AS cktotal from (((((Table_InvoiceAdmin ia left join Table_Entities e on((ia.id_proveedor = e.id))) left join Table_HouseControl hc on((ia.id_expediente = hc.id))) left join Table_Entities ec on((hc.id_consigner = ec.id))) left join Table_AllPath ap on((ia.id_path = ap.id))) left join Table_SPaymentPro tsp on((tsp.id_house = hc.id))) where ( (0 <> ia.status) AND 
-              ia.id IN (SELECT pays.id_invoiceadmin FROM detailsPaysInvoiceAdmin pays WHERE pays.id_pago =  ${item.id_pago}))`,
+              (
+             SELECT IF((SUM(dpiv.monto) IS NULL),0, SUM(dpiv.monto))
+             FROM detailsPaysInvoiceAdmin dpiv
+             WHERE (dpiv.id_invoiceadmin = ia.id)) AS monto_pagado,(ia.monto - (
+             SELECT IF((SUM(dpiv.monto) IS NULL),0, SUM(dpiv.monto))
+             FROM detailsPaysInvoiceAdmin dpiv
+             WHERE (dpiv.id_invoiceadmin = ia.id))) AS monto_deuda,(ia.monto - (
+             SELECT IF((SUM(dpiv.monto) IS NULL),0, SUM(dpiv.monto))
+             FROM detailsPaysInvoiceAdmin dpiv
+             WHERE (dpiv.id_invoiceadmin = ia.id))) AS max_pagar,(CASE WHEN (tsp.status = 3) THEN 'Pagado' WHEN (tsp.status = 2) THEN 'Pendiente' ELSE 'Activo' END) AS statusPago, IF((tsp.monto IS NULL),0,tsp.monto) AS monto_cobrado_cliente, TRUE AS cktotal
+             FROM (((((Table_InvoiceAdmin ia
+             LEFT JOIN Table_Entities e ON((ia.id_proveedor = e.id)))
+             LEFT JOIN Table_HouseControl hc ON((ia.id_expediente = hc.id)))
+             LEFT JOIN Table_Entities ec ON((hc.id_consigner = ec.id)))
+             LEFT JOIN Table_AllPath ap ON((ia.id_path = ap.id)))
+             LEFT JOIN Table_SPaymentPro tsp ON((tsp.id_house = hc.id)))
+             WHERE ((0 <> ia.status) AND 
+              ia.id IN (
+             SELECT pays.id_invoiceadmin
+             FROM detailsPaysInvoiceAdmin pays
+             WHERE pays.id_pago = ${item.id_pago}))`,
               //
               (err, rows, fields) => {
                 details = JSON.parse(JSON.stringify(rows));
@@ -312,9 +346,20 @@ export const setPayForCustomer = async (req: Request, res: Response) => {
       "INSERT INTO detailsPaysInvoiceAdminCxC (id_invoiceadmin,id_pago,monto,id_cuenta,status) values (?,?,?,?,?)",
       [item.id, id_path, item.max_pagar, id_cuenta, 1],
       (err, rows, fields) => {
-        if (!err) {
-        } else {
-          console.log(err);
+        if (item.cktotal == 1 || item.monto_deuda == item.max_pagar) {
+          conn.query(
+            `
+            UPDATE Table_InvoiceAdminCxC SET monto_pago=?,status=?
+            WHERE id = ?
+            `,
+            [item.monto_pagar, 2, item.id],
+            (err, rowss, fields) => {
+              if (!err) {
+              } else {
+                console.log(err);
+              }
+            }
+          );
         }
       }
     );
@@ -349,25 +394,22 @@ export const getListarPayForCustomer = async (req: Request, res: Response) => {
   conn.query(
     `
     SELECT 
-      distinct
-      ia.id id,
-       dia.id_pago as id_pago,
-       substring(dia.created_at,1,10) AS fecha,
-       substring(dia.created_at,12,17) AS hora,
-       CASE when e.tradename IS NULL then e.names when e.tradename = '' then e.names ELSE e.tradename end proveedor,
-       ia.monto AS monto,
-       b.name banco,
-       bd.nrocuenta nrocuenta,
-       c.symbol moneda_simbolo,
-       c.name moneda
-       FROM detailsPaysInvoiceAdminCxC dia
-       INNER JOIN Table_InvoiceAdminCxC ia ON dia.id_invoiceadmin = ia.id 
-       INNER JOIN Table_Entities e ON e.id = ia.id_cliente
-       LEFT JOIN bank_details bd ON dia.id_cuenta = bd.id 
-       LEFT JOIN Table_Banks b ON bd.id_bank = b.id
-       LEFT JOIN Table_Coins c ON ia.id_coins = c.id
-       ORDER BY fecha DESC;
-     
+    distinct
+    ia.id id,
+     substring(dia.created_at,1,10) AS fecha,
+     CASE when e.tradename IS NULL then e.names when e.tradename = '' then e.names ELSE e.tradename end proveedor,
+     ia.monto AS monto,
+     b.name banco,
+     bd.nrocuenta nrocuenta,
+     c.symbol moneda_simbolo,
+     c.name moneda
+     FROM detailsPaysInvoiceAdminCxC dia
+     INNER JOIN Table_InvoiceAdminCxC ia ON dia.id_invoiceadmin = ia.id 
+     INNER JOIN Table_Entities e ON e.id = ia.id_cliente
+     LEFT JOIN bank_details bd ON dia.id_cuenta = bd.id 
+     LEFT JOIN Table_Banks b ON bd.id_bank = b.id
+     LEFT JOIN Table_Coins c ON ia.id_coins = c.id
+     GROUP BY id,fecha,proveedor,monto,banco,nrocuenta, moneda_simbolo,moneda ORDER BY fecha DESC ;     
   `,
     (err, rows, fields) => {
       if (!err) {
@@ -377,6 +419,7 @@ export const getListarPayForCustomer = async (req: Request, res: Response) => {
           datanew.map((item: any, index) => {
             conn.query(
               ` SELECT 
+                distinct
                 hc.code_house expediente,
                 CASE when e.tradename IS NULL then e.names when e.tradename = '' then e.names ELSE e.tradename end cliente,
                 dia.monto,
@@ -389,7 +432,7 @@ export const getListarPayForCustomer = async (req: Request, res: Response) => {
                 INNER JOIN detailsPaysInvoiceAdminCxC dia  ON dia.id_invoiceadmin = ia.id 
                 LEFT JOIN Table_HouseControl hc ON ia.id_expediente = hc.id
                 LEFT JOIN Table_Entities e ON e.id = hc.id_consigner
-                WHERE dia.id_pago = ${item.id_pago} `,
+                WHERE ia.id  = ${item.id} `,
               (err, rows, fields) => {
                 details = JSON.parse(JSON.stringify(rows));
                 let dataTes = [];

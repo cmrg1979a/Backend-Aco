@@ -16,5 +16,6 @@ export interface postEntities {
   id_town: string;
   id_sex: string;
   id_document: string;
+  id_role: string;
   id_branch: string;
 }

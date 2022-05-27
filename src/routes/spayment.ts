@@ -29,6 +29,7 @@ import {
   setCheckDebsClient,
   getReportAccounts,
   getReportAccountsFilter,
+  getReporteCXP,
 } from "../controllers/spayment.controller";
 
 router.post("/setSPaymentPro", TokenValidation, setSPaymentPro);
@@ -69,5 +70,6 @@ router.post(
   TokenValidation,
   getSPaymentPro
 );
+router.post("/getReporteCXP", TokenValidation, getReporteCXP);
 
 export default router;

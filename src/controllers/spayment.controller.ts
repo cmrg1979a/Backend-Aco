@@ -255,7 +255,9 @@ export const getDebsToPayAdmin = async (req: Request, res: Response) => {
       sum(vli.total) as total_deuda, 
       if(SUM(monto_pago) IS NULL,0,SUM(monto_pago) ) AS total_pagado,
       sum(vli.total) - if(SUM(monto_pago) IS NULL,0,SUM(monto_pago) )  AS pendiente_pago
-      FROM view_listInvoiceAdmin vli where vli.status = 1 group by vli.id_proveedor;
+      FROM view_listInvoiceAdmin vli where vli.status = 1 and vli.type_payment = 1 group by vli.id_proveedor
+    
+      ;
     `,
     (err, rows, fields) => {
       if (!err) {
@@ -264,7 +266,7 @@ export const getDebsToPayAdmin = async (req: Request, res: Response) => {
         new Promise<void>((resolver, rechazar) => {
           datanew.map((item: any) => {
             conn.query(
-              `SELECT vli.* FROM view_listInvoiceAdmin vli where vli.id_proveedor = ${item.id_proveedor} and vli.status = 1 `,
+              `SELECT vli.* FROM view_listInvoiceAdmin vli where vli.id_proveedor = ${item.id_proveedor} and vli.status = 1`,
               (err, rows, fields) => {
                 dataServiceList = JSON.parse(JSON.stringify(rows));
                 dataServiceList.sort((a: any, b: any) => {
@@ -276,10 +278,10 @@ export const getDebsToPayAdmin = async (req: Request, res: Response) => {
                   }
                   return 0;
                 });
-                let dataTes = [];
-                let dataPre = [];
-                dataTes.push(dataServiceList);
-                dataPre.push({
+                let dataTest = [];
+                let dataPres = [];
+                dataTest.push(dataServiceList);
+                dataPres.push({
                   id: item.id,
                   type_payment: item.type_payment,
                   id_expediente: item.id_expediente,
@@ -303,9 +305,9 @@ export const getDebsToPayAdmin = async (req: Request, res: Response) => {
                   nameConsigner: item.nameConsigner,
                   nameCoins: item.nameCoins,
                   total_deuda: item.total_deuda,
-                  details: dataTes[0],
+                  details: dataTest[0],
                 });
-                req.app.locals.itemsdpa.push(dataPre[0]);
+                req.app.locals.itemsdpa.push(dataPres[0]);
               }
             );
           });
@@ -318,10 +320,12 @@ export const getDebsToPayAdmin = async (req: Request, res: Response) => {
               status: 200,
               statusBol: true,
               data: req.app.locals.itemsdpa,
+
             });
             conn.end();
-          }, 3000);
+          }, 30000);
         });
+
       } else {
         console.log(err);
       }
@@ -342,14 +346,14 @@ export const getDebsToPay = async (req: Request, res: Response) => {
           datanew.map((item: any) => {
             conn.query(
               `SELECT cpt.*,
-              IF (cpt.ajusteflag =1,0,SUM(cpt.total)) AS total_pagar, 
+              IF (cpt.ajusteflag =1,0,SUM(cpt.total)) AS total_pagar,
               (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND  cpp.pagado = 1 AND cpp.llegada LIKE '%%') AS total_pagado,
               (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND  cpp.llegada LIKE '1') AS total_pagar_llegada,
               (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND  cpp.pagado = 1 AND cpp.llegada LIKE '1') AS total_pagado_llegada,
               (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.llegada LIKE '0') AS total_pagar_no_llegada,
               (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.pagado = 1 AND cpp.llegada LIKE '0') AS total_pagado_no_llegada,
               (IF (cpt.ajusteflag =1,0,SUM(cpt.total))  - (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.pagado = 1 AND cpp.llegada LIKE '%%')) AS restante_pagar,
-              ((SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.llegada LIKE '1') - (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp 
+              ((SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.llegada LIKE '1') - (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp
               WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.pagado = 1 AND cpp.llegada LIKE '1')) AS restante_llegada,
               ((SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.llegada LIKE '0') - (SELECT if(SUM(total) IS NULL,0,
               SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.pagado = 1 AND cpp.llegada LIKE '0')) AS restante_no_llegada
@@ -422,14 +426,14 @@ export const getDebsToPay = async (req: Request, res: Response) => {
   );
 
   /*  await conn.query(
-    `SELECT cpt.*, SUM(cpt.total) AS total_pagar, 
+    `SELECT cpt.*, SUM(cpt.total) AS total_pagar,
 (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.pagado = 1 AND cpp.llegada LIKE '%%') AS total_pagado,
 (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.llegada LIKE '1') AS total_pagar_llegada,
 (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.pagado = 1 AND cpp.llegada LIKE '1') AS total_pagado_llegada,
 (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.llegada LIKE '0') AS total_pagar_no_llegada,
 (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.pagado = 1 AND cpp.llegada LIKE '0') AS total_pagado_no_llegada,
 (SUM(cpt.total) - (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.pagado = 1 AND cpp.llegada LIKE '%%')) AS restante_pagar,
-((SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.llegada LIKE '1') - (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp 
+((SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.llegada LIKE '1') - (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp
 WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.pagado = 1 AND cpp.llegada LIKE '1')) AS restante_llegada,
 ((SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.llegada LIKE '0') - (SELECT if(SUM(total) IS NULL,0,
 SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.pagado = 1 AND cpp.llegada LIKE '0')) AS restante_no_llegada
@@ -1409,6 +1413,69 @@ export const pdfcxcD = async (req: Request, res: Response) => {
           );
       }
       conn.end();
+    }
+  );
+};
+
+export const getReporteCXP = async (req: Request, res: Response) => {
+  const conn = await connect();
+
+  conn.query(
+    `
+      SELECT * from view_proveedoresreportecxp where restante_pagar >0 ;
+    `,
+    (err, rows, fields) => {
+      console.log("ddd");
+
+      if (!err) {
+        let datanew = JSON.parse(JSON.stringify(rows));
+        let dataServiceList;
+        new Promise<void>((resolver, rechazar) => {
+          datanew.map((item: any) => {
+            conn.query(
+              `SELECT * from view_reportedetallecxp vli where vli.id_proveedor = ${item.id} and vli.total_pagar>0`,
+              (err, rows, fields) => {
+                dataServiceList = JSON.parse(JSON.stringify(rows));
+                dataServiceList.sort((a: any, b: any) => {
+                  if (a.fecha_disponibilidad < b.fecha_disponibilidad) {
+                    return -1;
+                  }
+                  if (a.fecha_disponibilidad > b.fecha_disponibilidad) {
+                    return 1;
+                  }
+                  return 0;
+                });
+
+                let dataTes = [];
+                let dataPre = [];
+                dataTes.push(dataServiceList);
+                dataPre.push({
+                  id: item.id,
+                  nameProveedor: item.nameProveedor,
+                  restante_llegada: item.restante_llegada,
+                  restante_no_llegada: item.restante_no_llegada,
+                  restante_pagar: item.restante_pagar,
+                  details: dataTes[0],
+                });
+                req.app.locals.itemsdpa2.push(dataPre[0]);
+              }
+            );
+          });
+          req.app.locals.itemsdpa2 = [];
+          resolver();
+        }).then(() => {
+          setTimeout(() => {
+            res.json({
+              status: 200,
+              statusBol: true,
+              data: req.app.locals.itemsdpa2,
+            });
+            // conn.end();
+          }, 4000);
+        });
+      } else {
+        console.log(err);
+      }
     }
   );
 };
