@@ -154,6 +154,7 @@ export const getMasterId = async (req: Request, res: Response) => {
   const id = req.params.id;
   await conn.query(
     "SELECT * FROM view_masterList where id = ?",
+    
     [id],
     (err, rows, fields) => {
       if (!err) {

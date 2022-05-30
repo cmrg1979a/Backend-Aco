@@ -4,6 +4,6 @@ const router: Router = Router();
 
 import { getVersion } from "../controllers/version.controller";
 
-router.post("/getVersion", TokenValidation, getVersion);
+router.post("/getVersion", getVersion);
 
 export default router;

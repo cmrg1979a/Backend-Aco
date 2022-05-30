@@ -63,6 +63,7 @@ import modulesPaysRoutes from "./routes/modulesPays";
 import perfomanceRoutes from "./routes/perfomance";
 import monthRoutes from "./routes/month";
 import yearRoutes from "./routes/year";
+import ProgrammedPaymentRoutes from "./routes/ProgrammedPaymentRoute";
 
 // settings
 app.set("port", 9200);
@@ -259,5 +260,6 @@ app.use(modulesPaysRoutes);
 app.use(perfomanceRoutes);
 app.use(monthRoutes);
 app.use(yearRoutes);
+app.use(ProgrammedPaymentRoutes);
 
 export default app;

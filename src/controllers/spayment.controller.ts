@@ -205,7 +205,7 @@ export const getRequestPayment = async (req: Request, res: Response) => {
     "SELECT * FROM view_requestPayment where status <> 0 and status <> 1 ",
     (err, rows, fields) => {
       if (!err) {
-        console.log(rows);
+        // console.log(rows);
         res.json({
           status: 200,
           statusBol: true,
@@ -320,12 +320,10 @@ export const getDebsToPayAdmin = async (req: Request, res: Response) => {
               status: 200,
               statusBol: true,
               data: req.app.locals.itemsdpa,
-
             });
             conn.end();
           }, 30000);
         });
-
       } else {
         console.log(err);
       }
@@ -1422,10 +1420,16 @@ export const getReporteCXP = async (req: Request, res: Response) => {
 
   conn.query(
     `
-      SELECT * from view_proveedoresreportecxp where restante_pagar >0 ;
+    SELECT 
+    prxcp.id id,
+    prxcp.nameProveedor nameProveedor,
+    ROUND(prxcp.restante_llegada,2) restante_llegada,
+    ROUND(prxcp.restante_no_llegada,2) restante_no_llegada,
+    ROUND(prxcp.restante_pagar,2) restante_pagar 
+     from view_proveedoresreportecxp prxcp where prxcp.restante_pagar >0 ;
     `,
     (err, rows, fields) => {
-      console.log("ddd");
+      
 
       if (!err) {
         let datanew = JSON.parse(JSON.stringify(rows));
