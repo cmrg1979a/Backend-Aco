@@ -1,6 +1,6 @@
 import mysql from 'mysql2';
 
-export async function connect(){
+/*export async function connect(){
     const connection = await mysql.createPool({
         host: '10.116.0.2',
         user: 'admin',
@@ -9,8 +9,8 @@ export async function connect(){
         waitForConnections: true,
     });
     return connection;
-}
-/*export async function connect(){
+}*/
+export async function connect(){
     const connection = await mysql.createPool({
         host: '157.230.14.98',
         user: 'admin',
@@ -19,4 +19,4 @@ export async function connect(){
         waitForConnections: true,
     });
     return connection;
-}*/
+}
