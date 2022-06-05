@@ -13,7 +13,7 @@ import {
 router.post("/setProgrammedPayment", TokenValidation, setProgrammedPayment);
 router.get("/ListProgrammedPayment", TokenValidation, ListProgrammedPayment);
 router.put(
-  "/updateProgrammedPayment",
+  "/updateProgrammedPayment/:id",
   TokenValidation,
   updateProgrammedPayment
 );

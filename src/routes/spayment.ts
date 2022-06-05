@@ -30,6 +30,8 @@ import {
   getReportAccounts,
   getReportAccountsFilter,
   getReporteCXP,
+  getReporteCXC,
+  getReporteCXCAdmin,
 } from "../controllers/spayment.controller";
 
 router.post("/setSPaymentPro", TokenValidation, setSPaymentPro);
@@ -71,5 +73,7 @@ router.post(
   getSPaymentPro
 );
 router.post("/getReporteCXP", TokenValidation, getReporteCXP);
+router.post("/getReporteCXC", TokenValidation, getReporteCXC);
+router.post("/getReporteCXCAdmin", TokenValidation, getReporteCXCAdmin);
 
 export default router;

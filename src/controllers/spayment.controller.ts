@@ -569,7 +569,7 @@ GROUP BY cpt.id_proveedor, cpt.id_house order by total_pagar desc
             data: req.app.locals.itemsService,
           });
           conn.end();
-        }, 30000);
+        }, 300);
       });
     } else {
       console.log(err);
@@ -1429,8 +1429,6 @@ export const getReporteCXP = async (req: Request, res: Response) => {
      from view_proveedoresreportecxp prxcp where prxcp.restante_pagar >0 ;
     `,
     (err, rows, fields) => {
-      
-
       if (!err) {
         let datanew = JSON.parse(JSON.stringify(rows));
         let dataServiceList;
@@ -1474,7 +1472,136 @@ export const getReporteCXP = async (req: Request, res: Response) => {
               statusBol: true,
               data: req.app.locals.itemsdpa2,
             });
-            // conn.end();
+            conn.end();
+          }, 4000);
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const getReporteCXC = async (req: Request, res: Response) => {
+  const conn = await connect();
+
+  conn.query(
+    `
+    SELECT 
+    id_consigner,
+    nameConsigner,
+    total_pagar ,
+    total_no_llegada,
+    total_llegada
+     from view_proveedoresreportecxc prxcp where prxcp.total_pagar >0 ;
+    `,
+    (err, rows, fields) => {
+      if (!err) {
+        let datanewCxCAdmin = JSON.parse(JSON.stringify(rows));
+        let dataServiceListCxCAdmin;
+        new Promise<void>((resolver, rechazar) => {
+          datanewCxCAdmin.map((item: any) => {
+            conn.query(
+              `SELECT * from view_reportedetallecxc2 vli where vli.id_consigner = ${item.id_consigner} and vli.total_pagar >0`,
+              (err, rows, fields) => {
+                dataServiceListCxCAdmin = JSON.parse(JSON.stringify(rows));
+                dataServiceListCxCAdmin.sort((a: any, b: any) => {
+                  if (a.fecha_disponibilidad < b.fecha_disponibilidad) {
+                    return -1;
+                  }
+                  if (a.fecha_disponibilidad > b.fecha_disponibilidad) {
+                    return 1;
+                  }
+                  return 0;
+                });
+
+                let dataTes = [];
+                let dataPreCxCAdmin = [];
+                dataTes.push(dataServiceListCxCAdmin);
+                dataPreCxCAdmin.push({
+                  id: item.id_consigner,
+                  nameConsigner: item.nameConsigner,
+                  total_pagar: item.total_pagar,
+                  total_no_llegada: item.total_no_llegada,
+                  total_llegada: item.total_llegada,
+                  details: dataTes[0],
+                });
+                req.app.locals.itemsdpaCxCAdmin.push(dataPreCxCAdmin[0]);
+              }
+            );
+          });
+          req.app.locals.itemsdpaCxCAdmin = [];
+          resolver();
+        }).then(() => {
+          setTimeout(() => {
+            res.json({
+              status: 200,
+              statusBol: true,
+              data: req.app.locals.itemsdpaCxCAdmin,
+            });
+            conn.end();
+          }, 4000);
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const getReporteCXCAdmin = async (req: Request, res: Response) => {
+  const conn = await connect();
+
+  conn.query(
+    `
+    SELECT 
+    id_consigner,
+    nameConsigner,
+    total_pagar 
+     from view_proveedoresreporteadmincxc prxcp where prxcp.total_pagar >0 ;
+    `,
+    (err, rows, fields) => {
+      if (!err) {
+        let datanew = JSON.parse(JSON.stringify(rows));
+        let dataServiceList;
+        new Promise<void>((resolver, rechazar) => {
+          datanew.map((item: any) => {
+            conn.query(
+              `SELECT * from view_reporteadmincxc vli where vli.id_consigner = ${item.id_consigner} and vli.total_pagar >0`,
+              (err, rows, fields) => {
+                dataServiceList = JSON.parse(JSON.stringify(rows));
+                dataServiceList.sort((a: any, b: any) => {
+                  if (a.fecha_disponibilidad < b.fecha_disponibilidad) {
+                    return -1;
+                  }
+                  if (a.fecha_disponibilidad > b.fecha_disponibilidad) {
+                    return 1;
+                  }
+                  return 0;
+                });
+
+                let dataTes = [];
+                let dataPre = [];
+                dataTes.push(dataServiceList);
+                dataPre.push({
+                  id: item.id_consigner,
+                  nameConsigner: item.nameConsigner,
+                  total_pagar: item.total_pagar,
+                  details: dataTes[0],
+                });
+                req.app.locals.itemsdpa2.push(dataPre[0]);
+              }
+            );
+          });
+          req.app.locals.itemsdpa2 = [];
+          resolver();
+        }).then(() => {
+          setTimeout(() => {
+            res.json({
+              status: 200,
+              statusBol: true,
+              data: req.app.locals.itemsdpa2,
+            });
+            conn.end();
           }, 4000);
         });
       } else {

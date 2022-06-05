@@ -149,6 +149,7 @@ app.post("/uploadAllPath", function (req, res) {
     }
 
     console.log("Connected!");
+    
     var sql =
       'INSERT INTO Table_AllPath (originalname, type, size, path, name, hash, status) VALUES ("' +
       fileName +
