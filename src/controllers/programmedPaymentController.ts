@@ -181,7 +181,6 @@ export const ListProgrammedPaymentDetails = async (
     }
   );
 };
-
 export const deleteProgrammedPayment = async (req: Request, res: Response) => {
   const conn = await connect();
   console.log(req.body.id);

@@ -197,7 +197,7 @@ export const delDebsClient = async (req: Request, res: Response) => {
     }
   );
 };
-
+ 
 export const getRequestPayment = async (req: Request, res: Response) => {
   const conn = await connect();
 
@@ -852,7 +852,6 @@ export const getDebsClient = async (req: Request, res: Response) => {
     }
   );
 };
-
 export const getDebsClientList = async (req: Request, res: Response) => {
   const conn = await connect();
   const { id_house } = req.params;
@@ -1020,7 +1019,9 @@ export const setDebsClient = async (req: Request, res: Response) => {
       dataObj.id_path,
       dataObj.status,
     ],
+    
     (err, rows, fields) => {
+      console.log(rows);
       if (!err) {
         res.json({
           status: 200,

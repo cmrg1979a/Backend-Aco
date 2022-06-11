@@ -22,6 +22,7 @@ export const getBanksList = async (req: Request, res: Response) => {
   );
 };
 
+
 export const getListaPagosXProveedorCxP = async (
   req: Request,
   res: Response
