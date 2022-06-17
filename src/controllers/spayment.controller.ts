@@ -197,7 +197,7 @@ export const delDebsClient = async (req: Request, res: Response) => {
     }
   );
 };
- 
+
 export const getRequestPayment = async (req: Request, res: Response) => {
   const conn = await connect();
 
@@ -935,6 +935,8 @@ export const setSPaymentFile = async (req: Request, res: Response) => {
             "UPDATE ControlGastos_Egresos set pagado = ?, fecha_pago = ?, id_comprobante = ? where id = ?",
             [1, dataObj.fecha_operacion, datar.insertId, item.id_egreso],
             (err, rowss, fields) => {
+              console.log(dataObj);
+
               if (!err) {
               } else {
                 console.log(err);
@@ -942,12 +944,28 @@ export const setSPaymentFile = async (req: Request, res: Response) => {
             }
           );
         });
+        conn.query(
+          "UPDATE ControlGastos_Egresos set pagado = ?, fecha_pago = ?, id_comprobante = ? where id_proveedor = ? AND id_orders = ?",
+          [
+            1,
+            dataObj.fecha_operacion,
+            datar.insertId,
+            dataObj.id_proveedor,
+            dataObj.id_orders,
+          ],
+          (err, rowss, fields) => {
+            if (!err) {
+            } else {
+              console.log(err);
+            }
+          }
+        );
       } else {
         console.log(err);
       }
       setTimeout(() => {
         conn.end();
-      }, 9000);
+      }, 80000);
     }
   );
 
@@ -1019,9 +1037,8 @@ export const setDebsClient = async (req: Request, res: Response) => {
       dataObj.id_path,
       dataObj.status,
     ],
-    
+
     (err, rows, fields) => {
-      console.log(rows);
       if (!err) {
         res.json({
           status: 200,

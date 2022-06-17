@@ -108,11 +108,9 @@ export const ListProgrammedPayment = async (req: Request, res: Response) => {
 };
 export const updateProgrammedPayment = async (req: Request, res: Response) => {
   const conn = await connect();
-  console.log(req);
-
   await conn.query(
-    "UPDATE details_programendpaymet SET status = 0 where id = ?",
-    [req.params.id],
+    "UPDATE details_programendpaymet SET status = ? where id = ?",
+    [0,req.params.id],
     (err, rows, fields) => {
       if (!err) {
         res.json({
