@@ -64,7 +64,8 @@ import perfomanceRoutes from "./routes/perfomance";
 import monthRoutes from "./routes/month";
 import yearRoutes from "./routes/year";
 import ProgrammedPaymentRoutes from "./routes/ProgrammedPaymentRoute";
-
+import Calculadora from "./routes/calculadora";
+ 
 // settings
 app.set("port", 9200);
 
@@ -149,7 +150,7 @@ app.post("/uploadAllPath", function (req, res) {
     }
 
     console.log("Connected!");
-    
+
     var sql =
       'INSERT INTO Table_AllPath (originalname, type, size, path, name, hash, status) VALUES ("' +
       fileName +
@@ -262,5 +263,6 @@ app.use(perfomanceRoutes);
 app.use(monthRoutes);
 app.use(yearRoutes);
 app.use(ProgrammedPaymentRoutes);
+app.use(Calculadora);
 
 export default app;

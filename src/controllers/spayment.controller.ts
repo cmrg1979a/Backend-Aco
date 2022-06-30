@@ -982,6 +982,7 @@ export const setInvoice = async (req: Request, res: Response) => {
   const conn = await connect();
 
   const dataObj = req.body;
+  console.log(dataObj);
 
   conn.query(
     "INSERT INTO Table_Invoice (id_house, id_proveedor, id_path, type_pago, number, date, status) values (?,?,?,?,?,?,?)",
@@ -1008,7 +1009,7 @@ export const setInvoice = async (req: Request, res: Response) => {
           status: 400,
           statusBol: false,
           data: {
-            msg: "Registro no aceptado",
+            msg: err,
           },
         });
       }
