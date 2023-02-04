@@ -1,14 +1,32 @@
 import { Request, Response } from "express";
-import { connect } from "../routes/database";
+
+import { conexion } from "../routes/databasePGOp";
+import * as pg from "pg";
+import { InvoiceAdminCxC } from "interface/InvoiceAdminCxC";
+const { Pool } = pg;
+const pool = conexion();
 
 export const setInvoiceAdmin = async (req: Request, res: Response) => {
-  const conn = await connect();
-
   const dataObj = req.body;
   const dataDetails = req.body.detalle;
+  let concepto = dataDetails.map((item: any) => {
+    return item.concepto;
+  });
+  let monto = dataDetails.map((item: any) => {
+    return `${parseFloat(item.monto)}`;
+  });
+  let igv = dataDetails.map((item: any) => {
+    return `${parseFloat(item.igv)}`;
+  });
+  let total = dataDetails.map((item: any) => {
+    return `${parseFloat(item.total)}`;
+  });
+  let afecto = dataDetails.map((item: any) => {
+    return item.afecto == true ? 1 : 0;
+  });
 
-  conn.query(
-    "INSERT INTO Table_InvoiceAdmin (type_payment, id_expediente, id_proveedor, fecha, nro_factura, nro_serie, id_coins, monto, type_igv, igv, status, id_path,id_proformance,id_month,id_year) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+  await pool.query(
+    "select * from Table_InvoiceAdmin_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)",
     [
       dataObj.type_payment,
       dataObj.id_expediente,
@@ -20,37 +38,19 @@ export const setInvoiceAdmin = async (req: Request, res: Response) => {
       dataObj.monto,
       dataObj.type_igv,
       dataObj.igv,
-      // dataObj.total,
       dataObj.status,
       dataObj.id_path,
       dataObj.id_proformance,
       dataObj.id_month,
       dataObj.id_year,
+      concepto,
+      monto,
+      igv,
+      total,
+      afecto,
     ],
     (err, rows, fields) => {
       if (!err) {
-        var data = JSON.parse(JSON.stringify(rows));
-        dataDetails.map((item: any) => {
-          conn.query(
-            "INSERT INTO 	table_DetailsInvoiceAdmin(id_invoice,concepto,monto,igv,total,afecto,status) VALUES (?,?,?,?,?,?,?)",
-            [
-              data.insertId,
-              item.concepto,
-              item.monto,
-              item.total - item.monto,
-              item.total,
-              item.afecto == "true" ? 1 : 0,
-              1,
-            ],
-            (err, rowss, fields) => {
-              if (!err) {
-              } else {
-                console.log(err);
-              }
-            }
-          );
-        });
-
         res.json({
           status: 200,
           statusBol: true,
@@ -60,7 +60,6 @@ export const setInvoiceAdmin = async (req: Request, res: Response) => {
         });
       } else {
         console.log(err);
-
         res.json({
           status: 400,
           statusBol: false,
@@ -69,20 +68,15 @@ export const setInvoiceAdmin = async (req: Request, res: Response) => {
           },
         });
       }
-      setTimeout(() => {
-        conn.end();
-      }, 6000);
     }
   );
 };
 
 export const putPro = async (req: Request, res: Response) => {
-  const conn = await connect();
-
   const dataObj = req.body;
 
-  conn.query(
-    "UPDATE Table_Invoice SET type_pago = 1, id_path = ? where id = ?",
+  await pool.query(
+    "UPDATE Table_Invoice SET type_pago = $1, id_path = $2 where id = $3",
     [dataObj.id_path, dataObj.id],
     (err, rows, fields) => {
       if (!err) {
@@ -102,18 +96,14 @@ export const putPro = async (req: Request, res: Response) => {
           },
         });
       }
-      conn.end();
     }
   );
 };
 
 export const paymentInvoiceAdmin = async (req: Request, res: Response) => {
-  const conn = await connect();
-
   const id = req.params.id;
   const dataObj = req.body;
-
-  conn.query(
+  await pool.query(
     "UPDATE Table_InvoiceAdmin SET id_pago = ?, fecha_pago = ?, factura_pago = ?, serie_pago = ?, id_bank_pago = ?, id_coin_pago = ?, monto_pago = ?, status = ? where id = ?",
     [
       dataObj.id_pago,
@@ -144,106 +134,114 @@ export const paymentInvoiceAdmin = async (req: Request, res: Response) => {
           },
         });
       }
-      conn.end();
     }
   );
 };
 
 export const getInvoiceAdmin = async (req: Request, res: Response) => {
-  const conn = await connect();
-
-  await conn.query(
-    "SELECT * FROM view_listInvoiceAdmin where status <> 0",
-
-    (err, rows, fields) => {
+  await pool.query(
+    "SELECT * FROM table_invoiceadmin_listar($1);",
+    [req.body.id_branch],
+    (err, response, fields) => {
       if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };
 
 export const delPro = async (req: Request, res: Response) => {
-  const conn = await connect();
-
   const dataObj = req.body;
-
-  conn.query(
-    "UPDATE Table_InvoiceAdmin SET status = 0 where id = ?",
+  console.log(dataObj);
+  await pool.query(
+    "select * from function_del_pro($1)",
     [dataObj.id],
-    (err, rows, fields) => {
+    (err, response, fields) => {
       if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: {
-            msg: "Registro completo",
-          },
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
-        res.json({
-          status: 400,
-          statusBol: false,
-          data: {
-            msg: "Registro no aceptado",
-          },
-        });
+        console.log(err);
       }
-      conn.end();
     }
   );
 };
 
 export const getRegularizar = async (req: Request, res: Response) => {
-  const conn = await connect();
-
-  await conn.query(
-    "SELECT * FROM view_regularizarPro where pagado = 1 AND ajusteflag = 0",
-
-    (err, rows, fields) => {
+  await pool.query(
+    " SELECT * FROM TABLE_INVOICE_pro($1)",
+    [req.body.id_branch],
+    (err, response, fields) => {
       if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };
 
 export const getVerInvoiceAdmin = async (req: Request, res: Response) => {
-  const conn = await connect();
   let objData = req.params;
-  conn.query(
-    `SELECT * FROM (SELECT @pid:=${objData.id}) alias, view_InvoiceAdminVer;`,
-    (err, rows, field) => {
+  await pool.query(
+    "SELECT * FROM TABLE_INVOICEADMIN_ver($1);",
+    [objData.id],
+    (err, response, fields) => {
       if (!err) {
-        let datanew = JSON.parse(JSON.stringify(rows));
-        conn.query(
-          `SELECT * FROM (SELECT @pid:=${objData.id}) alias,view_InvoiceAdminDetailsVer;`,
-          (err, rowss, fields) => {
-            datanew.push({ details: rowss });
-            setTimeout(function () {
-              res.json({
-                status: 200,
-                statusBol: true,
-                data: datanew,
-              });
-              conn.end();
-            }, 800);
-          }
-        );
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }
@@ -252,135 +250,195 @@ export const getVerInvoiceAdmin = async (req: Request, res: Response) => {
 };
 
 export const setUpdateInvoiceAdmin = async (req: Request, res: Response) => {
-  const conn = await connect();
-
   const dataObj = req.body;
   const dataDetails = req.body.detalle;
   let path = isNaN(+dataObj.id_path);
-
-  conn.query(
-    ` update Table_InvoiceAdmin 
-      SET
-      id_proveedor=${dataObj.id_proveedor},
-      fecha='${dataObj.fecha}',
-      nro_factura='${dataObj.nro_factura}',
-      nro_serie='${dataObj.nro_serie}',
-      id_coins=${dataObj.id_coins},
-      monto=${dataObj.monto},
-      status=${dataObj.status},
-      id_proformance=${dataObj.id_proformance},
-      id_month=${dataObj.id_month},
-      id_year=${dataObj.id_year},
-      id_expediente = ${dataObj.id_expediente},
-      id_path=${path ? "id_path" : dataObj.id_path},
-      updated_at = now()
-      WHERE id = ${dataObj.id};
-    `,
-    (err, rows, fields) => {
+  await pool.query(
+    "SELECT * FROM  table_DetailsInvoiceAdmin_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19)",
+    [
+      dataObj.id,
+      dataObj.id_proveedor,
+      dataObj.fecha,
+      dataObj.nro_factura,
+      dataObj.nro_serie,
+      dataObj.id_coins,
+      dataObj.monto,
+      dataObj.status,
+      dataObj.id_proformance,
+      dataObj.id_month,
+      dataObj.id_year,
+      dataObj.id_expediente,
+      dataObj.id_path,
+      dataDetails.map((item: any) => {
+        return item.concepto;
+      }),
+      dataDetails.map((item: any) => {
+        return item.monto;
+      }),
+      dataDetails.map((item: any) => {
+        return item.total;
+      }),
+      dataDetails.map((item: any) => {
+        return item.afecto == true || item.afecto == 1 ? 1 : 0;
+      }),
+      dataDetails.map((item: any) => {
+        return item.status == true || item.status == 1 ? 1 : 0;
+      }),
+      dataDetails.map((item: any) => {
+        return item.id ? item.id : null;
+      }),
+    ],
+    (err, response, fields) => {
       if (!err) {
-        var data = JSON.parse(JSON.stringify(rows));
-        dataDetails.forEach((element) => {
-          if (element.id != 0 || !element.id) {
-            conn.query(
-              ` 
-              UPDATE table_DetailsInvoiceAdmin
-              SET 
-              concepto=?,monto=?,igv=?,total=?,afecto=?,status=?,updated_at = now()
-              WHERE id = ?
-            `,
-              [
-                element.concepto,
-                element.monto,
-                element.total - element.monto,
-                element.total,
-                element.afecto,
-                element.status,
-                element.id,
-              ],
-              (err, rowss, fields) => {
-                if (!err) {
-                } else {
-                  console.log(err);
-                }
-              }
-            );
-          } else {
-            conn.query(
-              "INSERT INTO table_DetailsInvoiceAdmin(id_invoice,concepto,monto,igv,total,afecto,status) VALUES (?,?,?,?,?,?,?)",
-              [
-                dataObj.id,
-                element.concepto,
-                element.monto,
-                element.total - element.monto,
-                element.total,
-                element.afecto == "true" || 1 ? 1 : 0,
-                1,
-              ],
-              (err, rowss, fields) => {
-                if (!err) {
-                } else {
-                  console.log(err);
-                }
-              }
-            );
-          }
-        });
-
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: {
-            msg: "Registro completo",
-          },
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
-
-        res.json({
-          status: 400,
-          statusBol: false,
-          data: {
-            msg: "Registro no aceptado",
-          },
-        });
       }
-      setTimeout(() => {
-        conn.end();
-      }, 10000);
     }
   );
 };
 
 // CxC
 export const getInvoiceAdminCxC = async (req: Request, res: Response) => {
-  const conn = await connect();
+  await pool.query(
+    "SELECT * FROM TABLE_INVOICEADMINCXC_listar($1)",
+    [req.body.id_branch],
 
-  await conn.query(
-    "SELECT * FROM view_listInvoiceAdminCxC where status <> 0",
-
-    (err, rows, fields) => {
+    (err, response, fields) => {
       if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };
 
 export const setInvoiceAdminCxC = async (req: Request, res: Response) => {
-  const conn = await connect();
-
   const dataObj = req.body;
   const dataDetails = req.body.detalle;
+  console.log(
+    dataDetails.map((item: any) => {
+      return item.concepto;
+    })
+  );
+  await pool.query(
+    "SELECT * FROM Table_InvoiceAdminCxC_isertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)",
+    [
+      dataObj.type_payment ? dataObj.type_payment : null,
+      dataObj.id_expediente ? dataObj.id_expediente : null,
+      dataObj.id_cliente ? dataObj.id_cliente : null,
+      dataObj.fecha ? dataObj.fecha : null,
+      dataObj.nro_factura ? dataObj.nro_factura : null,
+      dataObj.nro_serie ? dataObj.nro_serie : null,
+      dataObj.id_coins ? dataObj.id_coins : null,
+      dataObj.monto ? dataObj.monto : null,
+      dataObj.type_igv ? dataObj.type_igv : null,
+      dataObj.igv ? dataObj.igv : null,
+      dataObj.status ? dataObj.status : null,
+      dataObj.id_path ? dataObj.id_path : null,
+      dataObj.id_proformance ? dataObj.id_proformance : null,
+      dataObj.id_month ? dataObj.id_month : null,
+      dataObj.id_year ? dataObj.id_year : null,
+      dataDetails.map((item: any) => {
+        return item.concepto;
+      }),
+      dataDetails.map((item: any) => {
+        return item.monto;
+      }),
+      dataDetails.map((item: any) => {
+        return item.total;
+      }),
+      dataDetails.map((item: any) => {
+        return item.afecto == "true" ? 1 : 0;
+      }),
+      dataDetails.map((item: any) => {
+        return item.status == "true" ? 1 : 0;
+      }),
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
 
-  conn.query(
-    "INSERT INTO Table_InvoiceAdminCxC (type_payment, id_expediente, id_cliente, fecha, nro_factura, nro_serie, id_coins, monto, type_igv, igv, status, id_path,id_proformance,id_month,id_year) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+export const getVerInvoiceAdminCxC = async (req: Request, res: Response) => {
+  let objData = req.params;
+  await pool.query(
+    `SELECT * FROM TABLE_INVOICEADMINCXC_ver($1);`,
+    [objData.id],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const setUpdateInvoiceAdminCxC = async (req: Request, res: Response) => {
+  const dataObj: InvoiceAdminCxC = req.body;
+  const dataDetails = dataObj.detalle;
+  console.log(dataDetails);
+  await pool.query(
+    "select * from Table_InvoiceAdminCxC_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22)",
     [
       dataObj.type_payment,
       dataObj.id_expediente,
@@ -390,209 +448,61 @@ export const setInvoiceAdminCxC = async (req: Request, res: Response) => {
       dataObj.nro_serie,
       dataObj.id_coins,
       dataObj.monto,
-      dataObj.type_igv,
+      dataObj.type_igv ? dataObj.type_igv : null,
       dataObj.igv,
       dataObj.status,
       dataObj.id_path,
       dataObj.id_proformance,
       dataObj.id_month,
       dataObj.id_year,
-    ],
-    (err, rows, fields) => {
-      if (!err) {
-        var data = JSON.parse(JSON.stringify(rows));
-        dataDetails.map((item: any) => {
-          conn.query(
-            "INSERT INTO 	table_DetailsInvoiceAdminCxC(id_invoice,concepto,monto,igv,total,afecto,status) VALUES (?,?,?,?,?,?,?)",
-            [
-              data.insertId,
-              item.concepto,
-              item.monto,
-              item.total - item.monto,
-              item.total,
-              item.afecto == "true" ? 1 : 0,
-              1,
-            ],
-            (err, rowss, fields) => {
-              if (!err) {
-              } else {
-                console.log(err);
-              }
-            }
-          );
-        });
-
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: {
-            msg: "Registro completo",
-          },
-        });
-      } else {
-        console.log(err);
-
-        res.json({
-          status: 400,
-          statusBol: false,
-          data: {
-            msg: "Registro no aceptado",
-          },
-        });
-      }
-      setTimeout(() => {
-        conn.end();
-      }, 6000);
-    }
-  );
-};
-
-export const getVerInvoiceAdminCxC = async (req: Request, res: Response) => {
-  const conn = await connect();
-  let objData = req.params;
-  conn.query(
-    `SELECT * FROM (SELECT @pid:=${objData.id}) alias, view_InvoiceAdminCxCVer;`,
-    (err, rows, field) => {
-      if (!err) {
-        let datanew = JSON.parse(JSON.stringify(rows));
-        conn.query(
-          `SELECT * FROM (SELECT @pid:=${objData.id}) alias,view_InvoiceAdminDetailsCxCVer;`,
-          (err, rowss, fields) => {
-            datanew.push({ details: rowss });
-            setTimeout(function () {
-              res.json({
-                status: 200,
-                statusBol: true,
-                data: datanew,
-              });
-              conn.end();
-            }, 800);
-          }
-        );
-      } else {
-        console.log(err);
-      }
-    }
-  );
-};
-
-export const setUpdateInvoiceAdminCxC = async (req: Request, res: Response) => {
-  const conn = await connect();
-
-  const dataObj = req.body;
-  const dataDetails = req.body.detalle;
-  let path = isNaN(+dataObj.id_path);
-  conn.query(
-    ` update Table_InvoiceAdminCxC 
-      SET
-      id_cliente=?,
-      id_expediente =?,
-      fecha=?,
-      nro_factura=?,
-      nro_serie=?,
-      id_coins=?,
-      monto=?,
-      status=?,
-      id_proformance=?,
-      id_month=?,
-      id_year=?,id_path=${path ? "id_path" : dataObj.id_path},
-      updated_at = now()
-      WHERE id = ?;
-    `,
-    [
-      dataObj.id_cliente,
-      dataObj.id_expediente,
-      dataObj.fecha,
-      dataObj.nro_factura,
-      dataObj.nro_serie,
-      dataObj.id_coins,
-      dataObj.monto,
-      dataObj.status,
-      dataObj.id_proformance,
-      dataObj.id_month,
-      dataObj.id_year,
+      dataDetails.map((item: any) => {
+        return item.concepto_d;
+      }),
+      dataDetails.map((item: any) => {
+        return item.monto_d;
+      }),
+      dataDetails.map((item: any) => {
+        return item.total_d;
+      }),
+      dataDetails.map((item: any) => {
+        return item.afecto_d;
+      }),
+      dataDetails.map((item: any) => {
+        return item.status_d == 1 || item.status_d == true ? 1 : 0;
+      }),
+      dataDetails.map((item: any) => {
+        return item.id_d;
+      }),
       dataObj.id,
     ],
-    (err, rows, fields) => {
+    (err, response, fields) => {
       if (!err) {
-        var data = JSON.parse(JSON.stringify(rows));
-        dataDetails.forEach((element) => {
-          if (element.id != 0 || !element.id) {
-            conn.query(
-              ` UPDATE table_DetailsInvoiceAdminCxC SET 
-              concepto=?,monto=?,igv=?,total=?,afecto=?,status=?,updated_at = now()
-              WHERE id = ?
-            `,
-              [
-                element.concepto,
-                element.monto,
-                element.total - element.monto,
-                element.total,
-                element.afecto,
-                element.status,
-                element.id,
-              ],
-              (err, rowss, fields) => {
-                if (!err) {
-                } else {
-                  console.log(err);
-                }
-              }
-            );
-          } else {
-            conn.query(
-              "INSERT INTO table_DetailsInvoiceAdminCxC(id_invoice,concepto,monto,igv,total,afecto,status) VALUES (?,?,?,?,?,?,?)",
-              [
-                dataObj.id,
-                element.concepto,
-                element.monto,
-                element.total - element.monto,
-                element.total,
-                element.afecto == "true" || 1 ? 1 : 0,
-                1,
-              ],
-              (err, rowss, fields) => {
-                if (!err) {
-                } else {
-                  console.log(err);
-                }
-              }
-            );
-          }
-        });
-
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: {
-            msg: "Registro completo",
-          },
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
-
-        res.json({
-          status: 400,
-          statusBol: false,
-          data: {
-            msg: "Registro no aceptado",
-          },
-        });
       }
-      setTimeout(() => {
-        conn.end();
-      }, 9000);
     }
   );
 };
 
 export const paymentInvoiceAdminCxC = async (req: Request, res: Response) => {
-  const conn = await connect();
-
   const id = req.params.id;
   const dataObj = req.body;
 
-  conn.query(
+  await pool.query(
     "UPDATE Table_InvoiceAdminCxC SET id_pago = ?, fecha_pago = ?, factura_pago = ?, serie_pago = ?, id_bank_pago = ?, id_coin_pago = ?, monto_pago = ?, status = ? where id = ?",
     [
       dataObj.id_pago,
@@ -623,18 +533,15 @@ export const paymentInvoiceAdminCxC = async (req: Request, res: Response) => {
           },
         });
       }
-      conn.end();
     }
   );
 };
 
 export const delProCxC = async (req: Request, res: Response) => {
-  const conn = await connect();
-
   const dataObj = req.body;
-
-  conn.query(
-    "UPDATE Table_InvoiceAdminCxC SET status = 0 where id = ?",
+  console.log(dataObj.id);
+  await pool.query(
+    "UPDATE Table_InvoiceAdminCxC SET status = 0 where id = $1",
     [dataObj.id],
     (err, rows, fields) => {
       if (!err) {
@@ -650,11 +557,10 @@ export const delProCxC = async (req: Request, res: Response) => {
           status: 400,
           statusBol: false,
           data: {
-            msg: "Registro no aceptado",
+            msg: err,
           },
         });
       }
-      conn.end();
     }
   );
 };

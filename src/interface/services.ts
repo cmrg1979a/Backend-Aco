@@ -1,7 +1,9 @@
 export interface postServices {
-  id_house: string;
-  id_begend: string;
-  nameService: string;
-  price_services: string;
-  status: string;
+  id: Number;
+  id_house: Number;
+  id_begend: Number;
+  nameservice: String;
+  price_services: Float32Array;
+  color: String;
+  status: Number;
 }

@@ -12,7 +12,7 @@ const { Pool } = pg;
 //   return pool;
 // }
 
-// /**PROUCCIÓN */
+/**PROUCCIÓN */
 // export function conexion() {
 //   const pool = new Pool({
 //     host: "157.230.14.98",
@@ -28,8 +28,8 @@ const { Pool } = pg;
 export function conexion() {
   const pool = new Pool({
     host: "10.116.0.2",
-    user: "chainsolver",
-    password: "Fr3sc0l1t4+",
+    user: "postgres",
+    password: "@Developer2021Pic",
     port: "5432",
     database: "chainsolver_db_v3",
   });

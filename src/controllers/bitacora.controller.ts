@@ -1,16 +1,24 @@
 import { Request, Response } from "express";
-import { connect } from "../routes/database";
-
 import { postBitacora } from "../interface/bitacora";
 
+import { conexion } from "../routes/databasePGOp";
+import * as pg from "pg";
+const { Pool } = pg;
+
+const pool = conexion();
+
 export const setBitacora = async (req: Request, res: Response) => {
-  const conn = await connect();
-
   const dataObj: postBitacora = req.body;
-
-  await conn.query(
-    "INSERT INTO House_Bitacora SET ?",
-    [dataObj],
+  await pool.query(
+    "INSERT INTO House_Bitacora (id_house,id_bitacora,ic,comentario,date,status)values ($1,$2,$3,$4,$5,$6)",
+    [
+      dataObj.id_house,
+      dataObj.id_bitacora,
+      dataObj.ic,
+      dataObj.comentario,
+      dataObj.date,
+      dataObj.status == true ? 1 : 0,
+    ],
     (err, rows, fields) => {
       if (!err) {
         res.json({
@@ -21,16 +29,14 @@ export const setBitacora = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };
 
 export const deleteBitacora = async (req: Request, res: Response) => {
-  const conn = await connect();
   const { id } = req.body;
-  await conn.query(
-    "DELETE FROM House_Bitacora WHERE id = ?",
+  await pool.query(
+    "DELETE FROM House_Bitacora WHERE id = $1",
     [id],
     (err, rows, fields) => {
       if (!err) {
@@ -42,7 +48,6 @@ export const deleteBitacora = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };

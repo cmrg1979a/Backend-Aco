@@ -1,116 +1,80 @@
 import { Request, Response } from "express";
-import { connect } from "../routes/database";
+
+import { conexion } from "../routes/databasePGOp";
+import * as pg from "pg";
+const { Pool } = pg;
+const pool = conexion();
 
 import { programmedPaymentInterface } from "interface/programmedPaymentInterface";
 
 export const setProgrammedPayment = async (req: Request, res: Response) => {
-  const conn = await connect();
-
   const dataObj: programmedPaymentInterface = req.body;
-
-  if (dataObj.nuevoflag == true) {
-    await conn.query(
-      `INSERT INTO programmed_payment 
-      (fecha,status)
-      values
-      (?,?)`,
-      [dataObj.fecha, dataObj.STATUS],
-
-      (err, rows, fields) => {
-        if (!err) {
-          let datanew = JSON.parse(JSON.stringify(rows));
-          new Promise<void>((resolver, rechazar) => {
-            conn.query(
-              `INSERT INTO details_programendpaymet
-            (id_programendpaymed,id_detailspayinvoicecxp,id_controlgastosegresos,controlgastoegreso,STATUS)
-            values 
-            (?,?,?,?,?)
-            `,
-              [
-                datanew.insertId,
-                dataObj.id_detailspayinvoicecxp,
-                dataObj.id_controlgastosegresos,
-                dataObj.controlgastoegreso,
-                dataObj.STATUS,
-              ],
-              (err, rows, fields) => {
-                if (!err) {
-                  res.json({
-                    status: 200,
-                    statusBol: true,
-                    data: rows,
-                  });
-                  conn.end();
-                } else {
-                  console.log(err);
-                  conn.end();
-                }
-              }
-            );
-            resolver();
-          });
-        } else {
-          console.log(err);
-          conn.end();
-        }
-      }
-    );
-  } else {
-    await conn.query(
-      `INSERT INTO details_programendpaymet
-    (id_programendpaymed,id_detailspayinvoicecxp,id_controlgastosegresos,controlgastoegreso,STATUS)
-    values 
-    (?,?,?,?,?)
-    `,
-      [
-        dataObj.id,
-        dataObj.id_detailspayinvoicecxp,
-        dataObj.id_controlgastosegresos,
-        dataObj.controlgastoegreso,
-        dataObj.STATUS,
-      ],
-      (err, rows, fields) => {
-        if (!err) {
+  console.log(dataObj);
+  await pool.query(
+    "select * from programmed_payment_insertar($1,$2,$3,$4,$5,$6,$7)",
+    [
+      dataObj.fecha,
+      dataObj.STATUS ? 1 : 0,
+      dataObj.nuevoflag,
+      dataObj.id,
+      dataObj.id_detailspayinvoicecxp,
+      dataObj.id_controlgastosegresos,
+      dataObj.controlgastoegreso ? 1 : 0,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
             statusBol: true,
             data: rows,
           });
-          conn.end();
         } else {
-          console.log(err);
-          conn.end();
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
         }
-      }
-    );
-  }
-};
-
-export const ListProgrammedPayment = async (req: Request, res: Response) => {
-  const conn = await connect();
-  await conn.query(
-    "SELECT * FROM view_programmed_payment",
-    (err, rows, fields) => {
-      if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
       } else {
         console.log(err);
       }
-      setTimeout(() => {
-        conn.end();
-      }, 9000);
     }
   );
 };
+
+export const ListProgrammedPayment = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM programmed_payment_listar($1);",
+    [req.body.id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
 export const updateProgrammedPayment = async (req: Request, res: Response) => {
-  const conn = await connect();
-  await conn.query(
-    "UPDATE details_programendpaymet SET status = ? where id = ?",
-    [0,req.params.id],
+  await pool.query(
+    "UPDATE details_programendpaymet SET status = $1 where id = $2",
+    [0, req.params.id],
     (err, rows, fields) => {
       if (!err) {
         res.json({
@@ -121,9 +85,6 @@ export const updateProgrammedPayment = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
-      setTimeout(() => {
-        conn.end();
-      }, 9000);
     }
   );
 };
@@ -132,59 +93,36 @@ export const ListProgrammedPaymentDetails = async (
   req: Request,
   res: Response
 ) => {
-  const conn = await connect();
-
-  await conn.query(
-    "SELECT distinct * FROM view_programmed_payment",
-    (err, rows, fields) => {
+  await pool.query(
+    "SELECT * FROM programmed_payment_listar($1)",
+    [req.params.id_branch],
+    (err, response, fields) => {
       if (!err) {
-        let datanew = JSON.parse(JSON.stringify(rows));
-        let details;
-        new Promise<void>((resolver, rechazar) => {
-          datanew.map((item: any) => {
-            conn.query(
-              "select distinct * from  view_details_programendpaymet WHERE id_programendpaymed= ?",
-              [item.id],
-              (err, rowss, fields) => {
-                details = JSON.parse(JSON.stringify(rowss));
-                let dataTes = [];
-                let dataPre = [];
-                dataTes.push(details);
-                dataPre.push({
-                  id: item.id,
-                  correlativo: item.correlativo,
-                  fecha: item.fecha,
-                  details: dataTes[0],
-                });
+        let rows = response.rows;
 
-                req.app.locals.itemsService.push(dataPre[0]);
-              }
-            );
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
           });
-          req.app.locals.itemsService = [];
-          resolver();
-        }).then(() => {
-          setTimeout(() => {
-            res.json({
-              status: 200,
-              statusBol: true,
-              data: req.app.locals.itemsService,
-            });
-            conn.end();
-          }, 5000);
-        });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }
     }
   );
 };
-export const deleteProgrammedPayment = async (req: Request, res: Response) => {
-  const conn = await connect();
-  console.log(req.body.id);
 
-  await conn.query(
-    "UPDATE details_programendpaymet SET elimado = 1 where id = ?",
+export const deleteProgrammedPayment = async (req: Request, res: Response) => {
+  await pool.query(
+    "UPDATE details_programendpaymet SET elimado = 1 where id = $1",
     [req.body.id],
     (err, rows, fields) => {
       if (!err) {
@@ -196,9 +134,6 @@ export const deleteProgrammedPayment = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
-      setTimeout(() => {
-        conn.end();
-      }, 9000);
     }
   );
 };

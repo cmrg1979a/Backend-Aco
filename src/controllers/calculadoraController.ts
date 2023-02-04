@@ -3,23 +3,35 @@ import { conexion } from "../routes/databasePg";
 import * as pg from "pg";
 import { usuarioCalculadora } from "interface/usuariosCalculadora";
 import jwt from "jsonwebtoken";
+import { v4 as uuidv4 } from "uuid";
+import path from "path";
+const nodemailer = require("nodemailer");
 const { Pool } = pg;
-
+var xl = require("excel4node");
 const pool = conexion();
 export const ValidarCorreoExiste = async (req: Request, res: Response) => {
   const correo = req.params.correo;
   pool.query(
     "select * from validar_correo($1)",
     [correo],
-    async (err, response, fields) => {
+    (err, response, fields) => {
       if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: response.rows,
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
-        return console.error("Error executing query", err);
+        console.log(err);
       }
     }
   );
@@ -177,8 +189,6 @@ export const loginUsuarios = async (req: Request, res: Response) => {
   }
 };
 export const validarGenerarCotizacion = async (req: Request, res: Response) => {
-  console.log(req.params);
-
   const ip = req.params.ip;
   const correo = req.params.correo;
 
@@ -617,7 +627,6 @@ export const RegistrarCargaMasivaLCL = async (req: Request, res: Response) => {
 export const RegistrarCargaMasivaFCL = async (req: Request, res: Response) => {
   const data = req.body;
 
-  console.log("ddd");
   try {
     pool.query(
       `SELECT * FROM registro_tarifarios_fcl(
@@ -830,6 +839,237 @@ export const CargarNavieras = async (req: Request, res: Response) => {
         }
       } else {
         return console.error("Error executing query", err);
+      }
+    }
+  );
+};
+export const ListUsuarioCalculadora = async (req: Request, res: Response) => {
+  pool.query(
+    "SELECT * FROM function_list_user();",
+
+    async (err, response, fields) => {
+      if (!err) {
+        if (response.rows[0].estadoflag == true) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            estadoflag: true,
+            data: response.rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            estadoflag: false,
+            mensaje: response.rows[0].mensaje,
+            tipoMensaje: response.rows[0].tipomensaje,
+          });
+        }
+      } else {
+        return console.error("Error executing query", err);
+      }
+    }
+  );
+};
+export const ExportListUsuarioCalculadora = async (
+  req: Request,
+  res: Response
+) => {
+  var wb = new xl.Workbook();
+  await pool.query(
+    "SELECT * FROM function_list_user();",
+    (err, response, fields) => {
+      if (!err) {
+        if (response.rows[0].estadoflag == true) {
+          let rows = response.rows;
+          console.log(rows);
+          let cabTitle = wb.createStyle({
+            font: {
+              color: "#ffffff",
+              bold: true,
+            },
+            fill: {
+              type: "pattern",
+              patternType: "solid",
+              fgColor: "#A43542",
+            },
+            alignment: {
+              vertical: "center",
+              horizontal: "center",
+            },
+          });
+          let cabProveedor = wb.createStyle({
+            fill: {
+              type: "pattern",
+              patternType: "solid",
+              fgColor: "#a8aee5",
+            },
+            alignment: {
+              vertical: "center",
+            },
+          });
+          var wt = wb.addWorksheet("Listado");
+          wt.row(2).filter();
+          wt.column(1).setWidth(50);
+          wt.column(2).setWidth(50);
+          wt.column(3).setWidth(20);
+          // wt.column(4).setWidth(120);
+          wt.column(5).setWidth(17);
+
+          wt.cell(1, 1, 1, 5, true)
+            .string("LISTADO DE CLIENTES REGISTRADOS / CALCULADORA")
+            .style(cabTitle);
+          wt.cell(2, 1).string("Cliente").style(cabProveedor);
+          wt.cell(2, 2).string("Correo").style(cabProveedor);
+          wt.cell(2, 3).string("Teléfono").style(cabProveedor);
+          wt.cell(2, 4).string("Registro").style(cabProveedor);
+          wt.cell(2, 5).string("Modo de Registro").style(cabProveedor);
+          let fila = 3;
+          rows.forEach((element) => {
+            wt.cell(fila, 1).string(element.usuario_nombre);
+            wt.cell(fila, 2).string(element.usuario_email);
+            wt.cell(fila, 3).string(element.usuario_telefono);
+            wt.cell(fila, 4).string(element.usuario_creacion);
+            wt.cell(fila, 5).string(element.usuario_origen);
+            fila++;
+          });
+          let pathexcel = path.join(
+            `${__dirname}../../../uploads`,
+            uuidv4() + ".xlsx"
+          );
+          wb.write(pathexcel, function (err, stats) {
+            if (err) {
+              console.log(err);
+            } else {
+              res.download(pathexcel);
+            }
+          });
+        }
+      } else {
+        return console.error("Error executing query", err);
+      }
+    }
+  );
+};
+
+export const GenerarTokenRecuperarContrasenia = async (
+  req: Request,
+  res: Response
+) => {
+  
+  pool.query(
+    "SELECT * FROM funtction_gen_token($1);",
+    [req.body.email],
+
+    async (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (rows[0].estadoflag == true) {
+          await main(req.body.email, rows[0].token_url);
+          res.json({
+            status: 200,
+            statusBol: true,
+            // data: rows,
+            mensaje: rows[0].mensaje,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: false,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        return console.error("Error executing query", err);
+      }
+    }
+  );
+};
+
+async function main(email, url) {
+  let transporter = nodemailer.createTransport({
+    // host: "smtp.gmail.com",
+    // host: "smtp.ethereal.email",
+    host: "mail.pic-cargo.com",
+    port: 465,
+    secure: true, // true for 465, false for other ports
+    auth: {
+      user: "calculadorasoporte@pic-cargo.com", // "testkaysen@gmail.com", //
+      pass: "3$3p5x2k4&$", // "csyvzaysfnmntjws", //
+    },
+  });
+
+  let info = await transporter.sendMail({
+    from: 'Calculadora de Fletes" <calculadorasoporte@pic-cargo.com>', // sender address
+    to: email, // list of receivers
+    subject: "Recuperación de contraseña", // Subject line
+    text: "Recuperación de contraseña", // plain text body
+    html: `
+      <h1>Calculadora de Flete</h1>
+      <h2>Recuperación de Contraseña.<h/2>
+      <p>Estimado cliente, para recuperar su contraseña, haga click en el siguiente botón</p>
+      <a class="btn" href="${url}" target=”_blank”> <button>Click me</button></a>`,
+  });
+  console.log("Message sent: %s", info.messageId);
+  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+
+  // Preview only available when sending through an Ethereal account
+  console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+  // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+}
+export const validateToken = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM function_validate_token($1)",
+    [req.body.token ? req.body.token : null],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: false,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const UpdatePass = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM function_update_user($1,$2,$3,$4)",
+    [
+      req.body.email ? req.body.email : null,
+      req.body.clave ? req.body.clave : null,
+      req.body.confirmacion ? req.body.confirmacion : null,
+      req.body.token ? req.body.token : null,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: false,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
       }
     }
   );

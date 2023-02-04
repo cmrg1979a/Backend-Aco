@@ -1,7 +1,10 @@
 export interface postBitacora {
-  id_house: string;
-  id_bitacora: string;
-  comentario: string;
-  date: string;
-  status: string;
+  id:Number;
+  id_house:Number;
+  id_bitacora:Number;
+  ic?:bigint;
+  comentario:String;
+  date:Date;
+  status:boolean;
+ 
 }

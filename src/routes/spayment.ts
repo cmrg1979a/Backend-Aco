@@ -12,12 +12,12 @@ import {
   getRequestPaymentConceptos,
   getDebsToPay,
   getDebsToPayAdmin,
-  getAccountsReceivable,
+  // getAccountsReceivable,
   setInvoice,
   getListInvoice,
   getListInvoiceExp,
   delInvoice,
-  getDebsToPayFilter,
+  // getDebsToPayFilter,
   pdfcxp,
   pdfcxc,
   pdfcxpD,
@@ -32,6 +32,8 @@ import {
   getReporteCXP,
   getReporteCXC,
   getReporteCXCAdmin,
+  // getReporteCXPEXCEL,
+  listPagoControlGastoXProveedor,
 } from "../controllers/spayment.controller";
 
 router.post("/setSPaymentPro", TokenValidation, setSPaymentPro);
@@ -41,8 +43,8 @@ router.post("/setSPaymentFile", TokenValidation, setSPaymentFile);
 router.post("/getRequestPayment", TokenValidation, getRequestPayment);
 router.post("/getDebsToPay", TokenValidation, getDebsToPay);
 router.post("/getDebsToPayAdmin", TokenValidation, getDebsToPayAdmin);
-router.post("/getDebsToPayFilter", TokenValidation, getDebsToPayFilter);
-router.post("/getAccountsReceivable", TokenValidation, getAccountsReceivable);
+// router.post("/getDebsToPayFilter", TokenValidation, getDebsToPayFilter);
+// router.post("/getAccountsReceivable", TokenValidation, getAccountsReceivable);
 router.post("/setInvoice", TokenValidation, setInvoice);
 router.post("/getListInvoice", TokenValidation, getListInvoice);
 router.post("/getListInvoiceExp", TokenValidation, getListInvoiceExp);
@@ -62,18 +64,20 @@ router.post(
   TokenValidation,
   getReportAccountsFilter
 );
+router.post("/getRequestPaymentConceptos/:id",TokenValidation,getRequestPaymentConceptos);
 router.post(
-  "/getRequestPaymentConceptos/:id",
-  TokenValidation,
-  getRequestPaymentConceptos
-);
-router.post(
-  "/getSPaymentPro/:id_house/:id_proveedor",
+  "/getSPaymentPro/:id_house/:id_proveedor/:id_branch",
   TokenValidation,
   getSPaymentPro
 );
 router.post("/getReporteCXP", TokenValidation, getReporteCXP);
 router.post("/getReporteCXC", TokenValidation, getReporteCXC);
 router.post("/getReporteCXCAdmin", TokenValidation, getReporteCXCAdmin);
+// router.get("/getReporteCXPEXCEL", getReporteCXPEXCEL);
+router.get(
+  "/listPagoControlGastoXProveedor/:id",
+  TokenValidation,
+  listPagoControlGastoXProveedor
+);
 
 export default router;

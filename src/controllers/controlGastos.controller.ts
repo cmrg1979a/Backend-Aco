@@ -1,52 +1,58 @@
 import { Request, Response } from "express";
-import { connect } from "../routes/database";
 
 import { postControl } from "../interface/controlGastos";
+import { conexion } from "../routes/databasePGOp";
+import * as pg from "pg";
+const { Pool } = pg;
+const pool = conexion();
 
 export const setControl = async (req: Request, res: Response) => {
-  const conn = await connect();
-
   const dataObj: postControl = req.body;
-
-  await conn.query(
-    "call Table_ControlGastos_Insertar(?,?,?)",
+  await pool.query(
+    "select * from Table_ControlGastos_Insertar($1,$2,$3)",
     [dataObj.id_house, dataObj.id_user, dataObj.status],
-    (err, rows, fields) => {
+    (err, response, fields) => {
       if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
+        let rows = response.rows;
+        console.log(rows);
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };
 
 export const setIngresos = async (req: Request, res: Response) => {
-  const conn = await connect();
-
   const dataObj = req.body;
-
-  await conn.query(
-    "call PA_CIngresos_Insert(?,?,?,?,?,?,?,?,?,?,?,?,?)",
+  await pool.query(
+    "select * from PA_CIngresos_Insert($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)",
     [
-      dataObj.id_orders,
+      dataObj.id_orders ? dataObj.id_orders : null,
       dataObj.concepto,
-      dataObj.monto_op,
+      dataObj.monto_pr ? dataObj.monto_pr : 0,
+      dataObj.monto_op ? dataObj.monto_op : 0,
+      dataObj.igv_pr ? dataObj.igv_pr : 0,
+      dataObj.igv_op ? dataObj.igv_op : 0,
+      dataObj.total_pr ? dataObj.total_pr : 0,
+      dataObj.total_op ? dataObj.total_op : 0,
       0,
-      dataObj.igv_op,
-      0,
-      dataObj.total_op,
-      0,
-      0,
-      "",
-      "",
+      null,
+      null,
       1,
-      dataObj.id_user,
+      dataObj.id_user ? dataObj.id_user : null,
     ],
     (err, rows, fields) => {
       if (!err) {
@@ -58,32 +64,25 @@ export const setIngresos = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };
 
 export const setEgresos = async (req: Request, res: Response) => {
-  const conn = await connect();
-
   const dataObj = req.body;
-
-  await conn.query(
-    "call PA_CEgresos_Insert(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+  
+  await pool.query(
+    "select * from PA_CEgresos_Insert($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
     [
       dataObj.id_orders,
       dataObj.id_proveedor,
       dataObj.concepto,
-      dataObj.monto_op,
-      0,
-      dataObj.igv_op,
-      0,
-      dataObj.total_op,
-      0,
-      0,
-      "",
-      "",
-      1,
+      dataObj.monto_pr ? parseFloat(dataObj.monto_pr) : 0,
+      dataObj.monto_op ? parseFloat(dataObj.monto_op) : 0,
+      dataObj.igv_pr ? parseFloat(dataObj.igv_pr) : 0,
+      dataObj.igv_op ? parseFloat(dataObj.igv_op) : 0,
+      dataObj.total_pr ? parseFloat(dataObj.total_pr) : 0,
+      dataObj.total_op ? parseFloat(dataObj.total_op) : 0,
       dataObj.id_user,
     ],
     (err, rows, fields) => {
@@ -93,138 +92,164 @@ export const setEgresos = async (req: Request, res: Response) => {
           statusBol: true,
           data: rows,
         });
-        conn.end();
       } else {
         console.log(err);
-        conn.end();
       }
     }
   );
 };
 
 export const getIngresosList = async (req: Request, res: Response) => {
-  const conn = await connect();
-
   const id_orders = req.params.id_orders;
 
-  await conn.query(
-    "select * from view_costosIngresos where id_orders = ?",
+  await pool.query(
+    "select * from CONTROLGASTOS_INGRESOS_listarxorders($1)",
     [id_orders],
-    (err, rows, fields) => {
+    (err, response, fields) => {
       if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };
 
 export const getEgresosList = async (req: Request, res: Response) => {
-  const conn = await connect();
-
   const id_orders = req.params.id_orders;
 
-  await conn.query(
-    "select * from view_costosEgresos where id_orders = ?",
+  await pool.query(
+    "select * from CONTROLGASTOS_EGRESOS_listar($1,null,null)",
     [id_orders],
-    (err, rows, fields) => {
+    (err, response, fields) => {
       if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };
 
 export const getEgresosExpediente = async (req: Request, res: Response) => {
-  const conn = await connect();
-
   const id_house = req.params.id_house;
 
-  await conn.query(
-    "select * from view_costosEgresos where id_house = ?",
+  await pool.query(
+    "SELECT * FROM CONTROLGASTOS_EGRESOS_listar(NULL,$1,null)",
     [id_house],
-    (err, rows, fields) => {
+    (err, response, fields) => {
       if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };
 
 export const getEgresosProveedorList = async (req: Request, res: Response) => {
-  const conn = await connect();
-
   const id_orders = req.params.id_orders;
   const id_proveedor = req.params.id_proveedor;
 
-  await conn.query(
-    "select * from view_costosEgresos where id_orders = ? and id_proveedor = ?",
+  await pool.query(
+    "SELECT * FROM CONTROLGASTOS_EGRESOS_listar($1,null,$2)",
     [id_orders, id_proveedor],
-    (err, rows, fields) => {
+    (err, response, fields) => {
       if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };
 
 export const getTotalesProveedor = async (req: Request, res: Response) => {
-  const conn = await connect();
-
   const id_orders = req.params.id_orders;
 
-  await conn.query(
-    "select * from view_totalesProveedor where id_orders = ?",
+  await pool.query(
+    "SELECT * FROM CONTROLGASTOS_EGRESOS_totalesProveedor($1);",
     [id_orders],
-    (err, rows, fields) => {
+    (err, response, fields) => {
       if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };
 
 export const delEgresos = async (req: Request, res: Response) => {
-  const conn = await connect();
-
   const id = req.params.id;
 
-  await conn.query(
-    "delete from ControlGastos_Egresos where id = ?",
+  await pool.query(
+    "delete from ControlGastos_Egresos where id = $1",
     [id],
     (err, rows, fields) => {
       if (!err) {
@@ -236,18 +261,15 @@ export const delEgresos = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };
 
 export const delIngresos = async (req: Request, res: Response) => {
-  const conn = await connect();
-
   const id = req.params.id;
 
-  await conn.query(
-    "delete from ControlGastos_Ingresos where id = ?",
+  await pool.query(
+    "delete from ControlGastos_Ingresos where id = $1",
     [id],
     (err, rows, fields) => {
       if (!err) {
@@ -259,44 +281,73 @@ export const delIngresos = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
-      conn.end();
+    }
+  );
+};
+
+
+export const delEgregso = async (req: Request, res: Response) => {
+  const id = req.params.id;
+
+  await pool.query(
+    "delete from ControlGastos_Egresos where id = $1",
+    [id],
+    (err, rows, fields) => {
+      if (!err) {
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
     }
   );
 };
 
 export const getControlList = async (req: Request, res: Response) => {
-  const conn = await connect();
-
-  await conn.query("select * from view_controlList", (err, rows, fields) => {
-    if (!err) {
-      res.json({
-        status: 200,
-        statusBol: true,
-        data: rows,
-      });
-    } else {
-      console.log(err);
+  await pool.query(
+    "SELECT * FROM TABLE_CONTROLGASTOS_listar($1);",
+    [req.body.id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
     }
-    conn.end();
-  });
+  );
 };
 
 export const editIngreso = async (req: Request, res: Response) => {
-  const conn = await connect();
   const id = req.params.id;
 
   const data = req.body;
 
-  await conn.query(
-    "update ControlGastos_Ingresos set concepto = ?, monto_pr = ?, monto_op = ?, igv_pr = ?, igv_op = ?, total_pr = ?, total_op = ?, tipo_pago = ?, numero = ?, fecha = ? where id = ?",
+  await pool.query(
+    "update ControlGastos_Ingresos set concepto = $1, monto_pr = $2, monto_op =$3, igv_pr = $4, igv_op = $5, total_pr = $6, total_op = $7, tipo_pago = $8, numero = $9, fecha = $10 where id = $11",
     [
       data.concepto,
-      data.monto_op,
       data.monto_pr,
-      data.igv_op,
-      data.igv_pr,
-      data.total_op,
+      data.monto_op,
+      data.igv_pr ? data.igv_pr : 0,
+      data.igv_op ? data.igv_op : 0,
       data.total_pr,
+      data.total_op,
       data.tipo_pago,
       data.numero,
       data.fecha,
@@ -312,28 +363,26 @@ export const editIngreso = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };
 
 export const editEgreso = async (req: Request, res: Response) => {
-  const conn = await connect();
   const id = req.params.id;
 
   const data = req.body;
-
-  await conn.query(
-    "update ControlGastos_Egresos set id_proveedor = ?, concepto = ?, monto_pr = ?, monto_op = ?, igv_pr = ?, igv_op = ?, total_pr = ?, total_op = ?, tipo_pago = ?, numero = ?, fecha = ? where id = ?",
+  console.log(data);
+  await pool.query(
+    "update ControlGastos_Egresos set id_proveedor = $1, concepto = $2, monto_pr = $3, monto_op = $4, igv_pr = $5, igv_op = $6, total_pr = $7, total_op = $8, tipo_pago = $9, numero = $10, fecha = $11 where id = $12",
     [
       data.id_proveedor,
       data.concepto,
-      data.monto_op,
       data.monto_pr,
-      data.igv_op,
-      data.igv_pr,
-      data.total_op,
+      data.monto_op,
+      data.igv_pr ? data.igv_pr : 0,
+      data.igv_op ? data.igv_op : 0,
       data.total_pr,
+      data.total_op,
       data.tipo_pago,
       data.numero,
       data.fecha,
@@ -349,7 +398,6 @@ export const editEgreso = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };

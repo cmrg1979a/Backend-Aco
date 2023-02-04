@@ -1,17 +1,18 @@
 import { Request, Response } from "express";
 
-import { connect } from "../routes/database";
+import { conexion } from "../routes/databasePGOp";
+import * as pg from "pg";
+const { Pool } = pg;
+const pool = conexion();
 
 import axios from "axios";
 
 export const getFile = async (req: Request, res: Response) => {};
 //Preuba
 export const setFile = async (req: Request, res: Response) => {
-  const conn = await connect();
   const { names, email, phone, pais } = req.body;
-  console.log(req.file);
-  await conn.query(
-    "INSERT INTO Table_FilesPayments (names, email, phone, pathFile, pais, status) values(?,?,?,?,?,?)",
+  await pool.query(
+    "INSERT INTO Table_FilesPayments (names, email, phone, pathFile, pais, status) values($1,$2,$3,$4,$5,$6)",
     [names, email, phone, req.file?.path, pais, 1],
     (err, rows, fields) => {
       if (!err) {
@@ -50,7 +51,6 @@ export const setFile = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };

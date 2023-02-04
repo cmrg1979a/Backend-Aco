@@ -4,47 +4,76 @@
         <style>
         
         </style>
+
+
     </head>
     <body>
-        <img width="150" src="https://point.qreport.site/files/logopiccargo.svg" alt="">
+        
         <div style="width: 95%; margin: 0 1.5%;">
             <div style="text-align: center; padding-left: 0px;">            
-                <h3>CONTROL DE FILE</h5>
-                <table style="text-align: left; font-size: 11px; " class="tableMain">
+                <h5>CONTROLSSSSS DE FILE MASTER's</h5>
+<p>Sentido: <%=sentidoletra%> / Status Operativo: <%=statusLetra %> </p>
+<p>Fecha de Disponibilidad <%= fecha_ini %> - <%= fecha_fin %><p>
+<table style="text-align: left; font-size: 9px; background-color: rgb(230, 230, 230); margin-top: 10px" width="50%">
+                    <tr>
+                        <th>Operador</th>
+                        <th>Abiertas</th>
+                        <th>Cerradas</th>
+                        <th>Total</th>
+                    </tr>
+                    <% totales.forEach(ser => {%>
+                         </tr>
+                                    <td><%= ser.nameLong %></td>
+                                    <td><%= ser.abiertas %></td>
+	                    <td><%= ser.cerradas %></td>
+                                    <td><%= ser.total %></td>
+                                     </tr>
+                                <%  });%>
+                </table>
+<p style="text-align: left; padding-left: 0px;">Total de Expedientes Master: <%= totalExpedientesMaster %></p>
+                <table width="100%" style="text-align: left; font-size: 9px; " class="tableMain">
                     <tr class="encMain">
-                        <th width="15%">EXP</th>
-                        <th width="10%">POL/POD</th>
-                        <th width="25%">GENERALES <br>  EMBARQUES</th>
-                        <th width="20%">SERVICIOS</th>
+                        <th width="15%">EXP.MASTER</th>
+                        <th width="20%">GENERALES <br>  EMBARQUES</th>
+                        <th width="25%">SERVICIOS</th>
                         <th width="20%">FECHAS</th>
-                        <th width="10%">OPERADOR</th>
+                        <th width="20%">OPERADOR / GANANCIA</th>
                     </tr>
                 <% if (items.length > 0) { %>
                     <% items.forEach(item => {%>
                        <tr 
                        ><td>
-                           <p>E.M.:<%= item.dataHouse.code_master %></p>
-                           <p>E.H.:<%= item.dataHouse.code_house %></p>
-                           <p>v.: Sin Vendedor</p>
-                       </td>
-                       <td>
+                           <p><%= item.dataHouse.nro_master %></p>
                            <p><%= item.dataHouse.nameModality %> <%= item.dataHouse.nameShipment %></p>
                            <p><%= item.dataHouse.namePortBegin %></p>
                            <p><%= item.dataHouse.namePortEnd %></p>
+                           <% if (item.dataHouse.fecha_eta) { %>
+                           <p>Salida: <%= item.dataHouse.fecha_eta %></p>
+                           <% }%>
+                           <% if (item.dataHouse.fecha_etd) { %>
+                           <p>Llegada: <%= item.dataHouse.fecha_etd %></p>
+                            <% }%>
+                             <% if (item.dataHouse.fecha_disponibilidad) { %>
+                           <p>Disponibilidad: <%= item.dataHouse.fecha_disponibilidad_letra %></p>
+                           <% }%>
+                           <p>Incoterms: <%= item.dataHouse.nameIncoterms %></p>
+                           <p>Número de Quote: <%= item.dataHouse.id_cot %></p>
                        </td>
+                  
                        <td>
                            <p>A.:<%= item.dataHouse.nameAgent %></p>
                            <p>CSG.:<%= item.dataHouse.nameConsigner %></p>
                            <p>N.:<%= item.dataHouse.nameNotify %></p>
+                           <p>C.H.:<%= item.dataHouse.code_house %></p>
                        </td>
                        <td>
                             
                             <% item.dataService[0].forEach(ser => {%>
                                     <p><%= ser.nameService %>:
-                                        <% if (ser.status = 0) { %>
+                                        <% if (ser.status == 0) { %>
                                         NO
                                         <% }%>
-                                         <% if (ser.status = 1) { %>
+                                         <% if (ser.status == 1) { %>
                                         SI
                                         <% }%>
                                     </p>
@@ -53,9 +82,7 @@
        
                        </td>
                        <td>
-                           <p>Salida: <%= item.dataHouse.fecha_etd %></p>
-                           <p>Llegada: <%= item.dataHouse.fecha_eta %></p>
-                           <p>Disponibilidad: <%= item.dataHouse.fecha_disponibilidad %></p>
+                           
                            <p>Recogida: <%= item.dataHouse.fecha_recogida %></p>
                            <p>CUTT-OFF-FIS: <%= item.dataHouse.fecha_c_f %></p>
                            <p>CUTT-OFF-DOC: <%= item.dataHouse.fecha_c_d %></p>
@@ -63,13 +90,24 @@
                        <td>
                            <p>Operador: <%= item.dataHouse.nameOperador %></p>
                            <p>Creado: <%= item.dataHouse.created %></p>
+                           <% if ( item.dataHouse.ganancia_pricing > 0) { %>
+                           <p>Ganancia Pricing: <%= item.dataHouse.ganancia_pricing %></p>
+                           <% }%>
+                           <p>Status Expediente Op.: <%= item.dataHouse.statusLockLetra %></p>
+                           <p>Status Expediente Adm.: <%= item.dataHouse.statusLockLetraAdm %></p>
+                            <% if ( item.dataHouse.statusLock == 1) { %>
+                           <p>Fecha de Cierre Op.: <%= item.dataHouse.dateLock %></p>
+                           <% }%>
+                            <% if ( item.dataHouse.statusLockAdm == 1) { %>
+                           <p>Fecha de Cierre Adm.: <%= item.dataHouse.dateLockAdm %></p>
+                           <% }%>
                        </td>
                        
                     </tr>
                     <%  });%>
                 <% }%>
                 </table>
-                <table style="text-align: left; font-size: 11px; background-color: rgb(230, 230, 230)" width="100%" class="table_fott">
+                <table style="text-align: left; font-size: 9px; background-color: rgb(230, 230, 230)" width="100%" class="table_fott">
                     <tr>
                         <td>
                             <p>Total de Expedientes Master: <%= totalExpedientesMaster %></p>
@@ -83,14 +121,37 @@
                         <td>
                             <p>Total Llegados: <%= totalLL %></p>
                             <p>Total por Llegar: <%= totalPL %></p>
-                            <p>Total Salidos: <%= totalSS %></p>
-                            <p>Total por Salir: <%= totalPS %></p>
+                            
                         </td>
                     </tr>
                 </table>
+                <table style="text-align: left; font-size: 9px; background-color: rgb(230, 230, 230); margin-top: 10px" width="50%">
+                    <tr>
+                        <th>Operador</th>
+                        <th>Abiertas</th>
+                        <th>Cerradas</th>
+                        <th>Total</th>
+                    </tr>
+                    <% totales.forEach(ser => {%>
+                         </tr>
+                                    <td><%= ser.nameLong %></td>
+                                    <td><%= ser.abiertas %></td>
+	                    <td><%= ser.cerradas %></td>
+                                    <td><%= ser.total %></td>
+                                     </tr>
+                                <%  });%>
+                </table>
              </div>
+             <div id="pageFooter" style="border-top: 1px solid #ddd; padding-top: 5px;">
+  <p style="color: #666; width: 70%; margin: 0; padding-bottom: 5px; text-align: let; font-family: sans-serif; font-size: .65em; float: left;">Reporte Generado desde ChainSolver APP ----- Fecha/Hora Impresión: <%=fechaYHora %></p>
+  <p style="color: #666; margin: 0; padding-bottom: 5px; text-align: right; font-family: sans-serif; font-size: .65em">Página {{page}} de {{pages}}</p>
+</div>
         </div>
     </body>
+
+
+
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
         *{

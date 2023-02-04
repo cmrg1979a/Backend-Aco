@@ -8,12 +8,14 @@ import {
   getEntitiesListIc,
   addEntitie,
   addEntities,
-  editEntitie,
+   editEntitie,
   getPhones,
   getContacts,
   validationDocument,
   CargarClientes,
   CargarProveedores,
+  InsertPhones,
+  ListarPhons
 } from "../controllers/entities.controller";
 
 router.post("/getEntitiesList", TokenValidation, getEntitiesList);
@@ -28,5 +30,8 @@ router.post("/getContacts/:id_entitie", TokenValidation, getContacts);
 router.get("/validationDocument", TokenValidation, validationDocument);
 router.post("/CargarClientes", TokenValidation, CargarClientes);
 router.post("/CargarProveedores", TokenValidation, CargarProveedores);
+router.post("/guardar_telefono", TokenValidation, InsertPhones);
+router.get("/listar_phone/:id", TokenValidation, ListarPhons);
+
 
 export default router;

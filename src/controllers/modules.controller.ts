@@ -1,124 +1,123 @@
 import { Request, Response } from "express";
-import { connect } from "../routes/database";
+
+import jwt from "jsonwebtoken";
+import { conexion } from "../routes/databasePGOp";
+import * as pg from "pg";
+const { Pool } = pg;
+const pool = conexion();
 
 export const getModules = async (req: Request, res: Response) => {
-  const conn = await connect();
   const { branch } = req.params;
-  await conn.query(
-    "SELECT * FROM view_enterprise_modules where id_branch = ? and status <> 0 and statusModules <> 0",
+  await pool.query(
+    "SELECT * FROM ENTERPRISE_MODULES_LISTar($1);",
     [branch],
-    (err, rows) => {
+    (err, response, fields) => {
       if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };
 
 export const getEntitieModules = async (req: Request, res: Response) => {
-  const conn = await connect();
   const { id_entitie } = req.body;
-  var datanew = new Array();
+  // var datanew = new Array();
 
-  await conn.query(
-    "SELECT * FROM view_entitie_modules where id_entitie = ? and status <> 0 and statusModule <> 0",
+  await pool.query(
+    "SELECT * FROM ENTITIE_MODULES_listarxentitie($1);",
     [id_entitie],
-    (err, rows) => {
-      const data = JSON.parse(JSON.stringify(rows));
+    (err, response, fields) => {
       if (!err) {
-        data.map(function (item: any) {
-          datanew.push({
-            id: item.id_modules,
-            name: item.name,
-            icon: item.icon,
-            description: item.description,
-            path: item.path,
-            statusModule: item.statusModule,
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
           });
-        });
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: datanew,
-        });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };
 
 export const getMenuModules = async (req: Request, res: Response) => {
-  const conn = await connect();
-  const { id_entitie, id_module, id_group } = req.body;
-  var datanew = new Array();
-
-  await conn.query(
-    "SELECT * FROM view_entitie_menu where id_entitie = ? and id_module = ? AND id_group = ?",
+  const { id_entitie, id_group } = req.body;
+  let id_module = parseInt(req.body.id_module);
+  await pool.query(
+    "SELECT * FROM ENTITIE_MENU_cargar($1,$2,$3);",
     [id_entitie, id_module, id_group],
-    (err, rows) => {
-      const data = JSON.parse(JSON.stringify(rows));
+    (err, response, fields) => {
       if (!err) {
-        data.map(function (item: any) {
-          datanew.push({
-            id: item.id,
-            name: item.name,
-            icon: item.icon,
-            id_role: item.id_role,
-            description: item.description,
-            path: item.path,
-            route: item.route,
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
           });
-        });
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: datanew,
-        });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };
 
-export const getGroupList = async (req: Request, res: Response) => {
-  const conn = await connect();
-  const { id_entitie, id_module } = req.body;
-  var datanew = new Array();
 
-  await conn.query(
-    "SELECT DISTINCT(id_group), vem.nameGroup, vem.iconGroup FROM view_entitie_menu vem WHERE id_entitie = ? AND id_module = ?",
+export const getGroupList = async (req: Request, res: Response) => {
+  const { id_entitie, id_module } = req.body;
+  await pool.query(
+    "SELECT * FROM ENTITIE_MENU_cargar($1,$2,null);",
     [id_entitie, id_module],
-    (err, rows) => {
-      const data = JSON.parse(JSON.stringify(rows));
+    (err, response, fields) => {
       if (!err) {
-        /* data.map(function(item:any){
-          datanew.push({
-            id: item.id, 
-            name: item.name, 
-            icon: item.icon, 
-            description: item.description, 
-            path: item.path, 
-            route: item.route
-          }) 
-        }) */
-        res.json({
-          data,
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };

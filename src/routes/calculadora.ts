@@ -8,6 +8,9 @@ import {
   CargarPais,
   CargarPuertoXPaisXTipo,
   CargarSucursal,
+  ExportListUsuarioCalculadora,
+  GenerarTokenRecuperarContrasenia,
+  ListUsuarioCalculadora,
   loginUsuarios,
   RegistrarCargaMasivaAereo,
   RegistrarCargaMasivaFCL,
@@ -15,11 +18,13 @@ import {
   RegistrarCotizacionXCorreo,
   RegistrarUsuario,
   RegistrarUsuarioGmail,
+  UpdatePass,
   ValidarCorreoExiste,
   validarGenerarCotizacion,
   ValidarRegistrosAereo,
   ValidarRegistrosFCL,
   ValidarRegistrosLCL,
+  validateToken,
 } from "../controllers/calculadoraController";
 
 router.get("/validar_correo/:correo", ValidarCorreoExiste);
@@ -44,11 +49,33 @@ router.post("/validar_registros_fcl", TokenValidation, ValidarRegistrosFCL);
 router.post("/validar_registros_aereo", TokenValidation, ValidarRegistrosAereo);
 router.post("/cargar_sucursal", TokenValidation, CargarSucursal);
 
-
-router.post("/registrar_carga_masiva_lcl", TokenValidation, RegistrarCargaMasivaLCL);
-router.post("/registrar_carga_masiva_fcl", TokenValidation, RegistrarCargaMasivaFCL);
-router.post("/registrar_carga_masiva_aereo", TokenValidation, RegistrarCargaMasivaAereo);
-
-
+router.post(
+  "/registrar_carga_masiva_lcl",
+  TokenValidation,
+  RegistrarCargaMasivaLCL
+);
+router.post(
+  "/registrar_carga_masiva_fcl",
+  TokenValidation,
+  RegistrarCargaMasivaFCL
+);
+router.post(
+  "/registrar_carga_masiva_aereo",
+  TokenValidation,
+  RegistrarCargaMasivaAereo
+);
+router.post(
+  "/listar_usuarios_calculadora",
+  TokenValidation,
+  ListUsuarioCalculadora
+);
+router.post(
+  "/export_listar_usuarios_calculadora",
+  TokenValidation,
+  ExportListUsuarioCalculadora
+);
+router.post("/gen_link_resset", GenerarTokenRecuperarContrasenia);
+router.post("/validate_token", validateToken);
+router.post("/reestablecer_clave", UpdatePass);
 
 export default router;

@@ -1,44 +1,62 @@
 import { Request, Response } from "express";
-import { connect } from "../routes/database";
+import { conexion } from "../routes/databasePGOp";
+import * as pg from "pg";
+const { Pool } = pg;
 
-export const getCity = async (req: Request, res: Response) => {
-  const conn = await connect();
+const pool = conexion();
+
+export const getCity = async (req: Request, res: Response) => {  
   const { idState } = req.body;
-  await conn.query(
-    "SELECT * FROM view_cityList where id_state = ? and status <> 0",
-    [idState],
-    (err, rows, fields) => {
+  await pool.query(
+    "SELECT * FROM Loc_City_listar($1,$2);",
+    [idState, null],
+    (err, response, fields) => {
       if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };
 
-export const getCityPricing = async (req: Request, res: Response) => {
-  const conn = await connect();
+export const getCityPricing = async (req: Request, res: Response) => {  
   const { idState } = req.body;
-  await conn.query(
-    "SELECT * FROM view_cityList where id_state = ? and status <> 0 and code = 3128",
-    [idState],
-    (err, rows, fields) => {
+  await pool.query(
+    "SELECT * FROM Loc_City_listar($1,$2);",
+    [idState, 3128],
+    (err, response, fields) => {
       if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };

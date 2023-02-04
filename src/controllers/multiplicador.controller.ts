@@ -1,8 +1,12 @@
 import { Request, Response } from "express";
-import { connect } from "../routes/database";
+
+import { conexion } from "../routes/databasePGOp";
+import * as pg from "pg";
+const { Pool } = pg;
+
+const pool = conexion();
 
 export const getMultiplicador = async (req: Request, res: Response) => {
-  const conn = await connect();
   const { id_shipment, containers, id_branch } = req.body;
   let code7;
   let code8;
@@ -17,40 +21,42 @@ export const getMultiplicador = async (req: Request, res: Response) => {
   if (containers) {
     containers.map((item: any) => {
       if (item.id == 1) {
-        code7 = "";
+        code7 = null;
       }
       if (item.id == 2) {
-        code10 = "";
+        code10 = null;
       }
       if (item.id == 3) {
-        code9 = "";
+        code9 = null;
       }
       if (item.id == 4) {
-        code8 = "";
+        code8 = null;
       }
     });
   }
 
-  await conn.query(
-    "SELECT * FROM view_multiplicadorList where id_shipment = ? and status <> 0 and code <> ? and code <> ? and code <> ? and code <> ? and id_branch = ? ",
-    [id_shipment, code7, code10, code9, code8, id_branch],
-
-    (err, rows, fields) => {
-      // console.log(code7);
-      // console.log(code10);
-      // console.log(code9);
-      // console.log(code8);
+  await pool.query(
+    "SELECT * FROM TABLE_MULTIPLICADOR_listar($1,$2,$3,$4,$5,$6)",
+    [id_branch, id_shipment, code7, code10, code9, code8],
+    (err, response, fields) => {
       if (!err) {
-        // console.log(containers)
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };

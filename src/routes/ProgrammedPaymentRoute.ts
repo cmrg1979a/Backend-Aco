@@ -18,7 +18,7 @@ router.put(
   updateProgrammedPayment
 );
 router.get(
-  "/ListProgrammedPaymentDetails",
+  "/ListProgrammedPaymentDetails/:id_branch",
   TokenValidation,
   ListProgrammedPaymentDetails
 );

@@ -39,10 +39,6 @@ router.get(
   TokenValidation,
   getVerInvoiceAdminCxC
 );
-router.put(
-  "/setUpdateInvoiceAdminCxC",
-  TokenValidation,
-  setUpdateInvoiceAdminCxC
-);
+router.put("/setUpdateInvoiceAdminCxC",TokenValidation,setUpdateInvoiceAdminCxC);
 router.post("/delProCxC", TokenValidation, delProCxC);
 export default router;

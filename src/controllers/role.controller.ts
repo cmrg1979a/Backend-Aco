@@ -1,53 +1,71 @@
 import { Request, Response } from "express";
-import { connect } from "../routes/database";
+
+import { conexion } from "../routes/databasePGOp";
+import * as pg from "pg";
+const { Pool } = pg;
+
+const pool = conexion();
 
 export const getModuleRole = async (req: Request, res: Response) => {
-  const conn = await connect();
   const { id_module } = req.body;
-  await conn.query(
-    `SELECT * FROM view_moduleRole where id_module = ${req.body.id_module} and status <> 0`,
-
-    (err, rows, fields) => {
+  const { id_branch } = req.body;
+  await pool.query(
+    `SELECT * FROM role_listar($1,$2);`,
+    [id_branch, id_module],
+    (err, response, fields) => {
       if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };
 
 export const getRole = async (req: Request, res: Response) => {
-  const conn = await connect();
-
-  await conn.query(
-    "SELECT * FROM Table_Role where status <> 0",
-    (err, rows, fields) => {
+  await pool.query(
+    "SELECT * FROM Table_Role_LISTAR()",
+    (err, response, fields) => {
       if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };
 
 export const editRole = async (req: Request, res: Response) => {
-  const conn = await connect();
   const { id_entities } = req.params;
   const { id_role } = req.body;
-  await conn.query(
-    "UPDATE Entities_Role set id_role = ? where id_entities = ?",
+  await pool.query(
+    "UPDATE Entities_Role set id_role = $1 where id_entities = $2",
     [id_role, id_entities],
     (err, rows, fields) => {
       if (!err) {
@@ -59,7 +77,6 @@ export const editRole = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };

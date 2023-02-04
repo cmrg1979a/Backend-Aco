@@ -4,16 +4,42 @@ import cors from "cors";
 import path from "path";
 import multer from "multer";
 import bodyParser from "body-parser";
+import * as pg from "pg";
+const { Pool } = pg;
 
 var mysql = require("mysql");
 
+const pool = new Pool({
+  host: "10.116.0.2",
+  user: "postgres",
+  password: "@Developer2021Pic",
+  port: "5432",
+  database: "db_op_main_01",
+});
+// const pool = new Pool({
+//   host: "157.230.14.98",
+//   user: "chainsolver",
+//   password: "Fr3sc0l1t4+",
+//   port: "5432",
+//   database: "db_op_main_01",
+// });
+
+// var con = mysql.createConnection({
+//   host: "67.205.129.62",
+//   user: "admin",
+//   password: "@Developer2021Pic",
+//   database: "db_op_main_01",
+//   port: 3306,
+//   waitForConnections: true,
+// });
 var con = mysql.createConnection({
-  host: "157.230.14.98",
+  host: "10.116.0.2",
   user: "admin",
   password: "@Developer2021Pic",
   database: "db_op_main_01",
+  waitForConnections: true,
 });
-//con.connect();
+// con.connect();
 const app: Application = express();
 
 import authRoutes from "./routes/auth";
@@ -65,7 +91,9 @@ import monthRoutes from "./routes/month";
 import yearRoutes from "./routes/year";
 import ProgrammedPaymentRoutes from "./routes/ProgrammedPaymentRoute";
 import Calculadora from "./routes/calculadora";
- 
+import Factura from "./routes/factura";
+import Invoice from "./routes/invoice";
+
 // settings
 app.set("port", 9200);
 
@@ -89,16 +117,19 @@ var ruta;
 var type;
 var size;
 var fileName;
+var newName;
 var storage = multer.diskStorage({
   destination: function (req, file, callback) {
     callback(null, "./uploads");
   },
   filename: function (req, file, callback) {
-    callback(null, file.originalname);
-    ruta = file.originalname;
+    let fecha = Date.now();
     fileName = file.originalname.split(".");
     type = fileName[fileName.length - 1];
     size = fileName.size;
+    ruta = `${fecha}.${type}`;
+    newName = `${fecha}.${type}`;
+    callback(null, `${fecha}.${type}`);
   },
 });
 
@@ -110,34 +141,34 @@ app.post("/uploadFilesSingle", function (req, res) {
       return res.end("Error uploading file.");
     }
 
-    console.log("Connected!");
-    var sql =
-      'INSERT INTO Table_Path (id_quote, name, type, size, path, status) VALUES ("' +
-      req.body.id_quote +
-      '","' +
-      req.body.name +
-      '","' +
-      type +
-      '","' +
-      size +
-      '","https://api-general.qreport.site/uploads/' +
-      ruta +
-      '","' +
-      1 +
-      '")';
-    con.query(sql, function (err, result) {
-      if (err) throw err;
-      console.log("1 record inserted");
-    });
+    pool.query(
+      "select * from Table_Path_insertar_q($1,$2,$3,null,$4)",
+      [req.body.id_quote, req.body.name, type, ruta],
+      (err, response, fields) => {
+        if (!err) {
+          let rows = response.rows;
+          if (!!rows[0].estadoflag) {
+            res.json({
+              status: 200,
+              statusBol: true,
 
-    res.json({
-      status: 200,
-      statusBol: true,
-      data: {
-        ruta: "https://api-general.qreport.site/uploads/" + ruta,
-        name: ruta,
-      },
-    });
+              data: {
+                ruta: "https://api-general.qreport.site/uploads/" + ruta,
+                name: ruta,
+              },
+            });
+          } else {
+            res.json({
+              status: 200,
+              statusBol: true,
+              mensaje: rows[0].mensaje,
+            });
+          }
+        } else {
+          console.log(err);
+        }
+      }
+    );
   });
 });
 
@@ -148,38 +179,31 @@ app.post("/uploadAllPath", function (req, res) {
     if (err) {
       return res.end("Error uploading file.");
     }
+    pool.query(
+      "select * from Table_AllPath_insertar($1,$2,$3,$4,$5,$6 )",
+      [newName, type, size, process.env.RUTA_FILE + ruta, fileName[0], 1],
+      (err, response, fields) => {
+        if (!err) {
+          let rows = response.rows;
+          if (!!rows[0].estadoflag) {
+            res.json({
+              status: 200,
+              statusBol: true,
 
-    console.log("Connected!");
-
-    var sql =
-      'INSERT INTO Table_AllPath (originalname, type, size, path, name, hash, status) VALUES ("' +
-      fileName +
-      '","' +
-      type +
-      '","' +
-      size +
-      '","https://api-general.qreport.site/uploads/' +
-      ruta +
-      '","' +
-      req.body.name +
-      '",MD5("https://api-general.qreport.site/uploads/' +
-      ruta +
-      '"),"' +
-      req.body.status +
-      '")';
-    con.query(sql, function (err, result: any) {
-      if (err) throw err;
-      console.log("1 record inserted");
-      res.json({
-        status: 200,
-        statusBol: true,
-        data: {
-          ruta: "https://api-general.qreport.site/uploads/" + ruta,
-          name: ruta,
-          data: result,
-        },
-      });
-    });
+              data: rows,
+            });
+          } else {
+            res.json({
+              status: 200,
+              statusBol: true,
+              mensaje: rows[0].mensaje,
+            });
+          }
+        } else {
+          console.log(err);
+        }
+      }
+    );
   });
 });
 
@@ -264,5 +288,7 @@ app.use(monthRoutes);
 app.use(yearRoutes);
 app.use(ProgrammedPaymentRoutes);
 app.use(Calculadora);
+app.use(Factura);
+app.use(Invoice);
 
 export default app;

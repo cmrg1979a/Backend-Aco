@@ -1,44 +1,63 @@
 import { Request, Response } from "express";
-import { connect } from "../routes/database";
+
+import { conexion } from "../routes/databasePGOp";
+import * as pg from "pg";
+const { Pool } = pg;
+
+const pool = conexion();
 
 export const getPortBegin = async (req: Request, res: Response) => {
-  const conn = await connect();
   const { id_transport } = req.body;
-  await conn.query(
-    "SELECT * FROM view_portList where status <> 0 and id_begend = 1 and id_transport = ?",
-    [id_transport],
-    (err, rows, fields) => {
+  await pool.query(
+    "SELECT * FROM PORT_BEGINEND_listar($1,$2);",
+    [1, id_transport],
+    (err, response, fields) => {
       if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };
 
 export const getPortEnd = async (req: Request, res: Response) => {
-  const conn = await connect();
   const { id_transport } = req.body;
-  await conn.query(
-    "SELECT * FROM view_portList where status <> 0 and id_begend = 2 and id_transport = ?",
-    [id_transport],
-    (err, rows, fields) => {
+  await pool.query(
+    "SELECT * FROM PORT_BEGINEND_listar($1,$2);",
+    [2, id_transport],
+    (err, response, fields) => {
       if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };

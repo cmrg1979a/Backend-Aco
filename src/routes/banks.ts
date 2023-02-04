@@ -13,6 +13,8 @@ import {
   getListarPayForCustomer,
   getVerPagosPorCustomer,
   getListaPagosXProveedorCxC,
+  // ExportarListadoReportePagos,
+  RegistroPagoDetalles,
 } from "../controllers/banks.controller";
 
 router.post("/getBanksList", TokenValidation, getBanksList);
@@ -36,7 +38,7 @@ router.get(
 
 router.post("/setPayForCustomer", TokenValidation, setPayForCustomer);
 router.get(
-  "/getListarPayForCustomer",
+  "/getListarPayForCustomer/:id_branch",
   TokenValidation,
   getListarPayForCustomer
 );
@@ -46,4 +48,6 @@ router.get(
   TokenValidation,
   getListaPagosXProveedorCxC
 );
+// router.get("/exportar_listado_reporte_pagos", TokenValidation, ExportarListadoReportePagos);
+router.post("/registro_pago_detalles", TokenValidation, RegistroPagoDetalles);
 export default router;

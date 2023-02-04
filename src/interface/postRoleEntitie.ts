@@ -1,4 +1,4 @@
 export interface postRoleEntities {
-  id_entities: string;
-  id_role: string;
+  id_entities: number;
+  id_role: number;
 }

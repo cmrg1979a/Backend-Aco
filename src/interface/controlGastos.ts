@@ -1,6 +1,6 @@
 export interface postControl {
-  id_house: string;
-  id_user: string;
-  status: string;
+  id_house: Number;
+  id_user: Number;
+  status: Number;
 
 }

@@ -1,33 +1,42 @@
-import { Request, Response } from "express";
-import { connect } from "../routes/database";
+import { Request, response, Response } from "express";
+
+import { conexion } from "../routes/databasePGOp";
+import * as pg from "pg";
+const { Pool } = pg;
+const pool = conexion();
 
 export const getTypeAccount = async (req: Request, res: Response) => {
-  const conn = await connect();
-
-  await conn.query(
-    "SELECT * FROM view_typeAccount where status <> 0",
-    (err, rows, fields) => {
+  await pool.query(
+    "SELECT * FROM table_type_account_listar($1)",
+    [req.body.id_branch],
+    (err, response, fields) => {
       if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };
 
 export const setAccount = async (req: Request, res: Response) => {
-  const conn = await connect();
-
   const dataObj = req.body;
 
-  await conn.query(
-    "INSERT INTO Entities_Accounts (id_entities, id_account, id_banks, id_coins, accountNumber, status) values (?,?,?,?,?,?)",
+  await pool.query(
+    "INSERT INTO Entities_Accounts (id_entities, id_account, id_banks, id_coins, accountNumber, status,id_branch) values ($1,$2,$3,$4,$5,$6,$7)",
     [
       dataObj.id_entities,
       dataObj.id_account,
@@ -35,66 +44,68 @@ export const setAccount = async (req: Request, res: Response) => {
       dataObj.id_coins,
       dataObj.accountNumber,
       dataObj.status,
+      dataObj.id_branch,
     ],
     (err, rows, fields) => {
       if (!err) {
         res.json({
           status: 200,
           statusBol: true,
-          data: rows,
+          data: rows.rows,
         });
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };
 
 export const getAccountsNumber = async (req: Request, res: Response) => {
-  const conn = await connect();
-
-  const id_entities = req.params.id_entities;
-
-  await conn.query(
-    "SELECT * FROM view_accountsNumberList where status <> 0 and id_entities = ?",
-    [id_entities],
-    (err, rows, fields) => {
+  let id_branch = req.body.id_branch;
+  let id_entities = req.params.id_entities;
+  console.log(id_entities);
+  await pool.query(
+    "SELECT * FROM entities_accounts_list($1,$2)",
+    [id_branch, id_entities === "undefined" ? 0 : id_entities],
+    (err, response, fields) => {
       if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
-        
-        conn.end();
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
-        conn.end();
       }
     }
   );
 };
 
 export const delAccount = async (req: Request, res: Response) => {
-  const conn = await connect();
-
   const id = req.params.id;
 
-  await conn.query(
-    "DELETE FROM Entities_Accounts where id = ?",
+  await pool.query(
+    "UPDATE Entities_Accounts SET status = 0  where id = $1",
     [id],
     (err, rows, fields) => {
       if (!err) {
         res.json({
           status: 200,
           statusBol: true,
-          data: rows,
+          data: rows.rows,
         });
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };

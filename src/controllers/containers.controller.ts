@@ -1,31 +1,43 @@
 import { Request, Response } from "express";
-import { connect } from "../routes/database";
+
 import { postContainers } from "../interface/containers";
+import { conexion } from "../routes/databasePGOp";
+import * as pg from "pg";
+const { Pool } = pg;
+
+const pool = conexion();
 
 export const getContainers = async (req: Request, res: Response) => {
-  const conn = await connect();
-  await conn.query(
-    `SELECT * FROM view_containersList where status <> 0  `,
-    (err, rows, fields) => {
+  await pool.query(
+    `SELECT * FROM Table_Containers_listar();`,
+    (err, response, fields) => {
+
       if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };
 
 export const setHouseContainers = async (req: Request, res: Response) => {
-  const conn = await connect();
   const dataObj: postContainers = req.body;
-  await conn.query(
-    "INSERT INTO House_Containers SET ?",
+  await pool.query(
+    "INSERT INTO House_Containers SET $1",
     [dataObj],
     (err, rows, fields) => {
       if (!err) {
@@ -37,16 +49,14 @@ export const setHouseContainers = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };
 
 export const deleteContainers = async (req: Request, res: Response) => {
-  const conn = await connect();
   const { id } = req.body;
-  await conn.query(
-    "DELETE FROM House_Containers WHERE id = ?",
+  await pool.query(
+    "DELETE FROM House_Containers WHERE id = $1",
     [id],
     (err, rows, fields) => {
       if (!err) {
@@ -58,7 +68,6 @@ export const deleteContainers = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
-      conn.end();
     }
   );
 };

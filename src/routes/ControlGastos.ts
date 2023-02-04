@@ -17,6 +17,7 @@ import {
   editEgreso,
   getEgresosExpediente,
   getEgresosProveedorList,
+  delEgregso,
 } from "../controllers/controlGastos.controller";
 
 router.post("/setControl", TokenValidation, setControl);
@@ -24,7 +25,11 @@ router.post("/setIngresos", TokenValidation, setIngresos);
 router.post("/setEgresos", TokenValidation, setEgresos);
 router.post("/getIngresos/:id_orders", TokenValidation, getIngresosList);
 router.post("/getEgresos/:id_orders", TokenValidation, getEgresosList);
-router.post("/getEgresosExpediente/:id_house", TokenValidation, getEgresosExpediente);
+router.post(
+  "/getEgresosExpediente/:id_house",
+  TokenValidation,
+  getEgresosExpediente
+);
 router.post(
   "/getEgresosDivision/:id_orders/:id_proveedor",
   TokenValidation,
@@ -40,5 +45,6 @@ router.post(
 );
 router.post("/editIngreso/:id", TokenValidation, editIngreso);
 router.post("/editEgreso/:id", TokenValidation, editEgreso);
+router.put("/delEgregso/:id", TokenValidation, delEgregso);
 
 export default router;
