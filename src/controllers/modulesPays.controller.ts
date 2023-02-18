@@ -167,7 +167,7 @@ export const getInvoiceAdmin = async (req: Request, res: Response) => {
 
 export const delPro = async (req: Request, res: Response) => {
   const dataObj = req.body;
-  console.log(dataObj);
+  
   await pool.query(
     "select * from function_del_pro($1)",
     [dataObj.id],
@@ -253,6 +253,7 @@ export const setUpdateInvoiceAdmin = async (req: Request, res: Response) => {
   const dataObj = req.body;
   const dataDetails = req.body.detalle;
   let path = isNaN(+dataObj.id_path);
+  
   await pool.query(
     "SELECT * FROM  table_DetailsInvoiceAdmin_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19)",
     [
@@ -343,11 +344,7 @@ export const getInvoiceAdminCxC = async (req: Request, res: Response) => {
 export const setInvoiceAdminCxC = async (req: Request, res: Response) => {
   const dataObj = req.body;
   const dataDetails = req.body.detalle;
-  console.log(
-    dataDetails.map((item: any) => {
-      return item.concepto;
-    })
-  );
+ 
   await pool.query(
     "SELECT * FROM Table_InvoiceAdminCxC_isertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)",
     [
@@ -436,9 +433,9 @@ export const getVerInvoiceAdminCxC = async (req: Request, res: Response) => {
 export const setUpdateInvoiceAdminCxC = async (req: Request, res: Response) => {
   const dataObj: InvoiceAdminCxC = req.body;
   const dataDetails = dataObj.detalle;
-  console.log(dataDetails);
+  
   await pool.query(
-    "select * from Table_InvoiceAdminCxC_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22)",
+    "select * from Table_InvoiceAdminCxC_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23)",
     [
       dataObj.type_payment,
       dataObj.id_expediente,
@@ -456,22 +453,25 @@ export const setUpdateInvoiceAdminCxC = async (req: Request, res: Response) => {
       dataObj.id_month,
       dataObj.id_year,
       dataDetails.map((item: any) => {
-        return item.concepto_d;
+        return item.concepto;
       }),
       dataDetails.map((item: any) => {
-        return item.monto_d;
+        return item.monto;
       }),
       dataDetails.map((item: any) => {
-        return item.total_d;
+        return item.total;
       }),
       dataDetails.map((item: any) => {
-        return item.afecto_d;
+        return item.afecto == 1 || item.afecto ? 1 : 0;
       }),
       dataDetails.map((item: any) => {
-        return item.status_d == 1 || item.status_d == true ? 1 : 0;
+        return item.status == 1 || item.status == true ? 1 : 0;
       }),
       dataDetails.map((item: any) => {
-        return item.id_d;
+        return item.id;
+      }),
+      dataDetails.map((item: any) => {
+        return item.igv ? item.igv : 0;
       }),
       dataObj.id,
     ],
@@ -539,7 +539,7 @@ export const paymentInvoiceAdminCxC = async (req: Request, res: Response) => {
 
 export const delProCxC = async (req: Request, res: Response) => {
   const dataObj = req.body;
-  console.log(dataObj.id);
+  
   await pool.query(
     "UPDATE Table_InvoiceAdminCxC SET status = 0 where id = $1",
     [dataObj.id],

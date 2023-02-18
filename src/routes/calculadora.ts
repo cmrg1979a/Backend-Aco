@@ -10,6 +10,15 @@ import {
   CargarSucursal,
   ExportListUsuarioCalculadora,
   GenerarTokenRecuperarContrasenia,
+  GetCotAereo,
+  GetCotAereoResumen,
+  GetCotFCL,
+  GetCotFCLResumen,
+  GetCotLCL,
+  GetCotLCLResumen,
+  GetTotalCotizacion,
+  InsertCall,
+  InsertCotizacionXCliente,
   ListUsuarioCalculadora,
   loginUsuarios,
   RegistrarCargaMasivaAereo,
@@ -18,6 +27,7 @@ import {
   RegistrarCotizacionXCorreo,
   RegistrarUsuario,
   RegistrarUsuarioGmail,
+  StatusCarge,
   UpdatePass,
   ValidarCorreoExiste,
   validarGenerarCotizacion,
@@ -77,5 +87,18 @@ router.post(
 router.post("/gen_link_resset", GenerarTokenRecuperarContrasenia);
 router.post("/validate_token", validateToken);
 router.post("/reestablecer_clave", UpdatePass);
+router.post("/cargue_status", TokenValidation, StatusCarge);
+router.post("/insert_call", TokenValidation, InsertCall);
+router.post(
+  "/cotizacion_cliente_register",
+  InsertCotizacionXCliente
+);
+router.get("/get_cot_fcl", TokenValidation, GetCotFCL);
+router.get("/get_cot_fcl_resumen", TokenValidation, GetCotFCLResumen);
+router.get("/get_cot_lcl", TokenValidation, GetCotLCL);
+router.get("/get_cot_lcl_resumen", TokenValidation, GetCotLCLResumen);
+router.get("/get_cot_aereo", TokenValidation, GetCotAereo);
+router.get("/get_cot_aereo_resumen", TokenValidation, GetCotAereoResumen);
+router.post("/get_total_cotizacion", GetTotalCotizacion);
 
 export default router;

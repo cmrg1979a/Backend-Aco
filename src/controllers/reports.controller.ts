@@ -469,7 +469,7 @@ export const createdPDF = async (req: Request, res: Response) => {
         let itemsHouse = [];
 
         rows.forEach((element) => {
-          console.log(element.datahouse)
+          console.log(element.datahouse);
           itemsHouse.push({
             dataHouse: element.datahouse,
             dataService: element.dataservice ? element.dataservice : [],
@@ -881,6 +881,7 @@ export const test = async (req: Request, res: Response) => {
 
 export const getReportFileDetails = async (req: Request, res: Response) => {
   const { dateDesde, dateHasta } = req.body;
+  // se a movido la función existe una copia llamada totales_pagados_orders_old revisarla en caso se quiera revetir
   await pool.query(
     "SELECT * FROM totales_pagados_orders($1,$2)",
     [dateDesde, dateHasta],
@@ -1106,7 +1107,10 @@ export const pdfFD = async (req: Request, res: Response) => {
 };
 
 export const constRexportCXPExcel = async (req: Request, res: Response) => {
-  var wb = new xl.Workbook();
+  var wb = new xl.Workbook({
+    dateFormat: "dd/mm/yyyy",
+    author: "PIC CARGO - IMPORTADORES",
+  });
   await pool.query(
     "select * from controlgastos_egresos_reportecxp(1)",
     (err, response, fields) => {
@@ -1188,13 +1192,13 @@ export const constRexportCXPExcel = async (req: Request, res: Response) => {
                 var ws = wb.addWorksheet("Operativa");
                 var wa = wb.addWorksheet("Administrativa");
                 /** ANCHO COLUMNAS */
-                ws.column(2).setWidth(80);
+                ws.column(1).setWidth(60);
                 ws.column(3).setWidth(60);
-                wa.column(1).setWidth(25);
-                wa.column(2).setWidth(25);
-                wa.column(3).setWidth(25);
-                wa.column(4).setWidth(25);
-
+                ws.column(4).setWidth(40);
+                ws.row(2).filter();
+                // -------------------------
+                wa.column(1).setWidth(60);
+                wa.row(2).filter();
                 /** ------- REPORTE OPERATIVO ---------- */
                 /** ELIMINAR REPETIDOS */
                 let data = [];
@@ -1226,7 +1230,6 @@ export const constRexportCXPExcel = async (req: Request, res: Response) => {
                       }
                       restante_pagar += parseFloat(element2.total_pagar);
                     }
-                    console.log("ok siguiente");
                   });
                   element.details = detalles;
                   element.restante_llegada = restante_llegada;
@@ -1242,83 +1245,65 @@ export const constRexportCXPExcel = async (req: Request, res: Response) => {
                   .string("REPORTE DE CUENTAS POR PAGAR")
                   .style(cabTitle);
                 let fila = 2;
-                ws.cell(fila, 1, fila, 4, true)
-                  .string("PROVEEDOR")
-                  .style(cabProveedor);
-                ws.cell(fila, 5).string("LLEGADAS").style(cabLlegada);
-                ws.cell(fila, 6).string("NO LLEGADAS").style(cabNoLlegada);
-                ws.cell(fila, 7).string("GENERAL").style(cabGeneral);
+                ws.cell(fila, 1).string("Proveedor").style(cabDetalle);
+                ws.cell(fila, 2).string("Expediente").style(cabDetalle);
+                ws.cell(fila, 3).string("Cliente").style(cabDetalle);
+                ws.cell(fila, 4).string("Factura").style(cabDetalle);
+                ws.cell(fila, 5)
+                  .string("Fecha Disponibilidad")
+                  .style(cabDetalle);
+                ws.cell(fila, 6).string("Moneda").style(cabDetalle);
+                ws.cell(fila, 7).string("Total Pagar").style(cabDetalle);
+                ws.cell(fila, 8).string("Estatus").style(cabDetalle);
+                ws.cell(fila, 9).string("Pagado Cliente").style(cabDetalle);
                 fila++;
+
                 data.forEach((element) => {
-                  ws.cell(fila, 1, fila, 4, true)
-                    .string(element.nameproveedor)
-                    .style(cabProveedorDetalle);
-                  ws.cell(fila, 5)
-                    .number(element.restante_llegada)
-                    .style(cabProveedorDetalle);
-                  ws.cell(fila, 6)
-                    .number(element.restante_no_llegada)
-                    .style(cabProveedorDetalle);
-                  ws.cell(fila, 7)
-                    .number(element.restante_pagar)
-                    .style(cabProveedorDetalle);
-                  fila++;
-                  ws.cell(fila, 1).string("Expediente").style(cabDetalle);
-                  ws.cell(fila, 2).string("Cliente").style(cabDetalle);
-                  ws.cell(fila, 3).string("Factura").style(cabDetalle);
-                  ws.cell(fila, 4)
-                    .string("Fecha Disponibilidad")
-                    .style(cabDetalle);
-                  ws.cell(fila, 5).string("Total Pagar").style(cabDetalle);
-                  ws.cell(fila, 6).string("Estatus").style(cabDetalle);
-                  ws.cell(fila, 7).string("Pagado Cliente").style(cabDetalle);
-                  fila++;
                   element.details.forEach((element2) => {
-                    ws.cell(fila, 1).string(element2.nro_master + "");
-                    ws.cell(fila, 2).string(element2.nameconsigner);
-                    ws.cell(fila, 3).string(element2.expedientes);
-                    ws.cell(fila, 4).string(element2.fecha_disponibilidad);
-                    ws.cell(fila, 5).string(
-                      element2.symbol + " " + element2.total_pagar
-                    );
-                    ws.cell(fila, 6).string(
+                    ws.cell(fila, 1).string(element.nameproveedor + "");
+                    ws.cell(fila, 2).string(element2.nro_master + "");
+                    element2.nameconsigner
+                      ? ws.cell(fila, 3).string(element2.nameconsigner)
+                      : ws.cell(fila, 3).string("");
+                    ws.cell(fila, 4).string(element2.expedientes);
+                    ws.cell(fila, 5).date(element2.fecha_disponibilidad);
+                    ws.cell(fila, 6).string(element2.symbol);
+                    ws.cell(fila, 7).number(element2.total_pagar);
+                    ws.cell(fila, 8).string(
                       element2.llegada == 1 ? "LLEGADA" : "NO LLEGADA"
                     );
-                    ws.cell(fila, 7).string(element2.pagado == 1 ? "SI" : "NO");
+                    ws.cell(fila, 9).string(element2.pagado == 1 ? "SI" : "NO");
                     fila++;
                   });
                 });
                 /** ------- REPORTE ADMINISTRATIVO ---------- */
-                wa.cell(1, 1, 1, 4, true)
+                wa.cell(1, 1, 1, 9, true)
                   .string("REPORTE DE CUENTAS POR PAGAR ADMINISTRATIVAS")
                   .style(cabTitle);
                 let filaA = 2;
-                wa.cell(filaA, 1, filaA, 4, true)
-                  .string("PROVEEDOR")
-                  .style(cabProveedor);
+
+                wa.cell(filaA, 1).string("Proveedor").style(cabDetalle);
+                wa.cell(filaA, 2).string("N° Factura").style(cabDetalle);
+                wa.cell(filaA, 3).string("Fecha").style(cabDetalle);
+                wa.cell(filaA, 4).string("Moneda").style(cabDetalle);
+                wa.cell(filaA, 5).string("Monto").style(cabDetalle);
+                wa.cell(filaA, 6).string("Moneda").style(cabDetalle);
+                wa.cell(filaA, 7).string("IGV").style(cabDetalle);
+                wa.cell(filaA, 8).string("Moneda").style(cabDetalle);
+                wa.cell(filaA, 9).string("Total").style(cabDetalle);
                 filaA++;
                 rows2.forEach((element) => {
-                  wa.cell(filaA, 1, filaA, 4, true)
-                    .string(element.nameconsigner)
-                    .style(cabProveedorDetalle);
-                  filaA++;
-                  wa.cell(filaA, 1).string("Fecha").style(cabDetalle);
-                  wa.cell(filaA, 2).string("Monto").style(cabDetalle);
-                  wa.cell(filaA, 3).string("IGV").style(cabDetalle);
-                  wa.cell(filaA, 4).string("Total").style(cabDetalle);
-                  filaA++;
-
                   element.details.forEach((element2) => {
-                    wa.cell(filaA, 1).string(element2.fecha);
-                    wa.cell(filaA, 2).string(
-                      element2.namecoins + " " + element2.monto
-                    );
-                    wa.cell(filaA, 3).string(
-                      element2.namecoins + " " + element2.igv
-                    );
-                    wa.cell(filaA, 4).string(
-                      element2.namecoins + " " + element2.total
-                    );
+                    // console.log(element2);
+                    wa.cell(filaA, 1).string(element.nameconsigner);
+                    wa.cell(filaA, 2).string(element2.nro_factura);
+                    wa.cell(filaA, 3).date(element2.fecha);
+                    wa.cell(filaA, 4).string(element2.namecoins);
+                    wa.cell(filaA, 5).number(element2.monto);
+                    wa.cell(filaA, 6).string(element2.namecoins);
+                    wa.cell(filaA, 7).number(element2.igv);
+                    wa.cell(filaA, 8).string(element2.namecoins);
+                    wa.cell(filaA, 9).number(element2.total);
                     filaA++;
                   });
                 });
@@ -1376,7 +1361,7 @@ export const constRexportCXPExcel = async (req: Request, res: Response) => {
                   // "C:\\laragon\\www\\api-backend-general-v1\\uploads",
                   // `${process.env.RUTA_FILE}/uploads`,
                   `${__dirname}../../../uploads`,
-                  uuidv4() + ".xlsx"
+                  "Reportexls.xlsx"
                 );
 
                 wb.write(pathexcel, function (err, stats) {
@@ -1398,7 +1383,10 @@ export const constRexportCXPExcel = async (req: Request, res: Response) => {
 };
 
 export const constReporteCXCExcel = async (req: Request, res: Response) => {
-  var wb = new xl.Workbook();
+  var wb = new xl.Workbook({
+    dateFormat: "dd/mm/yyyy",
+    author: "PIC CARGO - IMPORTADORES",
+  });
   await pool.query(
     "select * from DEBSCLIENT_reportecxc(1)",
     (err, response, fields) => {
@@ -1483,93 +1471,71 @@ export const constReporteCXCExcel = async (req: Request, res: Response) => {
 
                 /** LLEANDO DE DATOS */
 
-                ws.cell(1, 1, 1, 7, true)
+                ws.cell(1, 1, 1, 6, true)
                   .string("REPORTE DE CUENTAS POR COBRAR")
                   .style(cabTitle);
                 let fila = 2;
-                ws.cell(fila, 1, fila, 4, true)
-                  .string("CLIENTE")
-                  .style(cabProveedor);
 
-                ws.cell(fila, 5).string("LLEGADAS").style(cabLlegada);
-                ws.cell(fila, 6).string("NO LLEGADAS").style(cabNoLlegada);
-                ws.cell(fila, 7).string("GENERAL").style(cabGeneral);
+                ws.cell(fila, 1).string("Expediente").style(cabDetalle);
+                ws.cell(fila, 2).string("Cliente").style(cabDetalle);
+                ws.cell(fila, 3)
+                  .string("Fecha Disponibilidad")
+                  .style(cabDetalle);
+                ws.cell(fila, 4).string("Moneda").style(cabDetalle);
+                ws.cell(fila, 5).string("Total Pagar").style(cabDetalle);
+                ws.cell(fila, 6).string("Estatus").style(cabDetalle);
+                ws.row(fila).filter();
+                ws.column(2).setWidth(60);
                 fila++;
 
                 rows.forEach((element) => {
-                  ws.cell(fila, 1, fila, 4, true)
-                    .string(element.nameconsigner)
-                    .style(cabProveedorDetalle);
-                  ws.cell(fila, 5)
-                    .string(element.total_llegada)
-                    .style(cabProveedorDetalle);
-                  ws.cell(fila, 6)
-                    .string(element.total_no_llegada)
-                    .style(cabProveedorDetalle);
-                  ws.cell(fila, 7)
-                    .string(element.total_pagar)
-                    .style(cabProveedorDetalle);
-                  fila++;
-                  ws.cell(fila, 1).string("Expediente").style(cabDetalle);
-                  ws.cell(fila, 2, fila, 4, true)
-                    .string("Cliente")
-                    .style(cabDetalle);
-                  ws.cell(fila, 5)
-                    .string("Fecha Disponibilidad")
-                    .style(cabDetalle);
-                  ws.cell(fila, 6).string("Total Pagar").style(cabDetalle);
-                  ws.cell(fila, 7).string("Estatus").style(cabDetalle);
-                  fila++;
-
                   element.details.forEach((element2) => {
-                    ws.cell(fila, 1).string(element2.nro_master + "");
+                    ws.cell(fila, 1).string(element2.nro_master);
                     ws.cell(fila, 2).string(element2.nameconsigner);
-
-                    ws.cell(fila, 5).string(element2.fecha_disponibilidad);
+                    if (element2.fecha_disponibilidad) {
+                      ws.cell(fila, 3).date(element2.fecha_disponibilidad);
+                    } else {
+                      ws.cell(fila, 3).string("");
+                    }
+                    ws.cell(fila, 4).string(element2.symbol);
+                    ws.cell(fila, 5).number(element2.total_pagar);
                     ws.cell(fila, 6).string(
-                      element2.symbol + " " + element2.total_pagar
-                    );
-                    ws.cell(fila, 7).string(
                       element2.llegada == 1 ? "LLEGADA" : "NO LLEGADA"
                     );
                     fila++;
                   });
                 });
                 /** ------- REPORTE ADMINISTRATIVO ---------- */
-                wa.cell(1, 1, 1, 4, true)
+                wa.cell(1, 1, 1, 7, true)
                   .string("REPORTE DE CUENTAS POR COBRAR ADMINISTRATIVAS")
                   .style(cabTitle);
                 let filaA = 2;
-                wa.cell(filaA, 1, filaA, 3, true)
-                  .string("CLIENTE")
-                  .style(cabProveedor);
-                wa.cell(filaA, 4).string("TOTAL").style(cabProveedor);
+                // wa.cell(filaA, 1, filaA, 3, true)
+                //   .string("CLIENTE")
+                //   .style(cabProveedor);
+                // wa.cell(filaA, 4).string("TOTAL").style(cabProveedor);
+
+                wa.cell(filaA, 1).string("Cliente").style(cabDetalle);
+                wa.cell(filaA, 2).string("Fecha").style(cabDetalle);
+                wa.cell(filaA, 3).string("Documento").style(cabDetalle);
+                wa.cell(filaA, 4).string("Moneda").style(cabDetalle);
+                wa.cell(filaA, 5).string("Monto Inicial").style(cabDetalle);
+                wa.cell(filaA, 6).string("Moneda").style(cabDetalle);
+                wa.cell(filaA, 7).string("Deuda Actual").style(cabDetalle);
+                wa.row(filaA).filter();
+                wa.column(1).setWidth(60);
                 filaA++;
 
                 rows2.forEach((element) => {
-                  wa.cell(filaA, 1, filaA, 3, true)
-                    .string(element.nameconsigner)
-                    .style(cabProveedorDetalle);
-                  wa.cell(filaA, 4)
-                    .string(element.total_pagar)
-                    .style(cabProveedorDetalle);
-                  filaA++;
-                  wa.cell(filaA, 1).string("Cliente").style(cabDetalle);
-                  wa.cell(filaA, 2).string("Documento").style(cabDetalle);
-                  wa.cell(filaA, 3).string("Monto Inicial").style(cabDetalle);
-                  wa.cell(filaA, 4).string("Deuda Actual").style(cabDetalle);
-
-                  filaA++;
-
                   element.details.forEach((element2) => {
+                    console.log(element2);
                     wa.cell(filaA, 1).string(element2.nameconsigner);
-                    wa.cell(filaA, 2).string(element2.concepto);
-                    wa.cell(filaA, 3).string(
-                      element2.symbol + " " + element2.monto
-                    );
-                    wa.cell(filaA, 4).string(
-                      element2.symbol + " " + element2.total_pagar
-                    );
+                    wa.cell(filaA, 2).date(element2.fecha);
+                    wa.cell(filaA, 3).string(element2.concepto);
+                    wa.cell(filaA, 4).string(element2.symbol);
+                    wa.cell(filaA, 5).number(element2.monto);
+                    wa.cell(filaA, 6).string(element2.symbol);
+                    wa.cell(filaA, 7).number(element2.total_pagar);
                     filaA++;
                   });
                 });
@@ -1626,7 +1592,7 @@ export const constReporteCXCExcel = async (req: Request, res: Response) => {
                 let pathexcel = path.join(
                   // console.log(),
                   `${__dirname}../../../uploads`,
-                  uuidv4() + ".xlsx"
+                  "Reportexls.xlsx"
                 );
                 wb.write(pathexcel, function (err, stats) {
                   if (err) {

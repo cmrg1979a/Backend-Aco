@@ -1,10 +1,12 @@
 import { Request, response, Response } from "express";
 import { conexion } from "../routes/databasePg";
+
 import * as pg from "pg";
 import { usuarioCalculadora } from "interface/usuariosCalculadora";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 import path from "path";
+import { call } from "interface/call";
 const nodemailer = require("nodemailer");
 const { Pool } = pg;
 var xl = require("excel4node");
@@ -845,7 +847,8 @@ export const CargarNavieras = async (req: Request, res: Response) => {
 };
 export const ListUsuarioCalculadora = async (req: Request, res: Response) => {
   pool.query(
-    "SELECT * FROM function_list_user();",
+    "SELECT * FROM function_list_user($1);",
+    [req.body.iso_pais ? req.body.iso_pais : null],
 
     async (err, response, fields) => {
       if (!err) {
@@ -882,7 +885,6 @@ export const ExportListUsuarioCalculadora = async (
       if (!err) {
         if (response.rows[0].estadoflag == true) {
           let rows = response.rows;
-          console.log(rows);
           let cabTitle = wb.createStyle({
             font: {
               color: "#ffffff",
@@ -908,34 +910,130 @@ export const ExportListUsuarioCalculadora = async (
               vertical: "center",
             },
           });
+          let cabDetalle = wb.createStyle({
+            fill: {
+              type: "pattern",
+              patternType: "solid",
+              fgColor: "#F5A9D0",
+            },
+            alignment: {
+              vertical: "center",
+            },
+          });
           var wt = wb.addWorksheet("Listado");
-          wt.row(2).filter();
-          wt.column(1).setWidth(50);
-          wt.column(2).setWidth(50);
-          wt.column(3).setWidth(20);
-          // wt.column(4).setWidth(120);
-          wt.column(5).setWidth(17);
 
-          wt.cell(1, 1, 1, 5, true)
+          wt.row(2).filter();
+          wt.column(1).setWidth(20);
+          wt.column(2).setWidth(50);
+          wt.column(3).setWidth(30);
+          wt.column(5).setWidth(20);
+          wt.column(6).setWidth(80);
+          wt.column(7).setWidth(40);
+
+          wt.cell(1, 1, 1, 7, true)
             .string("LISTADO DE CLIENTES REGISTRADOS / CALCULADORA")
             .style(cabTitle);
-          wt.cell(2, 1).string("Cliente").style(cabProveedor);
-          wt.cell(2, 2).string("Correo").style(cabProveedor);
-          wt.cell(2, 3).string("Teléfono").style(cabProveedor);
-          wt.cell(2, 4).string("Registro").style(cabProveedor);
-          wt.cell(2, 5).string("Modo de Registro").style(cabProveedor);
+
+          wt.cell(2, 1).string("Fecha Registro").style(cabProveedor);
+          wt.cell(2, 2).string("Cliente").style(cabProveedor);
+          wt.cell(2, 3).string("Correo").style(cabProveedor);
+          wt.cell(2, 4).string("Teléfono").style(cabProveedor);
+          wt.cell(2, 5).string("Estatus Última Llamada").style(cabProveedor);
+          wt.cell(2, 6).string("Último comentario").style(cabProveedor);
+          wt.cell(2, 7).string("Modo de Registro").style(cabProveedor);
           let fila = 3;
           rows.forEach((element) => {
-            wt.cell(fila, 1).string(element.usuario_nombre);
-            wt.cell(fila, 2).string(element.usuario_email);
-            wt.cell(fila, 3).string(element.usuario_telefono);
-            wt.cell(fila, 4).string(element.usuario_creacion);
-            wt.cell(fila, 5).string(element.usuario_origen);
+            wt.cell(fila, 1).string(element.usuario_creacion);
+            wt.cell(fila, 2).string(element.usuario_nombre);
+            wt.cell(fila, 3).string(element.usuario_email);
+            wt.cell(fila, 4).string(element.usuario_telefono);
+            wt.cell(fila, 5).string(element.status_description);
+            wt.cell(fila, 6).string(
+              element.usuario_ultimo_comentario
+                ? element.usuario_ultimo_comentario
+                : ""
+            );
+            wt.cell(fila, 7).string(element.usuario_origen);
+
             fila++;
           });
+
+          var wc = wb.addWorksheet("Historial de Llamadas");
+          wc.column(1).setWidth(20);
+          wc.column(2).setWidth(20);
+          wc.column(3).setWidth(80);
+          wc.cell(1, 1, 1, 4, true)
+            .string("Historial de llamadas ")
+            .style(cabTitle);
+          let filac = 2;
+          rows.forEach((element) => {
+            if (element.list_call.length > 0) {
+              wc.cell(filac, 1).string("Fecha Registro").style(cabProveedor);
+              wc.cell(filac, 2).string("Cliente").style(cabProveedor);
+              wc.cell(filac, 3).string("Correo").style(cabProveedor);
+              wc.cell(filac, 4).string("Teléfono").style(cabProveedor);
+
+              filac++;
+              wc.cell(filac, 1).string(element.usuario_creacion);
+              wc.cell(filac, 2).string(element.usuario_nombre);
+              wc.cell(filac, 3).string(element.usuario_email);
+              wc.cell(filac, 4).string(element.usuario_telefono);
+              filac++;
+              wc.cell(filac, 2).string("Fecha Registro").style(cabDetalle);
+              wc.cell(filac, 3).string("Comentario").style(cabDetalle);
+              wc.cell(filac, 4).string("Correo").style(cabDetalle);
+              filac++;
+              element.list_call.forEach((element2) => {
+                wc.cell(filac, 2).string(element2.date);
+                wc.cell(filac, 3).string(element2.comentario);
+                wc.cell(filac, 4).string(
+                  element2.status ? "Activo" : "Inactivo"
+                );
+                filac++;
+              });
+            }
+          });
+          // ------------------------------------------------------------------
+          var wcf = wb.addWorksheet("LLamadas(Filtro)");
+          wcf.row(2).filter();
+          wcf.column(1).setWidth(20);
+          wcf.column(2).setWidth(20);
+          wcf.column(3).setWidth(20);
+          wcf.column(5).setWidth(20);
+          wcf.column(6).setWidth(80);
+          wcf
+            .cell(1, 1, 1, 7, true)
+            .string("Historial de llamadas / Filtro")
+            .style(cabTitle);
+          let filacd = 2;
+          wcf.cell(filacd, 1).string("Fecha Registro").style(cabProveedor);
+          wcf.cell(filacd, 2).string("Cliente").style(cabProveedor);
+          wcf.cell(filacd, 3).string("Correo").style(cabProveedor);
+          wcf.cell(filacd, 4).string("Teléfono").style(cabProveedor);
+          wcf.cell(filacd, 5).string("Fecha Registro").style(cabDetalle);
+          wcf.cell(filacd, 6).string("Comentario").style(cabDetalle);
+          wcf.cell(filacd, 7).string("Correo").style(cabDetalle);
+          filacd++;
+          rows.forEach((element) => {
+            if (element.list_call.length > 0) {
+              element.list_call.forEach((element2) => {
+                wcf.cell(filacd, 1).string(element.usuario_creacion);
+                wcf.cell(filacd, 2).string(element.usuario_nombre);
+                wcf.cell(filacd, 3).string(element.usuario_email);
+                wcf.cell(filacd, 4).string(element.usuario_telefono);
+                wcf.cell(filacd, 5).string(element2.date);
+                wcf.cell(filacd, 6).string(element2.comentario);
+                wcf
+                  .cell(filacd, 7)
+                  .string(element2.status ? "Activo" : "Inactivo");
+                filacd++;
+              });
+            }
+          });
+
           let pathexcel = path.join(
             `${__dirname}../../../uploads`,
-            uuidv4() + ".xlsx"
+            "ExportListUsuarioCalculadora.xlsx"
           );
           wb.write(pathexcel, function (err, stats) {
             if (err) {
@@ -956,7 +1054,6 @@ export const GenerarTokenRecuperarContrasenia = async (
   req: Request,
   res: Response
 ) => {
-  
   pool.query(
     "SELECT * FROM funtction_gen_token($1);",
     [req.body.email],
@@ -1018,6 +1115,7 @@ async function main(email, url) {
   // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
 }
 export const validateToken = async (req: Request, res: Response) => {
+  console.log(req.body.token);
   await pool.query(
     "SELECT * FROM function_validate_token($1)",
     [req.body.token ? req.body.token : null],
@@ -1043,6 +1141,7 @@ export const validateToken = async (req: Request, res: Response) => {
     }
   );
 };
+
 export const UpdatePass = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM function_update_user($1,$2,$3,$4)",
@@ -1065,6 +1164,309 @@ export const UpdatePass = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: false,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const StatusCarge = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM user_status_cargue()",
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const InsertCall = async (req: Request, res: Response) => {
+  let dataObj: call = req.body;
+  await pool.query(
+    "SELECT * FROM function_call_insert($1,$2,$3,$4,$5)",
+    [
+      dataObj.iduser,
+      dataObj.statuscall,
+      dataObj.isuser,
+      dataObj.date,
+      dataObj.comentario,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const InsertCotizacionXCliente = async (req: Request, res: Response) => {
+  let dataObj: call = req.body;
+  let validate = true;
+
+  let mensaje = "";
+  if (!dataObj.token) {
+    validate = false;
+    mensaje += "El token es requerido.";
+  }
+  if (!dataObj.id_user) {
+    validate = false;
+    mensaje += "El id_user es requerido.";
+  }
+  if (dataObj.esusuariosistemaflag == null) {
+    validate = false;
+    mensaje += "El esusuariosistemaflag es requerido.";
+  }
+  if (!dataObj.eslcl && !dataObj.esflc && !dataObj.esaereo) {
+    validate = false;
+    mensaje += "El eslcl,esflc,esaereo es requerido al menos uno activo.";
+  }
+
+  if (!dataObj.eslcl && !dataObj.esflc && !dataObj.esaereo) {
+    validate = false;
+    mensaje += "Se require al menos un tipo de carga.";
+  }
+  if (!!dataObj.eslcl && !!dataObj.esflc && !!dataObj.esaereo) {
+    validate = false;
+    mensaje +=
+      "Solo puede ser FCL , LCL o AEREO. Pero no dos o tres al mismo tiempo";
+  }
+  if (!!dataObj.eslcl && !!dataObj.esflc) {
+    validate = false;
+    mensaje +=
+      "Solo puede ser FCL , LCL o AEREO. Pero no dos o tres al mismo tiempo";
+  }
+  if (!!dataObj.eslcl && !!dataObj.esaereo) {
+    validate = false;
+    mensaje +=
+      "Solo puede ser FCL , LCL o AEREO. Pero no dos o tres al mismo tiempo";
+  }
+  if (!!dataObj.esflc && !!dataObj.esaereo) {
+    validate = false;
+    mensaje +=
+      "Solo puede ser FCL , LCL o AEREO. Pero no dos o tres al mismo tiempo";
+  }
+  if (validate) {
+    await pool.query(
+      "SELECT * FROM function_cotizacionxusuario_insertar($1,$2,$3,$4,$5,$6)",
+      [
+        dataObj.token,
+        dataObj.id_user,
+        dataObj.esusuariosistemaflag,
+        dataObj.eslcl,
+        dataObj.esflc,
+        dataObj.esaereo,
+      ],
+      (err, response, fields) => {
+        if (!err) {
+          let rows = response.rows;
+          if (!!rows[0].estadoflag) {
+            res.json({
+              status: 200,
+              statusBol: true,
+              data: rows,
+            });
+          } else {
+            res.json({
+              status: 200,
+              statusBol: true,
+              mensaje: rows[0].mensaje,
+            });
+          }
+        } else {
+          res.status(500);
+          console.log(err);
+        }
+      }
+    );
+  } else {
+    res.status(500);
+    res.json({
+      status: 500,
+      statusBol: false,
+      mensaje: mensaje,
+    });
+  }
+};
+
+export const GetCotFCL = async (req: Request, res: Response) => {
+  let dataObj = req.query;
+  await pool.query(
+    `SELECT * FROM get_buscar_cotizacion_fcl($1);`,
+    [dataObj.token],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = JSON.parse(response.rows[0].r_dat);
+
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+        });
+      } else {
+        res.json({
+          status: 200,
+          statusBol: true,
+        });
+      }
+    }
+  );
+};
+
+export const GetCotFCLResumen = async (req: Request, res: Response) => {
+  let dataObj = req.query;
+  await pool.query(
+    `SELECT * FROM get_cotizacion_fcl_resumen($1);`,
+    [dataObj.token],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = JSON.parse(response.rows[0].r_dat);
+
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const GetCotLCL = async (req: Request, res: Response) => {
+  let dataObj = req.query;
+  await pool.query(
+    `SELECT * FROM get_buscar_cotizacion_lcl($1);`,
+    [dataObj.token],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = JSON.parse(response.rows[0].r_dat);
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const GetCotLCLResumen = async (req: Request, res: Response) => {
+  let dataObj = req.query;
+  await pool.query(
+    `SELECT * FROM get_cotizacion_lcl_resumen($1);`,
+    [dataObj.token],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = JSON.parse(response.rows[0].r_dat);
+
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const GetCotAereo = async (req: Request, res: Response) => {
+  let dataObj = req.query;
+  await pool.query(
+    `SELECT * FROM get_buscar_cotizacion_aereo($1);`,
+    [dataObj.token],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = JSON.parse(response.rows[0].r_dat);
+
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const GetCotAereoResumen = async (req: Request, res: Response) => {
+  let dataObj = req.query;
+  await pool.query(
+    `SELECT * FROM get_cotizacion_aereo_resumen($1);`,
+    [dataObj.token],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = JSON.parse(response.rows[0].r_dat);
+
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const GetTotalCotizacion = async (req: Request, res: Response) => {
+  await pool.query(
+    `SELECT * FROM function_total_cotizacionxsucursal($1);`,
+    [req.body.iso_pais],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
             mensaje: rows[0].mensaje,
           });
         }
