@@ -5,7 +5,7 @@ const { Pool } = pg;
 const pool = conexion();
 // const ExcelJS = require("exceljs/dist/es5");
 var xl = require("excel4node");
-import { v4 as uuidv4 } from "uuid";
+
 import path from "path";
 
 export const getControlFileAll = async (req: Request, res: Response) => {
@@ -345,7 +345,7 @@ export const pdfSolicitud = async (req: Request, res: Response) => {
     totalSelected,
     number,
   } = req.body;
-  console.log(path.join(__dirname, "../views/", "pdf-solicitud.ejs"));
+
   ejs.renderFile(
     path.join(__dirname, "../views/", "pdf-solicitud.ejs"),
     {
@@ -1612,6 +1612,102 @@ export const constReporteCXCExcel = async (req: Request, res: Response) => {
   );
 };
 
+export const getPdfInstructivoDetallado = async (
+  req: Request,
+  res: Response
+) => {
+  let ejs = require("ejs");
+  let pdf = require("html-pdf");
+  let path = require("path");
+
+  const {
+    bultos,
+    exp,
+    gananciaop,
+    gananciapr,
+    itemEgresos,
+    itemHouses,
+    itemTotalHouse,
+    itemsTotalesProveedores,
+    peso,
+    puerto_destino,
+    puerto_origen,
+    tipo_embarque,
+    volumen,
+    sentido,
+    totalEgreso,
+    totalIgvEgresos,
+    totalTotalEgresos,
+    totalEgresoOp,
+    totalIgvEgresosOp,
+    totalTotalEgresosOp,
+  } = req.body;
+
+  try {
+    ejs.renderFile(
+      path.join(__dirname, "../views/", "pdf-instructivoDetallado.ejs"),
+      {
+        exp,
+        gananciapr,
+        gananciaop,
+        sentido,
+        tipo_embarque,
+        puerto_origen,
+        puerto_destino,
+        bultos,
+        peso,
+        volumen,
+        itemEgresos,
+        itemHouses,
+        itemTotalHouse,
+        itemsTotalesProveedores,
+        totalEgreso,
+        totalIgvEgresos,
+        totalTotalEgresos,
+        totalEgresoOp,
+        totalIgvEgresosOp,
+        totalTotalEgresosOp,
+      },
+      (err: any, data: any) => {
+        if (err) {
+          res.send(err);
+        } else {
+          let options = {
+            page_size: "A4",
+            orientation: "portrait",
+            header: {
+              height: "1mm",
+            },
+            footer: {
+              height: "2mm",
+            },
+          };
+
+          pdf
+            .create(data, options)
+            .toFile(
+              "files/INSTRUCTIVO_DETALLADO.pdf",
+              function (err: any, data: any) {
+                if (err) {
+                  res.send(err);
+                } else {
+                  res.download("INSTRUCTIVO_DETALLADO.pdf");
+                  res.send({
+                    msg: "File created successfully",
+                    path: path.join("INSTRUCTIVO_DETALLADO.pdf"),
+                  });
+                }
+              }
+            );
+        }
+      }
+    );
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+// ----------------------------------------
 function calcularTotalesOp(data) {
   let totalOperativo = [];
   let totalNoLlegadaDolares = 0;

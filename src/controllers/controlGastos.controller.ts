@@ -8,6 +8,7 @@ const pool = conexion();
 
 export const setControl = async (req: Request, res: Response) => {
   const dataObj: postControl = req.body;
+  console.log(dataObj);
   await pool.query(
     "select * from Table_ControlGastos_Insertar($1,$2,$3)",
     [dataObj.id_house, dataObj.id_user, dataObj.status],
@@ -38,7 +39,7 @@ export const setControl = async (req: Request, res: Response) => {
 export const setIngresos = async (req: Request, res: Response) => {
   const dataObj = req.body;
   await pool.query(
-    "select * from PA_CIngresos_Insert($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)",
+    "select * from PA_CIngresos_Insert($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)",
     [
       dataObj.id_orders ? dataObj.id_orders : null,
       dataObj.concepto,
@@ -53,14 +54,26 @@ export const setIngresos = async (req: Request, res: Response) => {
       null,
       1,
       dataObj.id_user ? dataObj.id_user : null,
+      dataObj.tipo_pago ? dataObj.tipo_pago : null,
+      dataObj.numero ? dataObj.numero : null,
+      dataObj.fecha ? dataObj.fecha : null,
     ],
-    (err, rows, fields) => {
+    (err, response, fields) => {
       if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }
@@ -70,7 +83,7 @@ export const setIngresos = async (req: Request, res: Response) => {
 
 export const setEgresos = async (req: Request, res: Response) => {
   const dataObj = req.body;
-  
+
   await pool.query(
     "select * from PA_CEgresos_Insert($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
     [
@@ -269,15 +282,25 @@ export const delIngresos = async (req: Request, res: Response) => {
   const id = req.params.id;
 
   await pool.query(
-    "delete from ControlGastos_Ingresos where id = $1",
+    "select * from function_eliminar_ingreso($1)",
     [id],
-    (err, rows, fields) => {
+    (err, response, fields) => {
       if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
+        let rows = response.rows;
+        console.log(rows);
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }
@@ -285,20 +308,30 @@ export const delIngresos = async (req: Request, res: Response) => {
   );
 };
 
-
 export const delEgregso = async (req: Request, res: Response) => {
   const id = req.params.id;
 
   await pool.query(
-    "delete from ControlGastos_Egresos where id = $1",
+    "select * from function_delete_egreso($1)",
     [id],
-    (err, rows, fields) => {
+    (err, response, fields) => {
       if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+            estadoflag: rows[0].estadoflag,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+            estadoflag: rows[0].estadoflag,
+          });
+        }
       } else {
         console.log(err);
       }
@@ -339,7 +372,7 @@ export const editIngreso = async (req: Request, res: Response) => {
   const data = req.body;
 
   await pool.query(
-    "update ControlGastos_Ingresos set concepto = $1, monto_pr = $2, monto_op =$3, igv_pr = $4, igv_op = $5, total_pr = $6, total_op = $7, tipo_pago = $8, numero = $9, fecha = $10 where id = $11",
+    "SELECT * FROM function_edit_ingreso($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)",
     [
       data.concepto,
       data.monto_pr,
@@ -351,6 +384,50 @@ export const editIngreso = async (req: Request, res: Response) => {
       data.tipo_pago,
       data.numero,
       data.fecha,
+      id,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        console.log(rows);
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const editEgreso = async (req: Request, res: Response) => {
+  const id = req.params.id;
+
+  const data = req.body;
+  console.log(data);
+  await pool.query(
+    "update ControlGastos_Egresos set concepto = $1, monto_pr = $2, monto_op = $3, igv_pr = $4, igv_op = $5, total_pr = $6, total_op = $7, tipo_pago = $8, numero = $9, fecha = $10 where id = $11",
+    [
+      data.concepto,
+      data.monto_pr,
+      data.monto_op,
+      data.igv_pr ? data.igv_pr : 0,
+      data.igv_op ? data.igv_op : 0,
+      data.total_pr,
+      data.total_op,
+      data.tipo_pago,
+      data.numero ? data.numero : null,
+      data.fecha ? data.fecha : null,
       id,
     ],
     (err, rows, fields) => {
@@ -367,34 +444,27 @@ export const editIngreso = async (req: Request, res: Response) => {
   );
 };
 
-export const editEgreso = async (req: Request, res: Response) => {
-  const id = req.params.id;
-
-  const data = req.body;
-  console.log(data);
+export const ControlGastosList = async (req: Request, res: Response) => {
+  const code_master = req.query.code_master;
   await pool.query(
-    "update ControlGastos_Egresos set id_proveedor = $1, concepto = $2, monto_pr = $3, monto_op = $4, igv_pr = $5, igv_op = $6, total_pr = $7, total_op = $8, tipo_pago = $9, numero = $10, fecha = $11 where id = $12",
-    [
-      data.id_proveedor,
-      data.concepto,
-      data.monto_pr,
-      data.monto_op,
-      data.igv_pr ? data.igv_pr : 0,
-      data.igv_op ? data.igv_op : 0,
-      data.total_pr,
-      data.total_op,
-      data.tipo_pago,
-      data.numero,
-      data.fecha,
-      id,
-    ],
-    (err, rows, fields) => {
+    "select * from function_controlgastos($1)",
+    [code_master],
+    (err, response, fields) => {
       if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }

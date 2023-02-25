@@ -6,6 +6,7 @@ export interface call {
   comentario: String;
   token?: number;
   id_user?: number;
+  identities?: String;
   esusuariosistemaflag?: boolean;
   eslcl?: boolean;
   esflc?: boolean;

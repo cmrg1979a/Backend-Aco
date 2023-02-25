@@ -554,7 +554,7 @@ export const ValidarRegistrosAereo = async (req: Request, res: Response) => {
 
 export const RegistrarCargaMasivaLCL = async (req: Request, res: Response) => {
   const data = req.body;
-
+  console.log(data);
   try {
     pool.query(
       `SELECT * FROM registro_tarifarios_lcl(
@@ -880,11 +880,13 @@ export const ExportListUsuarioCalculadora = async (
 ) => {
   var wb = new xl.Workbook();
   await pool.query(
-    "SELECT * FROM function_list_user();",
+    "SELECT * FROM function_list_user($1);",
+    [req.body.iso_pais ? req.body.iso_pais : null],
     (err, response, fields) => {
       if (!err) {
         if (response.rows[0].estadoflag == true) {
           let rows = response.rows;
+
           let cabTitle = wb.createStyle({
             font: {
               color: "#ffffff",
@@ -929,8 +931,9 @@ export const ExportListUsuarioCalculadora = async (
           wt.column(5).setWidth(20);
           wt.column(6).setWidth(80);
           wt.column(7).setWidth(40);
+          wt.column(8).setWidth(40);
 
-          wt.cell(1, 1, 1, 7, true)
+          wt.cell(1, 1, 1, 8, true)
             .string("LISTADO DE CLIENTES REGISTRADOS / CALCULADORA")
             .style(cabTitle);
 
@@ -940,7 +943,8 @@ export const ExportListUsuarioCalculadora = async (
           wt.cell(2, 4).string("Teléfono").style(cabProveedor);
           wt.cell(2, 5).string("Estatus Última Llamada").style(cabProveedor);
           wt.cell(2, 6).string("Último comentario").style(cabProveedor);
-          wt.cell(2, 7).string("Modo de Registro").style(cabProveedor);
+          wt.cell(2, 7).string("Ejecutivo comentario").style(cabProveedor);
+          wt.cell(2, 8).string("Modo de Registro").style(cabProveedor);
           let fila = 3;
           rows.forEach((element) => {
             wt.cell(fila, 1).string(element.usuario_creacion);
@@ -953,7 +957,10 @@ export const ExportListUsuarioCalculadora = async (
                 ? element.usuario_ultimo_comentario
                 : ""
             );
-            wt.cell(fila, 7).string(element.usuario_origen);
+            wt.cell(fila, 7).string(
+              element.usuario_entities_name ? element.usuario_entities_name : ""
+            );
+            wt.cell(fila, 8).string(element.usuario_origen);
 
             fila++;
           });
@@ -981,14 +988,17 @@ export const ExportListUsuarioCalculadora = async (
               filac++;
               wc.cell(filac, 2).string("Fecha Registro").style(cabDetalle);
               wc.cell(filac, 3).string("Comentario").style(cabDetalle);
-              wc.cell(filac, 4).string("Correo").style(cabDetalle);
+              wc.cell(filac, 4)
+                .string("Ejecutivo Comentario")
+                .style(cabDetalle);
+
               filac++;
               element.list_call.forEach((element2) => {
                 wc.cell(filac, 2).string(element2.date);
                 wc.cell(filac, 3).string(element2.comentario);
-                wc.cell(filac, 4).string(
-                  element2.status ? "Activo" : "Inactivo"
-                );
+                wc.cell(filac, 3).string(element2.comentario);
+                wc.cell(filac, 4).string(element2.entities_name);
+
                 filac++;
               });
             }
@@ -1012,7 +1022,8 @@ export const ExportListUsuarioCalculadora = async (
           wcf.cell(filacd, 4).string("Teléfono").style(cabProveedor);
           wcf.cell(filacd, 5).string("Fecha Registro").style(cabDetalle);
           wcf.cell(filacd, 6).string("Comentario").style(cabDetalle);
-          wcf.cell(filacd, 7).string("Correo").style(cabDetalle);
+          wcf.cell(filacd, 7).string("Ejecutivo Comentario").style(cabDetalle);
+          wcf.cell(filacd, 8).string("Estado").style(cabDetalle);
           filacd++;
           rows.forEach((element) => {
             if (element.list_call.length > 0) {
@@ -1023,9 +1034,8 @@ export const ExportListUsuarioCalculadora = async (
                 wcf.cell(filacd, 4).string(element.usuario_telefono);
                 wcf.cell(filacd, 5).string(element2.date);
                 wcf.cell(filacd, 6).string(element2.comentario);
-                wcf
-                  .cell(filacd, 7)
-                  .string(element2.status ? "Activo" : "Inactivo");
+                wcf.cell(filacd, 7).string(element2.entities_name);
+
                 filacd++;
               });
             }
@@ -1202,14 +1212,16 @@ export const StatusCarge = async (req: Request, res: Response) => {
 
 export const InsertCall = async (req: Request, res: Response) => {
   let dataObj: call = req.body;
+  console.log(dataObj);
   await pool.query(
-    "SELECT * FROM function_call_insert($1,$2,$3,$4,$5)",
+    "SELECT * FROM function_call_insert($1,$2,$3,$4,$5,$6)",
     [
       dataObj.iduser,
       dataObj.statuscall,
       dataObj.isuser,
       dataObj.date,
       dataObj.comentario,
+      dataObj.identities,
     ],
     (err, response, fields) => {
       if (!err) {

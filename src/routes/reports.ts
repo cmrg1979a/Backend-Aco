@@ -16,6 +16,7 @@ import {
   pdfFD,
   constRexportCXPExcel,
   constReporteCXCExcel,
+  getPdfInstructivoDetallado,
 } from "../controllers/reports.controller";
 
 router.post("/getControlFileAll", TokenValidation, getControlFileAll);
@@ -43,5 +44,6 @@ router.post("/getReportFileDetails", TokenValidation, getReportFileDetails);
 router.post("/pdfFD", TokenValidation, pdfFD);
 router.post("/reportcxpexcel",constRexportCXPExcel)
 router.post("/reportcxcexcel",constReporteCXCExcel)
+router.post("/getPdfInstructivoDetallado",getPdfInstructivoDetallado)
 
 export default router;
