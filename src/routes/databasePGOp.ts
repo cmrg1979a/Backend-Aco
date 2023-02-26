@@ -26,9 +26,9 @@ const { Pool } = pg;
 //   return pool;
 // }
 
+
+
 // /**PROUCCIÓN INTERNA */
-
-
 
 export function conexion() {
   const pool = new Pool({

@@ -10,7 +10,7 @@ import {
   registrarFactura,
 } from "../controllers/factura.controller";
 
-router.post("/factura", generarFactura);
+router.post("/generar_factura", generarFactura);
 router.get("/data_factura/:id_house/:id_branch", TokenValidation, datosFactura);
 router.post("/registrar_factura", TokenValidation, registrarFactura);
 router.get("/listar_Factura/:id_branch", TokenValidation, listarFactura);

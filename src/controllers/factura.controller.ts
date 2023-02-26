@@ -155,9 +155,10 @@ export const generarFactura = async (req: Request, res: Response) => {
 
 export const registrarFactura = async (req: Request, res: Response) => {
   const datos: factura = req.body;
+  const details = req.body.details;
 
   await pool.query(
-    "SELECT * FROM table_Factura_insertar($1,$2,$3,$4,$5,$6,$7,1)",
+    "SELECT * FROM table_Factura_insertar($1,$2,$3,$4,$5,$6,$7,1,$8,$9,$10,$11)",
     [
       datos.id_house,
       datos.nro_factura,
@@ -166,6 +167,18 @@ export const registrarFactura = async (req: Request, res: Response) => {
       datos.total_monto,
       datos.total_igv,
       datos.total,
+      details.map((element) => {
+        return element.id;
+      }),
+      details.map((element) => {
+        return element.monto_op;
+      }),
+      details.map((element) => {
+        return element.igv_op;
+      }),
+      details.map((element) => {
+        return element.total_op;
+      }),
     ],
     (err, response, fields) => {
       if (!err) {
@@ -216,6 +229,7 @@ export const listarFactura = async (req: Request, res: Response) => {
     }
   );
 };
+
 export const AnularFacutar = async (req: Request, res: Response) => {
   let id = req.body.id;
 
