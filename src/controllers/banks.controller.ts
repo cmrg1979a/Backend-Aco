@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
-import { logging } from "googleapis/build/src/apis/logging";
-import { connect } from "../routes/database";
 
 import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
 const { Pool } = pg;
 const pool = conexion();
 
+var xl = require("excel4node");
+import path from "path";
 export const getBanksList = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM table_banks_listar()",
@@ -68,11 +68,15 @@ export const getListaPagosXProveedorCxP = async (
 export const setPayForProveedor = async (req: Request, res: Response) => {
   const details = req.body.details;
   const pid_pago = req.body.id_path;
+  const nro_operacion = req.body.nro_operacion;
+  const fecha_pago = req.body.fecha_pago;
 
   const id_cuenta = req.body.id_cuenta;
   await pool.query(
-    "SELECT * FROM detailsPaysInvoiceAdmin_insertar($1,$2,$3,$4,$5,$6,$7)",
+    "SELECT * FROM detailsPaysInvoiceAdmin_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9)",
     [
+      fecha_pago,
+      nro_operacion,
       details.map(function (item) {
         return item.id;
       }), // pid_invoiceadmin int[],
@@ -148,9 +152,21 @@ export const getListBanksDetailsCargar = async (
 };
 
 export const getListar = async (req: Request, res: Response) => {
+  let filtro = req.query;
   await pool.query(
-    "SELECT * FROM Table_InvoiceAdmin_listar2($1)",
-    [req.body.id_branch],
+    "SELECT * FROM function_list_egresos($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
+    [
+      filtro.pid_branch ? filtro.pid_branch : null,
+      filtro.pdesde ? filtro.pdesde : null,
+      filtro.phasta ? filtro.phasta : null,
+      filtro.pnro_operacion ? filtro.pnro_operacion : null,
+      filtro.pid_cuenta ? filtro.pid_cuenta : null,
+      filtro.pid_proveedor ? filtro.pid_proveedor : null,
+      filtro.pmonto ? filtro.pmonto : null,
+      filtro.pid_moneda ? filtro.pid_moneda : null,
+      filtro.pnro_factura ? filtro.pnro_factura : null,
+      filtro.pnro_serie ? filtro.pnro_serie : null,
+    ],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -209,10 +225,11 @@ export const setPayForCustomer = async (req: Request, res: Response) => {
   const id_cuenta = req.body.id_cuenta;
   const fecha = req.body.fecha;
   const id_path = req.body.id_path;
-  console.log(fecha);
+  const nro_operacion = req.body.nro_operacion;
+  const id_banco_origen = req.body.id_banco_origen;
   await pool.query(
     // detailsPaysInvoiceAdmin_insertar(pid_invoiceadmin int[],	pid_pago int,	pmonto numeric[],	pid_cuenta int,	cktotal int[],	monto_deuda numeric[],	monto_pagar numeric[])
-    "SELECT * FROM detailsPaysInvoiceAdminCxC_insertar($1,	$2,$3,	$4,	$5,	$6,$7,$8,$9,$10,$11)",
+    "SELECT * FROM detailsPaysInvoiceAdminCxC_insertar($1,	$2,$3,	$4,	$5,	$6,$7,$8,$9,$10,$11,$12,$13)",
     [
       details.map(function (item) {
         return item.id;
@@ -239,6 +256,8 @@ export const setPayForCustomer = async (req: Request, res: Response) => {
       }), // pid_house int[],
       id_path, //id_path
       fecha, // pfecha date
+      nro_operacion, // nro_operacion
+      id_banco_origen, // id_banco_origen
     ],
 
     (err, response, fields) => {
@@ -265,11 +284,22 @@ export const setPayForCustomer = async (req: Request, res: Response) => {
   );
 };
 
-
 export const getListarPayForCustomer = async (req: Request, res: Response) => {
+  // "SELECT * FROM Table_InvoiceAdminCxC_listado($1);",
   await pool.query(
-    "SELECT * FROM Table_InvoiceAdminCxC_listado($1);",
-    [req.params.id_branch],
+    "SELECT * FROM function_list_ingresos($1,$2,$3,$4,$5,$6,$7,$8,$9,$10);",
+    [
+      req.query.id_branch ? req.query.id_branch : null,
+      req.query.nro_operacion ? req.query.nro_operacion : null,
+      req.query.monto ? req.query.monto : null,
+      req.query.fechadesde ? req.query.fechadesde : null,
+      req.query.fechahasta ? req.query.fechahasta : null,
+      req.query.factura ? req.query.factura : null,
+      req.query.serie ? req.query.serie : null,
+      req.query.id_banco ? req.query.id_banco : null,
+      req.query.id_coin ? req.query.id_coin : null,
+      req.query.id_consigner ? req.query.id_consigner : null,
+    ],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -294,7 +324,7 @@ export const getListarPayForCustomer = async (req: Request, res: Response) => {
 };
 export const getVerPagosPorCustomer = async (req: Request, res: Response) => {
   const { id } = req.query;
-  console.log(id)
+  console.log(id);
   await pool.query(
     "SELECT * FROM pagos_por_cliente($1);",
     [id],
@@ -337,6 +367,7 @@ export const getListaPagosXProveedorCxC = async (
           res.json({
             status: 200,
             statusBol: true,
+            estadoflag: true,
             data: rows,
           });
         } else {
@@ -344,6 +375,7 @@ export const getListaPagosXProveedorCxC = async (
             status: 200,
             statusBol: false,
             mensaje: rows[0].mensaje,
+            estadoflag: false,
           });
         }
       } else {
@@ -353,25 +385,100 @@ export const getListaPagosXProveedorCxC = async (
   );
 };
 
-// export const ExportarListadoReportePagos = async (
-//   req: Request,
-//   res: Response
-// ) => {
+export const ExportarListadoReportePagos = async (
+  req: Request,
+  res: Response
+) => {
+  var wb = new xl.Workbook({
+    dateFormat: "dd/mm/yyyy",
+    author: "PIC CARGO - IMPORTADORES",
+  });
+  await pool.query(
+    "SELECT * from function_export_ingresos($1)",
+    [req.body.id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        let cabTitle = wb.createStyle({
+          font: {
+            color: "#ffffff",
+            bold: true,
+          },
+          fill: {
+            type: "pattern",
+            patternType: "solid",
+            fgColor: "#A43542",
+          },
+          alignment: {
+            vertical: "center",
+            horizontal: "center",
+          },
+        });
+        var wt = wb.addWorksheet("ReporteIngresos");
+        wt.row(1).filter();
 
-//   await conn.query("SELECT * from view_reporte_pagos", (err, rows, fields) => {
-//     if (err) {
-//       console.log(err);
+        wt.column(1).setWidth(10);
+        wt.column(2).setWidth(15);
+        wt.column(3).setWidth(18);
+        wt.column(4).setWidth(5);
+        wt.column(5).setWidth(15);
+        wt.column(6).setWidth(100);
+        wt.column(7).setWidth(10);
+        wt.column(8).setWidth(10);
+        wt.column(9).setWidth(150);
+        wt.column(10).setWidth(30);
+        wt.column(11).setWidth(15);
 
-//     } else {
-//       res.json({
-//         status: 200,
-//         statusBol: true,
-//         data: rows,
-//       });
+        wt.cell(1, 1).string("Fecha").style(cabTitle);
+        wt.cell(1, 2).string("Nro Operación").style(cabTitle);
+        wt.cell(1, 3).string("Cuenta Salida").style(cabTitle);
+        wt.cell(1, 4).string("O/A").style(cabTitle);
+        wt.cell(1, 5).string("Tipo de Gasto").style(cabTitle);
+        wt.cell(1, 6).string("Proveedor").style(cabTitle);
+        wt.cell(1, 7).string("Monto").style(cabTitle);
+        wt.cell(1, 8).string("Moneda").style(cabTitle);
+        wt.cell(1, 9).string("concepto").style(cabTitle);
+        wt.cell(1, 10).string("Nro Factura").style(cabTitle);
+        wt.cell(1, 11).string("Nro Serie").style(cabTitle);
+        let fila = 2;
+        rows.forEach((element) => {
+          wt.cell(fila, 1).string(element.fecha_pago);
+          wt.cell(fila, 2).string(
+            element.nro_operacion ? element.nro_operacion : ""
+          );
+          wt.cell(fila, 3).string(element.banco ? element.banco : "");
+          wt.cell(fila, 4).string(element.tipo ? element.tipo : "");
+          wt.cell(fila, 5).string(element.tipo_gasto ? element.tipo_gasto : "");
+          wt.cell(fila, 6).string(
+            element.name_proveedor ? element.name_proveedor : ""
+          );
+          wt.cell(fila, 7).string(element.monto);
+          wt.cell(fila, 8).string(
+            element.moneda_simbolo ? element.moneda_simbolo : ""
+          );
+          wt.cell(fila, 9).string(element.concepto ? element.concepto : "");
+          wt.cell(fila, 10).string(element.factura ? element.factura : "");
+          wt.cell(fila, 11).string(element.serie ? element.serie : "");
+          fila++;
+        });
 
-//     }
-//   });
-// };
+        let pathexcel = path.join(
+          `${__dirname}../../../uploads`,
+          "ReporteIngresos.xlsx"
+        );
+        wb.write(pathexcel, function (err, stats) {
+          if (err) {
+            console.log(err);
+          } else {
+            res.download(pathexcel);
+          }
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
 
 export const RegistroPagoDetalles = async (req: Request, res: Response) => {
   let data = req.body;
@@ -430,6 +537,497 @@ export const RegistroPagoDetalles = async (req: Request, res: Response) => {
             mensaje: rows[0].mensaje,
           });
         }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const getVerPagosInvoice = async (req: Request, res: Response) => {
+  let id = req.query.id;
+
+  await pool.query(
+    `SELECT * FROM function_ver_pago_invoice($1)`,
+    [id],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estadoflag: true,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: false,
+            estadoflag: false,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const getActualizarPagosInvoice = async (
+  req: Request,
+  res: Response
+) => {
+  let dataObj = req.body;
+  await pool.query(
+    `SELECT * FROM function_actualizar_pago_invoice($1,$2,$3,$4,$5,$6)`,
+    [
+      dataObj.id,
+      dataObj.nro_operacion ? dataObj.nro_operacion : null,
+      dataObj.monto ? dataObj.monto : null,
+      dataObj.fecha ? dataObj.fecha : null,
+      dataObj.id_cuenta ? dataObj.id_cuenta : null,
+      dataObj.id_path ? dataObj.id_path : null,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estadoflag: true,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: false,
+            estadoflag: false,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const getVerPagosCGEgresos = async (req: Request, res: Response) => {
+  let id = req.query.id;
+
+  await pool.query(
+    `SELECT * FROM function_ver_pago_cg_egreso($1)`,
+    [id],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estadoflag: true,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: false,
+            estadoflag: false,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const getActualizarPagosCGEgreso = async (
+  req: Request,
+  res: Response
+) => {
+  let dataObj = req.body;
+  console.log(dataObj);
+  await pool.query(
+    `SELECT * FROM function_actualizar_pago_cgegreso($1,$2,$3,$4,$5,$6)`,
+    [
+      dataObj.id,
+      dataObj.nro_operacion ? dataObj.nro_operacion : null,
+      dataObj.monto ? dataObj.monto : null,
+      dataObj.fecha ? dataObj.fecha : null,
+      dataObj.id_cuenta ? dataObj.id_cuenta : null,
+      dataObj.id_path ? dataObj.id_path : null,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estadoflag: true,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: false,
+            estadoflag: false,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const getVerPagosIngresosInvoice = async (
+  req: Request,
+  res: Response
+) => {
+  let id = req.query.id;
+
+  await pool.query(
+    `SELECT * FROM function_ver_ingreso_invoice($1)`,
+    [id],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estadoflag: true,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: false,
+            estadoflag: false,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const getVerPagosDebsClient = async (req: Request, res: Response) => {
+  let id = req.query.id;
+
+  await pool.query(
+    `SELECT * FROM function_ver_ingreso_debscliente($1)`,
+    [id],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estadoflag: true,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: false,
+            estadoflag: false,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const getActualizarPagosInvoiceIngreso = async (
+  req: Request,
+  res: Response
+) => {
+  let dataObj = req.body;
+  console.log(dataObj);
+  await pool.query(
+    `SELECT * FROM function_actualizar_ingreso_invoice($1,$2,$3,$4,$5,$6,$7)`,
+    [
+      dataObj.id,
+      dataObj.nro_operacion ? dataObj.nro_operacion : null,
+      dataObj.monto ? dataObj.monto : null,
+      dataObj.fecha ? dataObj.fecha : null,
+      dataObj.id_banco_origen ? dataObj.id_banco_origen : null,
+      dataObj.id_path ? dataObj.id_path : null,
+      dataObj.id_cuenta_pic ? dataObj.id_cuenta_pic : null,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estadoflag: true,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: false,
+            estadoflag: false,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const getActualizarIngresoDebsCliente = async (
+  req: Request,
+  res: Response
+) => {
+  let dataObj = req.body;
+  console.log(dataObj);
+  await pool.query(
+    `SELECT * FROM function_actualizar_ingreso_debscliente($1,$2,$3,$4,$5,$6,$7)`,
+    [
+      dataObj.id,
+      dataObj.nro_operacion ? dataObj.nro_operacion : null,
+      dataObj.monto ? dataObj.monto : null,
+      dataObj.fecha ? dataObj.fecha : null,
+      dataObj.id_banco_origen ? dataObj.id_banco_origen : null,
+      dataObj.id_path ? dataObj.id_path : null,
+      dataObj.id_cuenta_pic ? dataObj.id_cuenta_pic : null,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estadoflag: true,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: false,
+            estadoflag: false,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const ExportarListadoReporteEgresos = async (
+  req: Request,
+  res: Response
+) => {
+  var wb = new xl.Workbook({
+    dateFormat: "dd/mm/yyyy",
+    author: "PIC CARGO - IMPORTADORES",
+  });
+  await pool.query(
+    "SELECT * from function_export_ingresos($1)",
+    [req.body.id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        let cabTitle = wb.createStyle({
+          font: {
+            color: "#ffffff",
+            bold: true,
+          },
+          fill: {
+            type: "pattern",
+            patternType: "solid",
+            fgColor: "#A43542",
+          },
+          alignment: {
+            vertical: "center",
+            horizontal: "center",
+          },
+        });
+        var wt = wb.addWorksheet("ReporteEgresos");
+        wt.row(1).filter();
+
+        wt.column(1).setWidth(10);
+        wt.column(2).setWidth(15);
+        wt.column(3).setWidth(18);
+        wt.column(4).setWidth(5);
+        wt.column(5).setWidth(15);
+        wt.column(6).setWidth(100);
+        wt.column(7).setWidth(10);
+        wt.column(8).setWidth(10);
+        wt.column(9).setWidth(150);
+        wt.column(10).setWidth(30);
+        wt.column(11).setWidth(15);
+
+        wt.cell(1, 1).string("Fecha").style(cabTitle);
+        wt.cell(1, 2).string("Nro Operación").style(cabTitle);
+        wt.cell(1, 3).string("Cuenta Salida").style(cabTitle);
+        wt.cell(1, 4).string("O/A").style(cabTitle);
+        wt.cell(1, 5).string("Tipo de Gasto").style(cabTitle);
+        wt.cell(1, 6).string("Proveedor").style(cabTitle);
+        wt.cell(1, 7).string("Monto").style(cabTitle);
+        wt.cell(1, 8).string("Moneda").style(cabTitle);
+        wt.cell(1, 9).string("concepto").style(cabTitle);
+        wt.cell(1, 10).string("Nro Factura").style(cabTitle);
+        wt.cell(1, 11).string("Nro Serie").style(cabTitle);
+        let fila = 2;
+        rows.forEach((element) => {
+          wt.cell(fila, 1).string(element.fecha_pago);
+          wt.cell(fila, 2).string(
+            element.nro_operacion ? element.nro_operacion : ""
+          );
+          wt.cell(fila, 3).string(element.banco ? element.banco : "");
+          wt.cell(fila, 4).string(element.tipo ? element.tipo : "");
+          wt.cell(fila, 5).string(element.tipo_gasto ? element.tipo_gasto : "");
+          wt.cell(fila, 6).string(
+            element.name_proveedor ? element.name_proveedor : ""
+          );
+          wt.cell(fila, 7).string(element.monto);
+          wt.cell(fila, 8).string(
+            element.moneda_simbolo ? element.moneda_simbolo : ""
+          );
+          wt.cell(fila, 9).string(element.concepto ? element.concepto : "");
+          wt.cell(fila, 10).string(element.factura ? element.factura : "");
+          wt.cell(fila, 11).string(element.serie ? element.serie : "");
+          fila++;
+        });
+
+        let pathexcel = path.join(
+          `${__dirname}../../../uploads`,
+          "ReporteEngresos.xlsx"
+        );
+        wb.write(pathexcel, function (err, stats) {
+          if (err) {
+            console.log(err);
+          } else {
+            res.download(pathexcel);
+          }
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const ExportarListadoReporteIngresos = async (
+  req: Request,
+  res: Response
+) => {
+  var wb = new xl.Workbook({
+    dateFormat: "dd/mm/yyyy",
+    author: "PIC CARGO - IMPORTADORES",
+  });
+  await pool.query(
+    "SELECT * FROM function_list_ingresos($1,$2,$3,$4,$5,$6,$7,$8,$9,$10);",
+    [
+      req.query.id_branch ? req.query.id_branch : null,
+      req.query.nro_operacion ? req.query.nro_operacion : null,
+      req.query.monto ? req.query.monto : null,
+      req.query.fechadesde ? req.query.fechadesde : null,
+      req.query.fechahasta ? req.query.fechahasta : null,
+      req.query.factura ? req.query.factura : null,
+      req.query.serie ? req.query.serie : null,
+      req.query.id_banco ? req.query.id_banco : null,
+      req.query.id_coin ? req.query.id_coin : null,
+      req.query.id_consigner ? req.query.id_consigner : null,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        let cabTitle = wb.createStyle({
+          font: {
+            color: "#ffffff",
+            bold: true,
+          },
+          fill: {
+            type: "pattern",
+            patternType: "solid",
+            fgColor: "#A43542",
+          },
+          alignment: {
+            vertical: "center",
+            horizontal: "center",
+          },
+        });
+        var wt = wb.addWorksheet("ReporteIngresos");
+        wt.row(1).filter();
+
+        wt.column(1).setWidth(10);
+        wt.column(2).setWidth(10);
+        wt.column(3).setWidth(18);
+        wt.column(4).setWidth(60);
+        wt.column(5).setWidth(15);
+        wt.column(6).setWidth(12);
+        wt.column(7).setWidth(12);
+        wt.column(8).setWidth(18);
+        wt.column(9).setWidth(18);
+        wt.column(10).setWidth(100);
+        wt.column(11).setWidth(15);
+        wt.column(12).setWidth(15);
+
+        wt.cell(1, 1).string("Fecha").style(cabTitle);
+        wt.cell(1, 2).string("O/A").style(cabTitle);
+        wt.cell(1, 3).string("Tipo de Gasto").style(cabTitle);
+        wt.cell(1, 4).string("Cliente").style(cabTitle);
+        wt.cell(1, 5).string("Monto").style(cabTitle);
+        wt.cell(1, 6).string("Moneda").style(cabTitle);
+        wt.cell(1, 7).string("Banco Origen").style(cabTitle);
+        wt.cell(1, 8).string("Cuenta Destino").style(cabTitle);
+        wt.cell(1, 9).string("Nro Operación").style(cabTitle);
+        wt.cell(1, 10).string("Concepto").style(cabTitle);
+        wt.cell(1, 11).string("Nro Factura").style(cabTitle);
+        wt.cell(1, 12).string("Nro Serie").style(cabTitle);
+
+
+
+        let fila = 2;
+        rows.forEach((element) => {
+          wt.cell(fila, 1).string(element.fecha_pago);
+          wt.cell(fila, 2).string(element.tipo);
+          wt.cell(fila, 3).string(element.tipo_gasto);
+          wt.cell(fila, 4).string(element.name_consigner);
+          wt.cell(fila, 5).string(element.monto);
+          wt.cell(fila, 6).string(element.moneda_simbolo);
+          wt.cell(fila, 7).string(element.banco);
+          wt.cell(fila, 8).string(element.cuenta_destino);
+          wt.cell(fila, 9).string(element.nro_operacion);
+          wt.cell(fila, 10).string(element.concepto);
+          wt.cell(fila, 11).string(element.factura);
+          wt.cell(fila, 12).string(element.serie);
+          fila++;
+        });
+
+        let pathexcel = path.join(
+          `${__dirname}../../../uploads`,
+          "ReporteIngresos.xlsx"
+        );
+        wb.write(pathexcel, function (err, stats) {
+          if (err) {
+            console.log(err);
+          } else {
+            res.download(pathexcel);
+          }
+        });
       } else {
         console.log(err);
       }

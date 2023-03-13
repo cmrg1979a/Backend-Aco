@@ -73,8 +73,9 @@ export const generarFactura = async (req: Request, res: Response) => {
     cuenta_cci,
     cuenta_tienecci,
     tipo_imp,
+    coins,
   } = req.body;
-
+  console.log(coins);
   let fechaActual = `${fecha.getUTCDay()}_${fecha.getMonth()}_${fecha.getFullYear()}_${fecha.getTime()}`;
   let fechaRegistro = fecha.toLocaleDateString();
   // ejs.renderFile(path.join(__dirname, "../views", "pdf-factura.ejs")),
@@ -113,6 +114,7 @@ export const generarFactura = async (req: Request, res: Response) => {
       cuenta_cci,
       cuenta_tienecci,
       tipo_imp,
+      coins,
     },
     (err: any, data: any) => {
       if (err) {
@@ -158,7 +160,7 @@ export const registrarFactura = async (req: Request, res: Response) => {
   const details = req.body.details;
 
   await pool.query(
-    "SELECT * FROM table_Factura_insertar($1,$2,$3,$4,$5,$6,$7,1,$8,$9,$10,$11)",
+    "SELECT * FROM table_Factura_insertar($1,$2,$3,$4,$5,$6,$7,1,$8,$9,$10,$11,$12)",
     [
       datos.id_house,
       datos.nro_factura,
@@ -179,6 +181,7 @@ export const registrarFactura = async (req: Request, res: Response) => {
       details.map((element) => {
         return element.total_op;
       }),
+      datos.id_coins,
     ],
     (err, response, fields) => {
       if (!err) {

@@ -93,12 +93,14 @@ export const getEntitiesListIc = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
+            estadoflag: rows[0].estadoflag,
             data: rows,
           });
         } else {
           res.json({
             status: 200,
             statusBol: true,
+            estadoflag: rows[0].estadoflag,
             mensaje: rows[0].mensaje,
           });
         }
@@ -257,24 +259,10 @@ export const addEntities = async (req: Request, res: Response) => {
   const dataObj: postEntities = req.body;
   const dataPhones = req.body.dataPhones;
   const dataContacts = req.body.dataContacts;
+  const dataAccount = req.body.accounts;
 
-  let pidphone = [];
-  let pphoned = [];
-  let cname = [];
-  let cphone = [];
-
-  dataPhones.forEach((element) => {
-    pidphone.push(element.id);
-    pphoned.push(element.number);
-  });
-
-  dataContacts.forEach((element) => {
-    cname.push(element.name);
-    cphone.push(parseInt(element.number));
-  });
-
-  await pool.query(
-    "select * from TABLE_ENTITIES_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23)",
+    await pool.query(
+    "select * from TABLE_ENTITIES_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27)",
     [
       dataObj.names,
       dataObj.surname,
@@ -293,12 +281,34 @@ export const addEntities = async (req: Request, res: Response) => {
       dataObj.id_town,
       dataObj.id_sex ? dataObj.id_sex : 1,
       dataObj.id_document,
+      dataObj.id_role ? dataObj.id_role : null,
       dataObj.id_branch,
-      0,
-      pidphone,
-      pphoned,
-      cname,
-      cphone,
+      dataPhones.map((element) => {
+        return element.id ? element.id : null;
+      }),
+      dataPhones.map((element) => {
+        return element.number ? element.number : null;
+      }),
+      dataContacts.map((element) => {
+        return element.name ? element.name : null;
+      }),
+      dataContacts.map((element) => {
+        return element.number ? element.number : null;
+      }),
+      dataAccount.map((element) => {
+        return element.accountIdTypeAccount
+          ? element.accountIdTypeAccount
+          : null;
+      }),
+      dataAccount.map((element) => {
+        return element.accountIdBanks ? element.accountIdBanks : null;
+      }),
+      dataAccount.map((element) => {
+        return element.accountIdCoins ? element.accountIdCoins : null;
+      }),
+      dataAccount.map((element) => {
+        return element.accountnumber ? element.accountnumber : null;
+      }),
     ],
     (err, response, fields) => {
       if (!err) {

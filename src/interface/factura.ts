@@ -7,4 +7,5 @@ export interface factura {
   total_igv: Number;
   total: Number;
   estatus: true;
+  id_coins: Number;
 }

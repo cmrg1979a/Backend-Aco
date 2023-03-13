@@ -195,9 +195,11 @@ export const delDebsClient = async (req: Request, res: Response) => {
   );
 };
 
+
 export const getRequestPayment = async (req: Request, res: Response) => {
+  // " select v.* from view_requestPayment($1) v",
   await pool.query(
-    " select v.* from view_requestPayment($1) v",
+    " select v.* from function_solicitudes_pago($1) v",
     [req.body.id_branch],
     (err, response, fields) => {
       if (!err) {
@@ -1010,7 +1012,7 @@ export const setDebsClient = async (req: Request, res: Response) => {
   const dataObj = req.body;
 
   pool.query(
-    "INSERT INTO Table_DebsClient (id_house, date, number, id_banks, id_coins, monto, comentario_usuario, id_path, status) values ($1,$2,$3,$4,$5,$6,$7,$8,$9)",
+    "INSERT INTO Table_DebsClient (id_house, date, number, id_banks, id_coins, monto, comentario_usuario, id_path, status,id_cuenta_pic) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
     [
       dataObj.id_house,
       dataObj.date,
@@ -1021,6 +1023,7 @@ export const setDebsClient = async (req: Request, res: Response) => {
       dataObj.comentario_usuario,
       dataObj.id_path,
       dataObj.status,
+      dataObj.id_cuenta_pic,
     ],
 
     (err, rows, fields) => {
