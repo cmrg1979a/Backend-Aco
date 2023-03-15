@@ -152,20 +152,20 @@ export const getListBanksDetailsCargar = async (
 };
 
 export const getListar = async (req: Request, res: Response) => {
-  let filtro = req.query;
+  console.log(req.query);
   await pool.query(
     "SELECT * FROM function_list_egresos($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
     [
-      filtro.pid_branch ? filtro.pid_branch : null,
-      filtro.pdesde ? filtro.pdesde : null,
-      filtro.phasta ? filtro.phasta : null,
-      filtro.pnro_operacion ? filtro.pnro_operacion : null,
-      filtro.pid_cuenta ? filtro.pid_cuenta : null,
-      filtro.pid_proveedor ? filtro.pid_proveedor : null,
-      filtro.pmonto ? filtro.pmonto : null,
-      filtro.pid_moneda ? filtro.pid_moneda : null,
-      filtro.pnro_factura ? filtro.pnro_factura : null,
-      filtro.pnro_serie ? filtro.pnro_serie : null,
+      req.query.id_branch ? req.query.id_branch : null,
+      req.query.desde ? req.query.desde : null,
+      req.query.hasta ? req.query.hasta : null,
+      req.query.nro_operacion ? req.query.nro_operacion : null,
+      req.query.id_cuenta ? req.query.id_cuenta : null,
+      req.query.id_proveedor ? req.query.id_proveedor : null,
+      req.query.monto ? req.query.monto : null,
+      req.query.id_moneda ? req.query.id_moneda : null,
+      req.query.nro_factura ? req.query.nro_factura : null,
+      req.query.nro_serie ? req.query.nro_serie : null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -173,6 +173,7 @@ export const getListar = async (req: Request, res: Response) => {
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
+            estadoflag: rows[0].estadoflag,
             statusBol: true,
             data: rows,
           });
@@ -181,6 +182,7 @@ export const getListar = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             mensaje: rows[0].mensaje,
+            estadoflag: rows[0].estadoflag,
           });
         }
       } else {
@@ -298,7 +300,7 @@ export const getListarPayForCustomer = async (req: Request, res: Response) => {
       req.query.serie ? req.query.serie : null,
       req.query.id_banco ? req.query.id_banco : null,
       req.query.id_coin ? req.query.id_coin : null,
-      req.query.id_consigner ? req.query.id_consigner : null,
+      req.query.id_cuenta ? req.query.id_cuenta : null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -844,8 +846,19 @@ export const ExportarListadoReporteEgresos = async (
     author: "PIC CARGO - IMPORTADORES",
   });
   await pool.query(
-    "SELECT * from function_export_ingresos($1)",
-    [req.body.id_branch],
+    "SELECT * FROM function_list_egresos($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
+    [
+      req.query.id_branch ? req.query.id_branch : null,
+      req.query.desde ? req.query.desde : null,
+      req.query.hasta ? req.query.hasta : null,
+      req.query.nro_operacion ? req.query.nro_operacion : null,
+      req.query.id_cuenta ? req.query.id_cuenta : null,
+      req.query.id_proveedor ? req.query.id_proveedor : null,
+      req.query.monto ? req.query.monto : null,
+      req.query.id_moneda ? req.query.id_moneda : null,
+      req.query.nro_factura ? req.query.nro_factura : null,
+      req.query.nro_serie ? req.query.nro_serie : null,
+    ],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -949,7 +962,7 @@ export const ExportarListadoReporteIngresos = async (
       req.query.serie ? req.query.serie : null,
       req.query.id_banco ? req.query.id_banco : null,
       req.query.id_coin ? req.query.id_coin : null,
-      req.query.id_consigner ? req.query.id_consigner : null,
+      req.query.id_cuenta ? req.query.id_cuenta : null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -997,8 +1010,6 @@ export const ExportarListadoReporteIngresos = async (
         wt.cell(1, 10).string("Concepto").style(cabTitle);
         wt.cell(1, 11).string("Nro Factura").style(cabTitle);
         wt.cell(1, 12).string("Nro Serie").style(cabTitle);
-
-
 
         let fila = 2;
         rows.forEach((element) => {
