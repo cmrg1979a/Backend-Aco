@@ -9,13 +9,13 @@ const { Pool } = pg;
 
 // var mysql = require("mysql");
 
-const pool = new Pool({
-  host: "10.116.0.2",
-  user: "postgres",
-  password: "@Developer2021Pic",
-  port: "5432",
-  database: "db_op_main_01",
-});
+// const pool = new Pool({
+//   host: "10.116.0.2",
+//   user: "postgres",
+//   password: "@Developer2021Pic",
+//   port: "5432",
+//   database: "db_op_main_01",
+// });
 // const pool = new Pool({
 //   host: "157.230.14.98",
 //   user: "chainsolver",
@@ -23,30 +23,16 @@ const pool = new Pool({
 //   port: "5432",
 //   database: "db_op_main_01",
 // });
-// const pool = new Pool({
-//   host: "67.205.129.62",
-//   user: "chainsolver",
-//   password: "Fr3sc0l1t4+",
-//   port: "5432",
-//   database: "db_op_main_01",
-// });
 
-// var con = mysql.createConnection({
-//   host: "67.205.129.62",
-//   user: "admin",
-//   password: "@Developer2021Pic",
-//   database: "db_op_main_01",
-//   port: 3306,
-//   waitForConnections: true,
-// });
-// var con = mysql.createConnection({
-//   host: "10.116.0.2",
-//   user: "admin",
-//   password: "@Developer2021Pic",
-//   database: "db_op_main_01",
-//   waitForConnections: true,
-// });
-// con.connect();
+const pool = new Pool({
+  host: "67.205.129.62",
+  user: "chainsolver",
+  password: "Fr3sc0l1t4+",
+  port: "5432",
+  database: "db_op_main_01",
+});
+
+
 const app: Application = express();
 
 import authRoutes from "./routes/auth";

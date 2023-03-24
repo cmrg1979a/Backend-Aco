@@ -34,6 +34,7 @@ import {
   getReporteCXCAdmin,
   // getReporteCXPEXCEL,
   listPagoControlGastoXProveedor,
+  updateDebsClient,
 } from "../controllers/spayment.controller";
 
 router.post("/setSPaymentPro", TokenValidation, setSPaymentPro);
@@ -73,11 +74,11 @@ router.post(
 router.post("/getReporteCXP", TokenValidation, getReporteCXP);
 router.post("/getReporteCXC", TokenValidation, getReporteCXC);
 router.post("/getReporteCXCAdmin", TokenValidation, getReporteCXCAdmin);
-// router.get("/getReporteCXPEXCEL", getReporteCXPEXCEL);
 router.get(
   "/listPagoControlGastoXProveedor/:id",
   TokenValidation,
   listPagoControlGastoXProveedor
-);
-
+  );
+  
+  router.put("/actualizar_debs_client", updateDebsClient);
 export default router;

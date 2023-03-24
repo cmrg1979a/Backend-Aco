@@ -152,7 +152,6 @@ export const getListBanksDetailsCargar = async (
 };
 
 export const getListar = async (req: Request, res: Response) => {
-  console.log(req.query);
   await pool.query(
     "SELECT * FROM function_list_egresos($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
     [
@@ -193,7 +192,6 @@ export const getListar = async (req: Request, res: Response) => {
 };
 export const getVerPagosPorProveedor = async (req: Request, res: Response) => {
   const { id } = req.query;
-  console.log(id);
 
   pool.query(
     "SELECT * FROM detailsPaysInvoiceAdmin_pagos_por_proveedor($1)",
@@ -300,7 +298,7 @@ export const getListarPayForCustomer = async (req: Request, res: Response) => {
       req.query.serie ? req.query.serie : null,
       req.query.id_banco ? req.query.id_banco : null,
       req.query.id_coin ? req.query.id_coin : null,
-      req.query.id_cuenta ? req.query.id_cuenta : null,
+      req.query.id_consigner ? req.query.id_consigner : null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -326,7 +324,7 @@ export const getListarPayForCustomer = async (req: Request, res: Response) => {
 };
 export const getVerPagosPorCustomer = async (req: Request, res: Response) => {
   const { id } = req.query;
-  console.log(id);
+
   await pool.query(
     "SELECT * FROM pagos_por_cliente($1);",
     [id],
@@ -486,8 +484,6 @@ export const RegistroPagoDetalles = async (req: Request, res: Response) => {
   let data = req.body;
   let details = req.body.details;
 
-  console.log(req.body);
-
   await pool.query(
     "select * from table_pagosControlEgresos_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) ",
     [
@@ -582,7 +578,7 @@ export const getActualizarPagosInvoice = async (
 ) => {
   let dataObj = req.body;
   await pool.query(
-    `SELECT * FROM function_actualizar_pago_invoice($1,$2,$3,$4,$5,$6)`,
+    `SELECT * FROM function_actualizar_pago_invoice($1,$2,$3,$4,$5,$6,$7)`,
     [
       dataObj.id,
       dataObj.nro_operacion ? dataObj.nro_operacion : null,
@@ -590,6 +586,7 @@ export const getActualizarPagosInvoice = async (
       dataObj.fecha ? dataObj.fecha : null,
       dataObj.id_cuenta ? dataObj.id_cuenta : null,
       dataObj.id_path ? dataObj.id_path : null,
+      dataObj.usuario ? dataObj.usuario : null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -652,9 +649,9 @@ export const getActualizarPagosCGEgreso = async (
   res: Response
 ) => {
   let dataObj = req.body;
-  console.log(dataObj);
+
   await pool.query(
-    `SELECT * FROM function_actualizar_pago_cgegreso($1,$2,$3,$4,$5,$6)`,
+    `SELECT * FROM function_actualizar_pago_cgegreso($1,$2,$3,$4,$5,$6,$7)`,
     [
       dataObj.id,
       dataObj.nro_operacion ? dataObj.nro_operacion : null,
@@ -662,6 +659,7 @@ export const getActualizarPagosCGEgreso = async (
       dataObj.fecha ? dataObj.fecha : null,
       dataObj.id_cuenta ? dataObj.id_cuenta : null,
       dataObj.id_path ? dataObj.id_path : null,
+      dataObj.usuario ? dataObj.usuario : null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -758,9 +756,9 @@ export const getActualizarPagosInvoiceIngreso = async (
   res: Response
 ) => {
   let dataObj = req.body;
-  console.log(dataObj);
+
   await pool.query(
-    `SELECT * FROM function_actualizar_ingreso_invoice($1,$2,$3,$4,$5,$6,$7)`,
+    `SELECT * FROM function_actualizar_ingreso_invoice($1,$2,$3,$4,$5,$6,$7,$8)`,
     [
       dataObj.id,
       dataObj.nro_operacion ? dataObj.nro_operacion : null,
@@ -769,6 +767,7 @@ export const getActualizarPagosInvoiceIngreso = async (
       dataObj.id_banco_origen ? dataObj.id_banco_origen : null,
       dataObj.id_path ? dataObj.id_path : null,
       dataObj.id_cuenta_pic ? dataObj.id_cuenta_pic : null,
+      dataObj.usuario ? dataObj.usuario : null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -800,9 +799,9 @@ export const getActualizarIngresoDebsCliente = async (
   res: Response
 ) => {
   let dataObj = req.body;
-  console.log(dataObj);
+
   await pool.query(
-    `SELECT * FROM function_actualizar_ingreso_debscliente($1,$2,$3,$4,$5,$6,$7)`,
+    `SELECT * FROM function_actualizar_ingreso_debscliente($1,$2,$3,$4,$5,$6,$7,$8)`,
     [
       dataObj.id,
       dataObj.nro_operacion ? dataObj.nro_operacion : null,
@@ -811,6 +810,7 @@ export const getActualizarIngresoDebsCliente = async (
       dataObj.id_banco_origen ? dataObj.id_banco_origen : null,
       dataObj.id_path ? dataObj.id_path : null,
       dataObj.id_cuenta_pic ? dataObj.id_cuenta_pic : null,
+      dataObj.usuario ? dataObj.usuario : null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -992,11 +992,14 @@ export const ExportarListadoReporteIngresos = async (
         wt.column(5).setWidth(15);
         wt.column(6).setWidth(12);
         wt.column(7).setWidth(12);
-        wt.column(8).setWidth(18);
-        wt.column(9).setWidth(18);
-        wt.column(10).setWidth(100);
-        wt.column(11).setWidth(15);
-        wt.column(12).setWidth(15);
+        wt.column(8).setWidth(12);
+        wt.column(9).setWidth(12);
+        wt.column(10).setWidth(12);
+        wt.column(11).setWidth(18);
+        wt.column(12).setWidth(18);
+        wt.column(13).setWidth(100);
+        wt.column(14).setWidth(15);
+        wt.column(15).setWidth(15);
 
         wt.cell(1, 1).string("Fecha").style(cabTitle);
         wt.cell(1, 2).string("O/A").style(cabTitle);
@@ -1004,12 +1007,15 @@ export const ExportarListadoReporteIngresos = async (
         wt.cell(1, 4).string("Cliente").style(cabTitle);
         wt.cell(1, 5).string("Monto").style(cabTitle);
         wt.cell(1, 6).string("Moneda").style(cabTitle);
-        wt.cell(1, 7).string("Banco Origen").style(cabTitle);
-        wt.cell(1, 8).string("Cuenta Destino").style(cabTitle);
-        wt.cell(1, 9).string("Nro Operación").style(cabTitle);
-        wt.cell(1, 10).string("Concepto").style(cabTitle);
-        wt.cell(1, 11).string("Nro Factura").style(cabTitle);
-        wt.cell(1, 12).string("Nro Serie").style(cabTitle);
+        wt.cell(1, 7).string("Monto Ingresado al banco").style(cabTitle);
+        wt.cell(1, 8).string("Moneda Ingresado al banco").style(cabTitle);
+        wt.cell(1, 9).string("Tipo de Cambio").style(cabTitle);
+        wt.cell(1, 10).string("Banco Origen").style(cabTitle);
+        wt.cell(1, 11).string("Cuenta Destino").style(cabTitle);
+        wt.cell(1, 12).string("Nro Operación").style(cabTitle);
+        wt.cell(1, 13).string("Concepto").style(cabTitle);
+        wt.cell(1, 14).string("Nro Factura").style(cabTitle);
+        wt.cell(1, 15).string("Nro Serie").style(cabTitle);
 
         let fila = 2;
         rows.forEach((element) => {
@@ -1019,14 +1025,20 @@ export const ExportarListadoReporteIngresos = async (
           wt.cell(fila, 4).string(element.name_consigner);
           wt.cell(fila, 5).string(element.monto);
           wt.cell(fila, 6).string(element.moneda_simbolo);
-          wt.cell(fila, 7).string(element.banco);
-          wt.cell(fila, 8).string(element.cuenta_destino);
-          wt.cell(fila, 9).string(element.nro_operacion);
-          wt.cell(fila, 10).string(element.concepto);
-          wt.cell(fila, 11).string(element.factura);
-          wt.cell(fila, 12).string(element.serie);
+          wt.cell(fila, 7).string(element.monto_destino);
+          wt.cell(fila, 8).string(element.moneda_destino);
+          wt.cell(fila, 9).string(element.tipocambio);
+          wt.cell(fila, 10).string(element.banco);
+          wt.cell(fila, 11).string(element.cuenta_destino);
+          wt.cell(fila, 12).string(element.nro_operacion);
+          wt.cell(fila, 13).string(element.concepto);
+          wt.cell(fila, 14).string(element.factura);
+          wt.cell(fila, 15).string(element.serie);
           fila++;
         });
+        
+        
+        
 
         let pathexcel = path.join(
           `${__dirname}../../../uploads`,
@@ -1039,6 +1051,33 @@ export const ExportarListadoReporteIngresos = async (
             res.download(pathexcel);
           }
         });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+//
+export const reversarCxC = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM function_reversar_debsclient($1)",
+    [req.body.id],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }

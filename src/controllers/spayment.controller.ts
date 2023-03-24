@@ -46,7 +46,6 @@ export const setSPaymentPro = async (req: Request, res: Response) => {
   );
 };
 
-
 export const putSPaymentPro = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { status, fecha_sol } = req.body;
@@ -195,7 +194,6 @@ export const delDebsClient = async (req: Request, res: Response) => {
   );
 };
 
-
 export const getRequestPayment = async (req: Request, res: Response) => {
   // " select v.* from view_requestPayment($1) v",
   await pool.query(
@@ -256,7 +254,6 @@ export const getRequestPaymentConceptos = async (
     }
   );
 };
-
 
 export const getDebsToPayAdmin = async (req: Request, res: Response) => {
   pool.query(
@@ -1012,37 +1009,40 @@ export const setDebsClient = async (req: Request, res: Response) => {
   const dataObj = req.body;
 
   pool.query(
-    "INSERT INTO Table_DebsClient (id_house, date, number, id_banks, id_coins, monto, comentario_usuario, id_path, status,id_cuenta_pic) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
+    "select * from function_debscliente_insert($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)",
     [
       dataObj.id_house,
       dataObj.date,
       dataObj.number,
       dataObj.id_banks,
-      dataObj.id_coins,
       dataObj.monto,
       dataObj.comentario_usuario,
       dataObj.id_path,
-      dataObj.status,
       dataObj.id_cuenta_pic,
+      dataObj.tipocambio,
+      dataObj.id_moneda_destino,
+      dataObj.monto_destino,
+      dataObj.nro_operacion,
     ],
 
-    (err, rows, fields) => {
+    (err, response, fields) => {
       if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: {
-            msg: "Registro completo",
-          },
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
-        res.json({
-          status: 400,
-          statusBol: false,
-          data: {
-            msg: "Registro no aceptado",
-          },
-        });
+        console.log(err);
       }
     }
   );
@@ -1050,13 +1050,15 @@ export const setDebsClient = async (req: Request, res: Response) => {
 
 export const setCheckDebsClient = async (req: Request, res: Response) => {
   const dataObj = req.body;
+  console.log(dataObj);
   pool.query(
-    "select * from Table_DebsClient_aceptarpago($1,$2,$3,$4,$5)",
+    "select * from Table_DebsClient_aceptarpago($1,$2,$3,$4,$5,$6)",
     [
       dataObj.comentario_admin,
-      dataObj.checkComision,
+      dataObj.checkComision == true ? 1 : 0,
       dataObj.comision,
       dataObj.status,
+      dataObj.nro_operacion,
       dataObj.id,
     ],
     (err, response, fields) => {
@@ -1410,7 +1412,6 @@ export const pdfcxcD = async (req: Request, res: Response) => {
   );
 };
 
-
 export const getReporteCXP = async (req: Request, res: Response) => {
   pool.query(
     "SELECT * FROM controlgastos_egresos_reportecxp($1)",
@@ -1518,6 +1519,49 @@ export const listPagoControlGastoXProveedor = async (
   pool.query(
     "select * from view_list_pago_control_gasto_x_proveedor($1);",
     [id],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const updateDebsClient = async (req: Request, res: Response) => {
+  const dataObj = req.body;
+  console.log(dataObj);
+  pool.query(
+    "select * from function_debscliente_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)",
+    [
+      dataObj.id ? dataObj.id : null,
+      dataObj.date ? dataObj.date : null,
+      dataObj.number ? dataObj.number : null,
+      dataObj.id_banks ? dataObj.id_banks : null,
+      dataObj.monto ? dataObj.monto : null,
+      dataObj.comentario_usuario ? dataObj.comentario_usuario : null,
+      dataObj.id_path ? dataObj.id_path : null,
+      dataObj.id_cuenta_pic ? dataObj.id_cuenta_pic : null,
+      dataObj.tipocambio ? dataObj.tipocambio : null,
+      dataObj.id_moneda_destino ? dataObj.id_moneda_destino : null,
+      dataObj.monto_destino ? dataObj.monto_destino : null,
+      dataObj.nro_operacion ? dataObj.nro_operacion : null,
+    ],
+
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
