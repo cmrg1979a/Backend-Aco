@@ -85,7 +85,7 @@ export const setEgresos = async (req: Request, res: Response) => {
   const dataObj = req.body;
 
   await pool.query(
-    "select * from PA_CEgresos_Insert($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
+    "select * from PA_CEgresos_Insert($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)",
     [
       dataObj.id_orders,
       dataObj.id_proveedor,
@@ -96,6 +96,10 @@ export const setEgresos = async (req: Request, res: Response) => {
       dataObj.igv_op ? parseFloat(dataObj.igv_op) : 0,
       dataObj.total_pr ? parseFloat(dataObj.total_pr) : 0,
       dataObj.total_op ? parseFloat(dataObj.total_op) : 0,
+      dataObj.id_coins ? parseFloat(dataObj.id_coins) : 0,
+      dataObj.montoopcuentabanco ? parseFloat(dataObj.montoopcuentabanco) : 0,
+      dataObj.igvopcuentabanco ? parseFloat(dataObj.igvopcuentabanco) : 0,
+      dataObj.totalopcuentabanco ? parseFloat(dataObj.totalopcuentabanco) : 0,
       dataObj.id_user,
     ],
     (err, rows, fields) => {
@@ -410,13 +414,14 @@ export const editIngreso = async (req: Request, res: Response) => {
   );
 };
 
+
 export const editEgreso = async (req: Request, res: Response) => {
   const id = req.params.id;
 
   const data = req.body;
   console.log(data);
   await pool.query(
-    "update ControlGastos_Egresos set concepto = $1, monto_pr = $2, monto_op = $3, igv_pr = $4, igv_op = $5, total_pr = $6, total_op = $7, tipo_pago = $8, numero = $9, fecha = $10 where id = $11",
+    "update ControlGastos_Egresos set concepto = $1, monto_pr = $2, monto_op = $3, igv_pr = $4, igv_op = $5, total_pr = $6, total_op = $7, tipo_pago = $8, numero = $9, fecha = $10  , id_coins = $11 , montoopcuentabanco = $12 , igvopcuentabanco = $13 , totalopcuentabanco = $14 where id = $15",
     [
       data.concepto,
       data.monto_pr,
@@ -428,6 +433,10 @@ export const editEgreso = async (req: Request, res: Response) => {
       data.tipo_pago,
       data.numero ? data.numero : null,
       data.fecha ? data.fecha : null,
+      data.id_coins ? data.id_coins : null,
+      data.montoopcuentabanco ? data.montoopcuentabanco : null,
+      data.igvopcuentabanco ? data.igvopcuentabanco : null,
+      data.totalopcuentabanco ? data.totalopcuentabanco : null,
       id,
     ],
     (err, rows, fields) => {
