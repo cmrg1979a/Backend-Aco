@@ -18,7 +18,7 @@ export const setSPaymentPro = async (req: Request, res: Response) => {
       dataObj.id_proveedor,
       dataObj.monto,
       conceptos.map(function (item) {
-        return item.id_egreso;
+        return item.id_controlgastos;
       }),
       dataObj.status,
     ],
@@ -1516,8 +1516,9 @@ export const listPagoControlGastoXProveedor = async (
   res: Response
 ) => {
   let id = req.params.id;
+  // "select * from view_list_pago_control_gasto_x_proveedor($1);",
   pool.query(
-    "select * from view_list_pago_control_gasto_x_proveedor($1);",
+    "select * from function_bancos_listxproveedor(null,$1);",
     [id],
     (err, response, fields) => {
       if (!err) {

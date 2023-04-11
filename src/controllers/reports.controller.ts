@@ -428,7 +428,7 @@ export const createdPDF = async (req: Request, res: Response) => {
   let pdf = require("html-pdf");
   let path = require("path");
   const fechaYHora = new Date();
-
+  
   const {
     idsentido,
     fecha_ini,
@@ -467,9 +467,7 @@ export const createdPDF = async (req: Request, res: Response) => {
         let datanew = JSON.parse(JSON.stringify(rows));
         let dataServiceList;
         let itemsHouse = [];
-
         rows.forEach((element) => {
-          console.log(element.datahouse);
           itemsHouse.push({
             dataHouse: element.datahouse,
             dataService: element.dataservice ? element.dataservice : [],

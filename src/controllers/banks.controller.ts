@@ -482,43 +482,56 @@ export const ExportarListadoReportePagos = async (
 
 export const RegistroPagoDetalles = async (req: Request, res: Response) => {
   let data = req.body;
-  let details = req.body.details;
-
   await pool.query(
-    "select * from table_pagosControlEgresos_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) ",
+    "select * from function_bancos_pago($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)",
     [
-      details.map(function (item: any) {
-        return item.id_payment_pro;
-      }), //pid_payment_pro int[],
-      details.map(function (item: any) {
-        return item.id_programend_payment;
-      }), //pid_programend_payment int[],
+      data.isaprobacion,
+      data.iscontrolgasto,
+      data.isprogramado,
+      data.id,
+      data.monto,
+      data.id_concepto,
       data.id_path,
       data.id_cuenta,
       data.fecha,
-      details.map(function (item: any) {
-        return parseFloat(item.monto).toFixed(4);
-      }), //pmonto numeric(19,4),
-      details.map(function (item: any) {
-        return item.status == 1 || item.status == true ? 1 : 0;
-      }), //pstatus int,
-      data.nro_operacion, //pnro_operacion varchar,
-      details.map(function (item: any) {
-        return item.monto;
-      }), //pmonto_d numeric(19,4)[],
-      details.map(function (item: any) {
-        return item.total_pagar;
-      }), //ptotal_pagar_d numeric(19,4)[]
-      details.map(function (item: any) {
-        return item.id_house;
-      }),
-      details.map(function (item: any) {
-        return item.id_proveedor;
-      }),
-      details.map(function (item: any) {
-        return item.id_orders;
-      }),
+      data.nro_operacion,
+      data.id_proveedor,
+      data.id_user,
     ],
+    // "select * from table_pagosControlEgresos_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) ",
+    // [
+    //   details.map(function (item: any) {
+    //     return item.id_payment_pro;
+    //   }), //pid_payment_pro int[],
+    //   details.map(function (item: any) {
+    //     return item.id_programend_payment;
+    //   }), //pid_programend_payment int[],
+    //   data.id_path,
+    //   data.id_cuenta,
+    //   data.fecha,
+    //   details.map(function (item: any) {
+    //     return parseFloat(item.monto).toFixed(4);
+    //   }), //pmonto numeric(19,4),
+    //   details.map(function (item: any) {
+    //     return item.status == 1 || item.status == true ? 1 : 0;
+    //   }), //pstatus int,
+    //   data.nro_operacion, //pnro_operacion varchar,
+    //   details.map(function (item: any) {
+    //     return item.monto;
+    //   }), //pmonto_d numeric(19,4)[],
+    //   details.map(function (item: any) {
+    //     return item.total_pagar;
+    //   }), //ptotal_pagar_d numeric(19,4)[]
+    //   details.map(function (item: any) {
+    //     return item.id_house;
+    //   }),
+    //   details.map(function (item: any) {
+    //     return item.id_proveedor;
+    //   }),
+    //   details.map(function (item: any) {
+    //     return item.id_orders;
+    //   }),
+    // ],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -1036,9 +1049,6 @@ export const ExportarListadoReporteIngresos = async (
           wt.cell(fila, 15).string(element.serie);
           fila++;
         });
-        
-        
-        
 
         let pathexcel = path.join(
           `${__dirname}../../../uploads`,
@@ -1061,6 +1071,33 @@ export const ExportarListadoReporteIngresos = async (
 export const reversarCxC = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM function_reversar_debsclient($1)",
+    [req.body.id],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const reversarCxP = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM function_reversar_debsproveedor($1)",
     [req.body.id],
     (err, response, fields) => {
       if (!err) {

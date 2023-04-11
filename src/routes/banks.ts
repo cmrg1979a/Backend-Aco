@@ -26,6 +26,7 @@ import {
   ExportarListadoReporteIngresos,
   ExportarListadoReporteEgresos,
   reversarCxC,
+  reversarCxP,
 } from "../controllers/banks.controller";
 
 router.post("/getBanksList", TokenValidation, getBanksList);
@@ -104,5 +105,6 @@ router.get(
   ExportarListadoReporteIngresos
 );
 router.put("/reversar_debscliente", TokenValidation, reversarCxC);
+router.put("/reversar_debsproveedor", TokenValidation, reversarCxP);
 
 export default router;

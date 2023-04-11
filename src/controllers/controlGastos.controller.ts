@@ -83,9 +83,9 @@ export const setIngresos = async (req: Request, res: Response) => {
 
 export const setEgresos = async (req: Request, res: Response) => {
   const dataObj = req.body;
-
+  console.log(dataObj);
   await pool.query(
-    "select * from PA_CEgresos_Insert($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)",
+    "select * from PA_CEgresos_Insert($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)",
     [
       dataObj.id_orders,
       dataObj.id_proveedor,
@@ -101,6 +101,8 @@ export const setEgresos = async (req: Request, res: Response) => {
       dataObj.igvopcuentabanco ? parseFloat(dataObj.igvopcuentabanco) : 0,
       dataObj.totalopcuentabanco ? parseFloat(dataObj.totalopcuentabanco) : 0,
       dataObj.id_user,
+      dataObj.id_correlativo,
+      dataObj.id_master,
     ],
     (err, rows, fields) => {
       if (!err) {
@@ -414,14 +416,13 @@ export const editIngreso = async (req: Request, res: Response) => {
   );
 };
 
-
 export const editEgreso = async (req: Request, res: Response) => {
   const id = req.params.id;
 
   const data = req.body;
   console.log(data);
   await pool.query(
-    "update ControlGastos_Egresos set concepto = $1, monto_pr = $2, monto_op = $3, igv_pr = $4, igv_op = $5, total_pr = $6, total_op = $7, tipo_pago = $8, numero = $9, fecha = $10  , id_coins = $11 , montoopcuentabanco = $12 , igvopcuentabanco = $13 , totalopcuentabanco = $14 where id = $15",
+    "select * from function_controlgasto_edit($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,$11,$12,$13,$14,$15,$16)",
     [
       data.concepto,
       data.monto_pr,
@@ -437,15 +438,25 @@ export const editEgreso = async (req: Request, res: Response) => {
       data.montoopcuentabanco ? data.montoopcuentabanco : null,
       data.igvopcuentabanco ? data.igvopcuentabanco : null,
       data.totalopcuentabanco ? data.totalopcuentabanco : null,
+      data.id_correlativo ? data.id_correlativo : null,
       id,
     ],
-    (err, rows, fields) => {
+    (err, response, fields) => {
       if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }
@@ -458,6 +469,103 @@ export const ControlGastosList = async (req: Request, res: Response) => {
   await pool.query(
     "select * from function_controlgastos($1)",
     [code_master],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const cargarCorrelativo = async (req: Request, res: Response) => {
+  const id_branch = req.query.id_branch;
+  await pool.query(
+    "select * from function_cargar_correlativo($1)",
+    [id_branch ? id_branch : null],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const listarCGECcorralativo = async (req: Request, res: Response) => {
+  const id_proveedor = req.query.id_proveedor;
+  await pool.query(
+    "select * from function_cge_correlativo($1)",
+    [id_proveedor ? id_proveedor : null],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const registrarCGECcorralativo = async (req: Request, res: Response) => {
+  const dataObj = req.body;
+  await pool.query(
+    "select * from function_cge_correlativo($1)",
+    [
+      dataObj.nro_operacion,
+      dataObj.date,
+      dataObj.payPath,
+      dataObj.id_cuenta,
+      dataObj.control_gasto.map((element) => {
+        return element.id;
+      }),
+      dataObj.control_gasto.map((element) => {
+        return element.total_op;
+      }),
+      dataObj.control_gasto.map((element) => {
+        return element.totalopcuentabanco;
+      }),
+    ],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;

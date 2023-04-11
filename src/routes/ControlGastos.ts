@@ -19,6 +19,8 @@ import {
   getEgresosProveedorList,
   delEgregso,
   ControlGastosList,
+  cargarCorrelativo,
+  listarCGECcorralativo,
 } from "../controllers/controlGastos.controller";
 
 router.post("/setControl", TokenValidation, setControl);
@@ -48,5 +50,7 @@ router.post("/editIngreso/:id", TokenValidation, editIngreso);
 router.post("/editEgreso/:id", TokenValidation, editEgreso);
 router.put("/delEgregso/:id", TokenValidation, delEgregso);
 router.get("/control_gastos_list", TokenValidation, ControlGastosList);
+router.get("/cargar_correlativo", TokenValidation, cargarCorrelativo);
+router.get("/listar_cge_corralativo", TokenValidation, listarCGECcorralativo);
 
 export default router;

@@ -73,7 +73,7 @@ export const editMaster = async (req: Request, res: Response) => {
   const dataObj: postMaster = req.body;
   const id = req.params.id;
   await pool.query(
-    "UPDATE Table_MasterControl SET id_branch=$1,nro_master=$2,code_master=$3,id_cot=$4,id_modality=$5,id_shipment=$6,id_incoterms=$7,id_port_begin=$8,id_port_end=$9,id_operador=$10,fecha_etd=$11,fecha_eta=$12,fecha_disponibilidad=$13,ganancia_pricing=$14,ganancia_operaciones=$15,id_agent=$16,id_consigner=$17,id_notify=$18,id_aerolinea=$19,id_coloader=$20,id_naviera=$21,nro_mbl=$22,id_motonave=$23,nro_viaje=$24,bultos=$25,peso=$26,volumen=$27,id_conditions=$28,id_moneda=$29,monto=$30,statuslock=$31,statuslockadm=$32,status=$33 WHERE id = $34",
+    "UPDATE Table_MasterControl SET id_branch=$1,nro_master=$2,code_master=$3,id_cot=$4,id_modality=$5,id_shipment=$6,id_incoterms=$7,id_port_begin=$8,id_port_end=$9,id_operador=$10,fecha_etd=$11,fecha_eta=$12,fecha_disponibilidad=$13,ganancia_pricing=$14,ganancia_operaciones=$15,id_agent=$16,id_consigner=$17,id_notify=$18,id_aerolinea=$19,id_coloader=$20,id_naviera=$21,nro_mbl=$22,id_motonave=$23,nro_viaje=$24,bultos=$25,peso=$26,volumen=$27,id_conditions=$28,id_moneda=$29,monto=$30,statuslock=coalesce($31,statuslock),statuslockadm=coalesce($32,statuslockadm),status=$33 WHERE id = $34",
     [
       dataObj.id_branch,
       dataObj.nro_master,

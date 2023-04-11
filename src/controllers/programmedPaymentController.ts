@@ -11,7 +11,7 @@ export const setProgrammedPayment = async (req: Request, res: Response) => {
   const dataObj: programmedPaymentInterface = req.body;
   console.log(dataObj);
   await pool.query(
-    "select * from programmed_payment_insertar($1,$2,$3,$4,$5,$6,$7)",
+    "select * from programmed_payment_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9)",
     [
       dataObj.fecha,
       dataObj.STATUS ? 1 : 0,
@@ -20,6 +20,8 @@ export const setProgrammedPayment = async (req: Request, res: Response) => {
       dataObj.id_detailspayinvoicecxp,
       dataObj.id_controlgastosegresos,
       dataObj.controlgastoegreso ? 1 : 0,
+      dataObj.id_master ? dataObj.id_master : null,
+      dataObj.id_proveedor ? dataObj.id_proveedor : null,
     ],
     (err, response, fields) => {
       if (!err) {
