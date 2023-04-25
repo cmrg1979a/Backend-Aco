@@ -8,8 +8,22 @@ export const TokenValidation = (
 ) => {
   const token = req.header("auth-token");
 
+  
   if (!token) return res.status(401).json("Access denied");
-  const payload = jwt.verify(token, process.env.TOKEN_SECRET || "tokentest");
+  try {
+    const payload = jwt.verify(token, process.env.TOKEN_SECRET || "tokentest");
+    next();
+  } catch (error) {
+    res.json({
+      status: 500,
+      statusBol: false,
+      mensjae: "Sesión Expirada",
+    });
+    console.log(error);
+
+  }
+  
+  
   //console.log(payload);
-  next();
+ 
 };

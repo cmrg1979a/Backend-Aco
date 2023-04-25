@@ -159,6 +159,7 @@ export const registrarFactura = async (req: Request, res: Response) => {
   const datos: factura = req.body;
   const details = req.body.details;
 
+  
   await pool.query(
     "SELECT * FROM table_Factura_insertar($1,$2,$3,$4,$5,$6,$7,1,$8,$9,$10,$11,$12)",
     [

@@ -5,8 +5,8 @@ const pool = conexion();
 
 export const getInvoicePath = async (req: Request, res: Response) => {
   await pool.query(
-    "SELECT * FROM table_invoice_path($1,$2)",
-    [req.params.id_master, req.params.id_proveedor],
+    "SELECT * FROM table_invoice_path($1,$2,$3)",
+    [req.query.id_master, req.query.id_proveedor,req.query.id_correlativo],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;

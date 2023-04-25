@@ -12,13 +12,15 @@ export const setSPaymentPro = async (req: Request, res: Response) => {
   const dataObj = req.body;
   const conceptos = dataObj.conceptos;
   await pool.query(
-    "select * from Table_SPaymentPro_insertar($1,$2,$3,$4,$5)",
+    "select * from Table_SPaymentPro_insertar($1,$2,$3,$4,$5,$6,$7)",
     [
       dataObj.id_house,
       dataObj.id_proveedor,
       dataObj.monto,
+      dataObj.id_correlativo,
+      dataObj.id_master,
       conceptos.map(function (item) {
-        return item.id_controlgastos;
+        return item.id;
       }),
       dataObj.status,
     ],
@@ -73,13 +75,22 @@ export const putSPaymentPro = async (req: Request, res: Response) => {
 };
 
 export const getSPaymentPro = async (req: Request, res: Response) => {
-  const { id_house, id_proveedor, id_branch } = req.params;
+  console.log(req.query.id_branch);
+  console.log(req.query.id_master);
+  console.log(req.query.id_proveedor);
+  console.log(req.query.id_correlativo);
   await pool.query(
-    "SELECT * FROM TABLE_SPAYMENTPRO_listar($1,$2,$3);",
-    [id_branch, id_house, id_proveedor],
+    "SELECT * FROM TABLE_SPAYMENTPRO_listar($1,$2,$3,$4);",
+    [
+      req.query.id_branch,
+      req.query.id_master,
+      req.query.id_proveedor,
+      req.query.id_correlativo,
+    ],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+        console.log(rows);
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
@@ -973,7 +984,7 @@ export const setInvoice = async (req: Request, res: Response) => {
   const dataObj = req.body;
   console.log(dataObj);
   pool.query(
-    "INSERT INTO Table_Invoice (id_house, id_proveedor, id_path, type_pago, number, date, status) values ($1,$2,$3,$4,$5,$6,$7)",
+    "INSERT INTO Table_Invoice (id_house, id_proveedor, id_path, type_pago, number, date, status,id_correlativo,id_master) values ($1,$2,$3,$4,$5,$6,$7,$8,$9)",
     [
       dataObj.id_house,
       dataObj.id_proveedor,
@@ -982,6 +993,8 @@ export const setInvoice = async (req: Request, res: Response) => {
       dataObj.number,
       dataObj.date,
       dataObj.status,
+      dataObj.id_correlativo,
+      dataObj.id_master,
     ],
     (err, rows, fields) => {
       if (!err) {

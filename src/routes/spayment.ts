@@ -65,12 +65,12 @@ router.post(
   TokenValidation,
   getReportAccountsFilter
 );
-router.post("/getRequestPaymentConceptos/:id",TokenValidation,getRequestPaymentConceptos);
 router.post(
-  "/getSPaymentPro/:id_house/:id_proveedor/:id_branch",
+  "/getRequestPaymentConceptos/:id",
   TokenValidation,
-  getSPaymentPro
+  getRequestPaymentConceptos
 );
+router.get("/getSPaymentPro", TokenValidation, getSPaymentPro);
 router.post("/getReporteCXP", TokenValidation, getReporteCXP);
 router.post("/getReporteCXC", TokenValidation, getReporteCXC);
 router.post("/getReporteCXCAdmin", TokenValidation, getReporteCXCAdmin);
@@ -78,7 +78,7 @@ router.get(
   "/listPagoControlGastoXProveedor/:id",
   TokenValidation,
   listPagoControlGastoXProveedor
-  );
-  
-  router.put("/actualizar_debs_client", updateDebsClient);
+);
+
+router.put("/actualizar_debs_client", updateDebsClient);
 export default router;

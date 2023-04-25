@@ -7,21 +7,65 @@ const pool = conexion();
 
 import { programmedPaymentInterface } from "interface/programmedPaymentInterface";
 
+// export const setProgrammedPayment = async (req: Request, res: Response) => {
+//   const dataObj: programmedPaymentInterface = req.body;
+//   console.log(dataObj);
+//   await pool.query(
+//     "select * from programmed_payment_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9)",
+//     [
+//       dataObj.fecha,
+//       dataObj.STATUS ? 1 : 0,
+//       dataObj.nuevoflag,
+//       dataObj.id,
+//       dataObj.id_detailspayinvoicecxp,
+//       dataObj.id_controlgastosegresos,
+//       dataObj.controlgastoegreso ? 1 : 0,
+//       dataObj.id_master ? dataObj.id_master : null,
+//       dataObj.id_proveedor ? dataObj.id_proveedor : null,
+//     ],
+//     (err, response, fields) => {
+//       if (!err) {
+//         let rows = response.rows;
+//         if (!!rows[0].estadoflag) {
+//           res.json({
+//             status: 200,
+//             statusBol: true,
+//             data: rows,
+//           });
+//         } else {
+//           res.json({
+//             status: 200,
+//             statusBol: true,
+//             mensaje: rows[0].mensaje,
+//           });
+//         }
+//       } else {
+//         console.log(err);
+//       }
+//     }
+//   );
+// };
 export const setProgrammedPayment = async (req: Request, res: Response) => {
-  const dataObj: programmedPaymentInterface = req.body;
+  const dataObj = req.body;
   console.log(dataObj);
   await pool.query(
-    "select * from programmed_payment_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9)",
+    "select * from function_registrar_programacion($1,$2,$3,$4,$5,$6,$7)",
     [
-      dataObj.fecha,
-      dataObj.STATUS ? 1 : 0,
-      dataObj.nuevoflag,
-      dataObj.id,
-      dataObj.id_detailspayinvoicecxp,
-      dataObj.id_controlgastosegresos,
-      dataObj.controlgastoegreso ? 1 : 0,
-      dataObj.id_master ? dataObj.id_master : null,
-      dataObj.id_proveedor ? dataObj.id_proveedor : null,
+      dataObj.id, // bigint,
+      dataObj.tipo,
+      dataObj.fecha, // date,
+      dataObj.details.map((element) => {
+        return element.id_proveedor ? element.id_proveedor : null;
+      }), // int[],
+      dataObj.details.map((element) => {
+        return element.id_master ? element.id_master : null;
+      }), // int[],
+      dataObj.details.map((element) => {
+        return element.id_correlativo ? element.id_correlativo : null;
+      }), // int[],
+      dataObj.details.map((element) => {
+        return element.id ? element.id : null;
+      }), // bigint[]
     ],
     (err, response, fields) => {
       if (!err) {
@@ -31,6 +75,7 @@ export const setProgrammedPayment = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            mensaje: rows[0].mensaje,
           });
         } else {
           res.json({
@@ -58,6 +103,7 @@ export const ListProgrammedPayment = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            mensaje: rows[0].mensaje,
           });
         } else {
           res.json({
@@ -133,6 +179,119 @@ export const deleteProgrammedPayment = async (req: Request, res: Response) => {
           statusBol: true,
           data: rows,
         });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const CargarProgramacion = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM function_cargarprogramacion($1)",
+    [req.query.id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const PagosProgramadosPorProveedor = async (
+  req: Request,
+  res: Response
+) => {
+  await pool.query(
+    "SELECT * FROM programmed_payment_x_proveedor($1,$2)",
+    [req.query.id_branch, req.query.id_proveedor],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const RegistrarPagosProgramados = async (
+  req: Request,
+  res: Response
+) => {
+  let dataObj = req.body;
+  let details = req.body.details;
+  console.log(
+    details.map((element) => {
+      return element.id;
+    })
+  );
+  await pool.query(
+    "SELECT * FROM function_registrar_pagoprogramado($1,$2,$3,$4,$5,$6,$7,$8,$9)",
+    [
+      dataObj.id_path, // int,
+      dataObj.id_cuentas, // int,
+      dataObj.fecha, // date,
+      dataObj.nro_operacion, // varchar,
+      dataObj.tipocambio, // numeric,
+      dataObj.id_coins, // int,
+      details.map((element) => {
+        return element.id;
+      }), // int[],
+      details.map((element) => {
+        return element.monto;
+      }), // numeric[],
+      details.map((element) => {
+        return element.monto_mon_ex;
+      }), // numeric[]
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }

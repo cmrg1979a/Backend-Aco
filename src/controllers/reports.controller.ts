@@ -428,7 +428,7 @@ export const createdPDF = async (req: Request, res: Response) => {
   let pdf = require("html-pdf");
   let path = require("path");
   const fechaYHora = new Date();
-  
+
   const {
     idsentido,
     fecha_ini,
@@ -1617,7 +1617,7 @@ export const getPdfInstructivoDetallado = async (
   let ejs = require("ejs");
   let pdf = require("html-pdf");
   let path = require("path");
-
+  console.log(req.body);
   const {
     bultos,
     exp,
