@@ -483,7 +483,7 @@ export const ExportarListadoReportePagos = async (
 export const RegistroPagoDetalles = async (req: Request, res: Response) => {
   let data = req.body;
   await pool.query(
-    "select * from function_bancos_pago($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)",
+    "select * from function_bancos_pago($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)",
     [
       data.isaprobacion,
       data.iscontrolgasto,
@@ -497,6 +497,8 @@ export const RegistroPagoDetalles = async (req: Request, res: Response) => {
       data.nro_operacion,
       data.id_proveedor,
       data.id_user,
+      data.tipocambio,
+      data.id_coins,
     ],
     // "select * from table_pagosControlEgresos_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) ",
     // [

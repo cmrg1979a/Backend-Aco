@@ -47,9 +47,13 @@ import { programmedPaymentInterface } from "interface/programmedPaymentInterface
 // };
 export const setProgrammedPayment = async (req: Request, res: Response) => {
   const dataObj = req.body;
-  console.log(dataObj);
+  console.log(
+    dataObj.details.map((element) => {
+      return element.controlgastoegreso;
+    })
+  );
   await pool.query(
-    "select * from function_registrar_programacion($1,$2,$3,$4,$5,$6,$7)",
+    "select * from function_registrar_programacion($1,$2,$3,$4,$5,$6,$7,$8)",
     [
       dataObj.id, // bigint,
       dataObj.tipo,
@@ -65,6 +69,9 @@ export const setProgrammedPayment = async (req: Request, res: Response) => {
       }), // int[],
       dataObj.details.map((element) => {
         return element.id ? element.id : null;
+      }), // bigint[]
+      dataObj.details.map((element) => {
+        return element.controlgastoegreso;
       }), // bigint[]
     ],
     (err, response, fields) => {
@@ -219,8 +226,8 @@ export const PagosProgramadosPorProveedor = async (
   res: Response
 ) => {
   await pool.query(
-    "SELECT * FROM programmed_payment_x_proveedor($1,$2)",
-    [req.query.id_branch, req.query.id_proveedor],
+    "SELECT * FROM programmed_payment_x_proveedor($1,$2,$3)",
+    [req.query.id_branch, req.query.id_proveedor,req.query.id_programend],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -272,7 +279,7 @@ export const RegistrarPagosProgramados = async (
         return element.monto;
       }), // numeric[],
       details.map((element) => {
-        return element.monto_mon_ex;
+        return element.monto_mon_ext;
       }), // numeric[]
     ],
     (err, response, fields) => {
