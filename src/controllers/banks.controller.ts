@@ -66,34 +66,25 @@ export const getListaPagosXProveedorCxP = async (
 };
 
 export const setPayForProveedor = async (req: Request, res: Response) => {
+  const dabaObj = req.body;
   const details = req.body.details;
-  const pid_pago = req.body.id_path;
-  const nro_operacion = req.body.nro_operacion;
-  const fecha_pago = req.body.fecha_pago;
 
-  const id_cuenta = req.body.id_cuenta;
   await pool.query(
     "SELECT * FROM detailsPaysInvoiceAdmin_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9)",
     [
-      fecha_pago,
-      nro_operacion,
-      details.map(function (item) {
-        return item.id;
-      }), // pid_invoiceadmin int[],
-      pid_pago,
-      details.map(function (item) {
-        return item.max_pagar;
-      }), // pmonto numeric[],
-      id_cuenta,
-      details.map(function (item) {
-        return !!item.cktotal ? 1 : 0;
-      }), // cktotal int[],
-      details.map(function (item) {
-        return item.monto_deuda;
-      }), // monto_deuda numeric[],
-      details.map(function (item) {
-        return item.monto_pagar;
-      }), // monto_pagar numeric[]
+      details.map((element) => {
+        return element.id;
+      }), //id int[],
+      dabaObj.id_path, //id_path int,
+      dabaObj.id_coins, //id_cuenta int,
+      dabaObj.fecha_pago, //fecha date ,
+      details.map((element) => {
+        return element.monto_mon_ext;
+      }), //onto numeric[],
+      dabaObj.tipocambio, //tipocambio numeric,
+      dabaObj.nro_operacion, //nro_operacion varchar,
+      dabaObj.id_coins, //id_coins int,
+      dabaObj.comentarios, //--pcomentarios varchar
     ],
     (err, response, fields) => {
       if (!err) {
@@ -482,8 +473,32 @@ export const ExportarListadoReportePagos = async (
 
 export const RegistroPagoDetalles = async (req: Request, res: Response) => {
   let data = req.body;
+  /*
+  isaprobacion: [true, true]
+iscontrolgasto: [false, false]
+isprogramado: [false, false]
+id: [1056, 1055]
+monto: [309.645, 619.5]
+id_concepto: []
+id_path: "4119"
+id_cuenta: 3
+ fecha: "2023-05-06"
+nro_operacion: "9876546"
+id_proveedor: 3085
+id_user: 1
+tipocambio: "3.5"
+id_coins: 3
+comentarios: "333333333333"
+id_correlativo: [3, 1]
+
+
+
+
+tipo: ["A", "A"]
+
+  */
   await pool.query(
-    "select * from function_bancos_pago($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)",
+    "select * from function_bancos_pago($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)",
     [
       data.isaprobacion,
       data.iscontrolgasto,
@@ -499,41 +514,9 @@ export const RegistroPagoDetalles = async (req: Request, res: Response) => {
       data.id_user,
       data.tipocambio,
       data.id_coins,
+      data.comentarios,
     ],
-    // "select * from table_pagosControlEgresos_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) ",
-    // [
-    //   details.map(function (item: any) {
-    //     return item.id_payment_pro;
-    //   }), //pid_payment_pro int[],
-    //   details.map(function (item: any) {
-    //     return item.id_programend_payment;
-    //   }), //pid_programend_payment int[],
-    //   data.id_path,
-    //   data.id_cuenta,
-    //   data.fecha,
-    //   details.map(function (item: any) {
-    //     return parseFloat(item.monto).toFixed(4);
-    //   }), //pmonto numeric(19,4),
-    //   details.map(function (item: any) {
-    //     return item.status == 1 || item.status == true ? 1 : 0;
-    //   }), //pstatus int,
-    //   data.nro_operacion, //pnro_operacion varchar,
-    //   details.map(function (item: any) {
-    //     return item.monto;
-    //   }), //pmonto_d numeric(19,4)[],
-    //   details.map(function (item: any) {
-    //     return item.total_pagar;
-    //   }), //ptotal_pagar_d numeric(19,4)[]
-    //   details.map(function (item: any) {
-    //     return item.id_house;
-    //   }),
-    //   details.map(function (item: any) {
-    //     return item.id_proveedor;
-    //   }),
-    //   details.map(function (item: any) {
-    //     return item.id_orders;
-    //   }),
-    // ],
+
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -1101,6 +1084,32 @@ export const reversarCxP = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM function_reversar_debsproveedor($1)",
     [req.body.id],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const verPagosControlEgresos = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM function_pagoscontrolegresos_ver($1)",
+    [req.query.id],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;

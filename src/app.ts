@@ -167,6 +167,7 @@ app.post("/uploadFilesSingle", function (req, res) {
   });
 });
 
+
 var uploads = multer({ storage: storage }).single("file");
 
 app.post("/uploadAllPath", function (req, res) {

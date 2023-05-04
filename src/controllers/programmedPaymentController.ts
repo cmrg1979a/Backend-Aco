@@ -227,7 +227,7 @@ export const PagosProgramadosPorProveedor = async (
 ) => {
   await pool.query(
     "SELECT * FROM programmed_payment_x_proveedor($1,$2,$3)",
-    [req.query.id_branch, req.query.id_proveedor,req.query.id_programend],
+    [req.query.id_branch, req.query.id_proveedor, req.query.id_programend],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -264,7 +264,7 @@ export const RegistrarPagosProgramados = async (
     })
   );
   await pool.query(
-    "SELECT * FROM function_registrar_pagoprogramado($1,$2,$3,$4,$5,$6,$7,$8,$9)",
+    "SELECT * FROM function_registrar_pagoprogramado($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
     [
       dataObj.id_path, // int,
       dataObj.id_cuentas, // int,
@@ -281,7 +281,36 @@ export const RegistrarPagosProgramados = async (
       details.map((element) => {
         return element.monto_mon_ext;
       }), // numeric[]
+      dataObj.comentarios,
     ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const eliminarProgramacion = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM function_eliminarprogramacion($1,$2)",
+    [req.body.id, req.body.id_proveedor],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
