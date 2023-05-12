@@ -75,10 +75,6 @@ export const putSPaymentPro = async (req: Request, res: Response) => {
 };
 
 export const getSPaymentPro = async (req: Request, res: Response) => {
-  console.log(req.query.id_branch);
-  console.log(req.query.id_master);
-  console.log(req.query.id_proveedor);
-  console.log(req.query.id_correlativo);
   await pool.query(
     "SELECT * FROM TABLE_SPAYMENTPRO_listar($1,$2,$3,$4);",
     [
