@@ -85,7 +85,7 @@ export const setEgresos = async (req: Request, res: Response) => {
   const dataObj = req.body;
   console.log(dataObj);
   await pool.query(
-    "select * from PA_CEgresos_Insert($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)",
+    "select * from PA_CEgresos_Insert($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)",
     [
       dataObj.id_orders,
       dataObj.id_proveedor,
@@ -103,6 +103,7 @@ export const setEgresos = async (req: Request, res: Response) => {
       dataObj.id_user,
       dataObj.id_correlativo,
       dataObj.id_master,
+      dataObj.tipocambio,
     ],
     (err, rows, fields) => {
       if (!err) {
@@ -422,7 +423,7 @@ export const editEgreso = async (req: Request, res: Response) => {
   const data = req.body;
   console.log(data);
   await pool.query(
-    "select * from function_controlgasto_edit($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,$11,$12,$13,$14,$15,$16)",
+    "select * from function_controlgasto_edit($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,$11,$12,$13,$14,$15,$16,$17,$18)",
     [
       data.concepto,
       data.monto_pr,
@@ -439,6 +440,8 @@ export const editEgreso = async (req: Request, res: Response) => {
       data.igvopcuentabanco ? data.igvopcuentabanco : null,
       data.totalopcuentabanco ? data.totalopcuentabanco : null,
       data.id_correlativo ? data.id_correlativo : null,
+      data.id_proveedor ? data.id_proveedor : null,
+      data.tipocambio ? data.tipocambio : null,
       id,
     ],
     (err, response, fields) => {

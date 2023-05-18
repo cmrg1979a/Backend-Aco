@@ -7,8 +7,6 @@ import bodyParser from "body-parser";
 import * as pg from "pg";
 const { Pool } = pg;
 
-// var mysql = require("mysql");
-
 // const pool = new Pool({
 //   host: "10.116.0.2",
 //   user: "postgres",
@@ -30,7 +28,7 @@ const pool = new Pool({
   user: "chainsolver",
   password: "Fr3sc0l1t4+",
   port: "5432",
-  database: "db_op_main_01",
+  database: "db_op_main_05",
 });
 
 
@@ -77,7 +75,7 @@ import banksRoute from "./routes/banks";
 import { addPath } from "graphql/jsutils/Path";
 import filesRoute from "./routes/files";
 import spaymentRoute from "./routes/spayment";
-import { connect } from "routes/database";
+// import { connect } from "routes/database";
 import versionRoute from "./routes/version";
 import modulesPaysRoutes from "./routes/modulesPays";
 import perfomanceRoutes from "./routes/perfomance";

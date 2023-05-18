@@ -473,30 +473,7 @@ export const ExportarListadoReportePagos = async (
 
 export const RegistroPagoDetalles = async (req: Request, res: Response) => {
   let data = req.body;
-  /*
-  isaprobacion: [true, true]
-iscontrolgasto: [false, false]
-isprogramado: [false, false]
-id: [1056, 1055]
-monto: [309.645, 619.5]
-id_concepto: []
-id_path: "4119"
-id_cuenta: 3
- fecha: "2023-05-06"
-nro_operacion: "9876546"
-id_proveedor: 3085
-id_user: 1
-tipocambio: "3.5"
-id_coins: 3
-comentarios: "333333333333"
-id_correlativo: [3, 1]
-
-
-
-
-tipo: ["A", "A"]
-
-  */
+  console.log(data);
   await pool.query(
     "select * from function_bancos_pago($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)",
     [
