@@ -301,9 +301,10 @@ export const RegistrarPagosProgramados = async (
 };
 
 export const eliminarProgramacion = async (req: Request, res: Response) => {
+  console.log(req);
   await pool.query(
-    "SELECT * FROM function_eliminarprogramacion($1,$2)",
-    [req.body.id, req.body.id_proveedor],
+    "SELECT * FROM function_eliminarprogramacion($1)",
+    [req.body.id_details],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -318,6 +319,40 @@ export const eliminarProgramacion = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const eliminarProgramacionDetalle = async (
+  req: Request,
+  res: Response
+) => {
+  console.log(req.body);
+  await pool.query(
+    "SELECT * FROM eliminar_programacion_detalle($1)",
+    [req.body.id],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            mensaje: rows[0].mensaje,
+            estadoflag: rows[0].estadoflag,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            estadoflag: rows[0].estadoflag,
             mensaje: rows[0].mensaje,
           });
         }

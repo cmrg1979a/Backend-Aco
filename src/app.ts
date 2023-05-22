@@ -28,7 +28,7 @@ const pool = new Pool({
   user: "chainsolver",
   password: "Fr3sc0l1t4+",
   port: "5432",
-  database: "db_op_main_05",
+  database: "db_op_main_dev",
 });
 
 

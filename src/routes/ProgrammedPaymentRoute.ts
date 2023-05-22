@@ -12,6 +12,7 @@ import {
   PagosProgramadosPorProveedor,
   RegistrarPagosProgramados,
   eliminarProgramacion,
+  eliminarProgramacionDetalle,
 } from "../controllers/programmedPaymentController";
 
 router.post("/setProgrammedPayment", TokenValidation, setProgrammedPayment);
@@ -20,6 +21,7 @@ router.get("/cargar_programacion",  CargarProgramacion);
 router.get("/pagos_programados_por_proveedor",  PagosProgramadosPorProveedor);
 router.post("/registrar_pagos_programado",  RegistrarPagosProgramados);
 router.put("/eliminar_programacion",  eliminarProgramacion);
+router.put("/eliminar_programacion_detalle",  eliminarProgramacionDetalle);
 router.put(
   "/updateProgrammedPayment/:id",
   TokenValidation,
