@@ -263,7 +263,9 @@ export const RegistrarPagosProgramados = async (
       dataObj.id_cuentas, // int,
       dataObj.fecha, // date,
       dataObj.nro_operacion, // varchar,
-      dataObj.tipocambio, // numeric,
+      details.map((element) => {
+        return element.tipocambio;
+      }),//dataObj.tipocambio, // numeric,
       dataObj.id_coins, // int,
       details.map((element) => {
         return element.id;
