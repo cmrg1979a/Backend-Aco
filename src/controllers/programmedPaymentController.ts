@@ -223,8 +223,8 @@ export const PagosProgramadosPorProveedor = async (
   res: Response
 ) => {
   await pool.query(
-    "SELECT * FROM programmed_payment_x_proveedor($1,$2,$3)",
-    [req.query.id_branch, req.query.id_proveedor, req.query.id_programend],
+    "SELECT * FROM programmed_payment_x_proveedor($1,$2,$3,$4)",
+    [req.query.id_branch, req.query.id_proveedor, req.query.id_programend,req.query.id_coins],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;

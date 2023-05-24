@@ -463,7 +463,7 @@ export const createdPDF = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        // console.log(JSON.stringify(rows.datahouse));
+        
         let datanew = JSON.parse(JSON.stringify(rows));
         let dataServiceList;
         let itemsHouse = [];
@@ -473,7 +473,7 @@ export const createdPDF = async (req: Request, res: Response) => {
             dataService: element.dataservice ? element.dataservice : [],
           });
         });
-        // console.log(itemsHouse)
+        
         ejs.renderFile(
           path.join(__dirname, "../views/", "report-template.ejs"),
 
@@ -532,285 +532,12 @@ export const createdPDF = async (req: Request, res: Response) => {
             }
           }
         );
-        //   new Promise<void>((resolver, rechazar) => {
-        //     datanew.map((item: any) => {
-        //       // console.log();
-        //       pool.query(
-        //         "SELECT * FROM HOUSE_SERVICES_LISTArxhouse($1)",
-        //         [item.datahouse[0].id],
-        //         (err, response, fields) => {
-        //           let rows2 = response.rows;
-
-        //           dataServiceList = JSON.parse(JSON.stringify(rows2));
-
-        //           if (item.id_modality == 1) {
-        //             dataServiceList.sort((a: any, b: any) => {
-        //               if (a.id < b.id) {
-        //                 return -1;
-        //               }
-        //               if (a.id > b.id) {
-        //                 return 1;
-        //               }
-        //               return 0;
-        //             });
-        //           } else {
-        //             dataServiceList.sort((a: any, b: any) => {
-        //               if (a.id < b.id) {
-        //                 return -1;
-        //               }
-        //               if (a.id > b.id) {
-        //                 return 1;
-        //               }
-        //               return 0;
-        //             });
-        //           }
-        //           let dataTes = [];
-        //           let dataPre = [];
-        //           dataTes.push(dataServiceList);
-        //           dataPre.push({
-        //             dataHouse: item.datahouse,
-        //             dataService: dataTes,
-        //           });
-
-        //           req.app.locals.itemsHouse.push(dataPre[0]);
-        //         }
-        //         );
-        //       });
-        //       req.app.locals.itemsHouse = [];
-        //       console.log(req.app.locals.itemsHouse)
-        //     resolver();
-        //   }).then(() => {
-        //     setTimeout(() => {
-        //       req.app.locals.itemsHouse.sort((a: any, b: any) => {
-        //         if (
-        //           a.dataHouse.fecha_disponibilidad <
-        //           b.dataHouse.fecha_disponibilidad
-        //         ) {
-        //           return -1;
-        //         }
-        //         if (
-        //           a.dataHouse.fecha_disponibilidad >
-        //           b.dataHouse.fecha_disponibilidad
-        //         ) {
-        //           return 1;
-        //         }
-        //         return 0;
-        //       });
-        //       ejs.renderFile(
-        //         path.join(__dirname, "../views/", "report-template.ejs"),
-
-        //         {
-        //           items: req.app.locals.itemsHouse,
-        //           fecha_ini,
-        //           fecha_fin,
-        //           totalExpedientesMaster,
-        //           totalExpedientesHouse,
-        //           totalIA,
-        //           totalEA,
-        //           totalIM,
-        //           totalEM,
-        //           totalLL,
-        //           totalPL,
-        //           totalSS,
-        //           totalPS,
-        //           totales,
-        //           fechaYHora,
-        //           sentidoletra,
-        //           statusLetra,
-        //         },
-
-        //         (err: any, data: any) => {
-        //           if (err) {
-        //             res.send(err);
-        //           } else {
-        //             let options = {
-        //               page_size: "A4",
-        //               orientation: "landscape",
-        //               header: {
-        //                 height: "10mm",
-        //               },
-        //               footer: {
-        //                 height: "10mm",
-        //               },
-        //             };
-
-        //             pdf
-        //               .create(data, options)
-        //               .toFile(
-        //                 "files/REPORT_CONTROL_FILE.pdf",
-        //                 function (err: any, data: any) {
-        //                   if (err) {
-        //                     res.send(err);
-        //                   } else {
-        //                     res.download("/REPORT_CONTROL_FILE.pdf");
-        //                     res.send({
-        //                       msg: "File created successfully",
-        //                       path: path.join("/REPORT_CONTROL_FILE.pdf"),
-        //                     });
-        //                   }
-        //                 }
-        //               );
-        //           }
-        //         }
-        //       );
-        //     }, 10000);
-        //   });
-        // } else {
-        //   console.log(err);
+      
       }
     }
   );
 
-  // var query = "";
-  // query =
-  //   "SELECT * FROM view_reportFile vr WHERE vr.id_modality LIKE ? and vr.id_operador like ? and vr.statusLock like ? and vr.statusLockAdm like ? ";
-
-  // if (fecha_ini != "") {
-  //   query =
-  //     "SELECT * FROM view_reportFile vr WHERE  vr.id_modality LIKE ?  and vr.id_operador like ? and vr.statusLock like ? and vr.statusLockAdm like ? AND fecha_disponibilidad >= ? or fecha_disponibilidad = '0000-00-00'";
-  // }
-
-  // if (fecha_fin != "") {
-  //   query =
-  //     "SELECT * FROM view_reportFile vr WHERE vr.id_modality LIKE ? and vr.id_operador like ? and vr.statusLock like ? and vr.statusLockAdm like ? and fecha_disponibilidad <= ? or fecha_disponibilidad = '0000-00-00'";
-  // }
-
-  // if (fecha_ini != "" && fecha_fin != "") {
-  //   query =
-  //     "SELECT * FROM view_reportFile vr WHERE vr.id_modality LIKE ? and vr.id_operador like ? and vr.statusLock like ? and vr.statusLockAdm like ? AND fecha_disponibilidad >= ? and fecha_disponibilidad <= ? or fecha_disponibilidad = '0000-00-00'";
-  // }
-  // SELECT * FROM HOUSE_SERVICES_LISTArxhouse($1)
-  // conn.query(
-  //   query,
-  //   [idsentido, idOperador, idStatus, idStatusAdm, fecha_ini, fecha_fin],
-  //   (err, rows, fields) => {
-  //     if (!err) {
-  //       let datanew = JSON.parse(JSON.stringify(rows));
-  //       let dataServiceList;
-  //       new Promise<void>((resolver, rechazar) => {
-  //         datanew.map((item: any) => {
-  //           conn.query(
-  //             "SELECT * FROM view_houseService where id_house = ? order by id desc",
-  //             [item.id],
-  //             (err, rows, fields) => {
-  //               dataServiceList = JSON.parse(JSON.stringify(rows));
-  //               if (item.id_modality == 1) {
-  //                 dataServiceList.sort((a: any, b: any) => {
-  //                   if (a.id < b.id) {
-  //                     return -1;
-  //                   }
-  //                   if (a.id > b.id) {
-  //                     return 1;
-  //                   }
-  //                   return 0;
-  //                 });
-  //               } else {
-  //                 dataServiceList.sort((a: any, b: any) => {
-  //                   if (a.id < b.id) {
-  //                     return -1;
-  //                   }
-  //                   if (a.id > b.id) {
-  //                     return 1;
-  //                   }
-  //                   return 0;
-  //                 });
-  //               }
-  //               let dataTes = [];
-  //               let dataPre = [];
-  //               dataTes.push(dataServiceList);
-  //               dataPre.push({
-  //                 dataHouse: item,
-  //                 dataService: dataTes,
-  //               });
-  //               req.app.locals.itemsHouse.push(dataPre[0]);
-  //             }
-  //           );
-  //         });
-  //         req.app.locals.itemsHouse = [];
-  //         resolver();
-  //         console.log(resolver);
-  //       }).then(() => {
-  //         setTimeout(() => {
-  //           //var data = JSON.parse(JSON.stringify(req.app.locals.itemsHoused));
-  //           req.app.locals.itemsHouse.sort((a: any, b: any) => {
-  //             if (
-  //               a.dataHouse.fecha_disponibilidad <
-  //               b.dataHouse.fecha_disponibilidad
-  //             ) {
-  //               return -1;
-  //             }
-  //             if (
-  //               a.dataHouse.fecha_disponibilidad >
-  //               b.dataHouse.fecha_disponibilidad
-  //             ) {
-  //               return 1;
-  //             }
-  //             return 0;
-  //           });
-  //           ejs.renderFile(
-  //             path.join(__dirname, "../views/", "report-template.ejs"),
-
-  //             {
-  //               items: req.app.locals.itemsHouse,
-  //               fecha_ini,
-  //               fecha_fin,
-  //               totalExpedientesMaster,
-  //               totalExpedientesHouse,
-  //               totalIA,
-  //               totalEA,
-  //               totalIM,
-  //               totalEM,
-  //               totalLL,
-  //               totalPL,
-  //               totalSS,
-  //               totalPS,
-  //               totales,
-  //               fechaYHora,
-  //               sentidoletra,
-  //               statusLetra,
-  //             },
-
-  //             (err: any, data: any) => {
-  //               if (err) {
-  //                 res.send(err);
-  //               } else {
-  //                 let options = {
-  //                   page_size: "A4",
-  //                   orientation: "landscape",
-  //                   header: {
-  //                     height: "10mm",
-  //                   },
-  //                   footer: {
-  //                     height: "10mm",
-  //                   },
-  //                 };
-
-  //                 pdf
-  //                   .create(data, options)
-  //                   .toFile(
-  //                     "files/REPORT_CONTROL_FILE.pdf",
-  //                     function (err: any, data: any) {
-  //                       if (err) {
-  //                         res.send(err);
-  //                       } else {
-  //                         res.download("/REPORT_CONTROL_FILE.pdf");
-  //                         res.send({
-  //                           msg: "File created successfully",
-  //                           path: path.join("/REPORT_CONTROL_FILE.pdf"),
-  //                         });
-  //                       }
-  //                     }
-  //                   );
-  //               }
-  //             }
-  //           );
-  //         }, 10000);
-  //       });
-  //     } else {
-  //       console.log(err);
-  //     }
-  //   }
-  // );
+ 
 };
 
 export const test = async (req: Request, res: Response) => {
@@ -908,127 +635,6 @@ export const getReportFileDetails = async (req: Request, res: Response) => {
   );
 };
 
-// export const getReportFileDetails = async (req: Request, res: Response) => {
-//   const { dateDesde, dateHasta } = req.body;
-
-//   await conn.query(
-//     `SELECT vhl.*, vt.total_abonado, ROUND((vhl.montoIngreso - if(vt.total_abonado is null,0,vt.total_abonado)),2) as porCobrar, ve.monto as montoEgreso, (vhl.montoIngreso - ve.monto) as ganancia_global, ROUND((ve.monto - if(vp.montoPagado is null,0,vp.montoPagado)),2) as porPagar FROM view_houseListAll vhl left outer join view_tAbonado vt on vhl.id = vt.id_house left outer join view_totalesEgresos ve on vhl.id = ve.id_house left outer join view_totalesPagados vp on vhl.id = vp.id_house where vhl.fecha_disponibilidad >= '${dateDesde}' and vhl.fecha_disponibilidad <= '${dateHasta}' `,
-//     (err, rows, fields) => {
-//       if (!err) {
-//         let datanew = JSON.parse(JSON.stringify(rows));
-//         let dataServiceList;
-
-//         new Promise<void>((resolver, rechazar) => {
-//           datanew.map((item: any) => {
-//             conn.query(
-//               `SELECT ce.*, (SELECT vtp.total_pr FROM view_totalesProveedor vtp WHERE vtp.id_orders = ce.id_orders AND vtp.id_proveedor = ce.id_proveedor) AS total_pr , (SELECT vtp.total_op FROM view_totalesProveedor vtp WHERE vtp.id_orders = ce.id_orders AND vtp.id_proveedor = ce.id_proveedor) AS total_op, (SELECT SUM(total_op) FROM view_costosEgresos vce WHERE vce.pagado = 1 AND vce.id_orders = ce.id_orders AND vce.id_proveedor  = ce.id_proveedor) AS total_pagado, (SELECT vtp.docs FROM view_totalesProveedor vtp WHERE vtp.id_orders = ce.id_orders AND vtp.id_proveedor = ce.id_proveedor) AS docs, (SELECT vtp.solicitudes FROM view_totalesProveedor vtp WHERE vtp.id_orders = ce.id_orders AND vtp.id_proveedor = ce.id_proveedor) AS solicitudes, ((SELECT vtp.total_p FROM view_totalesProveedor vtp WHERE vtp.id_orders = ce.id_orders AND vtp.id_proveedor = ce.id_proveedor) - IF(((SELECT SUM(total_p) FROM view_costosEgresos vce WHERE vce.pagado = 1 AND vce.id_orders = ce.id_orders AND vce.id_proveedor  = ce.id_proveedor)) IS NULL, 0, ((SELECT SUM(total_p) FROM view_costosEgresos vce WHERE vce.pagado = 1 AND vce.id_orders = ce.id_orders AND vce.id_proveedor  = ce.id_proveedor)))) as restante, (SELECT vli.type_pago FROM view_listInvoice vli WHERE vli.id_house = ce.id_house AND vli.id_proveedor = ce.id_proveedor LIMIT 1) AS type_pago FROM view_costosEgresos ce where ce.id_house = ${item.id} GROUP BY ce.id_orders, id_proveedor `,
-//               [item.id],
-//               (err, rows, fields) => {
-//                 dataServiceList = JSON.parse(JSON.stringify(rows));
-//                 let dataTes = [];
-//                 let dataPre = [];
-//                 dataTes.push(dataServiceList);
-//                 dataPre.push({
-//                   value: item.value,
-//                   conteo: item.conteo,
-//                   id_modality: item.id_modality,
-//                   nro_master: item.nro_master,
-//                   id_shipment: item.id_shipment,
-//                   statusLock: item.statusLock,
-//                   dateLock: item.dateLock,
-//                   statusLockLetra: item.statusLockLetra,
-//                   statusLockAdm: item.statusLockAdm,
-//                   dateLockAdm: item.dateLockAdm,
-//                   statusLockLetraAdm: item.statusLockLetraAdm,
-//                   ganancia_pricing: item.ganancia_pricing,
-//                   ganancia_operaciones: item.ganancia_operaciones,
-//                   fecha_eta: item.fecha_eta,
-//                   fecha_etd: item.fecha_etd,
-//                   fecha_disponibilidad: item.fecha_disponibilidad,
-//                   fecha_disponibilidad_letra: item.fecha_disponibilidad_letra,
-//                   id_operador: item.id_operador,
-//                   id_incoterms: item.id_incoterms,
-//                   id_port_begin: item.id_port_begin,
-//                   id_port_end: item.id_port_end,
-//                   id: item.id,
-//                   id_master: item.id_master,
-//                   nro_house: item.nro_house,
-//                   code_house: item.code_house,
-//                   id_cot: item.id_cot,
-//                   id_agent: item.id_agent,
-//                   id_consigner: item.id_consigner,
-//                   id_notify: item.id_notify,
-//                   id_aerolinea: item.id_aerolinea,
-//                   nro_hbl: item.nro_hbl,
-//                   id_motonave: item.id_motonave,
-//                   nameOperador: item.nameOperador,
-//                   id_coloader: item.id_coloader,
-//                   id_naviera: item.id_naviera,
-//                   nro_viaje: item.nro_viaje,
-//                   bultos: item.bultos,
-//                   peso: item.peso,
-//                   volumen: item.volumen,
-//                   id_conditions: item.id_conditions,
-//                   id_moneda: item.id_moneda,
-//                   monto: item.monto,
-//                   cant_pagado: item.cant_pagado,
-//                   cant_pagar: item.cant_pagar,
-//                   pagadode: item.pagadode,
-//                   porcentaje_pagado: item.porcentaje_pagado,
-//                   status: item.status,
-//                   created_at: item.created_at,
-//                   updated_at: item.updated_at,
-//                   nameShipment: item.nameShipment,
-//                   nameAgent: item.nameAgent,
-//                   nameConsigner: item.nameConsigner,
-//                   documentLong: item.documentLong,
-//                   nameNotify: item.nameNotify,
-//                   code_master: item.code_master,
-//                   namePortBegin: item.namePortBegin,
-//                   namePortEnd: item.namePortEnd,
-//                   nameModality: item.nameModality,
-//                   montoIngreso: item.montoIngreso,
-//                   total_abonado: item.total_abonado,
-//                   porCobrar: item.porCobrar,
-//                   total_p: item.total_p,
-//                   type_total: item.type_total,
-//                   porPagar: item.porPagar,
-//                   ganancia_global: item.ganancia_global,
-//                   dataEgresos: dataTes[0],
-//                 });
-//                 req.app.locals.itemsHouse.push(dataPre[0]);
-//                 req.app.locals.itemsHouse.sort((a: any, b: any) => {
-//                   if (a.fecha_disponibilidad > b.fecha_disponibilidad) {
-//                     return -1;
-//                   }
-//                   if (a.fecha_disponibilidad < b.fecha_disponibilidad) {
-//                     return 1;
-//                   }
-//                   return 0;
-//                 });
-//               }
-//             );
-//           });
-
-//           req.app.locals.itemsHouse = [];
-//           resolver();
-//           console.log(resolver);
-//         }).then(() => {
-//           setTimeout(() => {
-//             res.json({
-//               status: 200,
-//               statusBol: true,
-//               data: req.app.locals.itemsHouse,
-//             });
-
-//           }, 50000);
-//         });
-//       } else {
-//         console.log(err);
-//       }
-//     }
-//   );
-// };
 
 export const pdfFD = async (req: Request, res: Response) => {
   let ejs = require("ejs");
@@ -1292,7 +898,7 @@ export const constRexportCXPExcel = async (req: Request, res: Response) => {
                 filaA++;
                 rows2.forEach((element) => {
                   element.details.forEach((element2) => {
-                    // console.log(element2);
+                    
                     wa.cell(filaA, 1).string(element.nameconsigner);
                     wa.cell(filaA, 2).string(element2.nro_factura);
                     wa.cell(filaA, 3).date(element2.fecha);
@@ -1526,7 +1132,7 @@ export const constReporteCXCExcel = async (req: Request, res: Response) => {
 
                 rows2.forEach((element) => {
                   element.details.forEach((element2) => {
-                    console.log(element2);
+                    
                     wa.cell(filaA, 1).string(element2.nameconsigner);
                     wa.cell(filaA, 2).date(element2.fecha);
                     wa.cell(filaA, 3).string(element2.concepto);
@@ -1588,7 +1194,7 @@ export const constReporteCXCExcel = async (req: Request, res: Response) => {
                 );
                 // -------------------------------------------
                 let pathexcel = path.join(
-                  // console.log(),
+                  
                   `${__dirname}../../../uploads`,
                   "Reportexls.xlsx"
                 );
@@ -1617,7 +1223,7 @@ export const getPdfInstructivoDetallado = async (
   let ejs = require("ejs");
   let pdf = require("html-pdf");
   let path = require("path");
-  console.log(req.body);
+  
   const {
     bultos,
     exp,

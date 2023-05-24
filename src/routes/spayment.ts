@@ -35,6 +35,8 @@ import {
   // getReporteCXPEXCEL,
   listPagoControlGastoXProveedor,
   updateDebsClient,
+  
+  eliminarSpaymentpro,
 } from "../controllers/spayment.controller";
 
 router.post("/setSPaymentPro", TokenValidation, setSPaymentPro);
@@ -60,6 +62,7 @@ router.post("/setDebsClient", TokenValidation, setDebsClient);
 router.post("/getDebsClientList", TokenValidation, getDebsClientList);
 router.post("/setCheckDebsClient", TokenValidation, setCheckDebsClient);
 router.post("/getReportAccounts", TokenValidation, getReportAccounts);
+router.put("/eliminar_spaymentpro", TokenValidation, eliminarSpaymentpro);
 router.post(
   "/getReportAccountsFilter",
   TokenValidation,

@@ -1117,15 +1117,15 @@ async function main(email, url) {
       <p>Estimado cliente, para recuperar su contraseña, haga click en el siguiente botón</p>
       <a class="btn" href="${url}" target=”_blank”> <button>Click me</button></a>`,
   });
-  console.log("Message sent: %s", info.messageId);
+  
   // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
 
   // Preview only available when sending through an Ethereal account
-  console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+  
   // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
 }
 export const validateToken = async (req: Request, res: Response) => {
-  console.log(req.body.token);
+  
   await pool.query(
     "SELECT * FROM function_validate_token($1)",
     [req.body.token ? req.body.token : null],
@@ -1212,7 +1212,7 @@ export const StatusCarge = async (req: Request, res: Response) => {
 
 export const InsertCall = async (req: Request, res: Response) => {
   let dataObj: call = req.body;
-  console.log(dataObj);
+  
   await pool.query(
     "SELECT * FROM function_call_insert($1,$2,$3,$4,$5,$6)",
     [

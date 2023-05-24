@@ -317,218 +317,6 @@ export const getDebsToPay = async (req: Request, res: Response) => {
     }
   );
 };
-// export const getDebsToPay = async (req: Request, res: Response) => {
-//   conn.query(
-//     `select * from view_reportDebsToPay where restante_pagar > 0 and pagado = 0`,
-//     (err, rows, fields) => {
-//       if (!err) {
-//         let datanew = JSON.parse(JSON.stringify(rows));
-//         let dataServiceList;
-//         new Promise<void>((resolver, rechazar) => {
-//           datanew.map((item: any) => {
-//             conn.query(
-//               `SELECT cpt.*,
-//               IF (cpt.ajusteflag =1,0,SUM(cpt.total)) AS total_pagar,
-//               (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND  cpp.pagado = 1 AND cpp.llegada LIKE '%%') AS total_pagado,
-//               (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND  cpp.llegada LIKE '1') AS total_pagar_llegada,
-//               (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND  cpp.pagado = 1 AND cpp.llegada LIKE '1') AS total_pagado_llegada,
-//               (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.llegada LIKE '0') AS total_pagar_no_llegada,
-//               (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.pagado = 1 AND cpp.llegada LIKE '0') AS total_pagado_no_llegada,
-//               (IF (cpt.ajusteflag =1,0,SUM(cpt.total))  - (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.pagado = 1 AND cpp.llegada LIKE '%%')) AS restante_pagar,
-//               ((SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.llegada LIKE '1') - (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp
-//               WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.pagado = 1 AND cpp.llegada LIKE '1')) AS restante_llegada,
-//               ((SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.llegada LIKE '0') - (SELECT if(SUM(total) IS NULL,0,
-//               SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor AND cpp.pagado = 1 AND cpp.llegada LIKE '0')) AS restante_no_llegada
-//               FROM view_cppro_totales cpt WHERE cpt.llegada LIKE '%%' and cpt.id_proveedor = ${item.id_proveedor} and cpt.pagado =0
-//               GROUP BY cpt.id_proveedor, cpt.id_house order by total_pagar desc`,
-//               (err, rows, fields) => {
-//                 dataServiceList = JSON.parse(JSON.stringify(rows));
-//                 dataServiceList.sort((a: any, b: any) => {
-//                   if (a.fecha_disponibilidad < b.fecha_disponibilidad) {
-//                     return -1;
-//                   }
-//                   if (a.fecha_disponibilidad > b.fecha_disponibilidad) {
-//                     return 1;
-//                   }
-//                   return 0;
-//                 });
-//                 let dataTes = [];
-//                 let dataPre = [];
-//                 dataTes.push(dataServiceList);
-//                 dataPre.push({
-//                   id_house: item.id_house,
-//                   nro_master: item.nro_master,
-//                   id_control: item.id_control,
-//                   id_user: item.id_user,
-//                   fecha_disponibilidad: item.fecha_disponibilidad,
-//                   llegada: item.llegada,
-//                   nameConsigner: item.nameConsigner,
-//                   id_orders: item.id_orders,
-//                   id: item.id,
-//                   id_proveedor: item.id_proveedor,
-//                   nameProveedor: item.nameProveedor,
-//                   total: item.total,
-//                   total_src: item.total_src,
-//                   pagado: item.pagado,
-//                   fecha_pago: item.fecha_pago,
-//                   id_comprobante: item.id_comprobante,
-//                   status: item.status,
-//                   total_pagar: item.total_pagar,
-//                   total_pagado: item.total_pagado,
-//                   total_pagar_llegada: item.total_pagar_llegada,
-//                   total_pagado_llegada: item.total_pagado_llegada,
-//                   total_pagar_no_llegada: item.total_pagar_no_llegada,
-//                   total_pagado_no_llegada: item.total_pagado_no_llegada,
-//                   restante_pagar: item.restante_pagar,
-//                   restante_llegada: item.restante_llegada,
-//                   restante_no_llegada: item.restante_no_llegada,
-//                   details: dataTes[0],
-//                 });
-//                 req.app.locals.itemsdp.push(dataPre[0]);
-//               }
-//             );
-//           });
-//           req.app.locals.itemsdp = [];
-//           resolver();
-//           console.log(resolver);
-//         }).then(() => {
-//           setTimeout(() => {
-//             res.json({
-//               status: 200,
-//               statusBol: true,
-//               data: req.app.locals.itemsdp,
-//             });
-//           }, 10000);
-//         });
-//       } else {
-//         console.log(err);
-//       }
-//     }
-//   );
-// };
-
-// export const getDebsToPayFilter = async (req: Request, res: Response) => {
-//   const { date_begin, date_end } = req.body;
-//   let query;
-
-//   query = `
-//       SELECT cpt.*, SUM(cpt.total) AS total_pagar,
-// (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor and cpp.fecha_disponibilidad >= '${date_begin}'
-// AND cpp.fecha_disponibilidad <= '${date_end}' AND cpp.pagado = 1 AND cpp.llegada LIKE '%%') AS total_pagado,
-// (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor and cpp.fecha_disponibilidad >= '${date_begin}'
-// AND cpp.fecha_disponibilidad <= '${date_end}' AND cpp.llegada LIKE '1') AS total_pagar_llegada,
-// (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor and cpp.fecha_disponibilidad >= '${date_begin}'
-// AND cpp.fecha_disponibilidad <= '${date_end}' AND cpp.pagado = 1 AND cpp.llegada LIKE '1') AS total_pagado_llegada,
-// (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor and cpp.fecha_disponibilidad >= '${date_begin}'
-// AND cpp.fecha_disponibilidad <= '${date_end}' AND cpp.llegada LIKE '0') AS total_pagar_no_llegada,
-// (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor and cpp.fecha_disponibilidad >= '${date_begin}'
-// AND cpp.fecha_disponibilidad <= '${date_end}' AND cpp.pagado = 1 AND cpp.llegada LIKE '0') AS total_pagado_no_llegada,
-// (SUM(cpt.total) - (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor and cpp.fecha_disponibilidad >= '${date_begin}'
-// AND cpp.fecha_disponibilidad <= '${date_end}' AND cpp.pagado = 1 AND cpp.llegada LIKE '%%')) AS restante_pagar,
-// ((SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor and cpp.fecha_disponibilidad >= '${date_begin}'
-// AND cpp.fecha_disponibilidad <= '${date_end}' AND cpp.llegada LIKE '1') - (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor and cpp.fecha_disponibilidad >= '${date_begin}'
-// AND cpp.fecha_disponibilidad <= '${date_end}' AND cpp.pagado = 1 AND cpp.llegada LIKE '1')) AS restante_llegada,
-// ((SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor and cpp.fecha_disponibilidad >= '${date_begin}'
-// AND cpp.fecha_disponibilidad <= '${date_end}' AND cpp.llegada LIKE '0') - (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor and cpp.fecha_disponibilidad >= '${date_begin}'
-// AND cpp.fecha_disponibilidad <= '${date_end}' AND cpp.pagado = 1 AND cpp.llegada LIKE '0')) AS restante_no_llegada
-// FROM view_cppro_totales cpt WHERE cpt.fecha_disponibilidad >= '${date_begin}' AND cpt.fecha_disponibilidad <= '${date_end}' AND cpt.llegada LIKE '%%'
-// GROUP BY cpt.id_proveedor order by total_pagar desc
-//       `;
-
-//   conn.query(query, (err, rows, fields) => {
-//     if (!err) {
-//       let datanew = JSON.parse(JSON.stringify(rows));
-//       let dataServiceList;
-//       new Promise<void>((resolver, rechazar) => {
-//         datanew.map((item: any) => {
-//           conn.query(
-//             `
-//       SELECT cpt.*, SUM(cpt.total) AS total_pagar,
-// (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor and cpp.fecha_disponibilidad >= '${date_begin}'
-// AND cpp.fecha_disponibilidad <= '${date_end}' AND cpp.pagado = 1 AND cpp.llegada LIKE '%%') AS total_pagado,
-// (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor and cpp.fecha_disponibilidad >= '${date_begin}'
-// AND cpp.fecha_disponibilidad <= '${date_end}' AND cpp.llegada LIKE '1') AS total_pagar_llegada,
-// (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor and cpp.fecha_disponibilidad >= '${date_begin}'
-// AND cpp.fecha_disponibilidad <= '${date_end}' AND cpp.pagado = 1 AND cpp.llegada LIKE '1') AS total_pagado_llegada,
-// (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor and cpp.fecha_disponibilidad >= '${date_begin}'
-// AND cpp.fecha_disponibilidad <= '${date_end}' AND cpp.llegada LIKE '0') AS total_pagar_no_llegada,
-// (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor and cpp.fecha_disponibilidad >= '${date_begin}'
-// AND cpp.fecha_disponibilidad <= '${date_end}' AND cpp.pagado = 1 AND cpp.llegada LIKE '0') AS total_pagado_no_llegada,
-// (SUM(cpt.total) - (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor and cpp.fecha_disponibilidad >= '${date_begin}'
-// AND cpp.fecha_disponibilidad <= '${date_end}' AND cpp.pagado = 1 AND cpp.llegada LIKE '%%')) AS restante_pagar,
-// ((SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor and cpp.fecha_disponibilidad >= '${date_begin}'
-// AND cpp.fecha_disponibilidad <= '${date_end}' AND cpp.llegada LIKE '1') - (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor and cpp.fecha_disponibilidad >= '${date_begin}'
-// AND cpp.fecha_disponibilidad <= '${date_end}' AND cpp.pagado = 1 AND cpp.llegada LIKE '1')) AS restante_llegada,
-// ((SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor and cpp.fecha_disponibilidad >= '${date_begin}'
-// AND cpp.fecha_disponibilidad <= '${date_end}' AND cpp.llegada LIKE '0') - (SELECT if(SUM(total) IS NULL,0,SUM(total)) FROM view_cppro_totales cpp WHERE  cpp.id_proveedor = cpt.id_proveedor and cpp.fecha_disponibilidad >= '${date_begin}'
-// AND cpp.fecha_disponibilidad <= '${date_end}' AND cpp.pagado = 1 AND cpp.llegada LIKE '0')) AS restante_no_llegada
-// FROM view_cppro_totales cpt WHERE cpt.fecha_disponibilidad >= '${date_begin}' AND cpt.fecha_disponibilidad <= '${date_end}' AND cpt.llegada LIKE '%%' and cpt.id_proveedor = ${item.id_proveedor}
-// GROUP BY cpt.id_proveedor, cpt.id_house order by total_pagar desc
-//       `,
-//             (err, rows, fields) => {
-//               dataServiceList = JSON.parse(JSON.stringify(rows));
-//               dataServiceList.sort((a: any, b: any) => {
-//                 if (a.fecha_disponibilidad < b.fecha_disponibilidad) {
-//                   return -1;
-//                 }
-//                 if (a.fecha_disponibilidad > b.fecha_disponibilidad) {
-//                   return 1;
-//                 }
-//                 return 0;
-//               });
-//               let dataTes = [];
-//               let dataPre = [];
-//               dataTes.push(dataServiceList);
-//               dataPre.push({
-//                 id_house: item.id_house,
-//                 nro_master: item.nro_master,
-//                 id_control: item.id_control,
-//                 id_user: item.id_user,
-//                 fecha_disponibilidad: item.fecha_disponibilidad,
-//                 llegada: item.llegada,
-//                 nameConsigner: item.nameConsigner,
-//                 id_orders: item.id_orders,
-//                 id: item.id,
-//                 id_proveedor: item.id_proveedor,
-//                 nameProveedor: item.nameProveedor,
-//                 total: item.total,
-//                 total_src: item.total_src,
-//                 pagado: item.pagado,
-//                 fecha_pago: item.fecha_pago,
-//                 id_comprobante: item.id_comprobante,
-//                 status: item.status,
-//                 total_pagar: item.total_pagar,
-//                 total_pagado: item.total_pagado,
-//                 total_pagar_llegada: item.total_pagar_llegada,
-//                 total_pagado_llegada: item.total_pagado_llegada,
-//                 total_pagar_no_llegada: item.total_pagar_no_llegada,
-//                 total_pagado_no_llegada: item.total_pagado_no_llegada,
-//                 restante_pagar: item.restante_pagar,
-//                 restante_llegada: item.restante_llegada,
-//                 restante_no_llegada: item.restante_no_llegada,
-//                 details: dataTes[0],
-//               });
-//               req.app.locals.itemsService.push(dataPre[0]);
-//             }
-//           );
-//         });
-//         req.app.locals.itemsService = [];
-//         resolver();
-//         console.log(resolver);
-//       }).then(() => {
-//         setTimeout(() => {
-//           res.json({
-//             status: 200,
-//             statusBol: true,
-//             data: req.app.locals.itemsService,
-//           });
-//         }, 10000);
-//       });
-//     } else {
-//       console.log(err);
-//     }
-//   });
-// };
 
 export const getReportAccounts = async (req: Request, res: Response) => {
   await pool.query(
@@ -556,105 +344,6 @@ export const getReportAccounts = async (req: Request, res: Response) => {
     }
   );
 };
-// export const getReportAccounts = async (req: Request, res: Response) => {
-//   conn.query(
-//     `SELECT * FROM view_reportAccounts vra where vra.restante_pagar > 0  order by vra.id_consigner ASC`,
-//     (err, rows, fields) => {
-//       if (!err) {
-//         let datanew = JSON.parse(JSON.stringify(rows));
-//         let dataServiceList;
-
-//         new Promise<void>((resolver, rechazar) => {
-//           datanew.map((item: any) => {
-//             conn.query(
-//               `SELECT vc.*, (SUM(vc.total)) AS total_pagar, ((if(vt.total_abonado IS NULL, 0, vt.total_abonado))) AS total_abonado,
-//               ((SUM(vc.total) - (if(vt.total_abonado IS NULL, 0, vt.total_abonado)))) AS restante_pagar,
-//               IF((SELECT (SUM(vcc.total)) AS total_pagar_llegada FROM view_cxc_totales vcc WHERE vcc.llegada = 1 AND vcc.id_consigner = vc.id_consigner GROUP BY vcc.id_consigner )
-//               IS NULL, 0, (SELECT (SUM(vcc.total)) AS total_pagar_llegada FROM view_cxc_totales vcc WHERE vcc.llegada = 1 AND vcc.id_consigner = vc.id_consigner GROUP BY vcc.id_consigner ))
-//               AS total_pagar_llegada,
-//               IF((SELECT (SUM(vcc.total)) AS total_pagar_llegada FROM view_cxc_totales vcc WHERE vcc.llegada = 0 AND vcc.id_consigner = vc.id_consigner GROUP BY vcc.id_consigner )
-//               IS NULL, 0, (SELECT (SUM(vcc.total)) AS total_pagar_llegada FROM view_cxc_totales vcc WHERE vcc.llegada = 0 AND vcc.id_consigner = vc.id_consigner GROUP BY vcc.id_consigner ))
-//               AS total_pagar_no_llegada
-//               FROM view_cxc_totales vc
-//               LEFT OUTER JOIN view_tAbonado vt
-//               ON vc.id_house = vt.id_house
-//               where vc.id_consigner = ${item.id_consigner}
-//               GROUP BY vc.id_consigner, vc.id_house
-//               `,
-//               (err, rows, fields) => {
-//                 dataServiceList = JSON.parse(JSON.stringify(rows));
-
-//                 dataServiceList.sort((a: any, b: any) => {
-//                   if (a.fecha_disponibilidad < b.fecha_disponibilidad) {
-//                     return -1;
-//                   }
-//                   if (a.fecha_disponibilidad > b.fecha_disponibilidad) {
-//                     return 1;
-//                   }
-//                   return 0;
-//                 });
-//                 let dataTes = [];
-//                 let dataPre = [];
-//                 dataTes.push(dataServiceList);
-//                 dataPre.push({
-//                   id: item.id,
-//                   id_orders: item.id_orders,
-//                   concepto: item.concepto,
-//                   monto_pr: item.monto_pr,
-//                   fecha_disponibilidad: item.fecha_disponibilidad,
-//                   llegada: item.llegada,
-//                   monto_op: item.monto_op,
-//                   igv_pr: item.igv_pr,
-//                   igv_op: item.igv_op,
-//                   total_pr: item.total_pr,
-//                   total_op: item.total_op,
-//                   pagado: item.pagado,
-//                   fecha_pago: item.fecha_pago,
-//                   id_comprobante: item.id_comprobante,
-//                   tipo_pago: item.tipo_pago,
-//                   numero: item.numero,
-//                   fecha: item.fecha,
-//                   status: item.status,
-//                   id_user: item.id_user,
-//                   total: item.total,
-//                   id_control: item.id_control,
-//                   id_house: item.id_house,
-//                   nro_control: item.nro_control,
-//                   code_control: item.code_control,
-//                   nro_master: item.nro_master,
-//                   nameConsigner: item.nameConsigner,
-//                   id_master: item.id_master,
-//                   nro_house: item.nro_house,
-//                   id_consigner: item.id_consigner,
-//                   total_pagar: item.total_pagar,
-//                   total_abonado: item.total_abonado,
-//                   restante_pagar: item.restante_pagar,
-//                   total_pagar_llegada: item.total_pagar_llegada,
-//                   total_pagar_no_llegada: item.total_pagar_no_llegada,
-//                   details: dataTes[0],
-//                 });
-//                 req.app.locals.itemsdeb.push(dataPre[0]);
-//               }
-//             );
-//           });
-//           req.app.locals.itemsdeb = [];
-//           resolver();
-//           // console.log(resolver);
-//         }).then(() => {
-//           setTimeout(() => {
-//             res.json({
-//               status: 200,
-//               statusBol: true,
-//               data: req.app.locals.itemsdeb,
-//             });
-//           }, 30000);
-//         });
-//       } else {
-//         console.log(err);
-//       }
-//     }
-//   );
-// };
 export const getReportAccountsFilter = async (req: Request, res: Response) => {
   const { date_begin, date_end } = req.body;
   await pool.query(
@@ -682,140 +371,6 @@ export const getReportAccountsFilter = async (req: Request, res: Response) => {
     }
   );
 };
-// export const getReportAccountsFilter = async (req: Request, res: Response) => {
-//   const { date_begin, date_end } = req.body;
-
-//   conn.query(
-//     `SELECT vc.*, (SUM(vc.total)) AS total_pagar, ((if(vt.total_abonado IS NULL, 0, vt.total_abonado))) AS total_abonado,
-//       ((SUM(vc.total) - (if(vt.total_abonado IS NULL, 0, vt.total_abonado)))) AS restante_pagar,
-//       IF((SELECT (SUM(vcc.total)) AS total_pagar_llegada FROM view_cxc_totales vcc WHERE vcc.llegada = 1 AND vcc.id_consigner = vc.id_consigner
-//       AND vc.fecha_disponibilidad >= '${date_begin}' AND vc.fecha_disponibilidad <= '${date_end}' GROUP BY vcc.id_consigner )
-//       IS NULL, 0, (SELECT (SUM(vcc.total)) AS total_pagar_llegada FROM view_cxc_totales vcc WHERE vcc.llegada = 1 AND vcc.id_consigner = vc.id_consigner
-//       AND vc.fecha_disponibilidad >= '${date_begin}' AND vc.fecha_disponibilidad <= '${date_end}' GROUP BY vcc.id_consigner ))
-//       AS total_pagar_llegada,
-//       IF((SELECT (SUM(vcc.total)) AS total_pagar_llegada FROM view_cxc_totales vcc WHERE vcc.llegada = 0 AND vcc.id_consigner = vc.id_consigner
-//       AND vc.fecha_disponibilidad >= '${date_begin}' AND vc.fecha_disponibilidad <= '${date_end}' GROUP BY vcc.id_consigner )
-//       IS NULL, 0, (SELECT (SUM(vcc.total)) AS total_pagar_llegada FROM view_cxc_totales vcc WHERE vcc.llegada = 0 AND vcc.id_consigner = vc.id_consigner
-//       AND vc.fecha_disponibilidad >= '${date_begin}' AND vc.fecha_disponibilidad <= '${date_end}' GROUP BY vcc.id_consigner ))
-//       AS total_pagar_no_llegada
-//       FROM view_cxc_totales vc
-//       LEFT OUTER JOIN view_tAbonado vt
-//       ON vc.id_house = vt.id_house
-//       WHERE vc.fecha_disponibilidad >= '${date_begin}' AND vc.fecha_disponibilidad <= '${date_end}'
-//       GROUP BY vc.id_consigner
-//     `,
-//     (err, rows, fields) => {
-//       if (!err) {
-//         let datanew = JSON.parse(JSON.stringify(rows));
-//         let dataServiceList;
-//         new Promise<void>((resolver, rechazar) => {
-//           datanew.map((item: any) => {
-//             conn.query(
-//               `SELECT vc.*, (SUM(vc.total)) AS total_pagar, ((if(vt.total_abonado IS NULL, 0, vt.total_abonado))) AS total_abonado,
-//                 ((SUM(vc.total) - (if(vt.total_abonado IS NULL, 0, vt.total_abonado)))) AS restante_pagar,
-//                 IF((SELECT (SUM(vcc.total)) AS total_pagar_llegada FROM view_cxc_totales vcc WHERE vcc.llegada = 1 AND vcc.id_consigner = vc.id_consigner
-//                 AND vc.fecha_disponibilidad >= '${date_begin}' AND vc.fecha_disponibilidad <= '${date_end}' GROUP BY vcc.id_consigner )
-//                 IS NULL, 0, (SELECT (SUM(vcc.total)) AS total_pagar_llegada FROM view_cxc_totales vcc WHERE vcc.llegada = 1 AND vcc.id_consigner = vc.id_consigner
-//                 AND vc.fecha_disponibilidad >= '${date_begin}' AND vc.fecha_disponibilidad <= '${date_end}' GROUP BY vcc.id_consigner ))
-//                 AS total_pagar_llegada,
-//                 IF((SELECT (SUM(vcc.total)) AS total_pagar_llegada FROM view_cxc_totales vcc WHERE vcc.llegada = 0 AND vcc.id_consigner = vc.id_consigner
-//                 AND vc.fecha_disponibilidad >= '${date_begin}' AND vc.fecha_disponibilidad <= '${date_end}' GROUP BY vcc.id_consigner )
-//                 IS NULL, 0, (SELECT (SUM(vcc.total)) AS total_pagar_llegada FROM view_cxc_totales vcc WHERE vcc.llegada = 0 AND vcc.id_consigner = vc.id_consigner
-//                 AND vc.fecha_disponibilidad >= '${date_begin}' AND vc.fecha_disponibilidad <= '${date_end}' GROUP BY vcc.id_consigner ))
-//                 AS total_pagar_no_llegada
-//                 FROM view_cxc_totales vc
-//                 LEFT OUTER JOIN view_tAbonado vt
-//                 ON vc.id_house = vt.id_house
-//                 WHERE vc.fecha_disponibilidad >= '${date_begin}' AND vc.fecha_disponibilidad <= '${date_end}' and vc.id_consigner = ${item.id_consigner}
-//                 GROUP BY vc.id_consigner, vc.id_house
-// `,
-//               (err, rows, fields) => {
-//                 dataServiceList = JSON.parse(JSON.stringify(rows));
-//                 dataServiceList.sort((a: any, b: any) => {
-//                   if (a.fecha_disponibilidad < b.fecha_disponibilidad) {
-//                     return -1;
-//                   }
-//                   if (a.fecha_disponibilidad > b.fecha_disponibilidad) {
-//                     return 1;
-//                   }
-//                   return 0;
-//                 });
-//                 let dataTes = [];
-//                 let dataPre = [];
-//                 dataTes.push(dataServiceList);
-//                 dataPre.push({
-//                   id: item.id,
-//                   id_orders: item.id_orders,
-//                   concepto: item.concepto,
-//                   monto_pr: item.monto_pr,
-//                   fecha_disponibilidad: item.fecha_disponibilidad,
-//                   llegada: item.llegada,
-//                   monto_op: item.monto_op,
-//                   igv_pr: item.igv_pr,
-//                   igv_op: item.igv_op,
-//                   total_pr: item.total_pr,
-//                   total_op: item.total_op,
-//                   pagado: item.pagado,
-//                   fecha_pago: item.fecha_pago,
-//                   id_comprobante: item.id_comprobante,
-//                   tipo_pago: item.tipo_pago,
-//                   numero: item.numero,
-//                   fecha: item.fecha,
-//                   status: item.status,
-//                   id_user: item.id_user,
-//                   total: item.total,
-//                   id_control: item.id_control,
-//                   id_house: item.id_house,
-//                   nro_control: item.nro_control,
-//                   code_control: item.code_control,
-//                   nro_master: item.nro_master,
-//                   nameConsigner: item.nameConsigner,
-//                   id_master: item.id_master,
-//                   nro_house: item.nro_house,
-//                   id_consigner: item.id_consigner,
-//                   total_pagar: item.total_pagar,
-//                   total_abonado: item.total_abonado,
-//                   restante_pagar: item.restante_pagar,
-//                   total_pagar_llegada: item.total_pagar_llegada,
-//                   total_pagar_no_llegada: item.total_pagar_no_llegada,
-//                   details: dataTes[0],
-//                 });
-//                 req.app.locals.itemsService.push(dataPre[0]);
-//               }
-//             );
-//           });
-
-//           resolver();
-//           console.log(resolver);
-//         }).then(() => {
-//           setTimeout(() => {
-//             res.json({
-//               status: 200,
-//               statusBol: true,
-//               data: req.app.locals.itemsService,
-//             });
-//           }, 30000);
-//         });
-//       } else {
-//         console.log(err);
-//       }
-//     }
-//   );
-// };
-
-// export const getAccountsReceivable = async (req: Request, res: Response) => {
-//   await conn.query("SELECT * FROM view_cxc ", (err, rows, fields) => {
-//     if (!err) {
-//       res.json({
-//         status: 200,
-//         statusBol: true,
-//         data: rows,
-//       });
-//     } else {
-//       console.log(err);
-//     }
-//   });
-// };
 
 export const getDebsClient = async (req: Request, res: Response) => {
   const { id_house } = req.params;
@@ -978,7 +533,7 @@ export const setSPaymentFile = async (req: Request, res: Response) => {
 
 export const setInvoice = async (req: Request, res: Response) => {
   const dataObj = req.body;
-  console.log(dataObj);
+  
   pool.query(
     "INSERT INTO Table_Invoice (id_house, id_proveedor, id_path, type_pago, number, date, status,id_correlativo,id_master) values ($1,$2,$3,$4,$5,$6,$7,$8,$9)",
     [
@@ -1059,7 +614,7 @@ export const setDebsClient = async (req: Request, res: Response) => {
 
 export const setCheckDebsClient = async (req: Request, res: Response) => {
   const dataObj = req.body;
-  console.log(dataObj);
+  
   pool.query(
     "select * from Table_DebsClient_aceptarpago($1,$2,$3,$4,$5,$6)",
     [
@@ -1554,7 +1109,7 @@ export const listPagoControlGastoXProveedor = async (
 
 export const updateDebsClient = async (req: Request, res: Response) => {
   const dataObj = req.body;
-  console.log(dataObj);
+  
   pool.query(
     "select * from function_debscliente_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)",
     [
@@ -1586,6 +1141,36 @@ export const updateDebsClient = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const eliminarSpaymentpro = async (req: Request, res: Response) => {
+  
+  pool.query(
+    "select * from function_eliminar_spaymentpro($1)",
+    [req.body.id ? req.body.id : null],
+
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estadoflag: rows[0].estadoflag,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+            estadoflag: rows[0].estadoflag,
           });
         }
       } else {

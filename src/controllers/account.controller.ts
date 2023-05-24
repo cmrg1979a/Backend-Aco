@@ -63,7 +63,7 @@ export const setAccount = async (req: Request, res: Response) => {
 export const getAccountsNumber = async (req: Request, res: Response) => {
   let id_branch = req.body.id_branch;
   let id_entities = req.params.id_entities;
-  console.log(id_entities);
+  
   await pool.query(
     "SELECT * FROM entities_accounts_list($1,$2)",
     [id_branch, id_entities === "undefined" ? 0 : id_entities],

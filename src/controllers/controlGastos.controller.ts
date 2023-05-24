@@ -8,14 +8,14 @@ const pool = conexion();
 
 export const setControl = async (req: Request, res: Response) => {
   const dataObj: postControl = req.body;
-  console.log(dataObj);
+  
   await pool.query(
     "select * from Table_ControlGastos_Insertar($1,$2,$3)",
     [dataObj.id_house, dataObj.id_user, dataObj.status],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        console.log(rows);
+        
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
@@ -83,7 +83,7 @@ export const setIngresos = async (req: Request, res: Response) => {
 
 export const setEgresos = async (req: Request, res: Response) => {
   const dataObj = req.body;
-  console.log(dataObj);
+  
   await pool.query(
     "select * from PA_CEgresos_Insert($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)",
     [
@@ -294,7 +294,7 @@ export const delIngresos = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        console.log(rows);
+        
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
@@ -396,7 +396,7 @@ export const editIngreso = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        console.log(rows);
+        
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
@@ -421,7 +421,7 @@ export const editEgreso = async (req: Request, res: Response) => {
   const id = req.params.id;
 
   const data = req.body;
-  console.log(data);
+  
   await pool.query(
     "select * from function_controlgasto_edit($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,$11,$12,$13,$14,$15,$16,$17,$18)",
     [

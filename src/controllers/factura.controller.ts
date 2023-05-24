@@ -75,7 +75,7 @@ export const generarFactura = async (req: Request, res: Response) => {
     tipo_imp,
     coins,
   } = req.body;
-  console.log(coins);
+  
   let fechaActual = `${fecha.getUTCDay()}_${fecha.getMonth()}_${fecha.getFullYear()}_${fecha.getTime()}`;
   let fechaRegistro = fecha.toLocaleDateString();
   // ejs.renderFile(path.join(__dirname, "../views", "pdf-factura.ejs")),
