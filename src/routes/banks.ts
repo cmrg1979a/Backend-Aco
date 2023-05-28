@@ -98,7 +98,7 @@ router.put(
 );
 router.get(
   "/exportar_listado_reporte_egresos",
-  TokenValidation,
+  // TokenValidation,
   ExportarListadoReporteEgresos
 );
 router.get(

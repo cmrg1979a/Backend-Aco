@@ -33,6 +33,7 @@ const pool = new Pool({
 });
 
 
+
 const app: Application = express();
 
 import authRoutes from "./routes/auth";

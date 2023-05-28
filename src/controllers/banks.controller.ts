@@ -473,7 +473,7 @@ export const ExportarListadoReportePagos = async (
 
 export const RegistroPagoDetalles = async (req: Request, res: Response) => {
   let data = req.body;
-  
+
   await pool.query(
     "select * from function_bancos_pago($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)",
     [
@@ -838,6 +838,7 @@ export const ExportarListadoReporteEgresos = async (
       if (!err) {
         let rows = response.rows;
         let cabTitle = wb.createStyle({
+          numberFormat: "0.00",
           font: {
             color: "#ffffff",
             bold: true,
@@ -852,7 +853,9 @@ export const ExportarListadoReporteEgresos = async (
             horizontal: "center",
           },
         });
+
         var wt = wb.addWorksheet("ReporteEgresos");
+
         wt.row(1).filter();
 
         wt.column(1).setWidth(10);
@@ -860,12 +863,13 @@ export const ExportarListadoReporteEgresos = async (
         wt.column(3).setWidth(18);
         wt.column(4).setWidth(5);
         wt.column(5).setWidth(15);
-        wt.column(6).setWidth(100);
+        wt.column(6).setWidth(80);
         wt.column(7).setWidth(10);
         wt.column(8).setWidth(10);
-        wt.column(9).setWidth(150);
-        wt.column(10).setWidth(30);
+        wt.column(9).setWidth(10);
+        wt.column(10).setWidth(100);
         wt.column(11).setWidth(15);
+        wt.column(12).setWidth(15);
 
         wt.cell(1, 1).string("Fecha").style(cabTitle);
         wt.cell(1, 2).string("Nro Operación").style(cabTitle);
@@ -873,11 +877,12 @@ export const ExportarListadoReporteEgresos = async (
         wt.cell(1, 4).string("O/A").style(cabTitle);
         wt.cell(1, 5).string("Tipo de Gasto").style(cabTitle);
         wt.cell(1, 6).string("Proveedor").style(cabTitle);
-        wt.cell(1, 7).string("Monto").style(cabTitle);
-        wt.cell(1, 8).string("Moneda").style(cabTitle);
-        wt.cell(1, 9).string("concepto").style(cabTitle);
-        wt.cell(1, 10).string("Nro Factura").style(cabTitle);
-        wt.cell(1, 11).string("Nro Serie").style(cabTitle);
+        wt.cell(1, 7).string("Monto Pagado").style(cabTitle);
+        wt.cell(1, 8).string("Moneda de Pago").style(cabTitle);
+        wt.cell(1, 9).string("Monto en Dolares").style(cabTitle);
+        wt.cell(1, 10).string("Concepto(s)").style(cabTitle);
+        wt.cell(1, 11).string("Nro Factura(s)").style(cabTitle);
+        wt.cell(1, 12).string("Nro Serie(s)").style(cabTitle);
         let fila = 2;
         rows.forEach((element) => {
           wt.cell(fila, 1).string(element.fecha_pago);
@@ -890,13 +895,20 @@ export const ExportarListadoReporteEgresos = async (
           wt.cell(fila, 6).string(
             element.name_proveedor ? element.name_proveedor : ""
           );
-          wt.cell(fila, 7).string(element.monto);
+          // console.log(element)
+          wt.cell(fila, 7).number(
+            element.monto_mon_ex ? parseFloat(element.monto_mon_ex) : 0.0
+          );
+          // wt.cell(fila, 7).string(element.monto_mon_ex ? element.monto_mon_ex : 0.00);
           wt.cell(fila, 8).string(
             element.moneda_simbolo ? element.moneda_simbolo : ""
           );
-          wt.cell(fila, 9).string(element.concepto ? element.concepto : "");
-          wt.cell(fila, 10).string(element.factura ? element.factura : "");
-          wt.cell(fila, 11).string(element.serie ? element.serie : "");
+          wt.cell(fila, 9).number(
+            element.monto_dolar ? parseFloat(element.monto_dolar) : 0.0
+          );
+          wt.cell(fila, 10).string(element.concepto ? element.concepto : "");
+          wt.cell(fila, 11).string(element.factura ? element.factura : "");
+          wt.cell(fila, 12).string(element.serie ? element.serie : "");
           fila++;
         });
 
