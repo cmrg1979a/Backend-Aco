@@ -884,7 +884,7 @@ export const ExportarListadoReporteEgresos = async (
         wt.cell(1, 10).string("Concepto(s)").style(cabTitle);
         wt.cell(1, 11).string("Nro Factura(s)").style(cabTitle);
         wt.cell(1, 12).string("Nro Serie(s)").style(cabTitle);
-        wt.cell(1, 12).string("Comentarios").style(cabTitle);
+        wt.cell(1, 13).string("Comentarios").style(cabTitle);
         let fila = 2;
         rows.forEach((element) => {
           wt.cell(fila, 1).string(element.fecha_pago);
@@ -911,7 +911,7 @@ export const ExportarListadoReporteEgresos = async (
           wt.cell(fila, 10).string(element.concepto ? element.concepto : "");
           wt.cell(fila, 11).string(element.factura ? element.factura : "");
           wt.cell(fila, 12).string(element.serie ? element.serie : "");
-          wt.cell(fila, 12).string(element.comentarios ? element.comentarios : "");
+          wt.cell(fila, 13).string(element.comentarios ? element.comentarios : "");
           fila++;
         });
 
