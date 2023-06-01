@@ -57,7 +57,7 @@ export const setInvoiceAdmin = async (req: Request, res: Response) => {
       dataDetails.map((item: any) => {
         return item.total;
       }),
-      
+
       dataDetails.map((item: any) => {
         return item.afecto == true ? 1 : 0;
       }),
@@ -70,7 +70,6 @@ export const setInvoiceAdmin = async (req: Request, res: Response) => {
       dataDetails.map((item: any) => {
         return item.totaldolar;
       }),
-      
     ],
     (err, rows, fields) => {
       if (!err) {
@@ -278,7 +277,7 @@ export const setUpdateInvoiceAdmin = async (req: Request, res: Response) => {
   let path = isNaN(+dataObj.id_path);
 
   await pool.query(
-    "SELECT * FROM  table_DetailsInvoiceAdmin_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19)",
+    "SELECT * FROM  table_DetailsInvoiceAdmin_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24)",
     [
       dataObj.id,
       dataObj.id_proveedor,
@@ -293,6 +292,7 @@ export const setUpdateInvoiceAdmin = async (req: Request, res: Response) => {
       dataObj.id_year,
       dataObj.id_expediente,
       dataObj.id_path,
+      dataObj.tipocambio,
       dataDetails.map((item: any) => {
         return item.concepto;
       }),
@@ -300,8 +300,21 @@ export const setUpdateInvoiceAdmin = async (req: Request, res: Response) => {
         return item.monto;
       }),
       dataDetails.map((item: any) => {
+        return item.igv;
+      }),
+      dataDetails.map((item: any) => {
         return item.total;
       }),
+      dataDetails.map((item: any) => {
+        return item.montodolar;
+      }),
+      dataDetails.map((item: any) => {
+        return item.igvdolar;
+      }),
+      dataDetails.map((item: any) => {
+        return item.totaldolar;
+      }),
+
       dataDetails.map((item: any) => {
         return item.afecto == true || item.afecto == 1 ? 1 : 0;
       }),
@@ -338,7 +351,7 @@ export const setUpdateInvoiceAdmin = async (req: Request, res: Response) => {
 // CxC
 export const getInvoiceAdminCxC = async (req: Request, res: Response) => {
   await pool.query(
-    "SELECT * FROM TABLE_INVOICEADMINCXC_listar($1)",
+    "SELECT * FROM table_invoiceadmincxc_listar($1)",
     [req.body.id_branch],
 
     (err, response, fields) => {
@@ -369,7 +382,7 @@ export const setInvoiceAdminCxC = async (req: Request, res: Response) => {
   const dataDetails = req.body.detalle;
 
   await pool.query(
-    "SELECT * FROM Table_InvoiceAdminCxC_isertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)",
+    "SELECT * FROM Table_InvoiceAdminCxC_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26)",
     [
       dataObj.type_payment ? dataObj.type_payment : null,
       dataObj.id_expediente ? dataObj.id_expediente : null,
@@ -379,6 +392,7 @@ export const setInvoiceAdminCxC = async (req: Request, res: Response) => {
       dataObj.nro_serie ? dataObj.nro_serie : null,
       dataObj.id_coins ? dataObj.id_coins : null,
       dataObj.monto ? dataObj.monto : null,
+      dataObj.montodolar ? dataObj.montodolar : null,
       dataObj.type_igv ? dataObj.type_igv : null,
       dataObj.igv ? dataObj.igv : null,
       dataObj.status ? dataObj.status : null,
@@ -386,14 +400,27 @@ export const setInvoiceAdminCxC = async (req: Request, res: Response) => {
       dataObj.id_proformance ? dataObj.id_proformance : null,
       dataObj.id_month ? dataObj.id_month : null,
       dataObj.id_year ? dataObj.id_year : null,
+      dataObj.tipocambio ? dataObj.tipocambio : null,
       dataDetails.map((item: any) => {
         return item.concepto;
       }),
       dataDetails.map((item: any) => {
-        return item.monto;
+        return item.monto ?? 0;
       }),
       dataDetails.map((item: any) => {
-        return item.total;
+        return item.total ?? 0;
+      }),
+      dataDetails.map((item: any) => {
+        return item.igv ?? 0;
+      }),
+      dataDetails.map((item: any) => {
+        return item.montodolar ?? 0;
+      }),
+      dataDetails.map((item: any) => {
+        return item.totaldolar ?? 0;
+      }),
+      dataDetails.map((item: any) => {
+        return item.igvdolar ?? 0;
       }),
       dataDetails.map((item: any) => {
         return item.afecto == "true" ? 1 : 0;
@@ -454,11 +481,11 @@ export const getVerInvoiceAdminCxC = async (req: Request, res: Response) => {
 };
 
 export const setUpdateInvoiceAdminCxC = async (req: Request, res: Response) => {
-  const dataObj: InvoiceAdminCxC = req.body;
+  const dataObj = req.body;
   const dataDetails = dataObj.detalle;
 
   await pool.query(
-    "select * from Table_InvoiceAdminCxC_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23)",
+    "select * from Table_InvoiceAdminCxC_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28)",
     [
       dataObj.type_payment,
       dataObj.id_expediente,
@@ -468,6 +495,7 @@ export const setUpdateInvoiceAdminCxC = async (req: Request, res: Response) => {
       dataObj.nro_serie,
       dataObj.id_coins,
       dataObj.monto,
+      dataObj.montodolar,
       dataObj.type_igv ? dataObj.type_igv : null,
       dataObj.igv,
       dataObj.status,
@@ -475,6 +503,7 @@ export const setUpdateInvoiceAdminCxC = async (req: Request, res: Response) => {
       dataObj.id_proformance,
       dataObj.id_month,
       dataObj.id_year,
+      dataObj.tipocambio,
       dataDetails.map((item: any) => {
         return item.concepto;
       }),
@@ -482,7 +511,19 @@ export const setUpdateInvoiceAdminCxC = async (req: Request, res: Response) => {
         return item.monto;
       }),
       dataDetails.map((item: any) => {
+        return item.igv;
+      }),
+      dataDetails.map((item: any) => {
         return item.total;
+      }),
+      dataDetails.map((item: any) => {
+        return item.montodolar;
+      }),
+      dataDetails.map((item: any) => {
+        return item.igvdolar;
+      }),
+      dataDetails.map((item: any) => {
+        return item.totaldolar;
       }),
       dataDetails.map((item: any) => {
         return item.afecto == 1 || item.afecto ? 1 : 0;
@@ -492,9 +533,6 @@ export const setUpdateInvoiceAdminCxC = async (req: Request, res: Response) => {
       }),
       dataDetails.map((item: any) => {
         return item.id;
-      }),
-      dataDetails.map((item: any) => {
-        return item.igv ? item.igv : 0;
       }),
       dataObj.id,
     ],
