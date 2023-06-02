@@ -467,6 +467,7 @@ export const editEgreso = async (req: Request, res: Response) => {
   );
 };
 
+
 export const ControlGastosList = async (req: Request, res: Response) => {
   const code_master = req.query.code_master;
   await pool.query(

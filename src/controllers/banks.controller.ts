@@ -211,44 +211,39 @@ export const getVerPagosPorProveedor = async (req: Request, res: Response) => {
 };
 
 export const setPayForCustomer = async (req: Request, res: Response) => {
+  const dabaObj = req.body;
   const details = req.body.details;
-  const pid_pago = req.body.id_path;
-  const id_cuenta = req.body.id_cuenta;
-  const fecha = req.body.fecha;
-  const id_path = req.body.id_path;
-  const nro_operacion = req.body.nro_operacion;
-  const id_banco_origen = req.body.id_banco_origen;
+  // const pid_pago = req.body.id_path;
+  // const id_cuenta = req.body.id_cuenta;
+  // const fecha = req.body.fecha;
+  // const id_path = req.body.id_path;
+  // const nro_operacion = req.body.nro_operacion;
+  // const id_banco_origen = req.body.id_banco_origen;
   await pool.query(
     // detailsPaysInvoiceAdmin_insertar(pid_invoiceadmin int[],	pid_pago int,	pmonto numeric[],	pid_cuenta int,	cktotal int[],	monto_deuda numeric[],	monto_pagar numeric[])
-    "SELECT * FROM detailsPaysInvoiceAdminCxC_insertar($1,	$2,$3,	$4,	$5,	$6,$7,$8,$9,$10,$11,$12,$13)",
+    "SELECT * FROM detailsPaysInvoiceAdminCxC_insertar($1,	$2,$3,	$4,	$5,	$6,$7,$8,$9,$10,$11)",
     [
-      details.map(function (item) {
+      details.map((item) => {
         return item.id;
-      }), // pid_invoiceadmin int[],
-      pid_pago,
-      details.map(function (item) {
-        return item.max_pagar;
-      }), // pmonto numeric[],
-      id_cuenta,
-      details.map(function (item) {
-        return !!item.cktotal ? 1 : 0;
-      }), // cktotal int[],
-      details.map(function (item) {
-        return item.monto_deuda;
-      }), // monto_deuda numeric[],
-      details.map(function (item) {
-        return item.monto_pagar;
-      }), // monto_pagar numeric[]
-      details.map(function (item) {
+      }), //pid_invoiceadmin integer[],
+      details.map((item) => {
+        return item.montopagar;
+      }), //pmonto numeric[],
+      dabaObj.id_cuenta, //pid_cuenta integer,
+      details.map((item) => {
         return item.esinvoiceflag;
-      }), // pesinvoiceflag boolean[],
-      details.map(function (item) {
-        return item.id_house;
-      }), // pid_house int[],
-      id_path, //id_path
-      fecha, // pfecha date
-      nro_operacion, // nro_operacion
-      id_banco_origen, // id_banco_origen
+      }), //pesinvoiceflag boolean[],
+      details.map((item) => {
+        return item.id_house ? item.id_house  : null;
+      }), //pid_house integer[],
+      details.map((item) => {
+        return item.tipocambio;
+      }), //ptipocambio numeric[],
+      dabaObj.id_path, //pid_path integer,
+      dabaObj.fecha, //pfecha date,
+      dabaObj.nro_operacion, //pnro_operacion character varying,
+      dabaObj.id_banco_origen, //pid_bank integer
+      dabaObj.id_coins, //id_coins integer
     ],
 
     (err, response, fields) => {
@@ -911,7 +906,9 @@ export const ExportarListadoReporteEgresos = async (
           wt.cell(fila, 10).string(element.concepto ? element.concepto : "");
           wt.cell(fila, 11).string(element.factura ? element.factura : "");
           wt.cell(fila, 12).string(element.serie ? element.serie : "");
-          wt.cell(fila, 13).string(element.comentarios ? element.comentarios : "");
+          wt.cell(fila, 13).string(
+            element.comentarios ? element.comentarios : ""
+          );
           fila++;
         });
 
