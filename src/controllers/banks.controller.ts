@@ -245,7 +245,6 @@ export const setPayForCustomer = async (req: Request, res: Response) => {
       dabaObj.id_banco_origen, //pid_bank integer
       dabaObj.id_coins, //id_coins integer
     ],
-
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;

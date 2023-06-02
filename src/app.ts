@@ -88,6 +88,7 @@ import Calculadora from "./routes/calculadora";
 import Factura from "./routes/factura";
 import Invoice from "./routes/invoice";
 import Consolidation from "./routes/consolidation";
+import balance from "./routes/balance";
 
 // settings
 app.set("port", 9200);
@@ -287,5 +288,6 @@ app.use(Calculadora);
 app.use(Factura);
 app.use(Invoice);
 app.use(Consolidation);
+app.use(balance);
 
 export default app;
