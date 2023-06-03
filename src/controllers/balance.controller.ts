@@ -3,7 +3,7 @@ import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
 const { Pool } = pg;
 const pool = conexion();
-// const ExcelJS = require("exceljs/dist/es5");
+
 var xl = require("excel4node");
 
 export const detalleGanancia = async (req: Request, res: Response) => {

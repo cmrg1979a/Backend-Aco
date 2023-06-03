@@ -234,7 +234,7 @@ export const setPayForCustomer = async (req: Request, res: Response) => {
         return item.esinvoiceflag;
       }), //pesinvoiceflag boolean[],
       details.map((item) => {
-        return item.id_house ? item.id_house  : null;
+        return item.id_house ? item.id_house : null;
       }), //pid_house integer[],
       details.map((item) => {
         return item.tipocambio;
@@ -954,6 +954,7 @@ export const ExportarListadoReporteIngresos = async (
       if (!err) {
         let rows = response.rows;
         let cabTitle = wb.createStyle({
+          numberFormat: "###0.00",
           font: {
             color: "#ffffff",
             bold: true,
@@ -1005,21 +1006,37 @@ export const ExportarListadoReporteIngresos = async (
 
         let fila = 2;
         rows.forEach((element) => {
-          wt.cell(fila, 1).string(element.fecha_pago);
-          wt.cell(fila, 2).string(element.tipo);
-          wt.cell(fila, 3).string(element.tipo_gasto);
-          wt.cell(fila, 4).string(element.name_consigner);
-          wt.cell(fila, 5).string(element.monto);
-          wt.cell(fila, 6).string(element.moneda_simbolo);
-          wt.cell(fila, 7).string(element.monto_destino);
-          wt.cell(fila, 8).string(element.moneda_destino);
-          wt.cell(fila, 9).string(element.tipocambio);
-          wt.cell(fila, 10).string(element.banco);
-          wt.cell(fila, 11).string(element.cuenta_destino);
-          wt.cell(fila, 12).string(element.nro_operacion);
-          wt.cell(fila, 13).string(element.concepto);
-          wt.cell(fila, 14).string(element.factura);
-          wt.cell(fila, 15).string(element.serie);
+          wt.cell(fila, 1).string(element.fecha_pago ? element.fecha_pago : "");
+          wt.cell(fila, 2).string(element.tipo ? element.tipo : "");
+          wt.cell(fila, 3).string(element.tipo_gasto ? element.tipo_gasto : "");
+          wt.cell(fila, 4).string(
+            element.name_consigner ? element.name_consigner : ""
+          );
+          wt.cell(fila, 5).number(
+            element.monto ? parseFloat(element.monto) : 0.0
+          );
+          wt.cell(fila, 6).string(
+            element.moneda_simbolo ? element.moneda_simbolo : ""
+          );
+          wt.cell(fila, 7).number(
+            element.monto_destino ? parseFloat(element.monto_destino) : 0.0
+          );
+          wt.cell(fila, 8).string(
+            element.moneda_destino ? element.moneda_destino : ""
+          );
+          wt.cell(fila, 9).number(
+            element.tipocambio ? parseFloat(element.tipocambio) : 0.0
+          );
+          wt.cell(fila, 10).string(element.banco ? element.banco : "");
+          wt.cell(fila, 11).string(
+            element.cuenta_destino ? element.cuenta_destino : ""
+          );
+          wt.cell(fila, 12).string(
+            element.nro_operacion ? element.nro_operacion : ""
+          );
+          wt.cell(fila, 13).string(element.concepto ? element.concepto : "");
+          wt.cell(fila, 14).string(element.factura ? element.factura : "");
+          wt.cell(fila, 15).string(element.serie ? element.serie : "");
           fila++;
         });
 
