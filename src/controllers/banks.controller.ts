@@ -341,9 +341,8 @@ export const getListaPagosXProveedorCxC = async (
   res: Response
 ) => {
   let id = req.params.id_cliente;
-
   await pool.query(
-    `SELECT * FROM Table_InvoiceAdminCxC_pagoxcliente($1)`,
+    `SELECT * FROM table_invoiceadmincxc_pagoxcliente($1)`,
     [id],
     (err, response, fields) => {
       if (!err) {
