@@ -5,7 +5,7 @@ const { Pool } = pg;
 const pool = conexion();
 import path from "path";
 var xl = require("excel4node");
-
+import { balance } from "../interface/balance";
 export const detalleGanancia = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM function_monto_egreso_x_exp($1,null,null);",
@@ -34,6 +34,7 @@ export const detalleGanancia = async (req: Request, res: Response) => {
     }
   );
 };
+
 export const resumenGanancia = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM function_monto_egreso_x_mes($1,null,null);",
@@ -121,9 +122,15 @@ export const resumenGastos = async (req: Request, res: Response) => {
 };
 
 export const exportarReporteGanancias = async (req: Request, res: Response) => {
-  let itemsGanancia = req.body.itemsGanancia;
-  let itemsGastos = req.body.itemsGastos;
-  let itemsResumen = req.body.itemsResumen;
+  let detalleGanancia = await dGanancia(req.query.year);
+  let resumenGanancia = await rGanancia(req.query.year);
+  let detallePerdida = await dPerdida(req.query.year);
+  let resumenPerdida = await rPerdida(req.query.year);
+
+  let itemsResumen = generarResumen(resumenGanancia, resumenPerdida);
+  let itemsGanancia = generarDetalleGanancia(detalleGanancia);
+  let itemsGastos = generarDetallePerdida(detallePerdida);
+
   var wb = new xl.Workbook({
     dateFormat: "dd/mm/yyyy",
     author: "PIC CARGO - IMPORTADORES",
@@ -317,7 +324,7 @@ export const exportarReporteGanancias = async (req: Request, res: Response) => {
   // -------------------------------------------------
   let pathexcel = path.join(
     `${__dirname}../../../uploads`,
-    "ReporteIngresos.xlsx"
+    "BalanceGananciaPerdida.xlsx"
   );
   wb.write(pathexcel, function (err, stats) {
     if (err) {
@@ -326,5 +333,807 @@ export const exportarReporteGanancias = async (req: Request, res: Response) => {
       res.download(pathexcel);
     }
   });
-  // wt.row(1).filter();
 };
+
+// ----------------------------------------
+function dGanancia(year) {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      "SELECT * FROM function_monto_egreso_x_exp($1,null,null);",
+      [year],
+      (err, response) => {
+        let rows = response.rows;
+        if (!err) {
+          resolve(rows);
+        }
+      }
+    );
+  });
+}
+function rGanancia(year) {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      "SELECT * FROM function_monto_egreso_x_mes($1,null,null);",
+      [year],
+      (err, response) => {
+        let rows = response.rows;
+        if (!err) {
+          resolve(rows);
+        }
+      }
+    );
+  });
+}
+function dPerdida(year) {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      "SELECT * FROM function_monto_gastos_x_proveedor($1,null,null);",
+      [year],
+      (err, response) => {
+        let rows = response.rows;
+        if (!err) {
+          resolve(rows);
+        }
+      }
+    );
+  });
+}
+function rPerdida(year) {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      "SELECT * FROM function_monto_gastos_x_mes($1,null,null);",
+      [year],
+      (err, response) => {
+        let rows = response.rows;
+
+        if (!err) {
+          resolve(rows);
+        }
+      }
+    );
+  });
+}
+
+function generarResumen(resumenGanancia, resumenPerdida) {
+  let res = [];
+  let resumen = {
+    description: "",
+    enero: "",
+    febrero: "",
+    marzo: "",
+    abril: "",
+    mayo: "",
+    junio: "",
+    julio: "",
+    agosto: "",
+    septiembre: "",
+    octubre: "",
+    noviembre: "",
+    diciembre: "",
+  };
+  let resumen2 = {
+    description: "",
+    enero: "",
+    febrero: "",
+    marzo: "",
+    abril: "",
+    mayo: "",
+    junio: "",
+    julio: "",
+    agosto: "",
+    septiembre: "",
+    octubre: "",
+    noviembre: "",
+    diciembre: "",
+  };
+  resumen.description = "Ganancia";
+  resumenGanancia.forEach((element) => {
+    switch (element.mes) {
+      case "01":
+        resumen.enero = element.monto;
+        break;
+      case "02":
+        resumen.febrero = element.monto ? element.monto : 0;
+        break;
+      case "03":
+        resumen.marzo = element.monto ? element.monto : 0;
+        break;
+      case "04":
+        resumen.abril = element.monto;
+        break;
+      case "05":
+        resumen.mayo = element.monto ? element.monto : 0;
+        break;
+      case "06":
+        resumen.junio = element.monto ? element.monto : 0;
+        break;
+      case "07":
+        resumen.julio = element.monto ? element.monto : 0;
+        break;
+      case "08":
+        resumen.agosto = element.monto ? element.monto : 0;
+        break;
+      case "09":
+        resumen.septiembre = element.monto ? element.monto : 0;
+        break;
+      case "10":
+        resumen.octubre = element.monto ? element.monto : 0;
+        break;
+      case "11":
+        resumen.noviembre = element.monto ? element.monto : 0;
+        break;
+      case "12":
+        resumen.diciembre = element.monto ? element.monto : 0;
+        break;
+
+      default:
+        break;
+    }
+  });
+  res.push(resumen);
+  // -----------------------------------------
+  resumen2.description = "Gastos";
+  resumenPerdida.forEach((element) => {
+    switch (element.mes) {
+      case "01":
+        resumen2.enero = element.monto ? element.monto : 0;
+        break;
+      case "02":
+        resumen2.febrero = element.monto ? element.monto : 0;
+        break;
+      case "03":
+        resumen2.marzo = element.monto ? element.monto : 0;
+        break;
+      case "04":
+        resumen2.abril = element.monto ? element.monto : 0;
+        break;
+      case "05":
+        resumen2.mayo = element.monto ? element.monto : 0;
+        break;
+      case "06":
+        resumen2.junio = element.monto ? element.monto : 0;
+        break;
+      case "07":
+        resumen.julio = element.monto ? element.monto : 0;
+        break;
+      case "08":
+        resumen2.agosto = element.monto ? element.monto : 0;
+        break;
+      case "09":
+        resumen2.septiembre = element.monto ? element.monto : 0;
+        break;
+      case "10":
+        resumen2.octubre = element.monto ? element.monto : 0;
+        break;
+      case "11":
+        resumen2.noviembre = element.monto ? element.monto : 0;
+        break;
+      case "12":
+        resumen2.diciembre = element.monto ? element.monto : 0;
+        break;
+
+      default:
+        break;
+    }
+  });
+  res.push(resumen2);
+  // CALCULAR TOTALES
+
+  let ganancias = res[0];
+  let perdidas = res[1];
+  let totalPorMes = { description: "" };
+
+  for (let mes in ganancias) {
+    if (ganancias.hasOwnProperty(mes)) {
+      // Verificar que el mes también esté en el objeto de pérdidas
+      if (!perdidas.hasOwnProperty(mes)) {
+        throw new Error(`No se encontró el mes '${mes}' en las pérdidas`);
+      }
+
+      // Convertir los valores de ganancia y pérdida a números
+      let ganancia = parseFloat(ganancias[mes]);
+      let perdida = parseFloat(perdidas[mes]);
+
+      // Calcular el total por mes restando la pérdida de la ganancia
+      let total = (ganancia ? ganancia : 0) - (perdida ? perdida : 0);
+
+      // Almacenar el total en el objeto totalPorMes
+      totalPorMes[mes] = total.toFixed(2);
+    }
+  }
+  totalPorMes.description = "Total";
+  res.push(totalPorMes);
+  return res;
+}
+
+function generarDetalleGanancia(detalleGanancia) {
+  let itemsGanancia = [];
+  let montosPorMes: {
+    exp?: string;
+    nro_master?: string;
+    proveedor?: string;
+    concepto?: string;
+    monto?: number;
+    ganancia?: number;
+  } = {
+    exp: "DETALLE DE GANANCIA OPERATIVA",
+  };
+  let mes;
+
+  for (let i = 0; i < detalleGanancia.length; i++) {
+    const elemento = detalleGanancia[i];
+
+    switch (elemento.mes) {
+      case "01":
+        mes = "enero";
+        break;
+      case "02":
+        mes = "febrero";
+        break;
+      case "03":
+        mes = "marzo";
+        break;
+      case "04":
+        mes = "abril";
+        break;
+      case "05":
+        mes = "mayo";
+        break;
+      case "06":
+        mes = "junio";
+        break;
+      case "07":
+        mes = "julio";
+        break;
+      case "08":
+        mes = "agosto";
+        break;
+      case "09":
+        mes = "septiembre";
+        break;
+      case "10":
+        mes = "octubre";
+        break;
+      case "11":
+        mes = "noviembre";
+        break;
+      case "12":
+        mes = "diciembre";
+        break;
+
+      default:
+        break;
+    }
+
+    const ganancia = parseFloat(elemento.ganancia).toFixed(2);
+    if (montosPorMes.hasOwnProperty(mes)) {
+      montosPorMes[mes] = (
+        parseFloat(montosPorMes[mes] ? montosPorMes[mes] : "0") +
+        parseFloat(ganancia)
+      ).toFixed(2);
+    } else {
+      montosPorMes[mes] = ganancia;
+    }
+  }
+  montosPorMes.nro_master = "DETALLE DE GANANCIA OPERATIVA";
+  itemsGanancia.push(montosPorMes);
+
+  //   -------------------------------
+  detalleGanancia.forEach((element) => {
+    switch (element.mes) {
+      case "01":
+        itemsGanancia.push({
+          exp: "EXPEDIENTE " + element.nro_master,
+          enero: element.ganancia ? element.ganancia : 0.0,
+          febrero: 0.0,
+          marzo: 0.0,
+          abril: 0.0,
+          mayo: 0.0,
+          junio: 0.0,
+          julio: 0.0,
+          agosto: 0.0,
+          septiembre: 0.0,
+          octubre: 0.0,
+          noviembre: 0.0,
+          diciembre: 0.0,
+        });
+        break;
+      case "02":
+        itemsGanancia.push({
+          exp: "EXPEDIENTE " + element.nro_master,
+          febrero: element.ganancia ? element.ganancia : 0.0,
+          enero: 0.0,
+          marzo: 0.0,
+          abril: 0.0,
+          mayo: 0.0,
+          junio: 0.0,
+          julio: 0.0,
+          agosto: 0.0,
+          septiembre: 0.0,
+          octubre: 0.0,
+          noviembre: 0.0,
+          diciembre: 0.0,
+        });
+        break;
+      case "03":
+        itemsGanancia.push({
+          exp: "EXPEDIENTE " + element.nro_master,
+          marzo: element.ganancia ? element.ganancia : 0.0,
+          enero: 0.0,
+          febrero: 0.0,
+          abril: 0.0,
+          mayo: 0.0,
+          junio: 0.0,
+          julio: 0.0,
+          agosto: 0.0,
+          septiembre: 0.0,
+          octubre: 0.0,
+          noviembre: 0.0,
+          diciembre: 0.0,
+        });
+        break;
+      case "04":
+        itemsGanancia.push({
+          exp: "EXPEDIENTE " + element.nro_master,
+          abril: element.ganancia ? element.ganancia : 0.0,
+          enero: 0.0,
+          febrero: 0.0,
+          marzo: 0.0,
+          mayo: 0.0,
+          junio: 0.0,
+          julio: 0.0,
+          agosto: 0.0,
+          septiembre: 0.0,
+          octubre: 0.0,
+          noviembre: 0.0,
+          diciembre: 0.0,
+        });
+        break;
+      case "05":
+        itemsGanancia.push({
+          exp: "EXPEDIENTE " + element.nro_master,
+          mayo: element.ganancia ? element.ganancia : 0.0,
+          enero: 0.0,
+          febrero: 0.0,
+          marzo: 0.0,
+          abril: 0.0,
+          junio: 0.0,
+          julio: 0.0,
+          agosto: 0.0,
+          septiembre: 0.0,
+          octubre: 0.0,
+          noviembre: 0.0,
+          diciembre: 0.0,
+        });
+        break;
+      case "06":
+        itemsGanancia.push({
+          exp: "EXPEDIENTE " + element.nro_master,
+          junio: element.ganancia ? element.ganancia : 0.0,
+          enero: 0.0,
+          febrero: 0.0,
+          marzo: 0.0,
+          abril: 0.0,
+          mayo: 0.0,
+          julio: 0.0,
+          agosto: 0.0,
+          septiembre: 0.0,
+          octubre: 0.0,
+          noviembre: 0.0,
+          diciembre: 0.0,
+        });
+        break;
+      case "07":
+        itemsGanancia.push({
+          exp: "EXPEDIENTE " + element.nro_master,
+          julio: element.ganancia ? element.ganancia : 0.0,
+          enero: 0.0,
+          febrero: 0.0,
+          marzo: 0.0,
+          abril: 0.0,
+          mayo: 0.0,
+          junio: 0.0,
+          agosto: 0.0,
+          septiembre: 0.0,
+          octubre: 0.0,
+          noviembre: 0.0,
+          diciembre: 0.0,
+        });
+        break;
+      case "08":
+        itemsGanancia.push({
+          exp: "EXPEDIENTE " + element.nro_master,
+          agosto: element.ganancia ? element.ganancia : 0.0,
+          enero: 0.0,
+          febrero: 0.0,
+          marzo: 0.0,
+          abril: 0.0,
+          mayo: 0.0,
+          junio: 0.0,
+          julio: 0.0,
+
+          septiembre: 0.0,
+          octubre: 0.0,
+          noviembre: 0.0,
+          diciembre: 0.0,
+        });
+        break;
+      case "09":
+        itemsGanancia.push({
+          exp: "EXPEDIENTE " + element.nro_master,
+          septiembre: element.ganancia ? element.ganancia : 0.0,
+          enero: 0.0,
+          febrero: 0.0,
+          marzo: 0.0,
+          abril: 0.0,
+          mayo: 0.0,
+          junio: 0.0,
+          julio: 0.0,
+          agosto: 0.0,
+
+          octubre: 0.0,
+          noviembre: 0.0,
+          diciembre: 0.0,
+        });
+        break;
+      case "10":
+        itemsGanancia.push({
+          exp: "EXPEDIENTE " + element.nro_master,
+          octubre: element.ganancia ? element.ganancia : 0.0,
+          enero: 0.0,
+          febrero: 0.0,
+          marzo: 0.0,
+          abril: 0.0,
+          mayo: 0.0,
+          junio: 0.0,
+          julio: 0.0,
+          agosto: 0.0,
+          septiembre: 0.0,
+
+          noviembre: 0.0,
+          diciembre: 0.0,
+        });
+        break;
+      case "11":
+        itemsGanancia.push({
+          exp: "EXPEDIENTE " + element.nro_master,
+          noviembre: element.ganancia ? element.ganancia : 0.0,
+          enero: 0.0,
+          febrero: 0.0,
+          marzo: 0.0,
+          abril: 0.0,
+          mayo: 0.0,
+          junio: 0.0,
+          julio: 0.0,
+          agosto: 0.0,
+          septiembre: 0.0,
+          octubre: 0.0,
+
+          diciembre: 0.0,
+        });
+        break;
+      case "12":
+        itemsGanancia.push({
+          exp: "EXPEDIENTE " + element.nro_master,
+          diciembre: element.ganancia ? element.ganancia : 0.0,
+          enero: 0.0,
+          febrero: 0.0,
+          marzo: 0.0,
+          abril: 0.0,
+          mayo: 0.0,
+          junio: 0.0,
+          julio: 0.0,
+          agosto: 0.0,
+          septiembre: 0.0,
+          octubre: 0.0,
+          noviembre: 0.0,
+        });
+        break;
+
+      default:
+        break;
+    }
+  });
+  return itemsGanancia;
+}
+
+function generarDetallePerdida(detallePerdida) {
+  let itemsGastos = [];
+  let montosPorMes: {
+    exp?: string;
+    nro_master?: string;
+    proveedor?: string;
+    concepto?: string;
+    monto?: number;
+    ganancia?: number;
+  } = {
+    exp: "DETALLE DE GASTOS OPERATIVA",
+  };
+
+  let mes = "";
+  for (let i = 0; i < detallePerdida.length; i++) {
+    const elemento = detallePerdida[i];
+
+    switch (elemento.mes) {
+      case "01":
+        mes = "enero";
+        break;
+      case "02":
+        mes = "febrero";
+        break;
+      case "03":
+        mes = "marzo";
+        break;
+      case "04":
+        mes = "abril";
+        break;
+      case "05":
+        mes = "mayo";
+        break;
+      case "06":
+        mes = "junio";
+        break;
+      case "07":
+        mes = "julio";
+        break;
+      case "08":
+        mes = "agosto";
+        break;
+      case "09":
+        mes = "septiembre";
+        break;
+      case "10":
+        mes = "octubre";
+        break;
+      case "11":
+        mes = "noviembre";
+        break;
+      case "12":
+        mes = "diciembre";
+        break;
+
+      default:
+        break;
+    }
+    const monto = parseFloat(elemento.monto).toFixed(2);
+    if (montosPorMes.hasOwnProperty(mes)) {
+      montosPorMes[mes] = (
+        parseFloat(montosPorMes[mes] ? montosPorMes[mes] : "0") +
+        parseFloat(monto)
+          ? parseFloat(monto)
+          : 0
+      ).toFixed(2);
+    } else {
+      montosPorMes[mes] = parseFloat(monto).toFixed(2);
+    }
+  }
+  montosPorMes.proveedor = "Proveedor";
+  montosPorMes.concepto = "Conceptos";
+  itemsGastos.push(montosPorMes);
+
+  //   -------------------------------
+  detallePerdida.forEach((element) => {
+    switch (element.mes) {
+      case "01":
+        itemsGastos.push({
+          proveedor: element.proveedor,
+          concepto: element.concepto,
+          enero: element.monto ? element.monto : 0,
+          diciembre: 0.0,
+          febrero: 0.0,
+          marzo: 0.0,
+          abril: 0.0,
+          mayo: 0.0,
+          junio: 0.0,
+          julio: 0.0,
+          agosto: 0.0,
+          septiembre: 0.0,
+          octubre: 0.0,
+          noviembre: 0.0,
+        });
+        break;
+      case "02":
+        itemsGastos.push({
+          proveedor: element.proveedor,
+          concepto: element.concepto,
+          febrero: element.monto,
+          enero: 0.0,
+          diciembre: 0.0,
+          marzo: 0.0,
+          abril: 0.0,
+          mayo: 0.0,
+          junio: 0.0,
+          julio: 0.0,
+          agosto: 0.0,
+          septiembre: 0.0,
+          octubre: 0.0,
+          noviembre: 0.0,
+        });
+        break;
+      case "03":
+        itemsGastos.push({
+          proveedor: element.proveedor,
+          concepto: element.concepto,
+          marzo: element.monto ? element.monto : 0,
+          enero: 0.0,
+          febrero: 0.0,
+          diciembre: 0.0,
+          abril: 0.0,
+          mayo: 0.0,
+          junio: 0.0,
+          julio: 0.0,
+          agosto: 0.0,
+          septiembre: 0.0,
+          octubre: 0.0,
+          noviembre: 0.0,
+        });
+        break;
+      case "04":
+        itemsGastos.push({
+          proveedor: element.proveedor,
+          concepto: element.concepto,
+          abril: element.monto ? element.monto : 0,
+          enero: 0.0,
+          febrero: 0.0,
+          marzo: 0.0,
+          diciembre: 0.0,
+          mayo: 0.0,
+          junio: 0.0,
+          julio: 0.0,
+          agosto: 0.0,
+          septiembre: 0.0,
+          octubre: 0.0,
+          noviembre: 0.0,
+        });
+        break;
+      case "05":
+        itemsGastos.push({
+          proveedor: element.proveedor,
+          concepto: element.concepto,
+          mayo: element.monto ? element.monto : 0,
+          enero: 0.0,
+          febrero: 0.0,
+          marzo: 0.0,
+          abril: 0.0,
+          diciembre: 0.0,
+          junio: 0.0,
+          julio: 0.0,
+          agosto: 0.0,
+          septiembre: 0.0,
+          octubre: 0.0,
+          noviembre: 0.0,
+        });
+        break;
+      case "06":
+        itemsGastos.push({
+          proveedor: element.proveedor,
+          concepto: element.concepto,
+          junio: element.monto ? element.monto : 0,
+          enero: 0.0,
+          febrero: 0.0,
+          marzo: 0.0,
+          abril: 0.0,
+          mayo: 0.0,
+          diciembre: 0.0,
+          julio: 0.0,
+          agosto: 0.0,
+          septiembre: 0.0,
+          octubre: 0.0,
+          noviembre: 0.0,
+        });
+        break;
+      case "07":
+        itemsGastos.push({
+          proveedor: element.proveedor,
+          concepto: element.concepto,
+          julio: element.monto ? element.monto : 0,
+          enero: 0.0,
+          febrero: 0.0,
+          marzo: 0.0,
+          abril: 0.0,
+          mayo: 0.0,
+          diciembre: 0.0,
+
+          agosto: 0.0,
+          septiembre: 0.0,
+          octubre: 0.0,
+          noviembre: 0.0,
+        });
+        break;
+      case "08":
+        itemsGastos.push({
+          proveedor: element.proveedor,
+          concepto: element.concepto,
+          agosto: element.monto ? element.monto : 0,
+          enero: 0.0,
+          febrero: 0.0,
+          marzo: 0.0,
+          abril: 0.0,
+          mayo: 0.0,
+          junio: 0.0,
+          julio: 0.0,
+          diciembre: 0.0,
+          septiembre: 0.0,
+          octubre: 0.0,
+          noviembre: 0.0,
+        });
+        break;
+      case "09":
+        itemsGastos.push({
+          proveedor: element.proveedor,
+          concepto: element.concepto,
+          septiembre: element.monto ? element.monto : 0,
+          enero: 0.0,
+          febrero: 0.0,
+          marzo: 0.0,
+          abril: 0.0,
+          mayo: 0.0,
+          junio: 0.0,
+          julio: 0.0,
+          agosto: 0.0,
+          diciembre: 0.0,
+          octubre: 0.0,
+          noviembre: 0.0,
+        });
+        break;
+      case "10":
+        itemsGastos.push({
+          proveedor: element.proveedor,
+          concepto: element.concepto,
+          octubre: element.monto ? element.monto : 0,
+          enero: 0.0,
+          febrero: 0.0,
+          marzo: 0.0,
+          abril: 0.0,
+          mayo: 0.0,
+          junio: 0.0,
+          julio: 0.0,
+          agosto: 0.0,
+          septiembre: 0.0,
+          diciembre: 0.0,
+          noviembre: 0.0,
+        });
+        break;
+      case "11":
+        itemsGastos.push({
+          proveedor: element.proveedor,
+          concepto: element.concepto,
+          noviembre: element.monto ? element.monto : 0,
+          enero: 0.0,
+          febrero: 0.0,
+          marzo: 0.0,
+          abril: 0.0,
+          mayo: 0.0,
+          junio: 0.0,
+          julio: 0.0,
+          agosto: 0.0,
+          septiembre: 0.0,
+          octubre: 0.0,
+          diciembre: 0.0,
+        });
+        break;
+      case "12":
+        itemsGastos.push({
+          proveedor: element.proveedor,
+          concepto: element.concepto,
+          diciembre: element.monto ? element.monto : 0,
+          enero: 0.0,
+          febrero: 0.0,
+          marzo: 0.0,
+          abril: 0.0,
+          mayo: 0.0,
+          junio: 0.0,
+          julio: 0.0,
+          agosto: 0.0,
+          septiembre: 0.0,
+          octubre: 0.0,
+          noviembre: 0.0,
+        });
+        break;
+
+      default:
+        break;
+    }
+  });
+  return itemsGastos;
+}
