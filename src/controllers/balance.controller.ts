@@ -153,13 +153,9 @@ export const exportarReporteGanancias = async (req: Request, res: Response) => {
     },
   });
   var wr = wb.addWorksheet("Resumen");
-  var wg = wb.addWorksheet("Ganancias");
-  var wp = wb.addWorksheet("Gasto");
-  // --------------------------- resumen
 
-  wr.row(1).filter();
-  wr.column(1).setWidth(15);
-  wr.column(2).setWidth(15);
+  wr.column(1).setWidth(20);
+  wr.column(2).setWidth(20);
   wr.column(3).setWidth(15);
   wr.column(4).setWidth(15);
   wr.column(5).setWidth(15);
@@ -209,117 +205,84 @@ export const exportarReporteGanancias = async (req: Request, res: Response) => {
     fila++;
   });
   // --------------------------- ganancia
+  fila = fila + 2;
 
-  wg.row(1).filter();
-  wg.column(1).setWidth(15);
-  wg.column(2).setWidth(15);
-  wg.column(3).setWidth(15);
-  wg.column(4).setWidth(15);
-  wg.column(5).setWidth(15);
-  wg.column(6).setWidth(15);
-  wg.column(7).setWidth(15);
-  wg.column(8).setWidth(15);
-  wg.column(9).setWidth(15);
-  wg.column(10).setWidth(15);
-  wg.column(11).setWidth(15);
-  wg.column(12).setWidth(15);
-  wg.column(13).setWidth(15);
-
-  wg.cell(1, 1).string("Expediente").style(cabTitle);
-  wg.cell(1, 2).string("Enero").style(cabTitle);
-  wg.cell(1, 3).string("Febrero").style(cabTitle);
-  wg.cell(1, 4).string("Marzo").style(cabTitle);
-  wg.cell(1, 5).string("Abril").style(cabTitle);
-  wg.cell(1, 6).string("Mayo").style(cabTitle);
-  wg.cell(1, 7).string("Junio").style(cabTitle);
-  wg.cell(1, 8).string("Julio").style(cabTitle);
-  wg.cell(1, 9).string("Agosto").style(cabTitle);
-  wg.cell(1, 10).string("Septiembre").style(cabTitle);
-  wg.cell(1, 11).string("Octubre").style(cabTitle);
-  wg.cell(1, 12).string("Noviembre").style(cabTitle);
-  wg.cell(1, 13).string("Diciembre").style(cabTitle);
-  let filag = 2;
+  wr.cell(fila, 1).string("Expediente").style(cabTitle);
+  wr.cell(fila, 2).string("Enero").style(cabTitle);
+  wr.cell(fila, 3).string("Febrero").style(cabTitle);
+  wr.cell(fila, 4).string("Marzo").style(cabTitle);
+  wr.cell(fila, 5).string("Abril").style(cabTitle);
+  wr.cell(fila, 6).string("Mayo").style(cabTitle);
+  wr.cell(fila, 7).string("Junio").style(cabTitle);
+  wr.cell(fila, 8).string("Julio").style(cabTitle);
+  wr.cell(fila, 9).string("Agosto").style(cabTitle);
+  wr.cell(fila, 10).string("Septiembre").style(cabTitle);
+  wr.cell(fila, 11).string("Octubre").style(cabTitle);
+  wr.cell(fila, 12).string("Noviembre").style(cabTitle);
+  wr.cell(fila, 13).string("Diciembre").style(cabTitle);
+  fila++;
   itemsGanancia.forEach((element) => {
-    wg.cell(filag, 1).string(element.exp);
-    wg.cell(filag, 2).number(element.enero ? parseFloat(element.enero) : 0);
-    wg.cell(filag, 3).number(element.febrero ? parseFloat(element.febrero) : 0);
-    wg.cell(filag, 4).number(element.marzo ? parseFloat(element.marzo) : 0);
-    wg.cell(filag, 5).number(element.abril ? parseFloat(element.abril) : 0);
-    wg.cell(filag, 6).number(element.mayo ? parseFloat(element.mayo) : 0);
-    wg.cell(filag, 7).number(element.junio ? parseFloat(element.junio) : 0);
-    wg.cell(filag, 8).number(element.julio ? parseFloat(element.julio) : 0);
-    wg.cell(filag, 9).number(element.agosto ? parseFloat(element.agosto) : 0);
-    wg.cell(filag, 10).number(
+    wr.cell(fila, 1).string(element.exp);
+    wr.cell(fila, 2).number(element.enero ? parseFloat(element.enero) : 0);
+    wr.cell(fila, 3).number(element.febrero ? parseFloat(element.febrero) : 0);
+    wr.cell(fila, 4).number(element.marzo ? parseFloat(element.marzo) : 0);
+    wr.cell(fila, 5).number(element.abril ? parseFloat(element.abril) : 0);
+    wr.cell(fila, 6).number(element.mayo ? parseFloat(element.mayo) : 0);
+    wr.cell(fila, 7).number(element.junio ? parseFloat(element.junio) : 0);
+    wr.cell(fila, 8).number(element.julio ? parseFloat(element.julio) : 0);
+    wr.cell(fila, 9).number(element.agosto ? parseFloat(element.agosto) : 0);
+    wr.cell(fila, 10).number(
       element.septiembre ? parseFloat(element.septiembre) : 0
     );
-    wg.cell(filag, 11).number(
-      element.octubre ? parseFloat(element.octubre) : 0
-    );
-    wg.cell(filag, 12).number(
+    wr.cell(fila, 11).number(element.octubre ? parseFloat(element.octubre) : 0);
+    wr.cell(fila, 12).number(
       element.noviembre ? parseFloat(element.noviembre) : 0
     );
-    wg.cell(filag, 13).number(
+    wr.cell(fila, 13).number(
       element.diciembre ? parseFloat(element.diciembre) : 0
     );
-    filag++;
+    fila++;
   });
   // --------------------------- perdida
+  fila = fila + 2;
 
-  wp.row(1).filter();
-  wp.column(1).setWidth(15);
-  wp.column(2).setWidth(15);
-  wp.column(3).setWidth(15);
-  wp.column(4).setWidth(15);
-  wp.column(5).setWidth(15);
-  wp.column(6).setWidth(15);
-  wp.column(7).setWidth(15);
-  wp.column(8).setWidth(15);
-  wp.column(9).setWidth(15);
-  wp.column(10).setWidth(15);
-  wp.column(11).setWidth(15);
-  wp.column(12).setWidth(15);
-  wp.column(13).setWidth(15);
-  wp.column(14).setWidth(15);
-
-  wp.cell(1, 1).string("Proveedor").style(cabTitle);
-  wp.cell(1, 2).string("Concepto").style(cabTitle);
-  wp.cell(1, 3).string("Enero").style(cabTitle);
-  wp.cell(1, 4).string("Febrero").style(cabTitle);
-  wp.cell(1, 5).string("Marzo").style(cabTitle);
-  wp.cell(1, 6).string("Abril").style(cabTitle);
-  wp.cell(1, 7).string("Mayo").style(cabTitle);
-  wp.cell(1, 8).string("Junio").style(cabTitle);
-  wp.cell(1, 9).string("Julio").style(cabTitle);
-  wp.cell(1, 10).string("Agosto").style(cabTitle);
-  wp.cell(1, 11).string("Septiembre").style(cabTitle);
-  wp.cell(1, 12).string("Octubre").style(cabTitle);
-  wp.cell(1, 13).string("Noviembre").style(cabTitle);
-  wp.cell(1, 14).string("Diciembre").style(cabTitle);
-  let filap = 2;
+  wr.cell(fila, 1).string("Proveedor").style(cabTitle);
+  wr.cell(fila, 2).string("Concepto").style(cabTitle);
+  wr.cell(fila, 3).string("Enero").style(cabTitle);
+  wr.cell(fila, 4).string("Febrero").style(cabTitle);
+  wr.cell(fila, 5).string("Marzo").style(cabTitle);
+  wr.cell(fila, 6).string("Abril").style(cabTitle);
+  wr.cell(fila, 7).string("Mayo").style(cabTitle);
+  wr.cell(fila, 8).string("Junio").style(cabTitle);
+  wr.cell(fila, 9).string("Julio").style(cabTitle);
+  wr.cell(fila, 10).string("Agosto").style(cabTitle);
+  wr.cell(fila, 11).string("Septiembre").style(cabTitle);
+  wr.cell(fila, 12).string("Octubre").style(cabTitle);
+  wr.cell(fila, 13).string("Noviembre").style(cabTitle);
+  wr.cell(fila, 14).string("Diciembre").style(cabTitle);
+  fila++;
   itemsGastos.forEach((element) => {
-    wp.cell(filap, 1).string(element.proveedor);
-    wp.cell(filap, 2).string(element.concepto);
-    wp.cell(filap, 3).number(element.enero ? parseFloat(element.enero) : 0);
-    wp.cell(filap, 4).number(element.febrero ? parseFloat(element.febrero) : 0);
-    wp.cell(filap, 5).number(element.marzo ? parseFloat(element.marzo) : 0);
-    wp.cell(filap, 6).number(element.abril ? parseFloat(element.abril) : 0);
-    wp.cell(filap, 7).number(element.mayo ? parseFloat(element.mayo) : 0);
-    wp.cell(filap, 8).number(element.junio ? parseFloat(element.junio) : 0);
-    wp.cell(filap, 9).number(element.julio ? parseFloat(element.julio) : 0);
-    wp.cell(filap, 10).number(element.agosto ? parseFloat(element.agosto) : 0);
-    wp.cell(filap, 11).number(
+    wr.cell(fila, 1).string(element.proveedor);
+    wr.cell(fila, 2).string(element.concepto);
+    wr.cell(fila, 3).number(element.enero ? parseFloat(element.enero) : 0);
+    wr.cell(fila, 4).number(element.febrero ? parseFloat(element.febrero) : 0);
+    wr.cell(fila, 5).number(element.marzo ? parseFloat(element.marzo) : 0);
+    wr.cell(fila, 6).number(element.abril ? parseFloat(element.abril) : 0);
+    wr.cell(fila, 7).number(element.mayo ? parseFloat(element.mayo) : 0);
+    wr.cell(fila, 8).number(element.junio ? parseFloat(element.junio) : 0);
+    wr.cell(fila, 9).number(element.julio ? parseFloat(element.julio) : 0);
+    wr.cell(fila, 10).number(element.agosto ? parseFloat(element.agosto) : 0);
+    wr.cell(fila, 11).number(
       element.septiembre ? parseFloat(element.septiembre) : 0
     );
-    wp.cell(filap, 12).number(
-      element.octubre ? parseFloat(element.octubre) : 0
-    );
-    wp.cell(filap, 13).number(
+    wr.cell(fila, 12).number(element.octubre ? parseFloat(element.octubre) : 0);
+    wr.cell(fila, 13).number(
       element.noviembre ? parseFloat(element.noviembre) : 0
     );
-    wp.cell(filap, 14).number(
+    wr.cell(fila, 14).number(
       element.diciembre ? parseFloat(element.diciembre) : 0
     );
-    filap++;
+    fila++;
   });
   // -------------------------------------------------
   let pathexcel = path.join(
@@ -900,11 +863,9 @@ function generarDetallePerdida(detallePerdida) {
       montosPorMes[mes] = (
         parseFloat(montosPorMes[mes] ? montosPorMes[mes] : "0") +
         parseFloat(monto)
-          ? parseFloat(monto)
-          : 0
       ).toFixed(2);
     } else {
-      montosPorMes[mes] = parseFloat(monto).toFixed(2);
+      montosPorMes[mes] = monto;
     }
   }
   montosPorMes.proveedor = "Proveedor";
