@@ -393,7 +393,7 @@ function generarResumen(resumenGanancia, resumenPerdida) {
   resumenGanancia.forEach((element) => {
     switch (element.mes) {
       case "01":
-        resumen.enero = element.monto;
+        resumen.enero = element.monto ? element.monto : 0;
         break;
       case "02":
         resumen.febrero = element.monto ? element.monto : 0;
@@ -402,7 +402,7 @@ function generarResumen(resumenGanancia, resumenPerdida) {
         resumen.marzo = element.monto ? element.monto : 0;
         break;
       case "04":
-        resumen.abril = element.monto;
+        resumen.abril = element.monto ? element.monto : 0;
         break;
       case "05":
         resumen.mayo = element.monto ? element.monto : 0;
@@ -434,6 +434,7 @@ function generarResumen(resumenGanancia, resumenPerdida) {
     }
   });
   res.push(resumen);
+
   // -----------------------------------------
   resumen2.description = "Gastos";
   resumenPerdida.forEach((element) => {
@@ -457,7 +458,7 @@ function generarResumen(resumenGanancia, resumenPerdida) {
         resumen2.junio = element.monto ? element.monto : 0;
         break;
       case "07":
-        resumen.julio = element.monto ? element.monto : 0;
+        resumen2.julio = element.monto ? element.monto : 0;
         break;
       case "08":
         resumen2.agosto = element.monto ? element.monto : 0;
