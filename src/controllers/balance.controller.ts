@@ -1098,5 +1098,3 @@ function generarDetallePerdida(detallePerdida) {
   });
   return itemsGastos;
 }
-
-
