@@ -4,6 +4,7 @@ const router: Router = Router();
 import { TokenValidation } from "../libs/verifyToken";
 
 import {
+  arbolGastos,
   detalleGanancia,
   detalleGastos,
   exportarReporteGanancias,
@@ -11,6 +12,7 @@ import {
   resumenGastos,
 } from "../controllers/balance.controller";
 
+router.get("/arbol_gastos", TokenValidation, arbolGastos);
 router.get("/detalle_ganancia", TokenValidation, detalleGanancia);
 router.get("/resumen_ganancia", TokenValidation, resumenGanancia);
 router.get("/detalle_gastos", TokenValidation, detalleGastos);

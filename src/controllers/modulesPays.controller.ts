@@ -26,7 +26,7 @@ export const setInvoiceAdmin = async (req: Request, res: Response) => {
   });
 
   await pool.query(
-    "select * from Table_InvoiceAdmin_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25)",
+    "select * from Table_InvoiceAdmin_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26)",
     [
       dataObj.type_payment,
       dataObj.id_expediente,
@@ -70,6 +70,7 @@ export const setInvoiceAdmin = async (req: Request, res: Response) => {
       dataDetails.map((item: any) => {
         return item.totaldolar;
       }),
+      dataObj.id_gastos,
     ],
     (err, rows, fields) => {
       if (!err) {
@@ -277,7 +278,7 @@ export const setUpdateInvoiceAdmin = async (req: Request, res: Response) => {
   let path = isNaN(+dataObj.id_path);
 
   await pool.query(
-    "SELECT * FROM  table_DetailsInvoiceAdmin_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24)",
+    "SELECT * FROM  table_DetailsInvoiceAdmin_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25)",
     [
       dataObj.id,
       dataObj.id_proveedor,
@@ -324,6 +325,7 @@ export const setUpdateInvoiceAdmin = async (req: Request, res: Response) => {
       dataDetails.map((item: any) => {
         return item.id ? item.id : null;
       }),
+      dataObj.id_gastos,
     ],
     (err, response, fields) => {
       if (!err) {
