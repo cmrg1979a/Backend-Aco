@@ -7,8 +7,6 @@ import path from "path";
 var xl = require("excel4node");
 import { balance } from "../interface/balance";
 
-
-
 export const detalleGanancia = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM function_monto_egreso_x_exp($1,null,null);",
@@ -239,46 +237,7 @@ export const exportarReporteGanancias = async (req: Request, res: Response) => {
   fila = fila + 2;
 
   wr.cell(fila, 1).string("Expediente").style(cabTitle);
-  wr.cell(fila, 2).string("Enero").style(cabTitle);
-  wr.cell(fila, 3).string("Febrero").style(cabTitle);
-  wr.cell(fila, 4).string("Marzo").style(cabTitle);
-  wr.cell(fila, 5).string("Abril").style(cabTitle);
-  wr.cell(fila, 6).string("Mayo").style(cabTitle);
-  wr.cell(fila, 7).string("Junio").style(cabTitle);
-  wr.cell(fila, 8).string("Julio").style(cabTitle);
-  wr.cell(fila, 9).string("Agosto").style(cabTitle);
-  wr.cell(fila, 10).string("Septiembre").style(cabTitle);
-  wr.cell(fila, 11).string("Octubre").style(cabTitle);
-  wr.cell(fila, 12).string("Noviembre").style(cabTitle);
-  wr.cell(fila, 13).string("Diciembre").style(cabTitle);
-  fila++;
-  itemsGanancia.forEach((element) => {
-    wr.cell(fila, 1).string(element.exp);
-    wr.cell(fila, 2).number(element.enero ? parseFloat(element.enero) : 0);
-    wr.cell(fila, 3).number(element.febrero ? parseFloat(element.febrero) : 0);
-    wr.cell(fila, 4).number(element.marzo ? parseFloat(element.marzo) : 0);
-    wr.cell(fila, 5).number(element.abril ? parseFloat(element.abril) : 0);
-    wr.cell(fila, 6).number(element.mayo ? parseFloat(element.mayo) : 0);
-    wr.cell(fila, 7).number(element.junio ? parseFloat(element.junio) : 0);
-    wr.cell(fila, 8).number(element.julio ? parseFloat(element.julio) : 0);
-    wr.cell(fila, 9).number(element.agosto ? parseFloat(element.agosto) : 0);
-    wr.cell(fila, 10).number(
-      element.septiembre ? parseFloat(element.septiembre) : 0
-    );
-    wr.cell(fila, 11).number(element.octubre ? parseFloat(element.octubre) : 0);
-    wr.cell(fila, 12).number(
-      element.noviembre ? parseFloat(element.noviembre) : 0
-    );
-    wr.cell(fila, 13).number(
-      element.diciembre ? parseFloat(element.diciembre) : 0
-    );
-    fila++;
-  });
-  // --------------------------- perdida
-  fila = fila + 2;
-
-  wr.cell(fila, 1).string("Proveedor").style(cabTitle);
-  wr.cell(fila, 2).string("Concepto").style(cabTitle);
+  wr.cell(fila, 2).string("Cliente").style(cabTitle);
   wr.cell(fila, 3).string("Enero").style(cabTitle);
   wr.cell(fila, 4).string("Febrero").style(cabTitle);
   wr.cell(fila, 5).string("Marzo").style(cabTitle);
@@ -292,9 +251,9 @@ export const exportarReporteGanancias = async (req: Request, res: Response) => {
   wr.cell(fila, 13).string("Noviembre").style(cabTitle);
   wr.cell(fila, 14).string("Diciembre").style(cabTitle);
   fila++;
-  itemsGastos.forEach((element) => {
-    wr.cell(fila, 1).string(element.proveedor);
-    wr.cell(fila, 2).string(element.concepto);
+  itemsGanancia.forEach((element) => {
+    wr.cell(fila, 1).string(element.exp);
+    wr.cell(fila, 2).string(element.cliente);
     wr.cell(fila, 3).number(element.enero ? parseFloat(element.enero) : 0);
     wr.cell(fila, 4).number(element.febrero ? parseFloat(element.febrero) : 0);
     wr.cell(fila, 5).number(element.marzo ? parseFloat(element.marzo) : 0);
@@ -311,6 +270,55 @@ export const exportarReporteGanancias = async (req: Request, res: Response) => {
       element.noviembre ? parseFloat(element.noviembre) : 0
     );
     wr.cell(fila, 14).number(
+      element.diciembre ? parseFloat(element.diciembre) : 0
+    );
+    fila++;
+  });
+  // --------------------------- perdida
+  fila = fila + 2;
+
+  wr.cell(fila, 1).string("Gastos").style(cabTitle);
+  wr.cell(fila, 2).string("SubGasto").style(cabTitle);
+  wr.cell(fila, 3).string("Proveedor").style(cabTitle);
+  wr.cell(fila, 4).string("Concepto").style(cabTitle);
+  wr.cell(fila, 5).string("Enero").style(cabTitle);
+  wr.cell(fila, 6).string("Febrero").style(cabTitle);
+  wr.cell(fila, 7).string("Marzo").style(cabTitle);
+  wr.cell(fila, 8).string("Abril").style(cabTitle);
+  wr.cell(fila, 9).string("Mayo").style(cabTitle);
+  wr.cell(fila, 10).string("Junio").style(cabTitle);
+  wr.cell(fila, 11).string("Julio").style(cabTitle);
+  wr.cell(fila, 12).string("Agosto").style(cabTitle);
+  wr.cell(fila, 13).string("Septiembre").style(cabTitle);
+  wr.cell(fila, 14).string("Octubre").style(cabTitle);
+  wr.cell(fila, 15).string("Noviembre").style(cabTitle);
+  wr.cell(fila, 16).string("Diciembre").style(cabTitle);
+  fila++;
+  itemsGastos.forEach((element) => {
+    wr.cell(fila, 1).string(
+      element.gasto_description ? element.gasto_description : ""
+    );
+    wr.cell(fila, 2).string(
+      element.subgasto_description ? element.subgasto_description : ""
+    );
+    wr.cell(fila, 3).string(element.proveedor);
+    wr.cell(fila, 4).string(element.concepto);
+    wr.cell(fila, 5).number(element.enero ? parseFloat(element.enero) : 0);
+    wr.cell(fila, 6).number(element.febrero ? parseFloat(element.febrero) : 0);
+    wr.cell(fila, 7).number(element.marzo ? parseFloat(element.marzo) : 0);
+    wr.cell(fila, 8).number(element.abril ? parseFloat(element.abril) : 0);
+    wr.cell(fila, 9).number(element.mayo ? parseFloat(element.mayo) : 0);
+    wr.cell(fila, 10).number(element.junio ? parseFloat(element.junio) : 0);
+    wr.cell(fila, 11).number(element.julio ? parseFloat(element.julio) : 0);
+    wr.cell(fila, 12).number(element.agosto ? parseFloat(element.agosto) : 0);
+    wr.cell(fila, 13).number(
+      element.septiembre ? parseFloat(element.septiembre) : 0
+    );
+    wr.cell(fila, 14).number(element.octubre ? parseFloat(element.octubre) : 0);
+    wr.cell(fila, 15).number(
+      element.noviembre ? parseFloat(element.noviembre) : 0
+    );
+    wr.cell(fila, 16).number(
       element.diciembre ? parseFloat(element.diciembre) : 0
     );
     fila++;
@@ -619,6 +627,7 @@ function generarDetalleGanancia(detalleGanancia) {
       case "01":
         itemsGanancia.push({
           exp: "EXPEDIENTE " + element.nro_master,
+          cliente: element.cliente,
           enero: element.ganancia ? element.ganancia : 0.0,
           febrero: 0.0,
           marzo: 0.0,
@@ -636,6 +645,7 @@ function generarDetalleGanancia(detalleGanancia) {
       case "02":
         itemsGanancia.push({
           exp: "EXPEDIENTE " + element.nro_master,
+          cliente: element.cliente,
           febrero: element.ganancia ? element.ganancia : 0.0,
           enero: 0.0,
           marzo: 0.0,
@@ -653,6 +663,7 @@ function generarDetalleGanancia(detalleGanancia) {
       case "03":
         itemsGanancia.push({
           exp: "EXPEDIENTE " + element.nro_master,
+          cliente: element.cliente,
           marzo: element.ganancia ? element.ganancia : 0.0,
           enero: 0.0,
           febrero: 0.0,
@@ -670,6 +681,7 @@ function generarDetalleGanancia(detalleGanancia) {
       case "04":
         itemsGanancia.push({
           exp: "EXPEDIENTE " + element.nro_master,
+          cliente: element.cliente,
           abril: element.ganancia ? element.ganancia : 0.0,
           enero: 0.0,
           febrero: 0.0,
@@ -687,6 +699,7 @@ function generarDetalleGanancia(detalleGanancia) {
       case "05":
         itemsGanancia.push({
           exp: "EXPEDIENTE " + element.nro_master,
+          cliente: element.cliente,
           mayo: element.ganancia ? element.ganancia : 0.0,
           enero: 0.0,
           febrero: 0.0,
@@ -704,6 +717,7 @@ function generarDetalleGanancia(detalleGanancia) {
       case "06":
         itemsGanancia.push({
           exp: "EXPEDIENTE " + element.nro_master,
+          cliente: element.cliente,
           junio: element.ganancia ? element.ganancia : 0.0,
           enero: 0.0,
           febrero: 0.0,
@@ -721,6 +735,7 @@ function generarDetalleGanancia(detalleGanancia) {
       case "07":
         itemsGanancia.push({
           exp: "EXPEDIENTE " + element.nro_master,
+          cliente: element.cliente,
           julio: element.ganancia ? element.ganancia : 0.0,
           enero: 0.0,
           febrero: 0.0,
@@ -738,6 +753,7 @@ function generarDetalleGanancia(detalleGanancia) {
       case "08":
         itemsGanancia.push({
           exp: "EXPEDIENTE " + element.nro_master,
+          cliente: element.cliente,
           agosto: element.ganancia ? element.ganancia : 0.0,
           enero: 0.0,
           febrero: 0.0,
@@ -756,6 +772,7 @@ function generarDetalleGanancia(detalleGanancia) {
       case "09":
         itemsGanancia.push({
           exp: "EXPEDIENTE " + element.nro_master,
+          cliente: element.cliente,
           septiembre: element.ganancia ? element.ganancia : 0.0,
           enero: 0.0,
           febrero: 0.0,
@@ -774,6 +791,7 @@ function generarDetalleGanancia(detalleGanancia) {
       case "10":
         itemsGanancia.push({
           exp: "EXPEDIENTE " + element.nro_master,
+          cliente: element.cliente,
           octubre: element.ganancia ? element.ganancia : 0.0,
           enero: 0.0,
           febrero: 0.0,
@@ -792,6 +810,7 @@ function generarDetalleGanancia(detalleGanancia) {
       case "11":
         itemsGanancia.push({
           exp: "EXPEDIENTE " + element.nro_master,
+          cliente: element.cliente,
           noviembre: element.ganancia ? element.ganancia : 0.0,
           enero: 0.0,
           febrero: 0.0,
@@ -810,6 +829,7 @@ function generarDetalleGanancia(detalleGanancia) {
       case "12":
         itemsGanancia.push({
           exp: "EXPEDIENTE " + element.nro_master,
+          cliente: element.cliente,
           diciembre: element.ganancia ? element.ganancia : 0.0,
           enero: 0.0,
           febrero: 0.0,
@@ -900,10 +920,10 @@ function generarDetallePerdida(detallePerdida) {
       montosPorMes[mes] = monto;
     }
   }
-  montosPorMes.proveedor = "Proveedor";
-  montosPorMes.concepto = "Conceptos";
+  montosPorMes.proveedor = "Totales";
+  
   itemsGastos.push(montosPorMes);
-
+console.table(detallePerdida)
   //   -------------------------------
   detallePerdida.forEach((element) => {
     switch (element.mes) {
@@ -911,6 +931,8 @@ function generarDetallePerdida(detallePerdida) {
         itemsGastos.push({
           proveedor: element.proveedor,
           concepto: element.concepto,
+          gasto_description: element.gasto_description,
+          subgasto_description: element.subgasto_description,
           enero: element.monto ? element.monto : 0,
           diciembre: 0.0,
           febrero: 0.0,
@@ -929,6 +951,8 @@ function generarDetallePerdida(detallePerdida) {
         itemsGastos.push({
           proveedor: element.proveedor,
           concepto: element.concepto,
+          gasto_description: element.gasto_description,
+          subgasto_description: element.subgasto_description,
           febrero: element.monto,
           enero: 0.0,
           diciembre: 0.0,
@@ -947,6 +971,8 @@ function generarDetallePerdida(detallePerdida) {
         itemsGastos.push({
           proveedor: element.proveedor,
           concepto: element.concepto,
+          gasto_description: element.gasto_description,
+          subgasto_description: element.subgasto_description,
           marzo: element.monto ? element.monto : 0,
           enero: 0.0,
           febrero: 0.0,
@@ -965,6 +991,8 @@ function generarDetallePerdida(detallePerdida) {
         itemsGastos.push({
           proveedor: element.proveedor,
           concepto: element.concepto,
+          gasto_description: element.gasto_description,
+          subgasto_description: element.subgasto_description,
           abril: element.monto ? element.monto : 0,
           enero: 0.0,
           febrero: 0.0,
@@ -983,6 +1011,8 @@ function generarDetallePerdida(detallePerdida) {
         itemsGastos.push({
           proveedor: element.proveedor,
           concepto: element.concepto,
+          gasto_description: element.gasto_description,
+          subgasto_description: element.subgasto_description,
           mayo: element.monto ? element.monto : 0,
           enero: 0.0,
           febrero: 0.0,
@@ -1001,6 +1031,8 @@ function generarDetallePerdida(detallePerdida) {
         itemsGastos.push({
           proveedor: element.proveedor,
           concepto: element.concepto,
+          gasto_description: element.gasto_description,
+          subgasto_description: element.subgasto_description,
           junio: element.monto ? element.monto : 0,
           enero: 0.0,
           febrero: 0.0,
@@ -1019,6 +1051,8 @@ function generarDetallePerdida(detallePerdida) {
         itemsGastos.push({
           proveedor: element.proveedor,
           concepto: element.concepto,
+          gasto_description: element.gasto_description,
+          subgasto_description: element.subgasto_description,
           julio: element.monto ? element.monto : 0,
           enero: 0.0,
           febrero: 0.0,
@@ -1037,6 +1071,8 @@ function generarDetallePerdida(detallePerdida) {
         itemsGastos.push({
           proveedor: element.proveedor,
           concepto: element.concepto,
+          gasto_description: element.gasto_description,
+          subgasto_description: element.subgasto_description,
           agosto: element.monto ? element.monto : 0,
           enero: 0.0,
           febrero: 0.0,
@@ -1055,6 +1091,8 @@ function generarDetallePerdida(detallePerdida) {
         itemsGastos.push({
           proveedor: element.proveedor,
           concepto: element.concepto,
+          gasto_description: element.gasto_description,
+          subgasto_description: element.subgasto_description,
           septiembre: element.monto ? element.monto : 0,
           enero: 0.0,
           febrero: 0.0,
@@ -1073,6 +1111,8 @@ function generarDetallePerdida(detallePerdida) {
         itemsGastos.push({
           proveedor: element.proveedor,
           concepto: element.concepto,
+          gasto_description: element.gasto_description,
+          subgasto_description: element.subgasto_description,
           octubre: element.monto ? element.monto : 0,
           enero: 0.0,
           febrero: 0.0,
@@ -1091,6 +1131,8 @@ function generarDetallePerdida(detallePerdida) {
         itemsGastos.push({
           proveedor: element.proveedor,
           concepto: element.concepto,
+          gasto_description: element.gasto_description,
+          subgasto_description: element.subgasto_description,
           noviembre: element.monto ? element.monto : 0,
           enero: 0.0,
           febrero: 0.0,
@@ -1109,6 +1151,8 @@ function generarDetallePerdida(detallePerdida) {
         itemsGastos.push({
           proveedor: element.proveedor,
           concepto: element.concepto,
+          gasto_description: element.gasto_description,
+          subgasto_description: element.subgasto_description,
           diciembre: element.monto ? element.monto : 0,
           enero: 0.0,
           febrero: 0.0,

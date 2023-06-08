@@ -1136,3 +1136,31 @@ export const verPagosControlEgresos = async (req: Request, res: Response) => {
     }
   );
 };
+export const validarNroOperacion = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM function_table_pagoscontrolegresos_validarnro_op($1)",
+    [req.query.nro_operacion],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            estadoflag: rows[0].estadoflag,
+            mensaje: rows[0].mensaje,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            estadoflag: rows[0].estadoflag,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
