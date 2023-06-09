@@ -76,7 +76,7 @@ export const setPayForProveedor = async (req: Request, res: Response) => {
         return element.id;
       }), //id int[],
       dabaObj.id_path, //id_path int,
-      dabaObj.id_coins, //id_cuenta int,
+      dabaObj.id_cuenta, //id_cuenta int,
       dabaObj.fecha_pago, //fecha date ,
       details.map((element) => {
         return element.monto_mon_ext;

@@ -278,7 +278,7 @@ export const setUpdateInvoiceAdmin = async (req: Request, res: Response) => {
   let path = isNaN(+dataObj.id_path);
 
   await pool.query(
-    "SELECT * FROM  table_DetailsInvoiceAdmin_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25)",
+    "SELECT * FROM  table_DetailsInvoiceAdmin_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26)",
     [
       dataObj.id,
       dataObj.id_proveedor,
@@ -287,6 +287,7 @@ export const setUpdateInvoiceAdmin = async (req: Request, res: Response) => {
       dataObj.nro_serie,
       dataObj.id_coins,
       dataObj.monto,
+      dataObj.montodolar,
       dataObj.status,
       dataObj.id_proformance,
       dataObj.id_month,
@@ -384,7 +385,7 @@ export const setInvoiceAdminCxC = async (req: Request, res: Response) => {
   const dataDetails = req.body.detalle;
 
   await pool.query(
-    "SELECT * FROM Table_InvoiceAdminCxC_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26)",
+    "SELECT * FROM Table_InvoiceAdminCxC_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27)",
     [
       dataObj.type_payment ? dataObj.type_payment : null,
       dataObj.id_expediente ? dataObj.id_expediente : null,
@@ -403,6 +404,7 @@ export const setInvoiceAdminCxC = async (req: Request, res: Response) => {
       dataObj.id_month ? dataObj.id_month : null,
       dataObj.id_year ? dataObj.id_year : null,
       dataObj.tipocambio ? dataObj.tipocambio : null,
+      dataObj.id_tipoingreso ? dataObj.id_tipoingreso : null,
       dataDetails.map((item: any) => {
         return item.concepto;
       }),
@@ -487,7 +489,7 @@ export const setUpdateInvoiceAdminCxC = async (req: Request, res: Response) => {
   const dataDetails = dataObj.detalle;
 
   await pool.query(
-    "select * from Table_InvoiceAdminCxC_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28)",
+    "select * from Table_InvoiceAdminCxC_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29)",
     [
       dataObj.type_payment,
       dataObj.id_expediente,
@@ -506,6 +508,7 @@ export const setUpdateInvoiceAdminCxC = async (req: Request, res: Response) => {
       dataObj.id_month,
       dataObj.id_year,
       dataObj.tipocambio,
+      dataObj.id_tipoingreso,
       dataDetails.map((item: any) => {
         return item.concepto;
       }),

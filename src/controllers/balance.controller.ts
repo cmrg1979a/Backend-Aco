@@ -121,9 +121,66 @@ export const resumenGastos = async (req: Request, res: Response) => {
     }
   );
 };
+export const resumenGastosxTipoGasto = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM function_monto_gastos_x_tipogasto($1,null,null);",
+    [req.query.year],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estado: rows[0].estadoflag,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+            estado: rows[0].estadoflag,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
 export const arbolGastos = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM function_arbol_gasto($1);",
+    [req.query.id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estado: rows[0].estadoflag,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+            estado: rows[0].estadoflag,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const arbolIngreso = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM function_arbol_ingreso($1);",
     [req.query.id_branch],
     (err, response, fields) => {
       if (!err) {
