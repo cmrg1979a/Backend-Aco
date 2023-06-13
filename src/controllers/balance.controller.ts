@@ -5,12 +5,11 @@ const { Pool } = pg;
 const pool = conexion();
 import path from "path";
 var xl = require("excel4node");
-import { balance } from "../interface/balance";
 
 export const detalleGanancia = async (req: Request, res: Response) => {
   await pool.query(
-    "SELECT * FROM function_monto_egreso_x_exp($1,null,null);",
-    [req.query.year],
+    "SELECT * FROM function_monto_egreso_x_exp($1,$2);",
+    [req.query.year, req.query.month ? req.query.month : null],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -38,8 +37,8 @@ export const detalleGanancia = async (req: Request, res: Response) => {
 
 export const resumenGanancia = async (req: Request, res: Response) => {
   await pool.query(
-    "SELECT * FROM function_monto_egreso_x_mes($1,null,null);",
-    [req.query.year],
+    "SELECT * FROM function_monto_egreso_x_mes($1,$2);",
+    [req.query.year, req.query.month ? req.query.month : null],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -67,64 +66,8 @@ export const resumenGanancia = async (req: Request, res: Response) => {
 
 export const detalleGastos = async (req: Request, res: Response) => {
   await pool.query(
-    "SELECT * FROM function_monto_gastos_x_proveedor($1,null,null);",
-    [req.query.year],
-    (err, response, fields) => {
-      if (!err) {
-        let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-            estado: rows[0].estadoflag,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-            estado: rows[0].estadoflag,
-          });
-        }
-      } else {
-        console.log(err);
-      }
-    }
-  );
-};
-export const resumenGastos = async (req: Request, res: Response) => {
-  await pool.query(
-    "SELECT * FROM function_monto_gastos_x_mes($1,null,null);",
-    [req.query.year],
-    (err, response, fields) => {
-      if (!err) {
-        let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-            estado: rows[0].estadoflag,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-            estado: rows[0].estadoflag,
-          });
-        }
-      } else {
-        console.log(err);
-      }
-    }
-  );
-};
-export const resumenGastosxTipoGasto = async (req: Request, res: Response) => {
-  await pool.query(
-    "SELECT * FROM function_monto_gastos_x_tipogasto($1,null,null);",
-    [req.query.year],
+    "SELECT * FROM function_monto_gastos_x_proveedor($1,$2);",
+    [req.query.year, req.query.month ? req.query.month : null],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -150,6 +93,96 @@ export const resumenGastosxTipoGasto = async (req: Request, res: Response) => {
   );
 };
 
+export const resumenGastos = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM function_monto_gastos_x_mes($1,$2);",
+    [req.query.year, req.query.month ? req.query.month : null],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estado: rows[0].estadoflag,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+            estado: rows[0].estadoflag,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const resumenGastosxTipoGasto = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM function_monto_gastos_x_tipogasto($1,$2);",
+    [req.query.year, req.query.month ? req.query.month : null],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estado: rows[0].estadoflag,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+            estado: rows[0].estadoflag,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const resumenGananciaPorTipoIngreso = async (
+  req: Request,
+  res: Response
+) => {
+  await pool.query(
+    "SELECT * FROM function_egreso_resumen_por_tipo($1,$2);",
+    [req.query.year, req.query.month ? req.query.month : null],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estado: rows[0].estadoflag,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+            estado: rows[0].estadoflag,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+// ---------------------------------------------------------------------------------------------------
 export const arbolGastos = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM function_arbol_gasto($1);",
@@ -395,11 +428,11 @@ export const exportarReporteGanancias = async (req: Request, res: Response) => {
 };
 
 // ----------------------------------------
-function dGanancia(year) {
+function dGanancia(year, month) {
   return new Promise((resolve, reject) => {
     pool.query(
-      "SELECT * FROM function_monto_egreso_x_exp($1,null,null);",
-      [year],
+      "SELECT * FROM function_monto_egreso_x_exp($1,$2);",
+      [year, month],
       (err, response) => {
         let rows = response.rows;
         if (!err) {
@@ -409,11 +442,11 @@ function dGanancia(year) {
     );
   });
 }
-function rGanancia(year) {
+function rGanancia(year, month) {
   return new Promise((resolve, reject) => {
     pool.query(
-      "SELECT * FROM function_monto_egreso_x_mes($1,null,null);",
-      [year],
+      "SELECT * FROM function_monto_egreso_x_mes($1,$2);",
+      [year, month],
       (err, response) => {
         let rows = response.rows;
         if (!err) {
@@ -423,11 +456,11 @@ function rGanancia(year) {
     );
   });
 }
-function dPerdida(year) {
+function dPerdida(year, month) {
   return new Promise((resolve, reject) => {
     pool.query(
-      "SELECT * FROM function_monto_gastos_x_proveedor($1,null,null);",
-      [year],
+      "SELECT * FROM function_monto_gastos_x_proveedor($1,$2);",
+      [year, month],
       (err, response) => {
         let rows = response.rows;
         if (!err) {
@@ -437,11 +470,11 @@ function dPerdida(year) {
     );
   });
 }
-function rPerdida(year) {
+function rPerdida(year, month) {
   return new Promise((resolve, reject) => {
     pool.query(
-      "SELECT * FROM function_monto_gastos_x_mes($1,null,null);",
-      [year],
+      "SELECT * FROM function_monto_gastos_x_mes($1,$2);",
+      [year, month],
       (err, response) => {
         let rows = response.rows;
 
@@ -978,9 +1011,9 @@ function generarDetallePerdida(detallePerdida) {
     }
   }
   montosPorMes.proveedor = "Totales";
-  
+
   itemsGastos.push(montosPorMes);
-console.table(detallePerdida)
+  console.table(detallePerdida);
   //   -------------------------------
   detallePerdida.forEach((element) => {
     switch (element.mes) {

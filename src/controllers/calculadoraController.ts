@@ -878,15 +878,16 @@ export const ExportListUsuarioCalculadora = async (
   req: Request,
   res: Response
 ) => {
+  console.log(req.query);
   var wb = new xl.Workbook();
   await pool.query(
     "SELECT * FROM function_list_user($1);",
-    [req.body.iso_pais ? req.body.iso_pais : null],
+    [req.query.id_pais ? req.query.id_pais : null],
     (err, response, fields) => {
       if (!err) {
         if (response.rows[0].estadoflag == true) {
           let rows = response.rows;
-
+          console.log(rows.length);
           let cabTitle = wb.createStyle({
             font: {
               color: "#ffffff",
@@ -1117,15 +1118,14 @@ async function main(email, url) {
       <p>Estimado cliente, para recuperar su contraseña, haga click en el siguiente botón</p>
       <a class="btn" href="${url}" target=”_blank”> <button>Click me</button></a>`,
   });
-  
+
   // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
 
   // Preview only available when sending through an Ethereal account
-  
+
   // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
 }
 export const validateToken = async (req: Request, res: Response) => {
-  
   await pool.query(
     "SELECT * FROM function_validate_token($1)",
     [req.body.token ? req.body.token : null],
@@ -1212,7 +1212,7 @@ export const StatusCarge = async (req: Request, res: Response) => {
 
 export const InsertCall = async (req: Request, res: Response) => {
   let dataObj: call = req.body;
-  
+
   await pool.query(
     "SELECT * FROM function_call_insert($1,$2,$3,$4,$5,$6)",
     [

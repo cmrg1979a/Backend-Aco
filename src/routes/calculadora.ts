@@ -79,7 +79,7 @@ router.post(
   TokenValidation,
   ListUsuarioCalculadora
 );
-router.post(
+router.get(
   "/export_listar_usuarios_calculadora",
   TokenValidation,
   ExportListUsuarioCalculadora

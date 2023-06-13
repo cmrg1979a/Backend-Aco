@@ -385,7 +385,7 @@ export const setInvoiceAdminCxC = async (req: Request, res: Response) => {
   const dataDetails = req.body.detalle;
 
   await pool.query(
-    "SELECT * FROM Table_InvoiceAdminCxC_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27)",
+    "SELECT * FROM table_invoiceadmincxc_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27)",
     [
       dataObj.type_payment ? dataObj.type_payment : null,
       dataObj.id_expediente ? dataObj.id_expediente : null,

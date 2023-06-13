@@ -10,6 +10,7 @@ import {
   detalleGastos,
   exportarReporteGanancias,
   resumenGanancia,
+  resumenGananciaPorTipoIngreso,
   resumenGastos,
   resumenGastosxTipoGasto,
 } from "../controllers/balance.controller";
@@ -20,6 +21,7 @@ router.get("/detalle_ganancia", TokenValidation, detalleGanancia);
 router.get("/resumen_ganancia", TokenValidation, resumenGanancia);
 router.get("/detalle_gastos", TokenValidation, detalleGastos);
 router.get("/resumen_gastos", TokenValidation, resumenGastos);
+router.get("/resumen_ingreso_tipo", TokenValidation, resumenGananciaPorTipoIngreso);
 router.get(
   "/resumen_gastos_tipogasto",
   TokenValidation,

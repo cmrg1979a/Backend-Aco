@@ -28,10 +28,11 @@ const pool = new Pool({
   user: "chainsolver",
   password: "Fr3sc0l1t4+",
   port: "5432",
-  // database: "db_op_main_dev",
-  database: "db_op_main_01",
+  database: "db_op_main_dev",
+  // database: "db_op_main_01",
   // database: "db_op_main_qa",
 });
+
 
 
 
@@ -92,6 +93,7 @@ import Consolidation from "./routes/consolidation";
 import balance from "./routes/balance";
 
 // settings
+
 app.set("port", 9200);
 
 // middlewares
