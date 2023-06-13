@@ -241,10 +241,10 @@ export const arbolIngreso = async (req: Request, res: Response) => {
 };
 
 export const exportarReporteGanancias = async (req: Request, res: Response) => {
-  let detalleGanancia = await dGanancia(req.query.year);
-  let resumenGanancia = await rGanancia(req.query.year);
-  let detallePerdida = await dPerdida(req.query.year);
-  let resumenPerdida = await rPerdida(req.query.year);
+  let detalleGanancia = await dGanancia(req.query.year, req.query.month);
+  let resumenGanancia = await rGanancia(req.query.year, req.query.month);
+  let detallePerdida = await dPerdida(req.query.year, req.query.month);
+  let resumenPerdida = await rPerdida(req.query.year, req.query.month);
 
   let itemsResumen = generarResumen(resumenGanancia, resumenPerdida);
   let itemsGanancia = generarDetalleGanancia(detalleGanancia);
