@@ -6,10 +6,186 @@ const pool = conexion();
 import path from "path";
 var xl = require("excel4node");
 
+export const arbolGastos = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM function_arbol_gasto($1);",
+    [req.query.id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estado: rows[0].estadoflag,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+            estado: rows[0].estadoflag,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const arbolIngreso = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM function_arbol_ingreso($1);",
+    [req.query.id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estado: rows[0].estadoflag,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+            estado: rows[0].estadoflag,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const cargarTipoIngreso = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM function_cargar_ingreso($1);",
+    [req.query.id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estado: rows[0].estadoflag,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+            estado: rows[0].estadoflag,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const cargarTipoSubIngreso = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM function_cargar_subingreso($1);",
+    [req.query.id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estado: rows[0].estadoflag,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+            estado: rows[0].estadoflag,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const cargarTipoGastos = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM function_cargar_gasto($1);",
+    [req.query.id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estado: rows[0].estadoflag,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+            estado: rows[0].estadoflag,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const cargarTipoSubGastos = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM function_cargar_subgasto($1);",
+    [req.query.id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estado: rows[0].estadoflag,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+            estado: rows[0].estadoflag,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
 export const detalleGanancia = async (req: Request, res: Response) => {
   await pool.query(
-    "SELECT * FROM function_monto_egreso_x_exp($1,$2);",
-    [req.query.year, req.query.month ? req.query.month : null],
+    "SELECT * FROM function_monto_egreso_x_exp($1,$2,$3,$4,$5,$6);",
+    [
+      req.query.year,
+      req.query.month ? req.query.month : null,
+      req.query.tipoingreso ? req.query.tipoingreso : null,
+      req.query.tiposubingreso ? req.query.tiposubingreso : null,
+      req.query.nro_expediente ? req.query.nro_expediente : null,
+      req.query.monto ? req.query.monto : null,
+    ],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -66,8 +242,15 @@ export const resumenGanancia = async (req: Request, res: Response) => {
 
 export const detalleGastos = async (req: Request, res: Response) => {
   await pool.query(
-    "SELECT * FROM function_monto_gastos_x_proveedor($1,$2);",
-    [req.query.year, req.query.month ? req.query.month : null],
+    "SELECT * FROM function_monto_gastos_x_proveedor($1,$2,$3,$4,$5,$6);",
+    [
+      req.query.year,
+      req.query.month ? req.query.month : null,
+      req.query.tipogastos ? req.query.tipogastos : null,
+      req.query.tiposubgastos ? req.query.tiposubgastos : null,
+      req.query.proveedor ? req.query.proveedor : null,
+      req.query.monto ? req.query.monto : null,
+    ],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -183,62 +366,6 @@ export const resumenGananciaPorTipoIngreso = async (
 };
 
 // ---------------------------------------------------------------------------------------------------
-export const arbolGastos = async (req: Request, res: Response) => {
-  await pool.query(
-    "SELECT * FROM function_arbol_gasto($1);",
-    [req.query.id_branch],
-    (err, response, fields) => {
-      if (!err) {
-        let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-            estado: rows[0].estadoflag,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-            estado: rows[0].estadoflag,
-          });
-        }
-      } else {
-        console.log(err);
-      }
-    }
-  );
-};
-export const arbolIngreso = async (req: Request, res: Response) => {
-  await pool.query(
-    "SELECT * FROM function_arbol_ingreso($1);",
-    [req.query.id_branch],
-    (err, response, fields) => {
-      if (!err) {
-        let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-            estado: rows[0].estadoflag,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-            estado: rows[0].estadoflag,
-          });
-        }
-      } else {
-        console.log(err);
-      }
-    }
-  );
-};
 
 export const exportarReporteGanancias = async (req: Request, res: Response) => {
   let detalleGanancia = await dGanancia(req.query.year, req.query.month);
@@ -1264,5 +1391,3 @@ function generarDetallePerdida(detallePerdida) {
   });
   return itemsGastos;
 }
-
-//  ALDO G
