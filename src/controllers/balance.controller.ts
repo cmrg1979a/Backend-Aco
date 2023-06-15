@@ -176,15 +176,16 @@ export const cargarTipoSubGastos = async (req: Request, res: Response) => {
 };
 
 export const detalleGanancia = async (req: Request, res: Response) => {
+  console.log(req.query);
   await pool.query(
     "SELECT * FROM function_monto_egreso_x_exp($1,$2,$3,$4,$5,$6);",
     [
       req.query.year,
-      req.query.month ? req.query.month : null,
-      req.query.tipoingreso ? req.query.tipoingreso : null,
-      req.query.tiposubingreso ? req.query.tiposubingreso : null,
-      req.query.nro_expediente ? req.query.nro_expediente : null,
-      req.query.monto ? req.query.monto : null,
+      req.query.month,
+      req.query.tipoingreso === "0" ? 0 : req.query.tipoingreso || null,
+      req.query.tiposubingreso === "0" ? 0 : req.query.tiposubingreso || null,
+      req.query.nro_expediente === "0" ? 0 : req.query.nro_expediente || null,
+      req.query.monto === "0" ? 0 : req.query.monto || null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -241,15 +242,16 @@ export const resumenGanancia = async (req: Request, res: Response) => {
 };
 
 export const detalleGastos = async (req: Request, res: Response) => {
+  console.log(req.query.tipogastos);
   await pool.query(
     "SELECT * FROM function_monto_gastos_x_proveedor($1,$2,$3,$4,$5,$6);",
     [
       req.query.year,
       req.query.month ? req.query.month : null,
-      req.query.tipogastos ? req.query.tipogastos : null,
-      req.query.tiposubgastos ? req.query.tiposubgastos : null,
-      req.query.proveedor ? req.query.proveedor : null,
-      req.query.monto ? req.query.monto : null,
+      req.query.tipogastos === "0" ? 0 : req.query.tipogastos || null,
+      req.query.tiposubgastos === "0" ? 0 : req.query.tiposubgastos || null,
+      req.query.proveedor === "0" ? 0 : req.query.proveedor || null,
+      req.query.monto === "0" ? 0 : req.query.monto || null,
     ],
     (err, response, fields) => {
       if (!err) {
