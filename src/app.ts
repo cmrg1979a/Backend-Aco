@@ -7,13 +7,13 @@ import bodyParser from "body-parser";
 import * as pg from "pg";
 const { Pool } = pg;
 
-const pool = new Pool({
-  host: "10.116.0.2",
-  user: "postgres",
-  password: "@Developer2021Pic",
-  port: "5432",
-  database: "db_op_main_01",
-});
+// const pool = new Pool({
+//   host: "10.116.0.2",
+//   user: "postgres",
+//   password: "@Developer2021Pic",
+//   port: "5432",
+//   database: "db_op_main_01",
+// });
 // const pool = new Pool({
 //   host: "157.230.14.98",
 //   user: "chainsolver",
@@ -22,18 +22,15 @@ const pool = new Pool({
 //   database: "db_op_main_01",
 // });
 
-
-// const pool = new Pool({
-//   host: "67.205.129.62",
-//   user: "chainsolver",
-//   password: "Fr3sc0l1t4+",
-//   port: "5432",
-//   // database: "db_op_main_dev",
-//   database: "db_op_main_01",
-//   //  database: "db_op_main_qa",
-// });
-
-
+const pool = new Pool({
+  host: "67.205.129.62",
+  user: "chainsolver",
+  password: "Fr3sc0l1t4+",
+  port: "5432",
+  // database: "db_op_main_dev",
+  database: "db_op_main_01",
+  //  database: "db_op_main_qa",
+});
 
 const app: Application = express();
 
@@ -90,6 +87,7 @@ import Factura from "./routes/factura";
 import Invoice from "./routes/invoice";
 import Consolidation from "./routes/consolidation";
 import balance from "./routes/balance";
+import proyeccion from "./routes/proyeccion";
 
 // settings
 app.set("port", 9200);
@@ -168,7 +166,6 @@ app.post("/uploadFilesSingle", function (req, res) {
     );
   });
 });
-
 
 var uploads = multer({ storage: storage }).single("file");
 
@@ -290,5 +287,6 @@ app.use(Factura);
 app.use(Invoice);
 app.use(Consolidation);
 app.use(balance);
+app.use(proyeccion);
 
 export default app;
