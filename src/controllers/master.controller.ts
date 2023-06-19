@@ -10,41 +10,41 @@ const pool = conexion();
 
 export const setMaster = async (req: Request, res: Response) => {
   const dataObj: postMaster = req.body;
-  
+
   await pool.query(
     "SELECT * FROM Table_MasterControl_insertar($1,$2, $3,$4, $5,$6, $7,$8, $9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31)",
     [
-      dataObj.nro_master ,
-      dataObj.code_master ,
-      dataObj.id_cot ,
-      dataObj.id_modality ,
-      dataObj.id_shipment ,
-      dataObj.id_incoterms ,
-      dataObj.id_port_begin ,
-      dataObj.id_port_end ,
-      dataObj.id_operador ,
-      dataObj.fecha_eta ,
-      dataObj.fecha_etd ,
-      dataObj.fecha_disponibilidad ,
-      dataObj.ganancia_pricing ,
-      dataObj.ganancia_operaciones ,
-      dataObj.id_agent ,
-      dataObj.id_consigner ,
-      dataObj.id_notify ,
-      dataObj.id_aerolinea ,
-      dataObj.id_coloader ,
-      dataObj.id_naviera ,
-      dataObj.nro_mbl ,
-      dataObj.id_motonave ,
-      dataObj.nro_viaje ,
-      dataObj.bultos ,
-      dataObj.peso ,
-      dataObj.volumen ,
-      dataObj.id_conditions ,
-      dataObj.id_moneda ,
-      dataObj.monto ,
-      dataObj.status ,
-      dataObj.id_branch ,
+      dataObj.nro_master,
+      dataObj.code_master,
+      dataObj.id_cot,
+      dataObj.id_modality,
+      dataObj.id_shipment,
+      dataObj.id_incoterms,
+      dataObj.id_port_begin,
+      dataObj.id_port_end,
+      dataObj.id_operador,
+      dataObj.fecha_eta,
+      dataObj.fecha_etd,
+      dataObj.fecha_disponibilidad,
+      dataObj.ganancia_pricing,
+      dataObj.ganancia_operaciones,
+      dataObj.id_agent,
+      dataObj.id_consigner,
+      dataObj.id_notify,
+      dataObj.id_aerolinea,
+      dataObj.id_coloader,
+      dataObj.id_naviera,
+      dataObj.nro_mbl,
+      dataObj.id_motonave,
+      dataObj.nro_viaje,
+      dataObj.bultos,
+      dataObj.peso,
+      dataObj.volumen,
+      dataObj.id_conditions,
+      dataObj.id_moneda,
+      dataObj.monto,
+      dataObj.status,
+      dataObj.id_branch,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -189,10 +189,6 @@ export const lockMasterAdm = async (req: Request, res: Response) => {
   );
 };
 
-
-
-
-
 export const getMasterList = async (req: Request, res: Response) => {
   let id_branch = req.body.id_branch;
   await pool.query(
@@ -226,6 +222,33 @@ export const getMasterId = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM TABLE_MASTERCONTROL_ver($1);",
     [id],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const getCargarHouse = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM function_cargar_housecontrol($1);",
+    [req.query.id_branch],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;

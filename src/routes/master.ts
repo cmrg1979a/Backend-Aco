@@ -11,6 +11,7 @@ import {
   lockMaster,
   lockMasterAdm,
   nullMaster,
+  getCargarHouse,
 } from "../controllers/master.controller";
 
 router.post("/setMaster", TokenValidation, setMaster);
@@ -20,5 +21,6 @@ router.post("/getMasterId/:id", TokenValidation, getMasterId);
 router.post("/lockMaster/:id", TokenValidation, lockMaster);
 router.post("/lockMasterAdm/:id", TokenValidation, lockMasterAdm);
 router.post("/nullMaster/:id", TokenValidation, nullMaster);
+router.get("/cargar_house", TokenValidation, getCargarHouse);
 
 export default router;
