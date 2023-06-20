@@ -153,11 +153,23 @@ export const cargarTipoSubGastos = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         if (!!rows[0].estadoflag) {
+          const subgasto = rows.map((row) => ({
+            estadoflag: row.estadoflag,
+            mensaje: row.mensaje,
+            tipomensaje: row.tipomensaje,
+            id: parseInt(row.id),
+            id_gasto: row.id_gasto,
+            code: row.code,
+            description: row.description,
+            status: row.status,
+          }));
+          console.log(subgasto)
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+            data: subgasto,
             estado: rows[0].estadoflag,
           });
         } else {
