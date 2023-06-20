@@ -66,18 +66,22 @@ export const setProyeccion = async (req: Request, res: Response) => {
   );
 };
 export const listProyeccion = async (req: Request, res: Response) => {
+  console.log(req.query)
   await pool.query(
-    "SELECT * FROM function_list_proyeccion($1,$2,$3,$4,$5,$6,$7,$8,$9);",
+    "SELECT * FROM function_list_proyeccion($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12);",
     [
       req.query.id_branch ? req.query.id_branch : null,
       req.query.id_month ? req.query.id_month : null,
       req.query.id_year ? req.query.id_year : null,
       req.query.id_user ? req.query.id_user : null,
+      req.query.correlativo ? req.query.correlativo : null,
       req.query.tipocambio ? req.query.tipocambio : null,
       req.query.total_monlocal ? req.query.total_monlocal : null,
       req.query.total_conversionext ? req.query.total_conversionext : null,
       req.query.total_monext ? req.query.total_monext : null,
       req.query.total_proyectado_ext ? req.query.total_proyectado_ext : null,
+      req.query.estado ? req.query.estado : null,
+      req.query.aprobadoflag ? req.query.aprobadoflag : null,
     ],
     (err, response, fields) => {
       if (!err) {
