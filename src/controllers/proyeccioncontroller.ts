@@ -66,7 +66,7 @@ export const setProyeccion = async (req: Request, res: Response) => {
   );
 };
 export const listProyeccion = async (req: Request, res: Response) => {
-  console.log(req.query)
+  
   await pool.query(
     "SELECT * FROM function_list_proyeccion($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12);",
     [
@@ -142,7 +142,7 @@ export const verProyeccion = async (req: Request, res: Response) => {
 
 export const updateProyeccion = async (req: Request, res: Response) => {
   let data = req.body;
-  console.log(data);
+  
   await pool.query(
     "SELECT * FROM function_proyeccion_editar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18);",
     [
@@ -275,7 +275,7 @@ export const copiarProyeccion = async (req: Request, res: Response) => {
   );
 };
 export const aprobarProyeccion = async (req: Request, res: Response) => {
-  console.log(req.body.id);
+  
   await pool.query(
     "SELECT * FROM function_proyeccion_aprobar($1);",
     [req.body.id],
@@ -306,10 +306,46 @@ export const aprobarProyeccion = async (req: Request, res: Response) => {
   );
 };
 export const eliminarProyeccion = async (req: Request, res: Response) => {
-  console.log(req.body.id);
+  
   await pool.query(
     "SELECT * FROM function_proyeccion_eliminar($1);",
     [req.body.id],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            mensaje: rows[0].mensaje,
+            estado: rows[0].estadoflag,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+
+            mensaje: rows[0].mensaje,
+            estado: rows[0].estadoflag,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const generarPrimeraProyeccion = async (req: Request, res: Response) => {
+ 
+  await pool.query(
+    "SELECT * FROM function_proyeccion_generar($1,$2,$3,$4);",
+    [
+      req.body.id_month,
+      req.body.id_year,
+      req.body.id_branch,
+      req.body.id_user,
+    ],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
