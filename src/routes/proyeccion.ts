@@ -5,6 +5,7 @@ import {
   aprobarProyeccion,
   copiarProyeccion,
   eliminarProyeccion,
+  exportarProyeccion,
   generarPrimeraProyeccion,
   listProyeccion,
   setProyeccion,
@@ -25,5 +26,6 @@ router.put("/copiar_proyeccion", TokenValidation, copiarProyeccion);
 router.put("/aprobar_proyeccion", TokenValidation, aprobarProyeccion);
 router.put("/eliminar_proyeccion", TokenValidation, eliminarProyeccion);
 router.post("/generar_primerar_proyeccion", TokenValidation, generarPrimeraProyeccion);
+router.get("/excel_proyeccion", exportarProyeccion);
 
 export default router;
