@@ -8,7 +8,7 @@ import {
   getQuoteList,
   getQuoteId,
   delQuote,
-   putQuote,
+  putQuote,
   // getReportsRangeDays,
   getModulesEntities,
   setCalls,
@@ -23,6 +23,9 @@ import {
   // getQuoteCalls,
   getMarketingList,
   getQuoteCalls,
+  updateQuoteRecibidoEnviado,
+  cargarMasterDetalleRecibido,
+  cargarMasterDetalleEnviado,
 } from "../controllers/pricing.controller";
 
 router.post("/setQuote", TokenValidation, setQuote);
@@ -44,6 +47,20 @@ router.post("/deletePath/:id", TokenValidation, deletePath);
 router.post("/getInstructivoId/:id_quote", TokenValidation, getInstructivoId);
 // router.post("/putInstructivo/:id_quote", TokenValidation, putInstructivo);
 router.post("/getMarketingList", TokenValidation, getMarketingList);
+router.post(
+  "/cargar_master_detalle_recibido",
+  TokenValidation,
+  cargarMasterDetalleRecibido
+);
+router.post(
+  "/cargar_master_detalle_enviado",
+  TokenValidation,
+  cargarMasterDetalleEnviado
+);
+router.put(
+  "/update_quote_recibido_enviado",
+  TokenValidation,
+  updateQuoteRecibidoEnviado
+);
 
 export default router;
-

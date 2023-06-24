@@ -560,8 +560,6 @@ export const putQuote = async (req: Request, res: Response) => {
   );
 };
 
-
-
 export const getReportsRangeDays = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM TABLE_SERVICESBRANCH_QuoteReportRangeDays2($1);",
@@ -866,6 +864,109 @@ export const getModulesEntities = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const updateQuoteRecibidoEnviado = async (
+  req: Request,
+  res: Response
+) => {
+  await pool.query(
+    "SELECT * FROM function_quote_actualizar_recibido_enviado($1,$2,$3,$4)",
+    [
+      req.body.id,
+      req.body.id_master_recibidocotizacion
+        ? req.body.id_master_recibidocotizacion
+        : null,
+      req.body.id_master_enviadocliente
+        ? req.body.id_master_enviadocliente
+        : null,
+      req.body.fecha_enviocliente,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estado: rows[0].estadoflag,
+            mensaje: rows[0].mensaje,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+            estado: rows[0].estadoflag,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const cargarMasterDetalleRecibido = async (
+  req: Request,
+  res: Response
+) => {
+  await pool.query(
+    "SELECT * FROM function_masterdetalle_cargar($1,'RCP')",
+    [req.query.id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estado: rows[0].estadoflag,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+            estado: rows[0].estadoflag,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const cargarMasterDetalleEnviado = async (
+  req: Request,
+  res: Response
+) => {
+  await pool.query(
+    "SELECT * FROM function_masterdetalle_cargar($1,'EC')",
+    [req.query.id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estado: rows[0].estadoflag,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+            estado: rows[0].estadoflag,
           });
         }
       } else {
