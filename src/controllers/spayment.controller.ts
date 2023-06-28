@@ -533,7 +533,7 @@ export const setSPaymentFile = async (req: Request, res: Response) => {
 
 export const setInvoice = async (req: Request, res: Response) => {
   const dataObj = req.body;
-  
+
   pool.query(
     "INSERT INTO Table_Invoice (id_house, id_proveedor, id_path, type_pago, number, date, status,id_correlativo,id_master) values ($1,$2,$3,$4,$5,$6,$7,$8,$9)",
     [
@@ -614,7 +614,7 @@ export const setDebsClient = async (req: Request, res: Response) => {
 
 export const setCheckDebsClient = async (req: Request, res: Response) => {
   const dataObj = req.body;
-  
+
   pool.query(
     "select * from Table_DebsClient_aceptarpago($1,$2,$3,$4,$5,$6)",
     [
@@ -1004,10 +1004,18 @@ export const getReporteCXP = async (req: Request, res: Response) => {
   );
 };
 
+
 export const getReporteCXC = async (req: Request, res: Response) => {
+  console.log(req.query)
   await pool.query(
-    "select * from  DEBSCLIENT_reportecxc($1);",
-    [req.body.id_branch],
+    "select * from  debsclient_reportecxc($1,$2,$3,$4,$5);",
+    [
+      req.query.id_branch ? req.query.id_branch : null,
+      req.query.id_cliente ? req.query.id_cliente : null,
+      req.query.llegadaflag ? req.query.llegadaflag : null,
+      req.query.fechadesde ? req.query.fechadesde : null,
+      req.query.fechahasta ? req.query.fechahasta : null,
+    ],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -1109,7 +1117,7 @@ export const listPagoControlGastoXProveedor = async (
 
 export const updateDebsClient = async (req: Request, res: Response) => {
   const dataObj = req.body;
-  
+
   pool.query(
     "select * from function_debscliente_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)",
     [
@@ -1150,7 +1158,6 @@ export const updateDebsClient = async (req: Request, res: Response) => {
   );
 };
 export const eliminarSpaymentpro = async (req: Request, res: Response) => {
-  
   pool.query(
     "select * from function_eliminar_spaymentpro($1)",
     [req.body.id ? req.body.id : null],

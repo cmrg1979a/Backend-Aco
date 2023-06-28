@@ -261,8 +261,8 @@ export const addEntities = async (req: Request, res: Response) => {
   const dataContacts = req.body.dataContacts;
   const dataAccount = req.body.accounts;
 
-    await pool.query(
-    "select * from TABLE_ENTITIES_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27)",
+  await pool.query(
+    "select * from TABLE_ENTITIES_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28)",
     [
       dataObj.names,
       dataObj.surname,
@@ -309,6 +309,7 @@ export const addEntities = async (req: Request, res: Response) => {
       dataAccount.map((element) => {
         return element.accountnumber ? element.accountnumber : null;
       }),
+      dataObj.diascredito ? dataObj.diascredito : 0,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -337,7 +338,7 @@ export const editEntitie = async (req: Request, res: Response) => {
   const dataObj: postEntities = req.body;
   const id = req.params.id;
   await pool.query(
-    "SELECT * FROM Table_Entities_update($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)",
+    "SELECT * FROM Table_Entities_update($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18,$19)",
     [
       dataObj.names,
       dataObj.surname,
@@ -356,6 +357,7 @@ export const editEntitie = async (req: Request, res: Response) => {
       dataObj.id_town,
       dataObj.id_sex,
       dataObj.id_document,
+      dataObj.diascredito,
       id,
     ],
     (err, response, fields) => {

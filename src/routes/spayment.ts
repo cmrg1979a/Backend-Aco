@@ -75,7 +75,7 @@ router.post(
 );
 router.get("/getSPaymentPro", TokenValidation, getSPaymentPro);
 router.post("/getReporteCXP", TokenValidation, getReporteCXP);
-router.post("/getReporteCXC", TokenValidation, getReporteCXC);
+router.get("/getReporteCXC", TokenValidation, getReporteCXC);
 router.post("/getReporteCXCAdmin", TokenValidation, getReporteCXCAdmin);
 router.get(
   "/listPagoControlGastoXProveedor/:id",

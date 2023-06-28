@@ -877,7 +877,7 @@ export const updateQuoteRecibidoEnviado = async (
   res: Response
 ) => {
   await pool.query(
-    "SELECT * FROM function_quote_actualizar_recibido_enviado($1,$2,$3,$4)",
+    "SELECT * FROM function_quote_actualizar_recibido_enviado($1,$2,$3,$4,$5)",
     [
       req.body.id,
       req.body.id_master_recibidocotizacion
@@ -887,6 +887,7 @@ export const updateQuoteRecibidoEnviado = async (
         ? req.body.id_master_enviadocliente
         : null,
       req.body.fecha_enviocliente,
+      req.body.id_status ? req.body.id_status : null,
     ],
     (err, response, fields) => {
       if (!err) {

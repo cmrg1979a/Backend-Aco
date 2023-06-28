@@ -21,4 +21,5 @@ export interface postEntities {
   esoperativa?: number;
   id?: number;
   tipo?: number;
+  diascredito?: number;
 }
