@@ -1093,29 +1093,34 @@ export const constReporteCXCExcel = async (req: Request, res: Response) => {
   wa.column(3).setWidth(25);
   fila++;
   /** ------- REPORTE OPERATIVO ---------- */
-  rows.forEach((element) => {
-    element.details.forEach((element2) => {
-      ws.cell(fila, 1).string(element2.nro_master);
-      ws.cell(fila, 2).string(element2.nameconsigner);
-      if (element2.fecha_disponibilidad) {
-        ws.cell(fila, 3).date(element2.fecha_disponibilidad);
-      } else {
-        ws.cell(fila, 3).string("");
-      }
-      ws.cell(fila, 4).string(
-        element2.nro_factura ? element2.nro_factura : "No se ha cargado Factura"
-      );
-      ws.cell(fila, 5).string(element2.symbol);
-      ws.cell(fila, 6).number(element2.total_pagar);
-      ws.cell(fila, 7).string(element2.llegada == 1 ? "LLEGADA" : "NO LLEGADA");
-      ws.cell(fila, 8).date(element2.fechadevencimiento);
-      ws.cell(fila, 9).number(element2.diasatraso ? element2.diasatraso : 0);
-      ws.cell(fila, 10).string(element2.estatus);
-      fila++;
+  if (Array.isArray(rows)) {
+    rows.forEach((element) => {
+      element.details.forEach((element2) => {
+        ws.cell(fila, 1).string(element2.nro_master);
+        ws.cell(fila, 2).string(element2.nameconsigner);
+        if (element2.fecha_disponibilidad) {
+          ws.cell(fila, 3).date(element2.fecha_disponibilidad);
+        } else {
+          ws.cell(fila, 3).string("");
+        }
+        ws.cell(fila, 4).string(
+          element2.nro_factura
+            ? element2.nro_factura
+            : "No se ha cargado Factura"
+        );
+        ws.cell(fila, 5).string(element2.symbol);
+        ws.cell(fila, 6).number(element2.total_pagar);
+        ws.cell(fila, 7).string(
+          element2.llegada == 1 ? "LLEGADA" : "NO LLEGADA"
+        );
+        ws.cell(fila, 8).date(element2.fechadevencimiento);
+        ws.cell(fila, 9).number(element2.diasatraso ? element2.diasatraso : 0);
+        ws.cell(fila, 10).string(element2.estatus);
+        fila++;
+      });
     });
-  });
-  /*   */
-
+    /*   */
+  }
   if (!!req.query.id_cliente) {
     let resumen = resumenCXC(rows[0].details);
 
@@ -1190,18 +1195,20 @@ export const constReporteCXCExcel = async (req: Request, res: Response) => {
   wa.row(filaA).filter();
   wa.column(1).setWidth(60);
   filaA++;
-  rows2.forEach((element) => {
-    element.details.forEach((element2) => {
-      wa.cell(filaA, 1).string(element2.nameconsigner);
-      wa.cell(filaA, 2).date(element2.fecha);
-      wa.cell(filaA, 3).string(element2.concepto);
-      wa.cell(filaA, 4).string(element2.symbol);
-      wa.cell(filaA, 5).number(element2.monto);
-      wa.cell(filaA, 6).string(element2.symbol);
-      wa.cell(filaA, 7).number(element2.total_pagar);
-      filaA++;
+  if (Array.isArray(rows2)) {
+    rows2.forEach((element) => {
+      element.details.forEach((element2) => {
+        wa.cell(filaA, 1).string(element2.nameconsigner);
+        wa.cell(filaA, 2).date(element2.fecha);
+        wa.cell(filaA, 3).string(element2.concepto);
+        wa.cell(filaA, 4).string(element2.symbol);
+        wa.cell(filaA, 5).number(element2.monto);
+        wa.cell(filaA, 6).string(element2.symbol);
+        wa.cell(filaA, 7).number(element2.total_pagar);
+        filaA++;
+      });
     });
-  });
+  }
   /** ------- REPORTE TOTAL ---------- */
   let totalOp = calcularTotalesOpCxC(rows);
   let totalAdmin = calcularTotalesAdmCxC(rows2);
