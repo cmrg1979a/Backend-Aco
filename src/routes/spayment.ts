@@ -45,7 +45,7 @@ router.post("/putSPaymentPro/:id", TokenValidation, putSPaymentPro);
 router.post("/setSPaymentFile", TokenValidation, setSPaymentFile);
 router.post("/getRequestPayment", TokenValidation, getRequestPayment);
 router.post("/getDebsToPay", TokenValidation, getDebsToPay);
-router.post("/getDebsToPayAdmin", TokenValidation, getDebsToPayAdmin);
+router.get("/getDebsToPayAdmin", TokenValidation, getDebsToPayAdmin);
 // router.post("/getDebsToPayFilter", TokenValidation, getDebsToPayFilter);
 // router.post("/getAccountsReceivable", TokenValidation, getAccountsReceivable);
 router.post("/setInvoice", TokenValidation, setInvoice);
@@ -74,9 +74,9 @@ router.post(
   getRequestPaymentConceptos
 );
 router.get("/getSPaymentPro", TokenValidation, getSPaymentPro);
-router.post("/getReporteCXP", TokenValidation, getReporteCXP);
+router.get("/getReporteCXP", TokenValidation, getReporteCXP);
 router.get("/getReporteCXC", TokenValidation, getReporteCXC);
-router.post("/getReporteCXCAdmin", TokenValidation, getReporteCXCAdmin);
+router.get("/getReporteCXCAdmin", TokenValidation, getReporteCXCAdmin);
 router.get(
   "/listPagoControlGastoXProveedor/:id",
   TokenValidation,

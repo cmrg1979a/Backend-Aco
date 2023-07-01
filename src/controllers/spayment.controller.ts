@@ -264,8 +264,14 @@ export const getRequestPaymentConceptos = async (
 
 export const getDebsToPayAdmin = async (req: Request, res: Response) => {
   pool.query(
-    "select * from Table_InvoiceAdmin_reporte_cxp($1)",
-    [1],
+    "select * from Table_InvoiceAdmin_reporte_cxp($1,$2,$3,$4,$5)",
+    [
+      req.query.id_branch ? req.query.id_branch : null,
+      req.query.id_proveedor ? req.query.id_proveedor : null,
+      req.query.llegada ? req.query.llegada : null,
+      req.query.desde ? req.query.desde : null,
+      req.query.hasta ? req.query.hasta : null,
+    ],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -977,9 +983,16 @@ export const pdfcxcD = async (req: Request, res: Response) => {
 };
 
 export const getReporteCXP = async (req: Request, res: Response) => {
+  console.log(req.query);
   pool.query(
-    "SELECT * FROM controlgastos_egresos_reportecxp($1)",
-    [1],
+    "SELECT * FROM controlgastos_egresos_reportecxp($1,$2,$3,$4,$5)",
+    [
+      req.query.id_branch ? req.query.id_branch : null,
+      req.query.id_proveedor ? req.query.id_proveedor : null,
+      req.query.llegada ? req.query.llegada : null,
+      req.query.desde ? req.query.desde : null,
+      req.query.hasta ? req.query.hasta : null,
+    ],
     (errs, response, fields) => {
       if (!errs) {
         let rows = response.rows;
@@ -1004,9 +1017,8 @@ export const getReporteCXP = async (req: Request, res: Response) => {
   );
 };
 
-
 export const getReporteCXC = async (req: Request, res: Response) => {
-  console.log(req.query)
+  console.log(req.query);
   await pool.query(
     "select * from  debsclient_reportecxc($1,$2,$3,$4,$5);",
     [
@@ -1041,8 +1053,14 @@ export const getReporteCXC = async (req: Request, res: Response) => {
 
 export const getReporteCXCAdmin = async (req: Request, res: Response) => {
   pool.query(
-    "SELECT * FROM TABLE_INVOICEADMINCXC_reporteadmincxc($1)",
-    [req.body.id_branch],
+    "SELECT * FROM TABLE_INVOICEADMINCXC_reporteadmincxc($1,$2,$3,$4,$5)",
+    [
+      req.query.id_branch ? req.query.id_branch : null,
+      req.query.id_cliente ? req.query.id_cliente : null,
+      req.query.desde ? req.query.desde : null,
+      req.query.hasta ? req.query.hasta : null,
+      req.query.llegada ? req.query.llegada : null,
+    ],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;

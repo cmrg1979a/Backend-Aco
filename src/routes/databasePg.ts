@@ -25,7 +25,7 @@ export function conexion() {
 // }
 
 
-/**PROUCCIÓN INTERNA */
+// /**PROUCCIÓN INTERNA */
 // export function conexion() {
 //   const pool = new Pool({
 //     host: "10.116.0.2",

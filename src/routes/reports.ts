@@ -42,7 +42,7 @@ router.post("/getPdfInstructivo", TokenValidation, pdfInstructivo);
 router.post("/pdfSolicitud", TokenValidation, pdfSolicitud);
 router.post("/getReportFileDetails", TokenValidation, getReportFileDetails);
 router.post("/pdfFD", TokenValidation, pdfFD);
-router.post("/reportcxpexcel",constRexportCXPExcel)
+router.get("/reportcxpexcel",constRexportCXPExcel)
 router.get("/reportcxcexcel",constReporteCXCExcel)
 router.post("/getPdfInstructivoDetallado",getPdfInstructivoDetallado)
 
