@@ -9,15 +9,9 @@ const { Pool } = pg;
 
 // const pool = new Pool({
 //   host: "10.116.0.2",
+//   host: "157.230.14.98",//// remoto
 //   user: "postgres",
 //   password: "@Developer2021Pic",
-//   port: "5432",
-//   database: "db_op_main_01",
-// });
-// const pool = new Pool({
-//   host: "157.230.14.98",
-//   user: "chainsolver",
-//   password: "Fr3sc0l1t4+",
 //   port: "5432",
 //   database: "db_op_main_01",
 // });
@@ -28,8 +22,8 @@ const pool = new Pool({
   password: "Fr3sc0l1t4+",
   port: "5432",
   // database: "db_op_main_dev",
-  database: "db_op_main_01",
-  //  database: "db_op_main_qa",
+  // database: "db_op_main_01",
+   database: "db_op_main_qa",
 });
 
 const app: Application = express();
@@ -136,6 +130,7 @@ app.post("/uploadFilesSingle", function (req, res) {
       return res.end("Error uploading file.");
     }
 
+    
     pool.query(
       "select * from Table_Path_insertar_q($1,$2,$3,null,$4)",
       [req.body.id_quote, req.body.name, type, ruta],
