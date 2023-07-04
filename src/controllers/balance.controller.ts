@@ -6,6 +6,35 @@ const pool = conexion();
 import path from "path";
 var xl = require("excel4node");
 
+export const comparativo = async (req: Request, res: Response) => {
+  console.log(req.query);
+  await pool.query(
+    "SELECT * FROM function_comparativo_proyeccion($1,$2,$3);",
+    [req.query.id_branch, req.query.month, req.query.year],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estado: rows[0].estadoflag,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+            estado: rows[0].estadoflag,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
 export const arbolGastos = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM function_arbol_gasto($1);",
@@ -165,7 +194,7 @@ export const cargarTipoSubGastos = async (req: Request, res: Response) => {
             description: row.description,
             status: row.status,
           }));
-          console.log(subgasto)
+
           res.json({
             status: 200,
             statusBol: true,
@@ -188,7 +217,6 @@ export const cargarTipoSubGastos = async (req: Request, res: Response) => {
 };
 
 export const detalleGanancia = async (req: Request, res: Response) => {
-  console.log(req.query);
   await pool.query(
     "SELECT * FROM function_monto_egreso_x_exp($1,$2,$3,$4,$5,$6);",
     [
@@ -254,7 +282,6 @@ export const resumenGanancia = async (req: Request, res: Response) => {
 };
 
 export const detalleGastos = async (req: Request, res: Response) => {
-  console.log(req.query.tipogastos);
   await pool.query(
     "SELECT * FROM function_monto_gastos_x_proveedor($1,$2,$3,$4,$5,$6);",
     [

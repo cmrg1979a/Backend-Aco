@@ -10,6 +10,7 @@ import {
   cargarTipoIngreso,
   cargarTipoSubGastos,
   cargarTipoSubIngreso,
+  comparativo,
   detalleGanancia,
   detalleGastos,
   exportarReporteGanancias,
@@ -40,5 +41,6 @@ router.get(
   resumenGastosxTipoGasto
 );
 router.get("/excel_reporte", exportarReporteGanancias);
+router.get("/generar_comparativo", comparativo);
 
 export default router;

@@ -86,7 +86,7 @@ export const getSPaymentPro = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        console.log(rows);
+
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
@@ -983,7 +983,6 @@ export const pdfcxcD = async (req: Request, res: Response) => {
 };
 
 export const getReporteCXP = async (req: Request, res: Response) => {
-  console.log(req.query);
   pool.query(
     "SELECT * FROM controlgastos_egresos_reportecxp($1,$2,$3,$4,$5)",
     [
@@ -1018,7 +1017,7 @@ export const getReporteCXP = async (req: Request, res: Response) => {
 };
 
 export const getReporteCXC = async (req: Request, res: Response) => {
-  console.log(req.query);
+  
   await pool.query(
     "select * from  debsclient_reportecxc($1,$2,$3,$4,$5);",
     [

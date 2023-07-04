@@ -554,7 +554,7 @@ export const ValidarRegistrosAereo = async (req: Request, res: Response) => {
 
 export const RegistrarCargaMasivaLCL = async (req: Request, res: Response) => {
   const data = req.body;
-  console.log(data);
+  
   try {
     pool.query(
       `SELECT * FROM registro_tarifarios_lcl(
@@ -878,7 +878,7 @@ export const ExportListUsuarioCalculadora = async (
   req: Request,
   res: Response
 ) => {
-  console.log(req.query);
+  
   var wb = new xl.Workbook();
   await pool.query(
     "SELECT * FROM function_list_user($1);",
@@ -887,7 +887,7 @@ export const ExportListUsuarioCalculadora = async (
       if (!err) {
         if (response.rows[0].estadoflag == true) {
           let rows = response.rows;
-          console.log(rows.length);
+  
           let cabTitle = wb.createStyle({
             font: {
               color: "#ffffff",
