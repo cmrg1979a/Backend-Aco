@@ -207,10 +207,11 @@ export const updateProyeccion = async (req: Request, res: Response) => {
   );
 };
 
+
 export const validateProyeccionAprob = async (req: Request, res: Response) => {
   await pool.query(
-    "SELECT * FROM function_proyeccion_validar_aprob($1,$2);",
-    [req.query.id_month, req.query.id_year],
+    "SELECT * FROM function_proyeccion_validar_aprob($1);",
+    [req.query.id_branch],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
