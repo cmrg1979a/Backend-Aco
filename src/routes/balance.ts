@@ -14,6 +14,7 @@ import {
   detalleGanancia,
   detalleGastos,
   exportarReporteGanancias,
+  flujoGastoPrePostMes,
   resumenGanancia,
   resumenGananciaPorTipoIngreso,
   resumenGastos,
@@ -42,5 +43,6 @@ router.get(
 );
 router.get("/excel_reporte", exportarReporteGanancias);
 router.get("/generar_comparativo", comparativo);
+router.get("/flujo_gasto_pre_post_mes", flujoGastoPrePostMes);
 
 export default router;
