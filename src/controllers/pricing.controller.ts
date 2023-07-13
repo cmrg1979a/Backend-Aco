@@ -886,7 +886,7 @@ export const updateQuoteRecibidoEnviado = async (
       req.body.id_master_enviadocliente
         ? req.body.id_master_enviadocliente
         : null,
-      req.body.fecha_enviocliente,
+      req.body.fecha_enviocliente ? req.body.fecha_enviocliente : null,
       req.body.id_status ? req.body.id_status : null,
       req.body.comentario,
       req.body.id_pricing,

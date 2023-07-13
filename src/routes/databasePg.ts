@@ -4,7 +4,7 @@ const { Pool } = pg;
 // export function conexion() {
 //   const pool = new Pool({
 //     host: "10.116.0.2",
-//     //     host: "157.230.14.98",// remoto
+//     // host: "157.230.14.98", // remoto
 //     user: "postgres",
 //     password: "@Developer2021Pic",
 //     port: "5432",
@@ -13,7 +13,7 @@ const { Pool } = pg;
 //   return pool;
 // }
 
-/** DESARROLLO */
+// /** DESARROLLO */
 export function conexion() {
   const pool = new Pool({
     host: "67.205.129.62",
@@ -24,4 +24,3 @@ export function conexion() {
   });
   return pool;
 }
-

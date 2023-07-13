@@ -16,6 +16,15 @@ const { Pool } = pg;
 //   database: "db_op_main_01",
 // });
 /** DESARROLLO */
+// Cache de opciones de cors
+const corsOptions = {
+  origin: "*",
+  methods: "GET,POST",
+  allowedHeaders: "Content-Type,Authorization",
+};
+
+const corsMiddleware = cors(corsOptions);
+
 const pool = new Pool({
   host: "67.205.129.62",
   user: "chainsolver",
@@ -23,7 +32,7 @@ const pool = new Pool({
   port: "5432",
   // database: "db_op_main_dev",
   // database: "db_op_main_01",
-   database: "db_op_main_qa",
+  database: "db_op_main_qa",
 });
 
 const app: Application = express();
@@ -130,7 +139,6 @@ app.post("/uploadFilesSingle", function (req, res) {
       return res.end("Error uploading file.");
     }
 
-    
     pool.query(
       "select * from Table_Path_insertar_q($1,$2,$3,null,$4)",
       [req.body.id_quote, req.body.name, type, ruta],

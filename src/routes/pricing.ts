@@ -1,7 +1,13 @@
 import { Router } from "express";
 const router: Router = Router();
 import { TokenValidation } from "../libs/verifyToken";
-
+import cors from "cors";
+const corsOptions = {
+  origin: "*",
+  methods: "GET,POST",
+  allowedHeaders: "Content-Type,Authorization",
+};
+const corsMiddleware = cors(corsOptions);
 import {
   setQuote,
   getQuoteStatus,
@@ -30,7 +36,7 @@ import {
 
 router.post("/setQuote", TokenValidation, setQuote);
 router.post("/getQuoteStatus", TokenValidation, getQuoteStatus);
-router.post("/getQuoteList", TokenValidation, getQuoteList);
+router.post("/getQuoteList", TokenValidation, corsMiddleware, getQuoteList);
 router.post("/getQuoteId", TokenValidation, getQuoteId);
 router.post("/delQuote", TokenValidation, delQuote);
 router.post("/putQuote/:id_quote", TokenValidation, putQuote);
