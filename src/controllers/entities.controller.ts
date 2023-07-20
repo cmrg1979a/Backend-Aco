@@ -253,16 +253,16 @@ export const addEntitie = async (req: Request, res: Response) => {
     // }
   );
 };
-/* REVISAR COMO FUNCIONA ESTO*/
+
 
 export const addEntities = async (req: Request, res: Response) => {
-  const dataObj: postEntities = req.body;
+  const dataObj = req.body;
   const dataPhones = req.body.dataPhones;
   const dataContacts = req.body.dataContacts;
   const dataAccount = req.body.accounts;
 
   await pool.query(
-    "select * from TABLE_ENTITIES_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28)",
+    "select * from TABLE_ENTITIES_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29)",
     [
       dataObj.names,
       dataObj.surname,
@@ -310,6 +310,7 @@ export const addEntities = async (req: Request, res: Response) => {
         return element.accountnumber ? element.accountnumber : null;
       }),
       dataObj.diascredito ? dataObj.diascredito : 0,
+      dataObj.diasdeuda ? dataObj.diasdeuda : 0,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -335,10 +336,10 @@ export const addEntities = async (req: Request, res: Response) => {
 };
 
 export const editEntitie = async (req: Request, res: Response) => {
-  const dataObj: postEntities = req.body;
+  const dataObj = req.body;
   const id = req.params.id;
   await pool.query(
-    "SELECT * FROM Table_Entities_update($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18,$19)",
+    "SELECT * FROM Table_Entities_update($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18,$19,$20)",
     [
       dataObj.names,
       dataObj.surname,
@@ -358,6 +359,7 @@ export const editEntitie = async (req: Request, res: Response) => {
       dataObj.id_sex,
       dataObj.id_document,
       dataObj.diascredito,
+      dataObj.diasdeuda ? dataObj.diasdeuda : null,
       id,
     ],
     (err, response, fields) => {

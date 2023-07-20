@@ -322,100 +322,100 @@ export const putQuote = async (req: Request, res: Response) => {
   const impuestos = dataObj.impuestos;
   // --------------------------
   let ID_BEGEND_s = serviciocotizacion.map((item: any) => {
-    return item.id_begend;
+    return item.id_begend ? item.id_begend : null;
   });
   let NAMESERVICE_s = serviciocotizacion.map((item: any) => {
-    return item.nameservice;
+    return item.nameservice ? item.nameservice : null;
   });
   let CODEGROUPSERVICES_s = serviciocotizacion.map((item: any) => {
-    return item.codegroupservices;
+    return item.codegroupservices ? item.codegroupservices : null;
   });
   // -----------------------
   let type_i = impuestos.map((item: any) => {
-    return item.type;
+    return item.type ? item.type : null;
   });
   let name_i = impuestos.map((item: any) => {
-    return item.name;
+    return item.name ? item.name : null;
   });
   let percentage_i = impuestos.map((item: any) => {
-    return item.percentage;
+    return item.percentage ? item.percentage : null;
   });
   let valor_i = impuestos.map((item: any) => {
-    return item.valor;
+    return item.valor ? item.valor : null;
   });
   let orden_i = impuestos.map((item: any) => {
-    return item.orden;
+    return item.orden ? item.orden : null;
   });
 
   // ---------------------
   let id_proveedor_cc = costocotizacion.map((item: any) => {
-    return item.id_proveedor;
+    return item.id_proveedor ? item.id_proveedor : null;
   });
   let id_multiplicador_cc = costocotizacion.map((item: any) => {
-    return item.id_multiplicador;
+    return item.id_multiplicador ? item.id_multiplicador : null;
   });
   let concepto_cc = costocotizacion.map((item: any) => {
-    return item.nameservice;
+    return item.nameservice ? item.nameservice : null;
   });
   let costounitario_cc = costocotizacion.map((item: any) => {
-    return item.costounitario;
+    return item.costounitario ? item.costounitario : null;
   });
   let cif_cc = costocotizacion.map((item: any) => {
-    return item.cif;
+    return item.cif ? item.cif : null;
   });
   let seguro_cc = costocotizacion.map((item: any) => {
-    return item.seguro;
+    return item.seguro ? item.seguro : null;
   });
   let ubptotal_cc = costocotizacion.map((item: any) => {
-    return item.ubptotal;
+    return item.ubptotal ? item.ubptotal : null;
   });
   let esorigenflag_cc = costocotizacion.map((item: any) => {
-    return item.esorigenflag;
+    return item.esorigenflag ? item.esorigenflag : null;
   });
   let eslocalflag_cc = costocotizacion.map((item: any) => {
-    return item.eslocalflag;
+    return item.eslocalflag ? item.eslocalflag : null;
   });
   let sadpuanaflag_cc = costocotizacion.map((item: any) => {
-    return item.esaduanaflag;
+    return item.esaduanaflag ? item.esaduanaflag : null;
   });
   let esalmacenflag_cc = costocotizacion.map((item: any) => {
-    return item.esalmacenflag;
+    return item.esalmacenflag ? item.esalmacenflag : null;
   });
   let esopcionflag_cc = costocotizacion.map((item: any) => {
-    return item.esopcionflag;
+    return item.esopcionflag ? item.esopcionflag : null;
   });
   let esventaflag_cc = costocotizacion.map((item: any) => {
-    return item.esventaflag;
+    return item.esventaflag ? item.esventaflag : null;
   });
   // -----------------------------
   let id_containers_c = contenedores.map((item: any) => {
     return item.id_contenedor == undefined ? null : item.id_contenedor;
   });
   let quantity_c = contenedores.map((item: any) => {
-    return item.quantity;
+    return item.quantity ? item.quantity : null;
   });
   // ----------------------------
   let id_quoteSales_vd = ventascasillerodetalles.map((item: any) => {
-    return item.id_quoteSales;
+    return item.id_quoteSales ? item.id_quoteSales : null;
   });
   let description_vd = ventascasillerodetalles.map((item: any) => {
-    return item.description;
+    return item.description ? item.description : null;
   });
   let monto_vd = ventascasillerodetalles.map((item: any) => {
-    return item.monto;
+    return item.monto ? item.monto : null;
   });
   // ------------------------------
   let description_nc = notacosto.map((item: any) => {
-    return item.description;
+    return item.description ? item.description : null;
   });
   let statusPrincipal_nc = notacosto.map((item: any) => {
-    return item.esprincipalflag;
+    return item.esprincipalflag ? item.esprincipalflag : null;
   });
   let statusIncluye_nc = notacosto.map((item: any) => {
-    return item.esincluyeflag;
+    return item.esincluyeflag ? item.esincluyeflag : null;
   });
   let statusNoIncluye_nc = notacosto.map((item: any) => {
-    return item.esnoincluyeflag;
+    return item.esnoincluyeflag ? item.esnoincluyeflag : null;
   });
   let pid_s = serviciocotizacion.map((item: any) => {
     return item.id ? item.id : 0;

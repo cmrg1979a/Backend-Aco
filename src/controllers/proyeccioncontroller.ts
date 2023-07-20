@@ -8,8 +8,9 @@ var xl = require("excel4node");
 
 export const setProyeccion = async (req: Request, res: Response) => {
   let data = req.body;
+  console.log(data);
   await pool.query(
-    "SELECT * FROM function_proyeccion_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15);",
+    "SELECT * FROM function_proyeccion_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16);",
     [
       data.id_branch,
       data.id_month,
@@ -20,6 +21,9 @@ export const setProyeccion = async (req: Request, res: Response) => {
       data.total_conversionext,
       data.total_monext,
       data.total_proyectado_ext,
+      data.details.map((item) => {
+        return item.nrodias;
+      }),
       data.details.map((item) => {
         return item.id_tiposubgasto;
       }),
@@ -143,7 +147,7 @@ export const updateProyeccion = async (req: Request, res: Response) => {
   let data = req.body;
 
   await pool.query(
-    "SELECT * FROM function_proyeccion_editar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18);",
+    "SELECT * FROM function_proyeccion_editar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19);",
     [
       data.id,
       data.id_branch,
@@ -155,6 +159,9 @@ export const updateProyeccion = async (req: Request, res: Response) => {
       data.total_conversionext,
       data.total_monext,
       data.total_proyectado_ext,
+      data.details.map((item) => {
+        return item.nrodias;
+      }),
       data.details.map((item) => {
         return item.id ? item.id : null;
       }),
@@ -206,7 +213,6 @@ export const updateProyeccion = async (req: Request, res: Response) => {
     }
   );
 };
-
 
 export const validateProyeccionAprob = async (req: Request, res: Response) => {
   await pool.query(

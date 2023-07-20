@@ -14,6 +14,7 @@ import {
   detalleGanancia,
   detalleGastos,
   exportarReporteGanancias,
+  flujoDineroPorMes,
   flujoGastoPrePostMes,
   resumenGanancia,
   resumenGananciaPorTipoIngreso,
@@ -41,8 +42,9 @@ router.get(
   TokenValidation,
   resumenGastosxTipoGasto
 );
-router.get("/excel_reporte", exportarReporteGanancias);
-router.get("/generar_comparativo", comparativo);
-router.get("/flujo_gasto_pre_post_mes", flujoGastoPrePostMes);
+router.get("/excel_reporte", TokenValidation, exportarReporteGanancias);
+router.get("/generar_comparativo", TokenValidation, comparativo);
+router.get("/flujo_gasto_pre_post_mes", TokenValidation, flujoGastoPrePostMes);
+router.get("/flujo_dinero_por_mes", TokenValidation, flujoDineroPorMes);
 
 export default router;
