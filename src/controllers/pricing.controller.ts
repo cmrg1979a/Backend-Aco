@@ -8,6 +8,7 @@ const pool = conexion();
 export const setQuote = async (req: Request, res: Response) => {
   const dataObj = req.body;
 
+  
   const serviciocotizacion = dataObj.serviciocotizacion;
   const costocotizacion = dataObj.costocotizacion;
   const notacosto = dataObj.notacosto;
