@@ -554,7 +554,7 @@ export const ValidarRegistrosAereo = async (req: Request, res: Response) => {
 
 export const RegistrarCargaMasivaLCL = async (req: Request, res: Response) => {
   const data = req.body;
-  
+
   try {
     pool.query(
       `SELECT * FROM registro_tarifarios_lcl(
@@ -878,7 +878,6 @@ export const ExportListUsuarioCalculadora = async (
   req: Request,
   res: Response
 ) => {
-  
   var wb = new xl.Workbook();
   await pool.query(
     "SELECT * FROM function_list_user($1);",
@@ -887,7 +886,7 @@ export const ExportListUsuarioCalculadora = async (
       if (!err) {
         if (response.rows[0].estadoflag == true) {
           let rows = response.rows;
-  
+
           let cabTitle = wb.createStyle({
             font: {
               color: "#ffffff",
@@ -1463,6 +1462,8 @@ export const GetCotAereoResumen = async (req: Request, res: Response) => {
   );
 };
 export const GetTotalCotizacion = async (req: Request, res: Response) => {
+  console.log(req);
+
   await pool.query(
     `SELECT * FROM function_total_cotizacionxsucursal($1);`,
     [req.body.iso_pais],
