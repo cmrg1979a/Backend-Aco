@@ -14,7 +14,7 @@ export const setQuote = async (req: Request, res: Response) => {
   const contenedores = dataObj.contenedores;
   const ventascasillerodetalles = dataObj.ventascasillerodetalles;
   const impuestos = dataObj.impuestos;
-  // --------------------------
+  // -------------------------- SERVICIOS
   let ID_BEGEND_s = serviciocotizacion.map((item: any) => {
     return item.idBegEnd;
   });
@@ -24,7 +24,10 @@ export const setQuote = async (req: Request, res: Response) => {
   let CODEGROUPSERVICES_s = serviciocotizacion.map((item: any) => {
     return item.codegroupservices;
   });
-  // -----------------------
+  let statusservices_s = serviciocotizacion.map((item: any) => {
+    return item.status == true || item.status == 1 ? 1 : 0;
+  });
+  // ----------------------- IMPUESTOS
   let type_i = impuestos.map((item: any) => {
     return item.type;
   });
@@ -41,7 +44,8 @@ export const setQuote = async (req: Request, res: Response) => {
     return item.orden;
   });
 
-  // ---------------------
+  // --------------------- COSTOS DE LA COTIZACION
+
   let id_proveedor_cc = costocotizacion.map((item: any) => {
     return item.id_proveedor;
   });
@@ -81,7 +85,7 @@ export const setQuote = async (req: Request, res: Response) => {
   let esventaflag_cc = costocotizacion.map((item: any) => {
     return item.esventaflag;
   });
-  // -----------------------------
+  // ----------------------------- contenedores
   let id_containers_c = contenedores.map((item: any) => {
     return item.id_contenedor;
   });
@@ -106,14 +110,14 @@ export const setQuote = async (req: Request, res: Response) => {
     return item.esprincipalflag;
   });
   let statusIncluye_nc = notacosto.map((item: any) => {
-    return item.esincluyeflag;
+    return item.esincluyeflag ? item.esincluyeflag : 0;
   });
   let statusNoIncluye_nc = notacosto.map((item: any) => {
-    return item.esnoincluyeflag;
+    return item.esnoincluyeflag ? item.esnoincluyeflag : 0;
   });
 
   await pool.query(
-    "SELECT * FROM table_quote_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53,$54,$55,$56,$57,$58,$59)",
+    "SELECT * FROM table_quote_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53,$54,$55,$56,$57,$58,$59,$60)",
     [
       dataObj.id_marketing ? dataObj.id_marketing : null,
       dataObj.id_entitie ? dataObj.id_entitie : null,
@@ -148,6 +152,7 @@ export const setQuote = async (req: Request, res: Response) => {
       ID_BEGEND_s,
       NAMESERVICE_s,
       CODEGROUPSERVICES_s,
+      statusservices_s,
       //----------------------------------
       type_i,
       name_i,
@@ -264,7 +269,7 @@ export const getQuoteList = async (req: Request, res: Response) => {
 };
 
 export const getQuoteId = async (req: Request, res: Response) => {
-  const { id } = req.body;
+  const { id } = req.query;
   await pool.query(
     "select * from TABLE_QUOTE_VER($1);",
     [id],
@@ -346,6 +351,7 @@ export const putQuote = async (req: Request, res: Response) => {
   let orden_i = impuestos.map((item: any) => {
     return item.orden ? item.orden : null;
   });
+  console.log(costocotizacion);
 
   // ---------------------
   let id_proveedor_cc = costocotizacion.map((item: any) => {
@@ -355,16 +361,16 @@ export const putQuote = async (req: Request, res: Response) => {
     return item.id_multiplicador ? item.id_multiplicador : null;
   });
   let concepto_cc = costocotizacion.map((item: any) => {
-    return item.nameservice ? item.nameservice : null;
+    return item.concepto ? item.concepto : null;
   });
   let costounitario_cc = costocotizacion.map((item: any) => {
-    return item.costounitario ? item.costounitario : null;
+    return item.costounitario ? item.costounitario : 0;
   });
   let cif_cc = costocotizacion.map((item: any) => {
-    return item.cif ? item.cif : null;
+    return item.cif ? item.cif : 0;
   });
   let seguro_cc = costocotizacion.map((item: any) => {
-    return item.seguro ? item.seguro : null;
+    return item.seguro ? item.seguro : 0;
   });
   let ubptotal_cc = costocotizacion.map((item: any) => {
     return item.ubptotal ? item.ubptotal : null;
@@ -437,7 +443,7 @@ export const putQuote = async (req: Request, res: Response) => {
   });
 
   let pstatus_s = serviciocotizacion.map((item: any) => {
-    return item.statusService == true || item.statusService == 1 ? 1 : 0;
+    return item.status == true || item.status == 1 ? 1 : 0;
   });
 
   let pstatus_c = costocotizacion.map((item: any) => {
@@ -953,6 +959,135 @@ export const cargarMasterDetalleEnviado = async (
 ) => {
   await pool.query(
     "SELECT * FROM function_masterdetalle_cargar($1,'EC')",
+    [req.query.id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estado: rows[0].estadoflag,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+            estado: rows[0].estadoflag,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const cargarMasterDetalleNotasCotizacion = async (
+  req: Request,
+  res: Response
+) => {
+  await pool.query(
+    "SELECT * FROM function_masterdetalle_cargar($1,'NQ')",
+    [req.query.id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estado: rows[0].estadoflag,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+            estado: rows[0].estadoflag,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const ActualizarFolderOneDrive = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM function_quote_updatefolderonedrive($1,$2)",
+    [req.body.id, req.body.url],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estado: rows[0].estadoflag,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+            estado: rows[0].estadoflag,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const getListCalls = async (req: Request, res: Response) => {
+  let filtros = req.body;
+  await pool.query(
+    "select * from lista_llamadas2($1,$2,$3,$4,$5,$6,$7)",
+    [
+      req.body.id_branch ? req.body.id_branch : null,
+      filtros.id_estado ? filtros.id_estado : null,
+      filtros.id_sentido ? filtros.id_sentido : null,
+      filtros.id_carga ? filtros.id_carga : null,
+      filtros.id_icoterms ? filtros.id_icoterms : null,
+      filtros.desde ? filtros.desde : null,
+      filtros.hasta ? filtros.hasta : null,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estado: rows[0].estadoflag,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+            estado: rows[0].estadoflag,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const cargarMasterDetalleImpuestos = async (
+  req: Request,
+  res: Response
+) => {
+  await pool.query(
+    "SELECT * FROM function_masterdetalle_cargar($1,'IMP')",
     [req.query.id_branch],
     (err, response, fields) => {
       if (!err) {

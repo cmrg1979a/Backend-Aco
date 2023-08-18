@@ -42,6 +42,7 @@ export const getPortEnd = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,

@@ -37,7 +37,7 @@ export const getItemsServices = async (req: Request, res: Response) => {
 export const getItemsServicesDetails = async (req: Request, res: Response) => {
   const { id_modality, id_shipment, id_incoterms, id_branch } = req.body;
   await pool.query(
-    " SELECT * FROM TABLE_ITEMSSERVICES_listar($1,$2,$3,$4)",
+    " SELECT * FROM table_itemsservices_listardetails($1,$2,$3,$4)",
     [id_modality, id_shipment, id_incoterms, id_branch],
     (err, response, fields) => {
       if (!err) {

@@ -32,12 +32,16 @@ import {
   updateQuoteRecibidoEnviado,
   cargarMasterDetalleRecibido,
   cargarMasterDetalleEnviado,
+  ActualizarFolderOneDrive,
+  getListCalls,
+  cargarMasterDetalleNotasCotizacion,
+  cargarMasterDetalleImpuestos,
 } from "../controllers/pricing.controller";
 
 router.post("/setQuote", TokenValidation, setQuote);
 router.post("/getQuoteStatus", TokenValidation, getQuoteStatus);
 router.post("/getQuoteList", TokenValidation, corsMiddleware, getQuoteList);
-router.post("/getQuoteId", TokenValidation, getQuoteId);
+router.get("/getQuoteId", TokenValidation, getQuoteId);
 router.post("/delQuote", TokenValidation, delQuote);
 router.post("/putQuote/:id_quote", TokenValidation, putQuote);
 // router.post("/getReportsRangeDays", TokenValidation, getReportsRangeDays);
@@ -63,10 +67,26 @@ router.post(
   TokenValidation,
   cargarMasterDetalleEnviado
 );
+router.post(
+  "/cargar_master_detalle_notas_cotizacion",
+  TokenValidation,
+  cargarMasterDetalleNotasCotizacion
+);
+router.post(
+  "/cargar_master_detalle_impuesto",
+  TokenValidation,
+  cargarMasterDetalleImpuestos
+);
 router.put(
   "/update_quote_recibido_enviado",
   TokenValidation,
   updateQuoteRecibidoEnviado
 );
+router.put(
+  "/actualizar_quote_folderonedrive",
+  TokenValidation,
+  ActualizarFolderOneDrive
+);
+router.post("/listado_llamadas", TokenValidation, getListCalls);
 
 export default router;

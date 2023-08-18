@@ -271,3 +271,31 @@ export const getCargarHouse = async (req: Request, res: Response) => {
     }
   );
 };
+
+export const updateFolderOneDrive = async (req: Request, res: Response) => {
+  console.log(req.body);
+  await pool.query(
+    "SELECT * FROM function_updatemaster_urlonedrive($1,$2);",
+    [req.body.id, req.body.url],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
