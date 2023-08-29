@@ -8,14 +8,14 @@ const pool = conexion();
 
 export const setControl = async (req: Request, res: Response) => {
   const dataObj: postControl = req.body;
-  
+
   await pool.query(
     "select * from Table_ControlGastos_Insertar($1,$2,$3)",
     [dataObj.id_house, dataObj.id_user, dataObj.status],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        
+
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
@@ -83,7 +83,7 @@ export const setIngresos = async (req: Request, res: Response) => {
 
 export const setEgresos = async (req: Request, res: Response) => {
   const dataObj = req.body;
-  
+
   await pool.query(
     "select * from PA_CEgresos_Insert($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)",
     [
@@ -294,7 +294,7 @@ export const delIngresos = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        
+
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
@@ -396,7 +396,7 @@ export const editIngreso = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        
+
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
@@ -421,7 +421,7 @@ export const editEgreso = async (req: Request, res: Response) => {
   const id = req.params.id;
 
   const data = req.body;
-  
+
   await pool.query(
     "select * from function_controlgasto_edit($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,$11,$12,$13,$14,$15,$16,$17,$18)",
     [
@@ -466,7 +466,6 @@ export const editEgreso = async (req: Request, res: Response) => {
     }
   );
 };
-
 
 export const ControlGastosList = async (req: Request, res: Response) => {
   const code_master = req.query.code_master;
@@ -568,6 +567,59 @@ export const registrarCGECcorralativo = async (req: Request, res: Response) => {
       }),
       dataObj.control_gasto.map((element) => {
         return element.totalopcuentabanco;
+      }),
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const cargaMasivaControlDeGasto = async (
+  req: Request,
+  res: Response
+) => {
+  const dataObj = req.body;
+  let detalle = dataObj.detalle;
+
+
+  await pool.query(
+    "select * from function_carga_masiva_controlgasto($1,$2,$3,$4,$5,$6,$7,$8)",
+    [
+      dataObj.id_operador,
+      dataObj.id_branch,
+      dataObj.id_master ? dataObj.id_master : null,
+      detalle.map((telefonos) => {
+        return telefonos.telefono;
+      }),
+      detalle.map((nombres) => {
+        return nombres.nombres;
+      }),
+      detalle.map((apaternos) => {
+        return apaternos.apaterno ? apaternos.apaterno : null;
+      }),
+      detalle.map((amaternos) => {
+        return amaternos.amaterno ? amaternos.amaterno : null;
+      }),
+
+      detalle.map((montos) => {
+        return montos.monto ? montos.monto : 0;
       }),
     ],
     (err, response, fields) => {

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { conexion } from "../routes/databasePGOp";
+import moment from "moment";
 import * as pg from "pg";
 const { Pool } = pg;
 const pool = conexion();
@@ -712,26 +713,28 @@ export const constRexportCXPExcel = async (req: Request, res: Response) => {
     author: "PIC CARGO - IMPORTADORES",
   });
   await pool.query(
-    "SELECT * FROM controlgastos_egresos_reportecxp($1,$2,$3,$4,$5)",
+    "SELECT * FROM controlgastos_egresos_reportecxp($1,$2,$3,$4,$5,$6)",
     [
       req.query.id_branch ? req.query.id_branch : null,
       req.query.id_proveedor ? req.query.id_proveedor : null,
       req.query.llegada ? req.query.llegada : null,
       req.query.desde ? req.query.desde : null,
       req.query.hasta ? req.query.hasta : null,
+      req.query.nro_expediente ? req.query.nro_expediente : null,
     ],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
         new Promise<void>((resolver, rechazar) => {
           pool.query(
-            "select * from Table_InvoiceAdmin_reporte_cxp($1,$2,$3,$4,$5)",
+            "select * from Table_InvoiceAdmin_reporte_cxp($1,$2,$3,$4,$5,$6)",
             [
               req.query.id_branch ? req.query.id_branch : null,
               req.query.id_proveedor ? req.query.id_proveedor : null,
               req.query.llegada ? req.query.llegada : null,
               req.query.desde ? req.query.desde : null,
               req.query.hasta ? req.query.hasta : null,
+              req.query.nro_expediente ? req.query.nro_expediente : null,
             ],
             (err, response, fields) => {
               if (!err) {
@@ -894,20 +897,22 @@ export const constRexportCXPExcel = async (req: Request, res: Response) => {
                 wa.cell(filaA, 8).string("Moneda").style(cabDetalle);
                 wa.cell(filaA, 9).string("Total").style(cabDetalle);
                 filaA++;
-                rows2.forEach((element) => {
-                  element.details.forEach((element2) => {
-                    wa.cell(filaA, 1).string(element.nameconsigner);
-                    wa.cell(filaA, 2).string(element2.nro_factura);
-                    wa.cell(filaA, 3).date(element2.fecha);
-                    wa.cell(filaA, 4).string(element2.namecoins);
-                    wa.cell(filaA, 5).number(element2.monto);
-                    wa.cell(filaA, 6).string(element2.namecoins);
-                    wa.cell(filaA, 7).number(element2.igv);
-                    wa.cell(filaA, 8).string(element2.namecoins);
-                    wa.cell(filaA, 9).number(element2.total);
-                    filaA++;
+                if (rows2[0].estadoflag == true) {
+                  rows2.forEach((element) => {
+                    element.details.forEach((element2) => {
+                      wa.cell(filaA, 1).string(element.nameconsigner);
+                      wa.cell(filaA, 2).string(element2.nro_factura);
+                      wa.cell(filaA, 3).date(element2.fecha);
+                      wa.cell(filaA, 4).string(element2.namecoins);
+                      wa.cell(filaA, 5).number(element2.monto);
+                      wa.cell(filaA, 6).string(element2.namecoins);
+                      wa.cell(filaA, 7).number(element2.igv);
+                      wa.cell(filaA, 8).string(element2.namecoins);
+                      wa.cell(filaA, 9).number(element2.total);
+                      filaA++;
+                    });
                   });
-                });
+                }
                 /** ------- REPORTE TOTAL ---------- */
                 let totalOp = calcularTotalesOp(rows);
                 let totalAdmin = calcularTotalesAdm(rows2);
@@ -1090,7 +1095,7 @@ export const constReporteCXCExcel = async (req: Request, res: Response) => {
   wo.cell(fila, 5).string("Factura").style(cabDetalle);
   wo.cell(fila, 6).string("Moneda").style(cabDetalle);
   wo.cell(fila, 7).string("Total Pagar").style(cabDetalle);
-  wo.cell(fila, 8).string("Estatus").style(cabDetalle);
+  wo.cell(fila, 8).string("Llegada").style(cabDetalle);
   wo.cell(fila, 9).string("Fecha de Vencimiento").style(cabDetalle);
   wo.cell(fila, 10).string("Días de atraso").style(cabDetalle);
   wo.cell(fila, 11).string("Estatus").style(cabDetalle);
@@ -1424,27 +1429,29 @@ function calcularTotalesAdm(data) {
   let totalMontoSoles = 0;
   let IgvSoles = 0;
   let totalSoles = 0;
-  data.forEach((element) => {
-    element.details.forEach((element2) => {
-      switch (element2.symbol) {
-        case "USD":
-          totalMontoDolares += parseFloat(element2.monto);
-          IgvDolares += parseFloat(element2.igv);
-          totalDolares += parseFloat(element2.total);
+  if (data[0].estadoflag == true) {
+    data.forEach((element) => {
+      element.details.forEach((element2) => {
+        switch (element2.symbol) {
+          case "USD":
+            totalMontoDolares += parseFloat(element2.monto);
+            IgvDolares += parseFloat(element2.igv);
+            totalDolares += parseFloat(element2.total);
 
-          break;
-        case "S/.":
-          totalMontoSoles += parseFloat(element2.monto);
-          IgvSoles += parseFloat(element2.igv);
-          totalSoles += parseFloat(element2.total);
+            break;
+          case "S/.":
+            totalMontoSoles += parseFloat(element2.monto);
+            IgvSoles += parseFloat(element2.igv);
+            totalSoles += parseFloat(element2.total);
 
-          break;
+            break;
 
-        default:
-          break;
-      }
+          default:
+            break;
+        }
+      });
     });
-  });
+  }
   totalAdministrativo.push(
     {
       moneda: "USD",
@@ -1569,13 +1576,14 @@ function calcularTotalesAdmCxC(data) {
 function getReporteCXC(data) {
   return new Promise((resolve, reject) => {
     pool.query(
-      "SELECT * FROM debsclient_reportecxc($1,$2,$3,$4,$5);",
+      "SELECT * FROM debsclient_reportecxc($1,$2,$3,$4,$5,$6);",
       [
         data.id_branch ? data.id_branch : null,
         data.id_cliente ? data.id_cliente : null,
         data.llegadaflag ? data.llegadaflag : null,
         data.fechadesde ? data.fechadesde : null,
         data.fechahasta ? data.fechahasta : null,
+        data.nro_expediente ? data.nro_expediente : null,
       ],
       (err, response) => {
         let rows = response.rows;
@@ -1597,13 +1605,14 @@ function getReporteCXC(data) {
 function getReporteCXCAdmin(data) {
   return new Promise((resolve, reject) => {
     pool.query(
-      "SELECT * FROM TABLE_INVOICEADMINCXC_reporteadmincxc($1,$2,$3,$4,$5)",
+      "SELECT * FROM TABLE_INVOICEADMINCXC_reporteadmincxc($1,$2,$3,$4,$5,$6)",
       [
         data.id_branch ? data.id_branch : null,
         data.id_cliente ? data.id_cliente : null,
         data.desde ? data.desde : null,
         data.hasta ? data.hasta : null,
         data.llegada ? data.llegada : null,
+        data.nro_expediente ? data.nro_expediente : null,
       ],
       (err, response) => {
         let rows = response.rows;
@@ -1622,21 +1631,7 @@ function getReporteCXCAdmin(data) {
     );
   });
 }
-// data.forEach((element) => {
-//   moneda = element.symbol;
-//   if (element.diasatraso > 0) {
-//     vencido += parseFloat(element.deuda);
-//     total += parseFloat(element.deuda);
-//   } else if (element.diasatraso > -7) {
-//     porvencer += parseFloat(element.deuda);
-//     total += parseFloat(element.deuda);
-//   } else if (!element.diasatraso) {
-//     novencido += parseFloat(element.deuda);
-//     total += parseFloat(element.deuda);
-//   } else {
-//     total += parseFloat(element.deuda);
-//   }
-// });
+
 function resumenCXC(rows, rows2) {
   let res = {
     vencido: 0,
@@ -1674,3 +1669,323 @@ function resumenCXC(rows, rows2) {
   // console.log(res);
   return res;
 }
+
+export const exportarPDFCXP = async (req: Request, res: Response) => {
+  let title = "REPORTE DE CUENTAS POR PAGAR";
+  let ejs = require("ejs");
+  let pdf = require("html-pdf");
+  moment.locale("ES");
+  let data = [];
+  let rowsOp = await getReporteCXP(req.query);
+  let rowsAdmin = await getDebsToPayAdmin(req.query);
+  if (Array.isArray(rowsOp)) {
+    if (rowsOp.length > 0) {
+      rowsOp.forEach((element) => {
+        let detalles = element.details;
+        if (detalles.length > 0) {
+          detalles.forEach((detalle) => {
+            data.push({
+              proveedor: element.nameproveedor,
+              nameconsigner: detalle.nameconsigner,
+              code_correlativo: detalle.code_correlativo,
+              nro_master: detalle.nro_master,
+              expedientes: detalle.expedientes,
+              fecha_disponibilidad: moment(detalle.fecha_disponibilidad).format(
+                "DD-MMM-YYYY"
+              ),
+              symbol: detalle.symbol,
+              total_pagar: detalle.total_pagar,
+              llegada: detalle.llegada == 1 ? "SI" : "NO",
+              pagado: detalle.pagado == 1 ? "SI" : "NO",
+              esoperativo: true,
+              esadministrativo: false,
+            });
+          });
+        }
+      });
+    }
+  }
+
+  if (Array.isArray(rowsAdmin)) {
+    if (rowsAdmin.length > 0) {
+      rowsAdmin.forEach((element) => {
+        let detalles = element.details;
+        if (detalles.length > 0) {
+          detalles.forEach((detalle) => {
+            data.push({
+              proveedor: element.nameconsigner,
+              nameconsigner: detalle.nameconsigner,
+              code_correlativo: "",
+              nro_master: "",
+              expedientes: detalle.nro_factura,
+              fecha_disponibilidad: moment(detalle.created_at).format(
+                "DD-MM-YYYY"
+              ),
+              symbol: detalle.symbol,
+              total_pagar: detalle.monto,
+              llegada: "SI",
+              pagado: "NO",
+              esoperativo: false,
+              esadministrativo: true,
+            });
+          });
+        }
+      });
+    }
+  }
+  let totalOpDolar = data
+    .filter((v) => !!v.esoperativo && v.symbol == "USD")
+    .reduce((monto, d) => {
+      return monto + d.total_pagar;
+    }, 0);
+  let totalOpSol = data
+    .filter((v) => !!v.esoperativo && v.symbol == "S/.")
+    .reduce((monto, d) => {
+      return monto + d.total_pagar;
+    }, 0);
+  let totalAdminDolar = data
+    .filter((v) => !!v.esadministrativo && v.symbol == "USD")
+    .reduce((monto, d) => {
+      return monto + d.total_pagar;
+    }, 0);
+  let totalAdminSol = data
+    .filter((v) => !!v.esadministrativo && v.symbol == "S/.")
+    .reduce((monto, d) => {
+      return monto + d.total_pagar;
+    }, 0);
+  totalOpDolar = parseFloat(totalOpDolar).toFixed(2);
+  totalOpSol = parseFloat(totalOpSol).toFixed(2);
+  totalAdminDolar = parseFloat(totalAdminDolar).toFixed(2);
+  totalAdminSol = parseFloat(totalAdminSol).toFixed(2);
+  ejs.renderFile(
+    path.join(__dirname, "../views/", "reporteCXP.ejs"),
+    { title, data, totalOpDolar, totalOpSol, totalAdminDolar, totalAdminSol },
+    (err, html) => {
+      if (err) {
+        res.send(err);
+      } else {
+        let options = {
+          page_size: "A4",
+          orientation: "landscape",
+          header: {
+            height: "1mm",
+          },
+          footer: {
+            height: "2mm",
+            contents:
+              '<div style="text-align: center;">Author: Marc Bachmann</div>',
+          },
+        };
+        // pdf
+        //   .create(data, options)
+        //   .toFile.toFile(
+        //     "files/REPORT_CXP.pdf",
+        //     function (err: any, data: any) {
+        //       if (err) {
+        //         res.send(err);
+        //       } else {
+        //         res.setHeader("Content-Type", "application/pdf");
+        //         res.download("/REPORT_CXP.pdf");
+        //         res.send({
+        //           msg: "File created successfully",
+        //           path: path.join("/REPORT_CXP.pdf"),
+        //         });
+        //       }
+        //     }
+        //   );
+        pdf.create(html, options).toBuffer(function (err, buffer) {
+          if (err) {
+            res.status(500).json({ error: "Error generating PDF" });
+          } else {
+            res.setHeader("Content-Type", "application/pdf");
+            res.status(200).send(buffer);
+          }
+        });
+      }
+    }
+  );
+};
+
+function getReporteCXP(data) {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      "SELECT * FROM controlgastos_egresos_reportecxp($1,$2,$3,$4,$5,$6)",
+      [
+        data.id_branch ? data.id_branch : null,
+        data.id_proveedor ? data.id_proveedor : null,
+        data.llegada ? data.llegada : null,
+        data.desde ? data.desde : null,
+        data.hasta ? data.hasta : null,
+        data.nro_operacion ? data.nro_operacion : null,
+      ],
+      (err, response) => {
+        let rows = response.rows;
+        if (!err) {
+          if (!!rows[0].estadoflag) {
+            resolve(rows);
+          } else {
+            rows = [];
+            resolve(rows);
+          }
+        } else {
+          rows = [];
+          resolve(rows);
+        }
+      }
+    );
+  });
+}
+
+function getDebsToPayAdmin(data) {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      "select * from Table_InvoiceAdmin_reporte_cxp($1,$2,$3,$4,$5,$6)",
+      [
+        data.id_branch ? data.id_branch : null,
+        data.id_proveedor ? data.id_proveedor : null,
+        data.llegada ? data.llegada : null,
+        data.desde ? data.desde : null,
+        data.hasta ? data.hasta : null,
+        data.nro_expediente ? data.nro_expediente : null,
+      ],
+      (err, response) => {
+        let rows = response.rows;
+        if (!err) {
+          if (!!rows[0].estadoflag) {
+            resolve(rows);
+          } else {
+            rows = [];
+            resolve(rows);
+          }
+        } else {
+          rows = [];
+          resolve(rows);
+        }
+      }
+    );
+  });
+}
+
+export const exportarPDFCXC = async (req: Request, res: Response) => {
+  let title = "REPORTE DE CUENTAS POR COBRAR";
+  let ejs = require("ejs");
+  let pdf = require("html-pdf");
+  moment.locale("ES");
+  let data = [];
+  let rowsOp = await getReporteCXC(req.query);
+  let rowsAdmin = await getReporteCXCAdmin(req.query);
+
+  if (Array.isArray(rowsOp)) {
+    if (rowsOp.length > 0) {
+      rowsOp.forEach((element) => {
+        let detalles = element.details;
+        if (detalles.length > 0) {
+          detalles.forEach((detalle) => {
+            data.push({
+              fechavencimiento: element.fechavencimiento,
+              esoperativo: true,
+              esadministrativo: false,
+              proveedor: detalle.nameconsigner,
+              expedientes: detalle.nro_master,
+              nameconsigner: detalle.nameconsigner,
+              llegada: detalle.llegada == 1 ? "LLEGADA" : "NO LLEGADA",
+              fecha_disponibilidad: moment(detalle.fecha_disponibilidad).format(
+                "DD-MMM-YYYY"
+              ),
+              factura: detalle.nro_factura ? detalle.nro_factura : "N/F",
+              symbol: detalle.symbol,
+              total_pagar: detalle.total_pagar,
+              diasatraso: detalle.diasatraso ? detalle.diasatraso : 0,
+              estatus: detalle.estatus ? detalle.estatus : "",
+            });
+          });
+        }
+      });
+    }
+  }
+
+  if (Array.isArray(rowsAdmin)) {
+    if (rowsAdmin.length > 0) {
+      rowsAdmin.forEach((element) => {
+        let detalles = element.details;
+        if (detalles.length > 0) {
+          detalles.forEach((detalle) => {
+            data.push({
+              fechavencimiento: element.fechavencimiento,
+              esoperativo: false,
+              esadministrativo: true,
+              proveedor: detalle.nameconsigner,
+              expedientes: "",
+              nameconsigner: detalle.nameconsigner,
+              llegada: detalle.llegada == 1 ? "LLEGADA" : "NO LLEGADA",
+              fecha_disponibilidad: detalle.fecha
+                ? moment(detalle.fecha).format("DD-MMM-YYYY")
+                : "",
+              factura: detalle.concepto ? detalle.concepto : "N/F",
+              symbol: detalle.symbol,
+              total_pagar: detalle.monto,
+              diasatrazo: detalle.diasatraso ? detalle.diasatraso : 0,
+              estatus: detalle.estatus ? detalle.estatus : "",
+            });
+          });
+        }
+      });
+    }
+  }
+
+  let totalOpDolar = data
+    .filter((v) => !!v.esoperativo && v.symbol == "USD")
+    .reduce((monto, d) => {
+      return monto + d.total_pagar;
+    }, 0);
+  let totalOpSol = data
+    .filter((v) => !!v.esoperativo && v.symbol == "S/.")
+    .reduce((monto, d) => {
+      return monto + d.total_pagar;
+    }, 0);
+  let totalAdminDolar = data
+    .filter((v) => !!v.esadministrativo && v.symbol == "USD")
+    .reduce((monto, d) => {
+      return monto + d.total_pagar;
+    }, 0);
+  let totalAdminSol = data
+    .filter((v) => !!v.esadministrativo && v.symbol == "S/.")
+    .reduce((monto, d) => {
+      return monto + d.total_pagar;
+    }, 0);
+  totalOpDolar = parseFloat(totalOpDolar).toFixed(2);
+  totalOpSol = parseFloat(totalOpSol).toFixed(2);
+  totalAdminDolar = parseFloat(totalAdminDolar).toFixed(2);
+  totalAdminSol = parseFloat(totalAdminSol).toFixed(2);
+  ejs.renderFile(
+    path.join(__dirname, "../views/", "reporteCXC.ejs"),
+    { title, data, totalOpDolar, totalOpSol, totalAdminDolar, totalAdminSol },
+    (err, html) => {
+      if (err) {
+        res.send(err);
+      } else {
+        let options = {
+          page_size: "A4",
+          orientation: "landscape",
+          header: {
+            height: "1mm",
+          },
+          footer: {
+            height: "2mm",
+            contents:
+              '<div style="text-align: center;">Author: Marc Bachmann</div>',
+          },
+        };
+
+        pdf.create(html, options).toBuffer(function (err, buffer) {
+          if (err) {
+            res.status(500).json({ error: "Error generating PDF" });
+          } else {
+            res.setHeader("Content-Type", "application/pdf");
+            res.status(200).send(buffer);
+          }
+        });
+      }
+    }
+  );
+};

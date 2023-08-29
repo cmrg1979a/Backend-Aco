@@ -264,13 +264,14 @@ export const getRequestPaymentConceptos = async (
 
 export const getDebsToPayAdmin = async (req: Request, res: Response) => {
   pool.query(
-    "select * from Table_InvoiceAdmin_reporte_cxp($1,$2,$3,$4,$5)",
+    "select * from Table_InvoiceAdmin_reporte_cxp($1,$2,$3,$4,$5,$6)",
     [
       req.query.id_branch ? req.query.id_branch : null,
       req.query.id_proveedor ? req.query.id_proveedor : null,
       req.query.llegada ? req.query.llegada : null,
       req.query.desde ? req.query.desde : null,
       req.query.hasta ? req.query.hasta : null,
+      req.query.nro_expediente ? req.query.nro_expediente : null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -984,13 +985,14 @@ export const pdfcxcD = async (req: Request, res: Response) => {
 
 export const getReporteCXP = async (req: Request, res: Response) => {
   pool.query(
-    "SELECT * FROM controlgastos_egresos_reportecxp($1,$2,$3,$4,$5)",
+    "SELECT * FROM controlgastos_egresos_reportecxp($1,$2,$3,$4,$5,$6)",
     [
       req.query.id_branch ? req.query.id_branch : null,
       req.query.id_proveedor ? req.query.id_proveedor : null,
       req.query.llegada ? req.query.llegada : null,
       req.query.desde ? req.query.desde : null,
       req.query.hasta ? req.query.hasta : null,
+      req.query.nro_operacion ? req.query.nro_operacion : null,
     ],
     (errs, response, fields) => {
       if (!errs) {
@@ -1017,15 +1019,15 @@ export const getReporteCXP = async (req: Request, res: Response) => {
 };
 
 export const getReporteCXC = async (req: Request, res: Response) => {
-  
   await pool.query(
-    "select * from  debsclient_reportecxc($1,$2,$3,$4,$5);",
+    "select * from  debsclient_reportecxc($1,$2,$3,$4,$5,$6);",
     [
       req.query.id_branch ? req.query.id_branch : null,
       req.query.id_cliente ? req.query.id_cliente : null,
       req.query.llegadaflag ? req.query.llegadaflag : null,
       req.query.fechadesde ? req.query.fechadesde : null,
       req.query.fechahasta ? req.query.fechahasta : null,
+      req.query.nro_expediente ? req.query.nro_expediente : null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -1052,13 +1054,14 @@ export const getReporteCXC = async (req: Request, res: Response) => {
 
 export const getReporteCXCAdmin = async (req: Request, res: Response) => {
   pool.query(
-    "SELECT * FROM TABLE_INVOICEADMINCXC_reporteadmincxc($1,$2,$3,$4,$5)",
+    "SELECT * FROM TABLE_INVOICEADMINCXC_reporteadmincxc($1,$2,$3,$4,$5,$6)",
     [
       req.query.id_branch ? req.query.id_branch : null,
       req.query.id_cliente ? req.query.id_cliente : null,
       req.query.desde ? req.query.desde : null,
       req.query.hasta ? req.query.hasta : null,
       req.query.llegada ? req.query.llegada : null,
+      req.query.nro_expediente ? req.query.nro_expediente : null,
     ],
     (err, response, fields) => {
       if (!err) {

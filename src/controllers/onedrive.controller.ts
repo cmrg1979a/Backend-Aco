@@ -79,7 +79,8 @@ export const crearCarpetaEnOneDriveMaster = async (
   res: Response
 ) => {
   const token = await obtenerTokenDeAcceso();
-
+  let namaCarpeta = "master";
+  // let namaCarpeta = "PUBLICA";
   const client = Client.init({
     authProvider: (done) => {
       done(null, token);
@@ -90,7 +91,7 @@ export const crearCarpetaEnOneDriveMaster = async (
     const userPrincipalName = "desarrollo@piccargope.onmicrosoft.com";
 
     const existeCarpetaMaster = await client
-      .api(`/users/${userPrincipalName}/drive/root:/master`)
+      .api(`/users/${userPrincipalName}/drive/root:/${namaCarpeta}`)
       .get()
       .then(() => true)
       .catch(() => false);
@@ -98,7 +99,7 @@ export const crearCarpetaEnOneDriveMaster = async (
     if (!existeCarpetaMaster) {
       // Si la carpeta "master" no existe, crearla primero
       await client.api(`/users/${userPrincipalName}/drive/root/children`).post({
-        name: "master",
+        name: namaCarpeta,
         folder: {},
         "@microsoft.graph.conflictBehavior": "rename",
       });
@@ -107,7 +108,8 @@ export const crearCarpetaEnOneDriveMaster = async (
       .api(`/users/${userPrincipalName}/drive/root/children`)
       .get();
 
-    let idFolderMaster = children.value.filter((v) => v.name == "master")[0].id;
+    let idFolderMaster = children.value.filter((v) => v.name == namaCarpeta)[0]
+      .id;
 
     // Guardando en la carpeta quote
     const carpeta = await client

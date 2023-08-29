@@ -1463,8 +1463,6 @@ export const GetCotAereoResumen = async (req: Request, res: Response) => {
 };
 
 export const GetTotalCotizacion = async (req: Request, res: Response) => {
-  console.log(req);
-
   await pool.query(
     `SELECT * FROM function_total_cotizacionxsucursal($1);`,
     [req.body.iso_pais],
