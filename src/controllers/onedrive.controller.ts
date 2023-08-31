@@ -247,6 +247,7 @@ export const crearCarpetaEnOneDriveMaster = async (
       done(null, token);
     },
   });
+  console.log(client);
 
   try {
     const userPrincipalName = "desarrollo@piccargope.onmicrosoft.com";
