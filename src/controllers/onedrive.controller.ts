@@ -241,7 +241,7 @@ export const crearCarpetaEnOneDriveMaster = async (
 ) => {
   const token = await obtenerTokenDeAcceso();
   let namaCarpeta = "master";
-  console.log('hola bb')
+  console.log("hola bb");
   const client = Client.init({
     authProvider: (done) => {
       done(null, token);
