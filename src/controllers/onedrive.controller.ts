@@ -303,9 +303,9 @@ export const crearCarpetaEnOneDriveMaster = async (
 
 const obtenerTokenDeAcceso = async (): Promise<string> => {
   const credential = new ClientSecretCredential(
-    process.env.tenantId,
-    process.env.clientId,
-    process.env.clientSecret
+    "f3ca4583-b661-4edb-94ff-f0dcc273c033", // process.env.tenantId,
+    "cdef05e7-8211-4b63-8acd-b6097b636948", // process.env.clientId,
+    "H-68Q~CIDT51g2Mzn4Ibzg74hOGoJkrwMXNkjcTN" // process.env.clientSecret
   );
 
   const scopes = [
