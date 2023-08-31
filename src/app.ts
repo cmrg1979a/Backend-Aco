@@ -102,10 +102,10 @@ app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(express.static("files"));
 
-app.use(bodyParser.json({ limit: "200mb" }));
+app.use(bodyParser.json({ limit: "1000mb" }));
 app.use(
   bodyParser.urlencoded({
-    limit: "200mb",
+    limit: "1000mb",
     extended: true,
     parameterLimit: 1000000,
   })
