@@ -598,28 +598,34 @@ export const cargaMasivaControlDeGasto = async (
   const dataObj = req.body;
   let detalle = dataObj.detalle;
 
-
   await pool.query(
-    "select * from function_carga_masiva_controlgasto($1,$2,$3,$4,$5,$6,$7,$8)",
+    "select * from function_carga_masiva_controlgasto($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)",
     [
       dataObj.id_operador,
       dataObj.id_branch,
       dataObj.id_master ? dataObj.id_master : null,
-      detalle.map((telefonos) => {
-        return telefonos.telefono;
+      dataObj.nombrecampania,
+      detalle.map((data) => {
+        return data.telefono;
       }),
-      detalle.map((nombres) => {
-        return nombres.nombres;
+      detalle.map((data) => {
+        return data.telefono2 ? data.telefono2 : null;
       }),
-      detalle.map((apaternos) => {
-        return apaternos.apaterno ? apaternos.apaterno : null;
+      detalle.map((data) => {
+        return data.nombres;
       }),
-      detalle.map((amaternos) => {
-        return amaternos.amaterno ? amaternos.amaterno : null;
+      detalle.map((data) => {
+        return data.apaterno ? data.apaterno : null;
+      }),
+      detalle.map((data) => {
+        return data.amaterno ? data.amaterno : null;
       }),
 
-      detalle.map((montos) => {
-        return montos.monto ? montos.monto : 0;
+      detalle.map((data) => {
+        return data.monto ? data.monto : 0;
+      }),
+      detalle.map((data) => {
+        return data.pedidos ? data.pedidos : 0;
       }),
     ],
     (err, response, fields) => {
@@ -635,6 +641,34 @@ export const cargaMasivaControlDeGasto = async (
           res.json({
             status: 200,
             statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const obtenerNombreCamapania = async (req: Request, res: Response) => {
+  await pool.query(
+    " SELECT * FROM function_compania_buscar_nombre($1);",
+    [req.query.id_master],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            estadoflag: rows[0].estadoflag,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            estadoflag: rows[0].estadoflag,
             mensaje: rows[0].mensaje,
           });
         }

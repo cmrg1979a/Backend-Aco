@@ -22,6 +22,7 @@ import {
   cargarCorrelativo,
   listarCGECcorralativo,
   cargaMasivaControlDeGasto,
+  obtenerNombreCamapania,
 } from "../controllers/controlGastos.controller";
 
 router.post("/setControl", TokenValidation, setControl);
@@ -53,6 +54,7 @@ router.put("/delEgregso/:id", TokenValidation, delEgregso);
 router.get("/control_gastos_list", TokenValidation, ControlGastosList);
 router.get("/cargar_correlativo", TokenValidation, cargarCorrelativo);
 router.get("/listar_cge_corralativo", TokenValidation, listarCGECcorralativo);
+router.get("/obtener_nombre_camapania", TokenValidation, obtenerNombreCamapania);
 router.post(
   "/carga_masiva_controldegasto",
   TokenValidation,

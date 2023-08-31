@@ -273,7 +273,6 @@ export const getCargarHouse = async (req: Request, res: Response) => {
 };
 
 export const updateFolderOneDrive = async (req: Request, res: Response) => {
-  console.log(req.body);
   await pool.query(
     "SELECT * FROM function_updatemaster_urlonedrive($1,$2);",
     [req.body.id, req.body.url],

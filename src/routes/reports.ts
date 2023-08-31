@@ -19,6 +19,7 @@ import {
   getPdfInstructivoDetallado,
   exportarPDFCXP,
   exportarPDFCXC,
+  ExportarConsolidadoCargaMasiva,
 } from "../controllers/reports.controller";
 
 router.post("/getControlFileAll", TokenValidation, getControlFileAll);
@@ -49,5 +50,6 @@ router.get("/reportcxcexcel", constReporteCXCExcel);
 router.post("/getPdfInstructivoDetallado", getPdfInstructivoDetallado);
 router.get("/exportarPDFCXP", exportarPDFCXP);
 router.get("/exportarPDFCXC", exportarPDFCXC);
+router.get("/consolidado_carga_masiva", ExportarConsolidadoCargaMasiva);
 
 export default router;

@@ -1989,3 +1989,215 @@ export const exportarPDFCXC = async (req: Request, res: Response) => {
     }
   );
 };
+
+// function_consolidado
+export const ExportarConsolidadoCargaMasiva = async (
+  req: Request,
+  res: Response
+) => {
+  var wb = new xl.Workbook({
+    dateFormat: "dd/mm/yyyy",
+    author: "PIC CARGO - IMPORTADORES",
+  });
+
+  let cabTitle = wb.createStyle({
+    wrapText: true,
+    font: {
+      // color: "#FFE699",
+      bold: true,
+    },
+    fill: {
+      type: "pattern",
+      patternType: "solid",
+      fgColor: "#FFE699",
+    },
+    alignment: {
+      wrapText: true,
+      vertical: "center",
+      horizontal: "center",
+    },
+  });
+  let cabTitle2 = wb.createStyle({
+    wrapText: true,
+    font: {
+      // color: "#FFE699",
+      bold: true,
+    },
+    fill: {
+      type: "pattern",
+      patternType: "solid",
+      fgColor: "#FFE699",
+    },
+    alignment: {
+      wrapText: true,
+      // vertical: "center",
+      horizontal: "center",
+    },
+  });
+  let cabDetalle = wb.createStyle({
+    fill: {
+      type: "pattern",
+      patternType: "solid",
+      fgColor: "#FFF2CC",
+    },
+    alignment: {
+      vertical: "center",
+      horizontal: "center",
+    },
+  });
+  console.log(req.query);
+  await pool.query(
+    "SELECT * FROM function_consolidado($1)",
+    [req.query.id_mastercontrol],
+    (err, response, fields) => {
+      if (!err) {
+        let views = [
+          {
+            state: "frozen",
+            xSplit: 4,
+            ySplit: 0,
+          },
+        ];
+        let rows = response.rows;
+        console.log(rows);
+        var wt = wb.addWorksheet("RESUMEN IMPORTADOR", {
+          views: [{ state: "frozen", xSplit: 4, ySplit: 1 }],
+        });
+
+        wt.cell(1, 10)
+          .number(0.17)
+          .style({
+            numberFormat: "0.00%", // Establecer el formato de porcentaje
+            font: {
+              bold: true,
+            },
+          });
+        wt.cell(1, 11)
+          .number(0.4)
+          .style({
+            numberFormat: "0.00%", // Establecer el formato de porcentaje
+            font: {
+              bold: true,
+            },
+          });
+        wt.cell(1, 12)
+          .number(0.4)
+          .style({
+            numberFormat: "0.00%", // Establecer el formato de porcentaje
+            font: {
+              bold: true,
+            },
+          });
+        // ---------------------------------
+        wt.cell(2, 8)
+          .string("Totales")
+          .style({
+            font: {
+              bold: true,
+            },
+          });
+        wt.cell(2, 9)
+          .formula(`=SUM(I3:I${rows.length + 4})`)
+          .style({
+            font: {
+              bold: true,
+            },
+          });
+        wt.cell(2, 10)
+          .formula(`=SUM(J3:J${rows.length + 4})`)
+          .style({
+            font: {
+              bold: true,
+            },
+          });
+        wt.cell(2, 11)
+          .formula(`=SUM(K3:K${rows.length + 4})`)
+          .style({
+            font: {
+              bold: true,
+            },
+          });
+        wt.cell(2, 12)
+          .formula(`=SUM(L3:L${rows.length + 4})`)
+          .style({
+            font: {
+              bold: true,
+            },
+          });
+        // ---------------------------------
+
+        wt.cell(3, 1).string("#").style(cabTitle);
+        wt.cell(3, 2).string("NOMBRE DEL CLIENTE").style(cabTitle2);
+        wt.cell(3, 3).string("DOCUMENTO").style(cabTitle);
+        wt.cell(3, 4).string("TIPO DE CLIENTE (SENIOR/JUNIOR)").style(cabTitle);
+        wt.cell(3, 5).string("DEPARTAMENTO").style(cabTitle);
+        wt.cell(3, 6).string("DIRECCION DE ENTREGA").style(cabTitle);
+        wt.cell(3, 7).string("NOMBRE PARA FACTURAR").style(cabTitle);
+        wt.cell(3, 8).string("CANTIDAD SOLICITADA").style(cabTitle);
+        wt.cell(3, 9).string("MONTO TOTAL").style(cabTitle);
+        wt.cell(3, 10).string("PAGO 1").style(cabTitle);
+        wt.cell(3, 11).string("PAGO 2").style(cabTitle);
+        wt.cell(3, 12).string("PAGO 3").style(cabTitle);
+        wt.cell(3, 13).string("PAGO 4").style(cabTitle);
+        wt.cell(3, 14).string("PAGO 5").style(cabTitle);
+        wt.cell(3, 15).string("TOTAL PAGO (FORMULA)").style(cabTitle);
+        wt.cell(3, 16).string("% PAGADO (FORMULA)").style(cabTitle);
+        wt.cell(3, 17).string("ESTADO (FORMULA)").style(cabTitle);
+
+        wt.column(1).setWidth(5);
+        wt.column(2).setWidth(30);
+        wt.column(3).setWidth(15);
+        wt.column(4).setWidth(18);
+        wt.column(5).setWidth(18);
+        wt.column(6).setWidth(15);
+        wt.column(7).setWidth(15);
+        wt.column(8).setWidth(15);
+        wt.column(9).setWidth(15);
+        wt.column(10).setWidth(15);
+        wt.column(11).setWidth(15);
+        wt.column(12).setWidth(15);
+        wt.column(13).setWidth(0);
+        wt.column(14).setWidth(0);
+        wt.column(15).setWidth(15);
+        wt.column(16).setWidth(15);
+        wt.column(17).setWidth(15);
+        // ------------------
+
+        // ------------------
+
+        let fila = 4;
+        rows.forEach((element, index) => {
+          wt.cell(fila, 1)
+            .number(index + 1)
+            .style(cabDetalle);
+          wt.cell(fila, 2).string(element.namelong).style(cabDetalle);
+          wt.cell(fila, 3).string(element.document).style(cabDetalle);
+          wt.cell(fila, 4).string("").style(cabDetalle);
+          wt.cell(fila, 8).number(
+            element.cantidad ? parseInt(element.cantidad) : 0
+          );
+          wt.cell(fila, 9).number(
+            element.total ? parseFloat(element.total) : parseFloat("0")
+          );
+          wt.cell(fila, 10).formula(`=J1*I${fila}`);
+          wt.cell(fila, 11).formula(`=K1*I${fila}`);
+          wt.cell(fila, 12).formula(`=L1*I${fila}`);
+
+          fila++;
+        });
+        // console.log(rows);
+        let pathexcel = path.join(
+          `${__dirname}../../../uploads`,
+          "Reportexls.xlsx"
+        );
+        wb.write(pathexcel, function (err, stats) {
+          if (err) {
+            console.log(err);
+          } else {
+            res.download(pathexcel);
+          }
+        });
+      }
+    }
+  );
+};
