@@ -597,14 +597,17 @@ export const cargaMasivaControlDeGasto = async (
 ) => {
   const dataObj = req.body;
   let detalle = dataObj.detalle;
-
+  
   await pool.query(
-    "select * from function_carga_masiva_controlgasto($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)",
+    "select * from function_carga_masiva_controlgasto($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)",
     [
+      dataObj.nuevo,
       dataObj.id_operador,
       dataObj.id_branch,
       dataObj.id_master ? dataObj.id_master : null,
       dataObj.nombrecampania,
+      dataObj.nro_cuotas,
+      JSON.stringify(dataObj.cuotas),
       detalle.map((data) => {
         return data.telefono;
       }),

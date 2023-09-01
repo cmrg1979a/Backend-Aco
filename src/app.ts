@@ -5,6 +5,7 @@ import path from "path";
 import multer from "multer";
 import bodyParser from "body-parser";
 import * as pg from "pg";
+require('dotenv').config();
 const { Pool } = pg;
 /**PROUCCIÓN */
 // const pool = new Pool({
