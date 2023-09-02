@@ -2045,9 +2045,9 @@ export const ExportarConsolidadoCargaMasiva = async (
       horizontal: "center",
     },
   });
-  console.log(req.query);
+
   await pool.query(
-    "SELECT * FROM function_consolidado($1)",
+    "SELECT * FROM function_consolidado_cargamasiva($1)",
     [req.query.id_mastercontrol],
     (err, response, fields) => {
       if (!err) {
@@ -2059,35 +2059,24 @@ export const ExportarConsolidadoCargaMasiva = async (
           },
         ];
         let rows = response.rows;
-        console.log(rows);
+        let nro_cuotas = rows[0].nro_cuotas;
+        let cuotas = rows[0].cuotas;
+
         var wt = wb.addWorksheet("RESUMEN IMPORTADOR", {
           views: [{ state: "frozen", xSplit: 4, ySplit: 1 }],
         });
+        for (let index = 0; index < nro_cuotas; index++) {
+          wt.cell(1, 10 + index)
+            .number(cuotas[index].porcentaje / 100)
+            .style({
+              numberFormat: "0.00%", // Establecer el formato de porcentaje
+              font: {
+                bold: true,
+              },
+            });
+        }
+        
 
-        wt.cell(1, 10)
-          .number(0.17)
-          .style({
-            numberFormat: "0.00%", // Establecer el formato de porcentaje
-            font: {
-              bold: true,
-            },
-          });
-        wt.cell(1, 11)
-          .number(0.4)
-          .style({
-            numberFormat: "0.00%", // Establecer el formato de porcentaje
-            font: {
-              bold: true,
-            },
-          });
-        wt.cell(1, 12)
-          .number(0.4)
-          .style({
-            numberFormat: "0.00%", // Establecer el formato de porcentaje
-            font: {
-              bold: true,
-            },
-          });
         // ---------------------------------
         wt.cell(2, 8)
           .string("Totales")
@@ -2103,29 +2092,21 @@ export const ExportarConsolidadoCargaMasiva = async (
               bold: true,
             },
           });
-        wt.cell(2, 10)
-          .formula(`=SUM(J3:J${rows.length + 4})`)
-          .style({
-            font: {
-              bold: true,
-            },
-          });
-        wt.cell(2, 11)
-          .formula(`=SUM(K3:K${rows.length + 4})`)
-          .style({
-            font: {
-              bold: true,
-            },
-          });
-        wt.cell(2, 12)
-          .formula(`=SUM(L3:L${rows.length + 4})`)
-          .style({
-            font: {
-              bold: true,
-            },
-          });
+        for (let index = 0; index < nro_cuotas; index++) {
+          let col = getColumnLetter(10 + index);
+
+          wt.cell(2, 10 + index)
+            .formula(`=SUM(${col}3:${col}${rows.length + 4})`)
+            .style({
+              font: {
+                bold: true,
+              },
+            });
+        }
+
         // ---------------------------------
 
+        let i = 1;
         wt.cell(3, 1).string("#").style(cabTitle);
         wt.cell(3, 2).string("NOMBRE DEL CLIENTE").style(cabTitle2);
         wt.cell(3, 3).string("DOCUMENTO").style(cabTitle);
@@ -2135,14 +2116,21 @@ export const ExportarConsolidadoCargaMasiva = async (
         wt.cell(3, 7).string("NOMBRE PARA FACTURAR").style(cabTitle);
         wt.cell(3, 8).string("CANTIDAD SOLICITADA").style(cabTitle);
         wt.cell(3, 9).string("MONTO TOTAL").style(cabTitle);
-        wt.cell(3, 10).string("PAGO 1").style(cabTitle);
-        wt.cell(3, 11).string("PAGO 2").style(cabTitle);
-        wt.cell(3, 12).string("PAGO 3").style(cabTitle);
-        wt.cell(3, 13).string("PAGO 4").style(cabTitle);
-        wt.cell(3, 14).string("PAGO 5").style(cabTitle);
-        wt.cell(3, 15).string("TOTAL PAGO (FORMULA)").style(cabTitle);
-        wt.cell(3, 16).string("% PAGADO (FORMULA)").style(cabTitle);
-        wt.cell(3, 17).string("ESTADO (FORMULA)").style(cabTitle);
+        for (let index = 0; index < nro_cuotas; index++) {
+          wt.cell(3, 10 + index)
+            .string(`PAGO ${index + 1}`)
+            .style(cabTitle);
+          i++;
+        }
+        wt.cell(3, 9 + i)
+          .string("TOTAL PAGO (FORMULA)")
+          .style(cabTitle);
+        wt.cell(3, 10 + i)
+          .string("% PAGADO (FORMULA)")
+          .style(cabTitle);
+        wt.cell(3, 11 + i)
+          .string("ESTADO (FORMULA)")
+          .style(cabTitle);
 
         wt.column(1).setWidth(5);
         wt.column(2).setWidth(30);
@@ -2153,14 +2141,13 @@ export const ExportarConsolidadoCargaMasiva = async (
         wt.column(7).setWidth(15);
         wt.column(8).setWidth(15);
         wt.column(9).setWidth(15);
-        wt.column(10).setWidth(15);
-        wt.column(11).setWidth(15);
-        wt.column(12).setWidth(15);
-        wt.column(13).setWidth(0);
-        wt.column(14).setWidth(0);
-        wt.column(15).setWidth(15);
-        wt.column(16).setWidth(15);
-        wt.column(17).setWidth(15);
+        for (let index = 0; index < nro_cuotas; index++) {
+          wt.column(10 + index).setWidth(15);
+        }
+        wt.column(9 + i).setWidth(15);
+        wt.column(10 + i).setWidth(15);
+        wt.column(11 + i).setWidth(15);
+
         // ------------------
 
         // ------------------
@@ -2179,9 +2166,12 @@ export const ExportarConsolidadoCargaMasiva = async (
           wt.cell(fila, 9).number(
             element.total ? parseFloat(element.total) : parseFloat("0")
           );
-          wt.cell(fila, 10).formula(`=J1*I${fila}`);
-          wt.cell(fila, 11).formula(`=K1*I${fila}`);
-          wt.cell(fila, 12).formula(`=L1*I${fila}`);
+          for (let index = 0; index < nro_cuotas; index++) {
+            let col = getColumnLetter(10 + index);
+            wt.cell(fila, 10 + index).formula(`=${col}1*I${fila}`);
+          }
+          // wt.cell(fila, 11).formula(`=K1*I${fila}`);
+          // wt.cell(fila, 12).formula(`=L1*I${fila}`);
 
           fila++;
         });
@@ -2201,3 +2191,19 @@ export const ExportarConsolidadoCargaMasiva = async (
     }
   );
 };
+
+function getColumnLetter(columnNumber) {
+  const A_CODE = 65; // El código ASCII de la letra 'A'
+  const ALPHABET_LENGTH = 26; // El número de letras en el alfabeto
+
+  let dividend = columnNumber;
+  let columnName = "";
+
+  while (dividend > 0) {
+    const modulo = (dividend - 1) % ALPHABET_LENGTH;
+    columnName = String.fromCharCode(A_CODE + modulo) + columnName;
+    dividend = Math.floor((dividend - modulo) / ALPHABET_LENGTH);
+  }
+
+  return columnName;
+}
