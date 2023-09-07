@@ -243,9 +243,22 @@ export const getQuoteStatus = async (req: Request, res: Response) => {
 };
 
 export const getQuoteList = async (req: Request, res: Response) => {
+  let filtro = req.query;
+
   await pool.query(
-    "select * from TABLE_QUOTE_list($1,null,null,null)",
-    [req.body.id_branch],
+    "select * from TABLE_QUOTE_list($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
+    [
+      filtro.id_branch ? filtro.id_branch : null,
+      filtro.id_marketing ? filtro.id_marketing : null,
+      filtro.id_status ? filtro.id_status : null,
+      filtro.id_entities ? filtro.id_entities : null,
+      filtro.id_modality ? filtro.id_modality : null,
+      filtro.id_shipment ? filtro.id_shipment : null,
+      filtro.id_incoterm ? filtro.id_incoterm : null,
+      filtro.fechainicio ? filtro.fechainicio : null,
+      filtro.fechafin ? filtro.fechafin : null,
+      filtro.estado ? filtro.estado : null,
+    ],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -253,6 +266,7 @@ export const getQuoteList = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
+            estadoflag: rows[0].estadoflag,
             data: rows,
           });
         } else {
@@ -260,6 +274,7 @@ export const getQuoteList = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             mensaje: rows[0].mensaje,
+            estadoflag: rows[0].estadoflag,
           });
         }
       } else {
@@ -352,7 +367,6 @@ export const putQuote = async (req: Request, res: Response) => {
   let orden_i = impuestos.map((item: any) => {
     return item.orden ? item.orden : null;
   });
-  console.log(costocotizacion);
 
   // ---------------------
   let id_proveedor_cc = costocotizacion.map((item: any) => {
@@ -459,7 +473,7 @@ export const putQuote = async (req: Request, res: Response) => {
   });
 
   let pid = dataObj.id_quote;
-
+  let statusquote = dataObj.statusquote;
   await pool.query(
     "SELECT * FROM table_quote_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53,$54,$55,$56,$57,$58,$59,$60,$61,$62,$63,$64,$65,$66,$67,$68,$69,$70)",
     [
@@ -475,7 +489,7 @@ export const putQuote = async (req: Request, res: Response) => {
       dataObj.volumen ? dataObj.volumen : null,
       dataObj.quote ? dataObj.quote : null,
       dataObj.monto ? dataObj.monto : null,
-      dataObj.statusquote ? dataObj.statusquote : null,
+      statusquote ? statusquote : null,
       1,
       dataObj.idVendedor ? dataObj.idVendedor : null,
       dataObj.descripcionMercancia ? dataObj.descripcionMercancia : null,

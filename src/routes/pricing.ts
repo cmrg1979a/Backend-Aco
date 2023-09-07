@@ -40,7 +40,7 @@ import {
 
 router.post("/setQuote", TokenValidation, setQuote);
 router.post("/getQuoteStatus", TokenValidation, getQuoteStatus);
-router.post("/getQuoteList", TokenValidation, corsMiddleware, getQuoteList);
+router.get("/getQuoteList", TokenValidation, corsMiddleware, getQuoteList);
 router.get("/getQuoteId", TokenValidation, getQuoteId);
 router.post("/delQuote", TokenValidation, delQuote);
 router.post("/putQuote/:id_quote", TokenValidation, putQuote);

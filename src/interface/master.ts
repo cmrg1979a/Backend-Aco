@@ -32,6 +32,8 @@ export interface postMaster {
   monto: bigint;
   statuslock: Number;
   statuslockadm: Number;
-
+  grupalflag?: Boolean;
   status: Number;
+  nro_cuotas: Number;
+  cuotas: any;
 }
