@@ -7,7 +7,6 @@ const pool = conexion();
 import { postHouse } from "../interface/house";
 import { postHouseEdit } from "../interface/house";
 
-
 export const setHouse = async (req: Request, res: Response) => {
   const dataObj: postHouse = req.body;
 
@@ -235,7 +234,7 @@ export const setHouseEdit = async (req: Request, res: Response) => {
   const id = req.params.id;
 
   await pool.query(
-    "UPDATE Table_HouseControl SET id_agent=$1, id_consigner=$2, id_notify=$3, id_aerolinea=$4, id_coloader=$5, id_naviera=$6, id_incoterms=$7, nro_hbl=$8,id_motonave=$9, nro_viaje=$10, bultos=$11, peso=$12, volumen=$13, id_conditions=$14, id_moneda=$15, monto=$16, status=$17, id_branch=$18 WHERE id = $19",
+    "UPDATE Table_HouseControl SET id_agent=$1, id_consigner=$2, id_notify=$3, id_aerolinea=$4, id_coloader=$5, id_naviera=$6, id_incoterms=$7, nro_hbl=$8,id_motonave=$9, nro_viaje=$10, bultos=$11, peso=$12, volumen=$13, id_conditions=$14, id_moneda=$15, monto=$16, status=$17, id_branch=$18 ,id_cot = $19 WHERE id = $20",
     [
       dataObj.id_agent,
       dataObj.id_consigner,
@@ -255,6 +254,7 @@ export const setHouseEdit = async (req: Request, res: Response) => {
       dataObj.monto,
       dataObj.status,
       dataObj.id_branch,
+      dataObj.id_cot,
       id,
     ],
     (err, rows, fields) => {

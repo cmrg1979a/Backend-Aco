@@ -30,11 +30,8 @@ import {
   getMarketingList,
   getQuoteCalls,
   updateQuoteRecibidoEnviado,
-  cargarMasterDetalleRecibido,
-  cargarMasterDetalleEnviado,
   ActualizarFolderOneDrive,
   getListCalls,
-  cargarMasterDetalleNotasCotizacion,
   cargarMasterDetalleImpuestos,
 } from "../controllers/pricing.controller";
 
@@ -57,21 +54,7 @@ router.post("/deletePath/:id", TokenValidation, deletePath);
 router.post("/getInstructivoId/:id_quote", TokenValidation, getInstructivoId);
 // router.post("/putInstructivo/:id_quote", TokenValidation, putInstructivo);
 router.post("/getMarketingList", TokenValidation, getMarketingList);
-router.post(
-  "/cargar_master_detalle_recibido",
-  TokenValidation,
-  cargarMasterDetalleRecibido
-);
-router.post(
-  "/cargar_master_detalle_enviado",
-  TokenValidation,
-  cargarMasterDetalleEnviado
-);
-router.post(
-  "/cargar_master_detalle_notas_cotizacion",
-  TokenValidation,
-  cargarMasterDetalleNotasCotizacion
-);
+
 router.post(
   "/cargar_master_detalle_impuesto",
   TokenValidation,

@@ -9,11 +9,11 @@ const { Pool } = pg;
 const pool = conexion();
 
 export const setMaster = async (req: Request, res: Response) => {
-  const dataObj: postMaster = req.body;
+  const dataObj = req.body;
   console.log(dataObj);
 
   await pool.query(
-    "SELECT * FROM Table_MasterControl_insertars($1,$2, $3,$4, $5,$6, $7,$8, $9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34)",
+    "SELECT * FROM table_mastercontrol_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39)",
     [
       dataObj.nro_master,
       dataObj.code_master,
@@ -49,6 +49,11 @@ export const setMaster = async (req: Request, res: Response) => {
       dataObj.grupalflag ? dataObj.grupalflag : false,
       dataObj.nro_cuotas ? dataObj.nro_cuotas : null,
       dataObj.cuotas ? JSON.stringify(dataObj.cuotas) : null,
+      dataObj.fecha_libre_almacenaje ? dataObj.fecha_libre_almacenaje : null,
+      dataObj.almacen_recepcion ? dataObj.almacen_recepcion : null,
+      dataObj.dias_sobreestadia ? dataObj.dias_sobreestadia : null,
+      dataObj.id_canal ? dataObj.id_canal : null,
+      dataObj.nro_manifiesto ? dataObj.nro_manifiesto : null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -74,45 +79,53 @@ export const setMaster = async (req: Request, res: Response) => {
 };
 
 export const editMaster = async (req: Request, res: Response) => {
-  const dataObj: postMaster = req.body;
+  const dataObj = req.body;
   const id = req.params.id;
   await pool.query(
-    "UPDATE Table_MasterControl SET id_branch=$1,nro_master=$2,code_master=$3,id_cot=$4,id_modality=$5,id_shipment=$6,id_incoterms=$7,id_port_begin=$8,id_port_end=$9,id_operador=$10,fecha_etd=$11,fecha_eta=$12,fecha_disponibilidad=$13,ganancia_pricing=$14,ganancia_operaciones=$15,id_agent=$16,id_consigner=$17,id_notify=$18,id_aerolinea=$19,id_coloader=$20,id_naviera=$21,nro_mbl=$22,id_motonave=$23,nro_viaje=$24,bultos=$25,peso=$26,volumen=$27,id_conditions=$28,id_moneda=$29,monto=$30,statuslock=coalesce($31,statuslock),statuslockadm=coalesce($32,statuslockadm),status=$33 WHERE id = $34",
+    "SELECT * FROM function_mastercontrol_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42)",
     [
-      dataObj.id_branch,
-      dataObj.nro_master,
-      dataObj.code_master,
-      dataObj.id_cot,
-      dataObj.id_modality,
-      dataObj.id_shipment,
-      dataObj.id_incoterms,
-      dataObj.id_port_begin,
-      dataObj.id_port_end,
-      dataObj.id_operador,
-      dataObj.fecha_etd,
-      dataObj.fecha_eta,
-      dataObj.fecha_disponibilidad,
-      dataObj.ganancia_pricing,
-      dataObj.ganancia_operaciones,
-      dataObj.id_agent,
-      dataObj.id_consigner,
-      dataObj.id_notify,
-      dataObj.id_aerolinea,
-      dataObj.id_coloader,
-      dataObj.id_naviera,
-      dataObj.nro_mbl,
-      dataObj.id_motonave,
-      dataObj.nro_viaje,
-      dataObj.bultos,
-      dataObj.peso,
-      dataObj.volumen,
-      dataObj.id_conditions,
-      dataObj.id_moneda,
-      dataObj.monto,
-      dataObj.statuslock,
-      dataObj.statuslockadm,
-      dataObj.status,
       id,
+      dataObj.id_branch ? dataObj.id_branch : null,
+      dataObj.nro_master ? dataObj.nro_master : null,
+      dataObj.code_master ? dataObj.code_master : null,
+      dataObj.id_cot ? dataObj.id_cot : null,
+      dataObj.id_modality ? dataObj.id_modality : null,
+      dataObj.id_shipment ? dataObj.id_shipment : null,
+      dataObj.id_incoterms ? dataObj.id_incoterms : null,
+      dataObj.id_port_begin ? dataObj.id_port_begin : null,
+      dataObj.id_port_end ? dataObj.id_port_end : null,
+      dataObj.id_operador ? dataObj.id_operador : null,
+      dataObj.fecha_etd ? dataObj.fecha_etd : null,
+      dataObj.fecha_eta ? dataObj.fecha_eta : null,
+      dataObj.fecha_disponibilidad ? dataObj.fecha_disponibilidad : null,
+      dataObj.ganancia_pricing ? dataObj.ganancia_pricing : null,
+      dataObj.ganancia_operaciones ? dataObj.ganancia_operaciones : null,
+      dataObj.id_agent ? dataObj.id_agent : null,
+      dataObj.id_consigner ? dataObj.id_consigner : null,
+      dataObj.id_notify ? dataObj.id_notify : null,
+      dataObj.id_aerolinea ? dataObj.id_aerolinea : null,
+      dataObj.id_coloader ? dataObj.id_coloader : null,
+      dataObj.id_naviera ? dataObj.id_naviera : null,
+      dataObj.nro_mbl ? dataObj.nro_mbl : null,
+      dataObj.id_motonave ? dataObj.id_motonave : null,
+      dataObj.nro_viaje ? dataObj.nro_viaje : null,
+      dataObj.bultos ? dataObj.bultos : null,
+      dataObj.peso ? dataObj.peso : null,
+      dataObj.volumen ? dataObj.volumen : null,
+      dataObj.id_conditions ? dataObj.id_conditions : null,
+      dataObj.id_moneda ? dataObj.id_moneda : null,
+      dataObj.monto ? dataObj.monto : null,
+      dataObj.statuslock ? dataObj.statuslock : null,
+      dataObj.statuslockadm ? dataObj.statuslockadm : null,
+      dataObj.status ? dataObj.status : null,
+      dataObj.grupalflag ? dataObj.grupalflag : false,
+      dataObj.nro_cuotas ? dataObj.nro_cuotas : null,
+      dataObj.cuotas ? JSON.stringify(dataObj.cuotas) : null,
+      dataObj.fecha_libre_almacenaje ? dataObj.fecha_libre_almacenaje : null,
+      dataObj.almacen_recepcion ? dataObj.almacen_recepcion : null,
+      dataObj.dias_sobreestadia ? dataObj.dias_sobreestadia : null,
+      dataObj.id_canal ? dataObj.id_canal : null,
+      dataObj.nro_manifiesto ? dataObj.nro_manifiesto : null,
     ],
     (err, rows, fields) => {
       if (!err) {
@@ -292,6 +305,40 @@ export const updateFolderOneDrive = async (req: Request, res: Response) => {
         } else {
           res.json({
             status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const insertComentarioMaster = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM function_comentariomaster_insert($1,$2,$3,$4);",
+    [
+      req.body.id_entitie,
+      req.body.id_master,
+      req.body.fecha,
+      req.body.comentario,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estadoflag: rows[0].estadoflag,
+            mensaje: rows[0].mensaje,
+          });
+        } else {
+          res.json({
+            status: 200,
+            estadoflag: rows[0].estadoflag,
             statusBol: true,
             mensaje: rows[0].mensaje,
           });
