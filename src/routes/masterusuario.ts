@@ -7,6 +7,7 @@ import {
   cargarMasterDetalleEnviado,
   cargarMasterDetalleNotasCotizacion,
   cargarMasterDetalleRecibido,
+  cargarMasterDetalleTipoProveedor,
 } from "../controllers/masterusuario.controller";
 const corsOptions = {
   origin: "*",
@@ -33,6 +34,12 @@ router.post(
   "/cargar_master_detalle_canal",
   TokenValidation,
   cargarMasterDetalleCanal
+);
+router.post(
+  "/cargar_master_detalle_tipo_proveedor",
+  TokenValidation,
+  cargarMasterDetalleTipoProveedor
+
 );
 
 export default router;
