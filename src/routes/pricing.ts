@@ -33,6 +33,8 @@ import {
   ActualizarFolderOneDrive,
   getListCalls,
   cargarMasterDetalleImpuestos,
+  quoteCargarNoAsignadosHouse,
+  quoteDataHouse,
 } from "../controllers/pricing.controller";
 
 router.post("/setQuote", TokenValidation, setQuote);
@@ -71,5 +73,11 @@ router.put(
   ActualizarFolderOneDrive
 );
 router.post("/listado_llamadas", TokenValidation, getListCalls);
+router.get(
+  "/quote_cargar_noasignadoshouse",
+  TokenValidation,
+  quoteCargarNoAsignadosHouse
+);
+router.get("/quote_data_house", TokenValidation, quoteDataHouse);
 
 export default router;
