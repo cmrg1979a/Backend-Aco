@@ -7,7 +7,6 @@ const pool = conexion();
 import { postHouse } from "../interface/house";
 import { postHouseEdit } from "../interface/house";
 
-
 export const setHouse = async (req: Request, res: Response) => {
   const dataObj: postHouse = req.body;
 
@@ -231,39 +230,65 @@ export const getHouseContainers = async (req: Request, res: Response) => {
 };
 
 export const setHouseEdit = async (req: Request, res: Response) => {
-  const dataObj: postHouseEdit = req.body;
+  const dataObj = req.body;
   const id = req.params.id;
+  
 
   await pool.query(
-    "UPDATE Table_HouseControl SET id_agent=$1, id_consigner=$2, id_notify=$3, id_aerolinea=$4, id_coloader=$5, id_naviera=$6, id_incoterms=$7, nro_hbl=$8,id_motonave=$9, nro_viaje=$10, bultos=$11, peso=$12, volumen=$13, id_conditions=$14, id_moneda=$15, monto=$16, status=$17, id_branch=$18 WHERE id = $19",
+    "select function_housecontrol_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26)",
     [
-      dataObj.id_agent,
-      dataObj.id_consigner,
-      dataObj.id_notify,
-      dataObj.id_aerolinea,
-      dataObj.id_coloader,
-      dataObj.id_naviera,
-      dataObj.id_incoterms,
-      dataObj.nro_hbl,
-      dataObj.id_motonave,
-      dataObj.nro_viaje,
-      dataObj.bultos,
-      dataObj.peso,
-      dataObj.volumen,
-      dataObj.id_conditions,
-      dataObj.id_moneda,
-      dataObj.monto,
-      dataObj.status,
-      dataObj.id_branch,
-      id,
+      dataObj.id,
+      dataObj.id_cot ? dataObj.id_cot : null,
+      dataObj.id_agent ? dataObj.id_agent : null,
+      dataObj.id_consigner ? dataObj.id_consigner : null,
+      dataObj.id_notify ? dataObj.id_notify : null,
+      dataObj.id_aerolinea ? dataObj.id_aerolinea : null,
+      dataObj.id_coloader ? dataObj.id_coloader : null,
+      dataObj.id_naviera ? dataObj.id_naviera : null,
+      dataObj.id_incoterms ? dataObj.id_incoterms : null,
+      dataObj.nro_hbl ? dataObj.nro_hbl : null,
+      dataObj.id_motonave ? dataObj.id_motonave : null,
+      dataObj.nro_viaje ? dataObj.nro_viaje : null,
+      dataObj.bultos ? dataObj.bultos : null,
+      dataObj.peso ? dataObj.peso : null,
+      dataObj.volumen ? dataObj.volumen : null,
+      dataObj.id_conditions ? dataObj.id_conditions : null,
+      dataObj.id_moneda ? dataObj.id_moneda : null,
+      dataObj.monto ? dataObj.monto : null,
+      dataObj.id_modality ? dataObj.id_modality : null,
+      dataObj.id_shipment ? dataObj.id_shipment : null,
+      dataObj.id_consigner_real ? dataObj.id_consigner_real : null,
+      dataObj.id_port_begin ? dataObj.id_port_begin : null,
+      dataObj.id_port_end ? dataObj.id_port_end : null,
+      dataObj.lstservices.map((item: any) => {
+        return item.id ? item.id : null;
+      }),
+      dataObj.lstservices.map((item: any) => {
+        return item.nameservice ? item.nameservice : null;
+      }),
+      dataObj.lstservices.map((item: any) => {
+        return item.status ? item.status : null;
+      }),
     ],
-    (err, rows, fields) => {
+    (err, response, fields) => {
       if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estadoflag: rows[0].estadoflag,
+            mensaje: rows[0].mensaje,
+          });
+        } else {
+          res.json({
+            status: 200,
+            estadoflag: rows[0].estadoflag,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
       } else {
         console.log(err);
       }

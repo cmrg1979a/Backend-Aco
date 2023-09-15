@@ -1475,11 +1475,18 @@ function generarDetallePerdida(detallePerdida) {
 }
 
 export const flujoDineroPorMes = async (req: Request, res: Response) => {
-  let { id_branch, cantidadmes } = req.query;
+  let { id_branch, cantidadmes, id_proveedor, id_cliente, nro_expediente } =
+    req.query;
 
   await pool.query(
-    "select * from function_flujocaja($1,$2)",
-    [id_branch, cantidadmes],
+    "select * from function_flujocaja($1,$2,$3,$4,$5)",
+    [
+      id_branch ? id_branch : null,
+      cantidadmes ? cantidadmes : null,
+      id_proveedor ? id_proveedor : null,
+      id_cliente ? id_cliente : null,
+      nro_expediente ? nro_expediente : null,
+    ],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;

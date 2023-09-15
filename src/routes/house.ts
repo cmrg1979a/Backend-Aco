@@ -22,7 +22,7 @@ router.post("/getHouseListId", TokenValidation, getHouseListId);
 router.post("/getHouseServices", TokenValidation, getHouseServices);
 router.post("/getHouseBitacora", TokenValidation, getHouseBitacora);
 router.post("/getHouseContainers", TokenValidation, getHouseContainers);
-router.post("/setHouseEdit/:id", TokenValidation, setHouseEdit);
+router.put("/setHouseEdit", TokenValidation, setHouseEdit);
 router.put("/setHouseDelete/:id", TokenValidation, setHouseDelete);
 
 export default router;

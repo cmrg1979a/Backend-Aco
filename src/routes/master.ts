@@ -13,6 +13,7 @@ import {
   nullMaster,
   getCargarHouse,
   updateFolderOneDrive,
+  insertComentarioMaster,
 } from "../controllers/master.controller";
 
 router.post("/setMaster", TokenValidation, setMaster);
@@ -24,5 +25,10 @@ router.post("/lockMasterAdm/:id", TokenValidation, lockMasterAdm);
 router.post("/nullMaster/:id", TokenValidation, nullMaster);
 router.get("/cargar_house", TokenValidation, getCargarHouse);
 router.put("/update_folder_onedrive", TokenValidation, updateFolderOneDrive);
+router.post(
+  "/insert_comentario_master",
+  TokenValidation,
+  insertComentarioMaster
+);
 
 export default router;
