@@ -21,6 +21,7 @@ CREATE SEQUENCE empresa_code_seq;
 -- LIST | FILTER
 drop function if exists function_list_enterprise;
 CREATE OR REPLACE FUNCTION function_list_enterprise(
+    p_search_branch INTEGER,
     p_search_document BIGINT,
     p_search_trade_name VARCHAR,
     p_search_business_name VARCHAR,
@@ -74,7 +75,7 @@ BEGIN
             INNER JOIN loc_town lt ON lt.id = te.id_town
             INNER JOIN table_documents td ON td.id = te.id_document
         WHERE
-            (te.status = 1) AND
+            (te.status = 1) AND (te.id_branch = p_search_branch) AND
             (p_search_document IS NULL OR te.document = p_search_document) AND
             (p_search_trade_name IS NULL OR te.trade_name = p_search_trade_name) AND
             (p_search_business_name IS NULL OR te.business_name = p_search_business_name) AND
