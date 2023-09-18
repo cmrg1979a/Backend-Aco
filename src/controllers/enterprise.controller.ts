@@ -169,3 +169,27 @@ export const deleteEnterprise = async (req: Request, res: Response) => {
       return res.status(500).json({ error: 'Error interno del servidor.' });    
   }
 }
+
+export const validateDocumentEnterprise = async (req: Request, res: Response) => {
+  console.log("Desde el back...");
+
+  const result = await pool.query("SELECT *from function_validates_type_document_and_document_in_enterprise($1,$2);", [
+    req.query.id_document,
+    req.query.document,
+  ]);
+
+  const { rows } = result;
+
+  try {
+      if (rows.length > 0) {
+        console.log(rows);
+          const { status, message } = rows[0];
+          return res.status(200).json({ status, message });
+      } else {
+          return res.status(404).json({ error: 'No se respuesta.' });
+      }
+  } catch (error) {
+      console.error('Error al listar las regiones:', error);
+      return res.status(500).json({ error: 'Error interno del servidor.' });    
+  }
+}

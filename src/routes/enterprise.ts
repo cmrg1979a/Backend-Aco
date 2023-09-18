@@ -9,6 +9,7 @@ import {
   readEnterprise,
   deleteEnterprise,
   updateEnterprise,
+  validateDocumentEnterprise,
 } from "../controllers/enterprise.controller";
 
 router.post("/getBranch/:id_branch", TokenValidation, getBracnh);
@@ -17,6 +18,7 @@ router.post("/insertEnterprise/", insertEnterprise);
 router.get("/readEnterprise/", readEnterprise);
 router.put("/deleteEnterprise/", deleteEnterprise);
 router.put("/updateEnterprise/", updateEnterprise);
+router.get("/validateDocumentEnterprise/", validateDocumentEnterprise);
 
 
 export default router;

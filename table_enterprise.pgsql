@@ -330,6 +330,37 @@ $$ LANGUAGE plpgsql;
 
 
 
+-- VALIDATES: TYPE DOCUMENT AND DOCUMENT 
+drop function if exists function_validates_type_document_and_document_in_enterprise;
+CREATE OR REPLACE FUNCTION function_validates_type_document_and_document_in_enterprise(
+    p_id_document INTEGER,
+    p_document BIGINT
+) RETURNS table (status boolean, message text) AS $$
+DECLARE
+v_response varchar;
+BEGIN
+-- DB: FF
+    BEGIN
+        SELECT id INTO v_response FROM table_enterprise WHERE id_document = p_id_document AND document = p_document;
+        
+        IF v_response IS NOT NULL THEN
+            RETURN QUERY SELECT true, 'Ya existe una empresa creada con el mismo número de documento. Ingrese un número de documento diferente';
+        ELSE
+            RETURN QUERY SELECT false, 'El documento no existe en la base de datos';
+        END IF;
+    
+    EXCEPTION
+        WHEN OTHERS THEN
+            RETURN QUERY SELECT false, 'Ocurrió un error en la consulta de la base de datos';
+    END;
+END
+$$ LANGUAGE 'plpgsql' security definer set search_path = public, pg_temp;
+
+
+-- EXAMPLE
+SELECT *FROM function_validates_type_document_and_document_in_enterprise(2, '20602649090')
+
+
 -- EXAMPLE LIST | FILTER
 select *from function_list_enterprise(
     p_search_document := NULL,
