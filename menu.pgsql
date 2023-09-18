@@ -4,14 +4,15 @@
 -- id_entitie : 3711
 -- id_rol: 11
 -- id_group: 1 -> ficheros
+-- select *from table_users
 
-select *from table_modules 
-SELECT *from table_entities
-	where names like '%Aldo%'
-	where names like '%Fanny%'
+-- select *from table_modules 
+-- SELECT *from table_entities
+-- 	where surname like '%perez%'
+-- 	where names like '%Fanny%'
 
-select *from table_menu
-select *from table_role
+-- select *from table_menu
+-- select *from table_role
 
 
 -- FUNCION PARA AGREGAR UN ELEMENTO 
@@ -66,19 +67,6 @@ END
 $$ LANGUAGE plpgsql;
 
 
-select *from function_insert_table_menu(
-	p_id_branch := 1,
-	p_id_group := 1,
-	P_name := 'EMPRESAS',
-	p_icon := 'mdi-code-tags',
-	p_description := 'Menu para fichero de empresas',
-	p_route := 'listEnterprise',
-	p_id_role := 11
-);
-
-
-
-
 drop function if exists function_update_table_menu;
 CREATE OR REPLACE FUNCTION function_update_table_menu(
     p_id INTEGER
@@ -100,17 +88,13 @@ END
 $$ LANGUAGE plpgsql;
 
 
+-- select *from function_update_table_menu(
+-- 	p_id := 39
+-- );
 
-select *from function_update_table_menu(
-	p_id := 39
-);
-
-
-
-
--- INSERTAR EN entitie_menu
-select *from entitie_menu
-select *from table_menu where route = 'listEnterprise'
+-- -- INSERTAR EN entitie_menu
+-- select *from entitie_menu
+-- select *from table_menu where route = 'listEnterprise'
 
 
 drop function if exists function_insert_entitie_menu;
@@ -146,18 +130,10 @@ END
 $$ LANGUAGE plpgsql;
 
 
-
-select *from function_insert_entitie_menu(
-	p_id_entitie := 3711,
-	p_id_menu := 39 
-);
-
-
-
 -- INSERTAR EN modules_menu
 
-select *from MODULES_MENU
-select *from TABLE_MODULES
+-- select *from MODULES_MENU
+-- select *from TABLE_MODULES
 
 drop function if exists function_insert_module_menu;
 CREATE OR REPLACE FUNCTION function_insert_module_menu(
@@ -193,17 +169,41 @@ $$ LANGUAGE plpgsql;
 
 
 
+select *from function_insert_entitie_menu(
+	p_id_entitie := 3711,
+	p_id_menu := 39 
+);
+
+
+select *from function_insert_entitie_menu(
+	p_id_entitie := 3178,
+	p_id_menu := 39 
+);
+
+select *from function_insert_entitie_menu(
+	p_id_entitie := 4,
+	p_id_menu := 39 
+);
+
 select *from function_insert_module_menu(
 	p_id_module := 1,
 	p_id_menu := 39 
 );
 
-
-SELECT * FROM ENTITIE_MENU_cargar(3711, 1,null);
-
+-- SELECT * FROM ENTITIE_MENU_cargar(4, 1,null);
 
 select *from function_insert_entitie_menu(
 	p_id_entitie := 3711,
 	p_id_menu := 39 
 );
 
+
+select *from function_insert_entitie_menu(
+	p_id_entitie := 3178,
+	p_id_menu := 39 
+);
+
+select *from function_insert_entitie_menu(
+	p_id_entitie := 4,
+	p_id_menu := 39 
+);
