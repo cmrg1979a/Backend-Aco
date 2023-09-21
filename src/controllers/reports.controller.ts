@@ -602,6 +602,7 @@ export const test = async (req: Request, res: Response) => {
   );
 };
 
+
 export const getReportFileDetails = async (req: Request, res: Response) => {
   const { dateDesde, dateHasta } = req.body;
   // se a movido la función existe una copia llamada totales_pagados_orders_old revisarla en caso se quiera revetir

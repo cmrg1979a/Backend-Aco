@@ -597,7 +597,7 @@ export const cargaMasivaControlDeGasto = async (
 ) => {
   const dataObj = req.body;
   let detalle = dataObj.detalle;
-  
+
   await pool.query(
     "select * from function_carga_masiva_controlgasto($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)",
     [
@@ -657,6 +657,43 @@ export const obtenerNombreCamapania = async (req: Request, res: Response) => {
   await pool.query(
     " SELECT * FROM function_compania_buscar_nombre($1);",
     [req.query.id_master],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            estadoflag: rows[0].estadoflag,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            estadoflag: rows[0].estadoflag,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const cuotasMasterTipoProveedorInsertarActualizar = async (
+  req: Request,
+  res: Response
+) => {
+  await pool.query(
+    " SELECT * FROM function_table_cuotasmastertipoproveedor($1,$2,$3,$4,$5);",
+    [
+      req.body.id_master,
+      req.body.id_proveedor,
+      req.body.id_correlativo,
+      req.body.nro_cuotas,
+      JSON.stringify(req.body.cuotas),
+    ],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
