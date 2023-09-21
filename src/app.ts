@@ -94,6 +94,8 @@ import balance from "./routes/balance";
 import proyeccion from "./routes/proyeccion";
 import onedrive from "./routes/onedriver";
 import masterusuario from "./routes/masterusuario";
+import marketingRoutes from "./routes/marketing";
+
 // settings
 app.set("port", 9200);
 
@@ -295,4 +297,5 @@ app.use(balance);
 app.use(proyeccion);
 app.use(onedrive);
 app.use(masterusuario);
+app.use(marketingRoutes)
 export default app;
