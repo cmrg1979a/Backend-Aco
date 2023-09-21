@@ -23,6 +23,7 @@ import {
   listarCGECcorralativo,
   cargaMasivaControlDeGasto,
   obtenerNombreCamapania,
+  cuotasMasterTipoProveedorInsertarActualizar,
 } from "../controllers/controlGastos.controller";
 
 router.post("/setControl", TokenValidation, setControl);
@@ -59,6 +60,11 @@ router.post(
   "/carga_masiva_controldegasto",
   TokenValidation,
   cargaMasivaControlDeGasto
+);
+router.post(
+  "/guardar_cuotas_cge_tipo_proveedor",
+  TokenValidation,
+  cuotasMasterTipoProveedorInsertarActualizar
 );
 
 export default router;
