@@ -85,6 +85,7 @@ export const setQuote = async (req: Request, res: Response) => {
   let esventaflag_cc = costocotizacion.map((item: any) => {
     return item.esventaflag;
   });
+
   // ----------------------------- contenedores
   let id_containers_c = contenedores.map((item: any) => {
     return item.id_contenedor;
@@ -116,9 +117,9 @@ export const setQuote = async (req: Request, res: Response) => {
   let statusNoIncluye_nc = notacosto.map((item: any) => {
     return item.esnoincluyeflag ? item.esnoincluyeflag : 0;
   });
-
+  
   await pool.query(
-    "SELECT * FROM table_quote_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53,$54,$55,$56,$57,$58,$59,$60)",
+    "SELECT * FROM table_quote_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53,$54,$55,$56,$57,$58,$59,$60,$61)",
     [
       dataObj.id_marketing ? dataObj.id_marketing : null,
       dataObj.id_entitie ? dataObj.id_entitie : null,
@@ -161,6 +162,9 @@ export const setQuote = async (req: Request, res: Response) => {
       valor_i,
       orden_i,
       // --------------------------
+      costocotizacion.map((item: any) => {
+        return item.code_cost;
+      }),
       id_proveedor_cc,
       id_multiplicador_cc,
       concepto_cc,
