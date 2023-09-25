@@ -6,42 +6,12 @@ const { Pool } = pg;
 
 const pool = conexion();
 
-export const getDocumentsList = async (req: Request, res: Response) => {
-  const { id_pais } = req.body;
-  await pool.query(
-    "SELECT * FROM Pais_Document_documento($1)",
-    [id_pais],
-    (err, response, fields) => {
-      if (!err) {
-        let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
-      } else {
-        console.log(err);
-      }
-    }
-  );
-};
-
-export const getListDocumentsByBranch = async (req: Request, res: Response) => {
+export const getListTypePhone = async (req: Request, res: Response) => {
   let data = req.query;
-  const result = await pool.query("SELECT *from function_list_table_documents($1,$2, $3, $4, $5);", [
+  const result = await pool.query("SELECT *from function_list_table_type_phone($1,$2, $3);", [
+    data.id_branch,
     data.code ? data.code : null,
-    data.name ? data.name : null,
-    data.description ? data.description : null,
-    data.status ? data.status : null,
-    data.id_branch
+    data.name ? data.name : null
   ]);
 
   const { rows } = result;
@@ -57,13 +27,13 @@ export const getListDocumentsByBranch = async (req: Request, res: Response) => {
   }
 }
 
-export const insertDocuments = async (req: Request, res: Response) => {
+export const insertTypePhone = async (req: Request, res: Response) => {
   let data = req.body;
-  const result = await pool.query("SELECT *from function_insert_table_documents($1,$2, $3, $4);", [
+  const result = await pool.query("SELECT *from function_insert_table_type_phone($1,$2, $3, $4);", [
+    data.code,
     data.name,
-    data.description,
     data.status,
-    data.id_branch
+    data.id_branch,
   ]);
 
   const { rows } = result;
@@ -79,9 +49,9 @@ export const insertDocuments = async (req: Request, res: Response) => {
   }
 }
 
-export const readDocuments = async (req: Request, res: Response) => {
+export const readTypePhone = async (req: Request, res: Response) => {
   let data = req.query;
-  const result = await pool.query("SELECT *from function_see_table_documents($1);", [
+  const result = await pool.query("SELECT *from function_see_table_type_phone($1);", [
     data.id
   ]);
 
@@ -98,12 +68,11 @@ export const readDocuments = async (req: Request, res: Response) => {
   }
 }
 
-export const updateDocuments = async (req: Request, res: Response) => {
+export const updateTypePhone = async (req: Request, res: Response) => {
   let data = req.body;
-  const result = await pool.query("SELECT *from function_edit_table_documents($1,$2, $3, $4);", [
+  const result = await pool.query("SELECT *from function_edit_table_type_phone($1,$2, $3);", [
     data.id,
     data.name,
-    data.description,
     data.status
   ]);
 
@@ -120,9 +89,10 @@ export const updateDocuments = async (req: Request, res: Response) => {
   }
 }
 
-export const deleteDocuments = async (req: Request, res: Response) => {
+
+export const deleteTypePhone = async (req: Request, res: Response) => {
   let data = req.body;
-  const result = await pool.query("SELECT *from function_delete_table_documents($1);", [
+  const result = await pool.query("SELECT *from function_delete_table_type_phone($1);", [
     data.id
   ]);
 

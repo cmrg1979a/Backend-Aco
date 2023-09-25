@@ -95,6 +95,7 @@ import proyeccion from "./routes/proyeccion";
 import onedrive from "./routes/onedriver";
 import masterusuario from "./routes/masterusuario";
 import marketingRoutes from "./routes/marketing";
+import typePhoneRoutes from "./routes/type_phone";
 
 // settings
 app.set("port", 9200);
@@ -298,4 +299,5 @@ app.use(proyeccion);
 app.use(onedrive);
 app.use(masterusuario);
 app.use(marketingRoutes)
+app.use(typePhoneRoutes)
 export default app;
