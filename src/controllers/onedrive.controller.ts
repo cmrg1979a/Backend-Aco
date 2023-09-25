@@ -1,11 +1,8 @@
-import * as fs from "fs";
 import { Client } from "@microsoft/microsoft-graph-client";
 import { ClientSecretCredential } from "@azure/identity";
 
-import axios from "axios";
 import { Request, Response } from "express";
-import { readFileSync } from "fs";
-import { Buffer } from "buffer";
+
 require("isomorphic-fetch");
 
 // // ------------------------------------------------------
