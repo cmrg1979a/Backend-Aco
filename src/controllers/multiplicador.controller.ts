@@ -12,7 +12,7 @@ export const getMultiplicador = async (req: Request, res: Response) => {
   let code8;
   let code9;
   let code10;
-
+  // console.log(containers);
   code7 = 7;
   code8 = 8;
   code9 = 9;
@@ -20,21 +20,22 @@ export const getMultiplicador = async (req: Request, res: Response) => {
 
   if (containers) {
     containers.map((item: any) => {
-      if (item.id == 1) {
+      if (item.id_containers == 1) {
         code7 = null;
       }
-      if (item.id == 2) {
+      if (item.id_containers == 2) {
         code10 = null;
       }
-      if (item.id == 3) {
+      if (item.id_containers == 3) {
         code9 = null;
       }
-      if (item.id == 4) {
+      if (item.id_containers == 4) {
         code8 = null;
       }
     });
   }
 
+  
   await pool.query(
     "SELECT * FROM TABLE_MULTIPLICADOR_listar($1,$2,$3,$4,$5,$6)",
     [id_branch, id_shipment, code7, code10, code9, code8],
