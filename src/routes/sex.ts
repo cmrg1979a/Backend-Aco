@@ -2,8 +2,23 @@ import { Router } from "express";
 const router: Router = Router();
 import { TokenValidation } from "../libs/verifyToken";
 
-import { getSex } from "../controllers/sex.controller";
+import { 
+    getSex,
+    getListSex,
+    insertSex,
+    readSex,
+    updateSex,
+    deleteSex,
+    validateAcronymInTableSex,
+} from "../controllers/sex.controller";
 
 router.post("/getSex", TokenValidation, getSex);
+
+router.get("/getListSex/", getListSex);
+router.post("/insertSex/", insertSex);
+router.get("/readSex/", readSex);
+router.put("/updateSex/", updateSex);
+router.put("/deleteSex/", deleteSex);
+router.get("/validateAcronymInTableSex/", validateAcronymInTableSex);
 
 export default router;
