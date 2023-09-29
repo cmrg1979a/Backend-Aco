@@ -142,9 +142,9 @@ export const getListBanksDetailsCargar = async (
   );
 };
 
-export const getListar = async (req: Request, res: Response) => {
+export const getListarBancosgastos = async (req: Request, res: Response) => {
   await pool.query(
-    "SELECT * FROM function_list_egresos($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
+    "SELECT * FROM function_list_egresos($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)",
     [
       req.query.id_branch ? req.query.id_branch : null,
       req.query.desde ? req.query.desde : null,
@@ -156,6 +156,10 @@ export const getListar = async (req: Request, res: Response) => {
       req.query.id_moneda ? req.query.id_moneda : null,
       req.query.nro_factura ? req.query.nro_factura : null,
       req.query.nro_serie ? req.query.nro_serie : null,
+      req.query.tipogastos ? req.query.tipogastos : null,
+      req.query.tiposubgastos ? req.query.tiposubgastos : null,
+      req.query.operativo,
+      req.query.administrativo,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -181,6 +185,7 @@ export const getListar = async (req: Request, res: Response) => {
     }
   );
 };
+
 export const getVerPagosPorProveedor = async (req: Request, res: Response) => {
   const { id } = req.query;
 
@@ -271,8 +276,9 @@ export const setPayForCustomer = async (req: Request, res: Response) => {
 
 export const getListarPayForCustomer = async (req: Request, res: Response) => {
   // "SELECT * FROM Table_InvoiceAdminCxC_listado($1);",
+
   await pool.query(
-    "SELECT * FROM function_list_ingresos($1,$2,$3,$4,$5,$6,$7,$8,$9,$10);",
+    "SELECT * FROM function_list_ingresos($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14);",
     [
       req.query.id_branch ? req.query.id_branch : null,
       req.query.nro_operacion ? req.query.nro_operacion : null,
@@ -284,6 +290,10 @@ export const getListarPayForCustomer = async (req: Request, res: Response) => {
       req.query.id_banco ? req.query.id_banco : null,
       req.query.id_coin ? req.query.id_coin : null,
       req.query.id_consigner ? req.query.id_consigner : null,
+      req.query.id_tipoingreso ? req.query.id_tipoingreso : null,
+      req.query.id_tiposubingreso ? req.query.id_tiposubingreso : null,
+      req.query.operativo,
+      req.query.administrativo,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -814,7 +824,7 @@ export const ExportarListadoReporteEgresos = async (
     author: "PIC CARGO - IMPORTADORES",
   });
   await pool.query(
-    "SELECT * FROM function_list_egresos($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
+    "SELECT * FROM function_list_egresos($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)",
     [
       req.query.id_branch ? req.query.id_branch : null,
       req.query.desde ? req.query.desde : null,
@@ -826,6 +836,10 @@ export const ExportarListadoReporteEgresos = async (
       req.query.id_moneda ? req.query.id_moneda : null,
       req.query.nro_factura ? req.query.nro_factura : null,
       req.query.nro_serie ? req.query.nro_serie : null,
+      req.query.tipogastos ? req.query.tipogastos : null,
+      req.query.tiposubgastos ? req.query.tiposubgastos : null,
+      req.query.operativo,
+      req.query.administrativo,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -852,59 +866,72 @@ export const ExportarListadoReporteEgresos = async (
         wt.row(1).filter();
 
         wt.column(1).setWidth(10);
-        wt.column(2).setWidth(15);
-        wt.column(3).setWidth(18);
-        wt.column(4).setWidth(5);
-        wt.column(5).setWidth(15);
-        wt.column(6).setWidth(80);
-        wt.column(7).setWidth(10);
+        wt.column(2).setWidth(10);
+        wt.column(3).setWidth(21);
+        wt.column(4).setWidth(21);
+        wt.column(5).setWidth(50);
+        wt.column(6).setWidth(50);
+        wt.column(7).setWidth(50);
         wt.column(8).setWidth(10);
-        wt.column(9).setWidth(10);
-        wt.column(10).setWidth(100);
-        wt.column(11).setWidth(15);
-        wt.column(12).setWidth(15);
+        wt.column(9).setWidth(50);
+        wt.column(10).setWidth(10);
+        wt.column(11).setWidth(50);
         wt.column(12).setWidth(50);
+        wt.column(13).setWidth(50);
+        wt.column(14).setWidth(50);
+        wt.column(15).setWidth(50);
 
         wt.cell(1, 1).string("Fecha").style(cabTitle);
-        wt.cell(1, 2).string("Nro Operación").style(cabTitle);
-        wt.cell(1, 3).string("Cuenta Salida").style(cabTitle);
-        wt.cell(1, 4).string("O/A").style(cabTitle);
-        wt.cell(1, 5).string("Tipo de Gasto").style(cabTitle);
+        wt.cell(1, 2).string("O/A").style(cabTitle);
+        wt.cell(1, 3).string("Tipo Pago").style(cabTitle);
+        wt.cell(1, 4).string("Tipo Gasto").style(cabTitle);
+        wt.cell(1, 5).string("Sub Tipo de Gasto").style(cabTitle);
         wt.cell(1, 6).string("Proveedor").style(cabTitle);
-        wt.cell(1, 7).string("Monto Pagado").style(cabTitle);
-        wt.cell(1, 8).string("Moneda de Pago").style(cabTitle);
-        wt.cell(1, 9).string("Monto en Dolares").style(cabTitle);
-        wt.cell(1, 10).string("Concepto(s)").style(cabTitle);
-        wt.cell(1, 11).string("Nro Factura(s)").style(cabTitle);
-        wt.cell(1, 12).string("Nro Serie(s)").style(cabTitle);
-        wt.cell(1, 13).string("Comentarios").style(cabTitle);
+        wt.cell(1, 7).string("Monto").style(cabTitle);
+        wt.cell(1, 8).string("Moneda").style(cabTitle);
+        wt.cell(1, 9).string("Monto de Pago").style(cabTitle);
+        wt.cell(1, 10).string("Moneda de Pago").style(cabTitle);
+        wt.cell(1, 11).string("Tipo de Cambio").style(cabTitle);
+        wt.cell(1, 12).string("Cuenta Salida").style(cabTitle);
+        wt.cell(1, 13).string("Nro Operación").style(cabTitle);
+        wt.cell(1, 14).string("Concepto(s)").style(cabTitle);
+        wt.cell(1, 15).string("Nro Factura(s)").style(cabTitle);
+        wt.cell(1, 16).string("Nro Serie(s)").style(cabTitle);
+        wt.cell(1, 17).string("Comentarios").style(cabTitle);
+
         let fila = 2;
         rows.forEach((element) => {
           wt.cell(fila, 1).string(element.fecha_pago);
-          wt.cell(fila, 2).string(
-            element.nro_operacion ? element.nro_operacion : ""
-          );
-          wt.cell(fila, 3).string(element.banco ? element.banco : "");
-          wt.cell(fila, 4).string(element.tipo ? element.tipo : "");
-          wt.cell(fila, 5).string(element.tipo_gasto ? element.tipo_gasto : "");
+          wt.cell(fila, 2).string(element.tipo ? element.tipo : "");
+          wt.cell(fila, 3).string(element.tipo_pago ? element.tipo_pago : "");
+          wt.cell(fila, 4).string(element.tipo_gasto);
+          wt.cell(fila, 5).string(element.subtipo_gasto);
           wt.cell(fila, 6).string(
             element.name_proveedor ? element.name_proveedor : ""
           );
-          // console.log(element)
           wt.cell(fila, 7).number(
-            element.monto_mon_ex ? parseFloat(element.monto_mon_ex) : 0.0
-          );
-          // wt.cell(fila, 7).string(element.monto_mon_ex ? element.monto_mon_ex : 0.00);
-          wt.cell(fila, 8).string(
-            element.moneda_simbolo ? element.moneda_simbolo : ""
-          );
-          wt.cell(fila, 9).number(
             element.monto_dolar ? parseFloat(element.monto_dolar) : 0.0
           );
-          wt.cell(fila, 10).string(element.concepto ? element.concepto : "");
-          wt.cell(fila, 11).string(element.factura ? element.factura : "");
-          wt.cell(fila, 12).string(element.serie ? element.serie : "");
+          wt.cell(fila, 8).string("USD");
+
+          wt.cell(fila, 9).number(
+            element.monto_mon_ex ? parseFloat(element.monto_mon_ex) : 0.0
+          );
+          wt.cell(fila, 10).string(
+            element.moneda_simbolo ? element.moneda_simbolo : ""
+          );
+
+          wt.cell(fila, 11).string(element.tipo_cambio);
+          wt.cell(fila, 12).string(element.banco ? element.banco : "");
+
           wt.cell(fila, 13).string(
+            element.nro_operacion ? element.nro_operacion : ""
+          );
+
+          wt.cell(fila, 14).string(element.concepto ? element.concepto : "");
+          wt.cell(fila, 15).string(element.factura ? element.factura : "");
+          wt.cell(fila, 16).string(element.serie ? element.serie : "");
+          wt.cell(fila, 17).string(
             element.comentarios ? element.comentarios : ""
           );
           fila++;
@@ -936,7 +963,7 @@ export const ExportarListadoReporteIngresos = async (
     author: "PIC CARGO - IMPORTADORES",
   });
   await pool.query(
-    "SELECT * FROM function_list_ingresos($1,$2,$3,$4,$5,$6,$7,$8,$9,$10);",
+    "SELECT * FROM function_list_ingresos($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14);",
     [
       req.query.id_branch ? req.query.id_branch : null,
       req.query.nro_operacion ? req.query.nro_operacion : null,
@@ -948,6 +975,10 @@ export const ExportarListadoReporteIngresos = async (
       req.query.id_banco ? req.query.id_banco : null,
       req.query.id_coin ? req.query.id_coin : null,
       req.query.id_cuenta ? req.query.id_cuenta : null,
+      req.query.id_tipoingreso ? req.query.id_tipoingreso : null,
+      req.query.id_tiposubingreso ? req.query.id_tiposubingreso : null,
+      req.query.operativo,
+      req.query.administrativo,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -974,34 +1005,38 @@ export const ExportarListadoReporteIngresos = async (
         wt.column(1).setWidth(10);
         wt.column(2).setWidth(10);
         wt.column(3).setWidth(18);
-        wt.column(4).setWidth(60);
-        wt.column(5).setWidth(15);
-        wt.column(6).setWidth(12);
-        wt.column(7).setWidth(12);
+        wt.column(4).setWidth(27);
+        wt.column(5).setWidth(27);
+        wt.column(6).setWidth(60);
+        wt.column(7).setWidth(15);
         wt.column(8).setWidth(12);
         wt.column(9).setWidth(12);
         wt.column(10).setWidth(12);
-        wt.column(11).setWidth(18);
-        wt.column(12).setWidth(18);
-        wt.column(13).setWidth(100);
-        wt.column(14).setWidth(15);
-        wt.column(15).setWidth(15);
+        wt.column(11).setWidth(12);
+        wt.column(12).setWidth(12);
+        wt.column(13).setWidth(18);
+        wt.column(14).setWidth(18);
+        wt.column(15).setWidth(100);
+        wt.column(16).setWidth(15);
+        wt.column(17).setWidth(15);
 
         wt.cell(1, 1).string("Fecha").style(cabTitle);
         wt.cell(1, 2).string("O/A").style(cabTitle);
-        wt.cell(1, 3).string("Tipo de Gasto").style(cabTitle);
-        wt.cell(1, 4).string("Cliente").style(cabTitle);
-        wt.cell(1, 5).string("Monto").style(cabTitle);
-        wt.cell(1, 6).string("Moneda").style(cabTitle);
-        wt.cell(1, 7).string("Monto Ingresado al banco").style(cabTitle);
-        wt.cell(1, 8).string("Moneda Ingresado al banco").style(cabTitle);
-        wt.cell(1, 9).string("Tipo de Cambio").style(cabTitle);
-        wt.cell(1, 10).string("Banco Origen").style(cabTitle);
-        wt.cell(1, 11).string("Cuenta Destino").style(cabTitle);
-        wt.cell(1, 12).string("Nro Operación").style(cabTitle);
-        wt.cell(1, 13).string("Concepto").style(cabTitle);
-        wt.cell(1, 14).string("Nro Factura").style(cabTitle);
-        wt.cell(1, 15).string("Nro Serie").style(cabTitle);
+        wt.cell(1, 3).string("Tipo de Pago").style(cabTitle);
+        wt.cell(1, 4).string("Tipo Ingreso").style(cabTitle);
+        wt.cell(1, 5).string("Sub Tipo de ingreso").style(cabTitle);
+        wt.cell(1, 6).string("Cliente").style(cabTitle);
+        wt.cell(1, 7).string("Monto").style(cabTitle);
+        wt.cell(1, 8).string("Moneda").style(cabTitle);
+        wt.cell(1, 9).string("Monto Ingresado al banco").style(cabTitle);
+        wt.cell(1, 10).string("Moneda Ingresado al banco").style(cabTitle);
+        wt.cell(1, 11).string("Tipo de Cambio").style(cabTitle);
+        wt.cell(1, 12).string("Banco Origen").style(cabTitle);
+        wt.cell(1, 13).string("Cuenta Destino").style(cabTitle);
+        wt.cell(1, 14).string("Nro Operación").style(cabTitle);
+        wt.cell(1, 15).string("Concepto").style(cabTitle);
+        wt.cell(1, 16).string("Nro Factura").style(cabTitle);
+        wt.cell(1, 17).string("Nro Serie").style(cabTitle);
 
         let fila = 2;
         rows.forEach((element) => {
@@ -1009,33 +1044,39 @@ export const ExportarListadoReporteIngresos = async (
           wt.cell(fila, 2).string(element.tipo ? element.tipo : "");
           wt.cell(fila, 3).string(element.tipo_gasto ? element.tipo_gasto : "");
           wt.cell(fila, 4).string(
-            element.name_consigner ? element.name_consigner : ""
+            element.tipo_ingreso ? element.tipo_ingreso : ""
           );
-          wt.cell(fila, 5).number(
-            element.monto ? parseFloat(element.monto) : 0.0
+          wt.cell(fila, 5).string(
+            element.subtipo_ingreso ? element.subtipo_ingreso : ""
           );
           wt.cell(fila, 6).string(
-            element.moneda_simbolo ? element.moneda_simbolo : ""
+            element.name_consigner ? element.name_consigner : ""
           );
           wt.cell(fila, 7).number(
-            element.monto_destino ? parseFloat(element.monto_destino) : 0.0
+            element.monto ? parseFloat(element.monto) : 0.0
           );
           wt.cell(fila, 8).string(
-            element.moneda_destino ? element.moneda_destino : ""
+            element.moneda_simbolo ? element.moneda_simbolo : ""
           );
           wt.cell(fila, 9).number(
+            element.monto_destino ? parseFloat(element.monto_destino) : 0.0
+          );
+          wt.cell(fila, 10).string(
+            element.moneda_destino ? element.moneda_destino : ""
+          );
+          wt.cell(fila, 11).number(
             element.tipocambio ? parseFloat(element.tipocambio) : 0.0
           );
-          wt.cell(fila, 10).string(element.banco ? element.banco : "");
-          wt.cell(fila, 11).string(
+          wt.cell(fila, 12).string(element.banco ? element.banco : "");
+          wt.cell(fila, 13).string(
             element.cuenta_destino ? element.cuenta_destino : ""
           );
-          wt.cell(fila, 12).string(
+          wt.cell(fila, 14).string(
             element.nro_operacion ? element.nro_operacion : ""
           );
-          wt.cell(fila, 13).string(element.concepto ? element.concepto : "");
-          wt.cell(fila, 14).string(element.factura ? element.factura : "");
-          wt.cell(fila, 15).string(element.serie ? element.serie : "");
+          wt.cell(fila, 15).string(element.concepto ? element.concepto : "");
+          wt.cell(fila, 16).string(element.factura ? element.factura : "");
+          wt.cell(fila, 17).string(element.serie ? element.serie : "");
           fila++;
         });
 
@@ -1056,7 +1097,7 @@ export const ExportarListadoReporteIngresos = async (
     }
   );
 };
-//
+
 export const reversarCxC = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM function_reversar_debsclient($1)",

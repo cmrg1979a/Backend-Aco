@@ -7,7 +7,6 @@ import {
   getListaPagosXProveedorCxP,
   setPayForProveedor,
   getListBanksDetailsCargar,
-  getListar,
   getVerPagosPorProveedor,
   setPayForCustomer,
   getListarPayForCustomer,
@@ -29,6 +28,7 @@ import {
   reversarCxP,
   verPagosControlEgresos,
   validarNroOperacion,
+  getListarBancosgastos,
 } from "../controllers/banks.controller";
 
 router.post("/getBanksList", TokenValidation, getBanksList);
@@ -43,7 +43,7 @@ router.get(
   TokenValidation,
   getListBanksDetailsCargar
 );
-router.get("/getListBanksDetailsCxP", TokenValidation, getListar);
+router.get("/getListBanksDetailsCxP", TokenValidation, getListarBancosgastos);
 router.get(
   "/getVerPagosPorProveedor",
   TokenValidation,
