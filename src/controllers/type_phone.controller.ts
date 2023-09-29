@@ -8,10 +8,11 @@ const pool = conexion();
 
 export const getListTypePhone = async (req: Request, res: Response) => {
   let data = req.query;
-  const result = await pool.query("SELECT *from function_list_table_type_phone($1,$2, $3);", [
+  const result = await pool.query("SELECT *from function_list_table_type_phone($1,$2, $3, $4);", [
     data.id_branch,
     data.code ? data.code : null,
-    data.name ? data.name : null
+    data.name ? data.name : null,
+    data.status
   ]);
 
   const { rows } = result;
