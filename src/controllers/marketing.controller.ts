@@ -13,7 +13,7 @@ export const getListMarketing = async (req: Request, res: Response) => {
     data.name ? data.name : null,
     data.description ? data.description : null,
     data.position ? data.position : null,
-    data.status ? data.status : null,
+    data.status
   ]);
 
   const { rows } = result;
