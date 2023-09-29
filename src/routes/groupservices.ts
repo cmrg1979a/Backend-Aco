@@ -1,0 +1,19 @@
+import { Router } from "express";
+const router: Router = Router();
+import { TokenValidation } from "../libs/verifyToken";
+
+import { 
+    getListGroupservices,
+    insertGroupservices,
+    readGroupservices,
+    updateGroupservices,
+    deleteGroupservices,
+} from "../controllers/groupservices.controller";
+
+router.get("/getListGroupservices/", getListGroupservices);
+router.post("/insertGroupservices/", insertGroupservices);
+router.get("/readGroupservices/", readGroupservices);
+router.put("/updateGroupservices/", updateGroupservices);
+router.put("/deleteGroupservices/", deleteGroupservices);
+
+export default router;
