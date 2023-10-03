@@ -120,10 +120,11 @@ export const updateDocuments = async (req: Request, res: Response) => {
   }
 }
 
-export const deleteDocuments = async (req: Request, res: Response) => {
+export const swicthDocuments = async (req: Request, res: Response) => {
   let data = req.body;
-  const result = await pool.query("SELECT *from function_delete_table_documents($1);", [
-    data.id
+  const result = await pool.query("SELECT *from function_switch_table_documents($1, $2);", [
+    data.id,
+    data.status
   ]);
 
   const { rows } = result;

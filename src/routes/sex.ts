@@ -8,7 +8,7 @@ import {
     insertSex,
     readSex,
     updateSex,
-    deleteSex,
+    switchSex,
     validateAcronymInTableSex,
 } from "../controllers/sex.controller";
 
@@ -18,7 +18,7 @@ router.get("/getListSex/", getListSex);
 router.post("/insertSex/", insertSex);
 router.get("/readSex/", readSex);
 router.put("/updateSex/", updateSex);
-router.put("/deleteSex/", deleteSex);
+router.put("/switchSex/", switchSex);
 router.get("/validateAcronymInTableSex/", validateAcronymInTableSex);
 
 export default router;

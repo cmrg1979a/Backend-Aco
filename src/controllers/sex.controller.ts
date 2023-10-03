@@ -121,10 +121,11 @@ export const updateSex = async (req: Request, res: Response) => {
   }
 }
 
-export const deleteSex = async (req: Request, res: Response) => {
+export const switchSex = async (req: Request, res: Response) => {
   let data = req.body;
-  const result = await pool.query("SELECT *from function_delete_table_sex($1);", [
-    data.id
+  const result = await pool.query("SELECT *from function_switch_table_sex($1, $2);", [
+    data.id,
+    data.status
   ]);
 
   const { rows } = result;
