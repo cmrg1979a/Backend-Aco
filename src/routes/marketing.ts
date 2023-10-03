@@ -7,7 +7,7 @@ import {
   insertMarketing,
   readMarketing,
   updateMarketing,
-  deleteMarketing,
+  switchMarketing,
   validatePositionMarketing,
   lastPositionMarketing,
 } from "../controllers/marketing.controller";
@@ -15,7 +15,7 @@ import {
 router.get("/getListMarketing/", getListMarketing);
 router.post("/insertMarketing/", insertMarketing);
 router.get("/readMarketing/", readMarketing);
-router.put("/deleteMarketing/", deleteMarketing);
+router.put("/switchMarketing/", switchMarketing);
 router.put("/updateMarketing/", updateMarketing);
 router.get("/validatePositionMarketing/",  validatePositionMarketing);
 router.get("/lastPositionMarketing/",  lastPositionMarketing);

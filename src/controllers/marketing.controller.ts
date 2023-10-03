@@ -73,12 +73,11 @@ export const readMarketing = async (req: Request, res: Response) => {
 
 export const updateMarketing = async (req: Request, res: Response) => {
   let data = req.body;
-  const result = await pool.query("SELECT *from function_edit_table_marketing($1,$2, $3, $4, $5, $6);", [
+  const result = await pool.query("SELECT *from function_edit_table_marketing($1,$2, $3, $4, $5);", [
     data.id,
     data.name,
     data.description,
     data.position,
-    data.id_branch,
     data.status
   ]);
 
@@ -95,10 +94,11 @@ export const updateMarketing = async (req: Request, res: Response) => {
   }
 }
 
-export const deleteMarketing = async (req: Request, res: Response) => {
+export const switchMarketing = async (req: Request, res: Response) => {
   let data = req.body;
-  const result = await pool.query("SELECT *from function_delete_table_marketing($1);", [
-    data.id
+  const result = await pool.query("SELECT *from function_switch_table_marketing($1, $2);", [
+    data.id,
+    data.status
   ]);
 
   const { rows } = result;
@@ -107,10 +107,10 @@ export const deleteMarketing = async (req: Request, res: Response) => {
       if (rows.length > 0) {
         return res.status(200).json(rows);
       } else {
-          console.log('No se pudo eliminar el registro.');
+          console.log('No se pudo actualizar el registro.');
       }
   } catch (error) {
-      console.log('Error al eliminar el registro:', error);
+      console.log('Error al actualizar el registro:', error);
   }
 }
 
