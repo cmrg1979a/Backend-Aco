@@ -114,10 +114,11 @@ export const updateYear = async (req: Request, res: Response) => {
   }
 }
 
-export const deleteYear = async (req: Request, res: Response) => {
+export const switchYear = async (req: Request, res: Response) => {
   let data = req.body;
-  const result = await pool.query("SELECT *from function_delete_table_year($1);", [
-    data.id
+  const result = await pool.query("SELECT *from function_switch_table_year($1, $2);", [
+    data.id,
+    data.status
   ]);
 
   const { rows } = result;
@@ -130,5 +131,28 @@ export const deleteYear = async (req: Request, res: Response) => {
       }
   } catch (error) {
       console.log('Error al eliminar el registro:', error);
+  }
+}
+
+
+export const validateCodeYear = async (req: Request, res: Response) => {
+  let data = req.query;
+
+  const result = await pool.query("SELECT *from validate_code_in_table_year($1,$2, $3);", [
+    data.id,
+    data.code,
+    data.id_branch,
+  ]);
+
+  const { rows } = result;
+
+  try {
+      if (rows.length > 0) {
+        return res.status(200).json(rows);
+      } else {
+        console.log("No se encontraron resultados");
+      }
+  } catch (error) {
+      console.log('Error al listar las regiones:', error);
   }
 }
