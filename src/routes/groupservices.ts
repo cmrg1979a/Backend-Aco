@@ -7,13 +7,13 @@ import {
     insertGroupservices,
     readGroupservices,
     updateGroupservices,
-    deleteGroupservices,
+    switchGroupservices,
 } from "../controllers/groupservices.controller";
 
 router.get("/getListGroupservices/", getListGroupservices);
 router.post("/insertGroupservices/", insertGroupservices);
 router.get("/readGroupservices/", readGroupservices);
 router.put("/updateGroupservices/", updateGroupservices);
-router.put("/deleteGroupservices/", deleteGroupservices);
+router.put("/switchGroupservices/", switchGroupservices);
 
 export default router;

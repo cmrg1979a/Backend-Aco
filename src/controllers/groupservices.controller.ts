@@ -92,10 +92,11 @@ export const updateGroupservices = async (req: Request, res: Response) => {
   }
 }
 
-export const deleteGroupservices = async (req: Request, res: Response) => {
+export const switchGroupservices = async (req: Request, res: Response) => {
   let data = req.body;
-  const result = await pool.query("SELECT *from function_delete_table_groupservices($1);", [
-    data.id
+  const result = await pool.query("SELECT *from function_switch_table_groupservices($1, $2);", [
+    data.id,
+    data.status
   ]);
 
   const { rows } = result;
