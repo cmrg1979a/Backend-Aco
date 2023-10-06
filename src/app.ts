@@ -139,42 +139,42 @@ var storage = multer.diskStorage({
 
 var upload = multer({ storage: storage }).single("file");
 
-app.post("/uploadFilesSingle", function (req, res) {
-  upload(req, res, function (err) {
-    if (err) {
-      return res.end("Error uploading file.");
-    }
+// app.post("/uploadFilesSingle", function (req, res) {
+//   upload(req, res, function (err) {
+//     if (err) {
+//       return res.end("Error uploading file.");
+//     }
 
-    pool.query(
-      "select * from Table_Path_insertar_q($1,$2,$3,null,$4)",
-      [req.body.id_quote, req.body.name, type, ruta],
-      (err, response, fields) => {
-        if (!err) {
-          let rows = response.rows;
-          if (!!rows[0].estadoflag) {
-            res.json({
-              status: 200,
-              statusBol: true,
+//     pool.query(
+//       "select * from Table_Path_insertar_q($1,$2,$3,null,$4)",
+//       [req.body.id_quote, req.body.name, type, ruta],
+//       (err, response, fields) => {
+//         if (!err) {
+//           let rows = response.rows;
+//           if (!!rows[0].estadoflag) {
+//             res.json({
+//               status: 200,
+//               statusBol: true,
 
-              data: {
-                ruta: "https://api-general.qreport.site/uploads/" + ruta,
-                name: ruta,
-              },
-            });
-          } else {
-            res.json({
-              status: 200,
-              statusBol: true,
-              mensaje: rows[0].mensaje,
-            });
-          }
-        } else {
-          console.log(err);
-        }
-      }
-    );
-  });
-});
+//               data: {
+//                 ruta: "https://api-general.qreport.site/uploads/" + ruta,
+//                 name: ruta,
+//               },
+//             });
+//           } else {
+//             res.json({
+//               status: 200,
+//               statusBol: true,
+//               mensaje: rows[0].mensaje,
+//             });
+//           }
+//         } else {
+//           console.log(err);
+//         }
+//       }
+//     );
+//   });
+// });
 
 var uploads = multer({ storage: storage }).single("file");
 
