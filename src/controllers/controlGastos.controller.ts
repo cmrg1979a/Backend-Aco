@@ -152,7 +152,7 @@ export const getEgresosList = async (req: Request, res: Response) => {
   const id_orders = req.params.id_orders;
 
   await pool.query(
-    "select * from CONTROLGASTOS_EGRESOS_listar($1,null,null)",
+    "select * from controlgastos_egresos_listar($1,null,null)",
     [id_orders],
     (err, response, fields) => {
       if (!err) {
