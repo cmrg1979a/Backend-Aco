@@ -34,18 +34,19 @@ export const getBracnh = async (req: Request, res: Response) => {
 };
 
 export const getListEnterprise = async (req: Request, res: Response) => {
+  let data = req.query
   const result = await pool.query("SELECT *from function_list_enterprise($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11);", [
-    req.query.id_branch,
-    req.query.document ? req.query.document : null,
-    req.query.trade_name ? req.query.trade_name : null,
-    req.query.business_name ? req.query.business_name : null,
-    req.query.address ? req.query.address : null,
-    req.query.status ? req.query.status : null,
-    req.query.id_pais ? req.query.id_pais : null,
-    req.query.id_state ? req.query.id_state : null,
-    req.query.id_city ? req.query.id_city : null,
-    req.query.id_town ? req.query.id_town : null,
-    req.query.id_document ? req.query.id_document : null,
+    data.id_branch,
+    data.document ? data.document : null,
+    data.trade_name ? data.trade_name : null,
+    data.business_name ? data.business_name : null,
+    data.address ? data.address : null,
+    data.status,
+    data.id_pais ? data.id_pais : null,
+    data.id_state ? data.id_state : null,
+    data.id_city ? data.id_city : null,
+    data.id_town ? data.id_town : null,
+    data.id_document ? data.id_document : null,
   ]);
 
   const { rows } = result;
@@ -64,8 +65,9 @@ export const getListEnterprise = async (req: Request, res: Response) => {
 
 export const insertEnterprise = async (req: Request, res: Response) => {
   let data = req.body;
-  const result = await pool.query("SELECT *from function_insert_enterprise($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);", [
+  const result = await pool.query("SELECT *from function_insert_enterprise($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);", [
     data.id_branch,
+    data.id_logo,
     data.document,
     data.trade_name,
     data.business_name,
@@ -115,8 +117,9 @@ export const readEnterprise = async (req: Request, res: Response) => {
 export const updateEnterprise = async (req: Request, res: Response) => {
   let data = req.body;
 
-  const result = await pool.query("SELECT *from function_edit_enterprise($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);", [
+  const result = await pool.query("SELECT *from function_edit_enterprise($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);", [
     data.id,
+    data.id_logo,
     data.document,
     data.trade_name,
     data.business_name,
@@ -144,10 +147,11 @@ export const updateEnterprise = async (req: Request, res: Response) => {
   }
 }
 
-export const deleteEnterprise = async (req: Request, res: Response) => {
+export const switchEnterprise = async (req: Request, res: Response) => {
   let data = req.body;
-  const result = await pool.query("SELECT *from function_delete_enterprise($1);", [
-    data.id
+  const result = await pool.query("SELECT *from function_switch_enterprise($1, $2);", [
+    data.id,
+    data.status
   ]);
 
   const { rows } = result;

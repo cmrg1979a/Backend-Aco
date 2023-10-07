@@ -7,7 +7,7 @@ import {
   getListEnterprise,
   insertEnterprise,
   readEnterprise,
-  deleteEnterprise,
+  switchEnterprise,
   updateEnterprise,
   validateDocumentEnterprise,
 } from "../controllers/enterprise.controller";
@@ -16,7 +16,7 @@ router.post("/getBranch/:id_branch", TokenValidation, getBracnh);
 router.get("/getListEnterprise/", getListEnterprise);
 router.post("/insertEnterprise/", insertEnterprise);
 router.get("/readEnterprise/", readEnterprise);
-router.put("/deleteEnterprise/", deleteEnterprise);
+router.put("/switchEnterprise/", switchEnterprise);
 router.put("/updateEnterprise/", updateEnterprise);
 router.get("/validateDocumentEnterprise/", validateDocumentEnterprise);
 
