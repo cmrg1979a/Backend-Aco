@@ -10,10 +10,10 @@ import {
     switchGroupservices,
 } from "../controllers/groupservices.controller";
 
-router.get("/getListGroupservices/", getListGroupservices);
-router.post("/insertGroupservices/", insertGroupservices);
-router.get("/readGroupservices/", readGroupservices);
-router.put("/updateGroupservices/", updateGroupservices);
-router.put("/switchGroupservices/", switchGroupservices);
+router.get("/getListGroupservices/", TokenValidation, getListGroupservices);
+router.post("/insertGroupservices/", TokenValidation, insertGroupservices);
+router.get("/readGroupservices/", TokenValidation, readGroupservices);
+router.put("/updateGroupservices/", TokenValidation, updateGroupservices);
+router.put("/switchGroupservices/", TokenValidation, switchGroupservices);
 
 export default router;

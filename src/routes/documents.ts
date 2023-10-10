@@ -11,11 +11,11 @@ import {
   swicthDocuments,
 } from "../controllers/documents.controller";
 
-router.post("/getDocumentsList", TokenValidation, getDocumentsList);
-router.get("/getListDocumentsByBranch/", getListDocumentsByBranch);
-router.post("/insertDocuments/", insertDocuments);
-router.get("/readDocuments/", readDocuments);
-router.put("/updateDocuments/", updateDocuments);
-router.put("/swicthDocuments/", swicthDocuments);
+router.post("/getDocumentsList", TokenValidation, TokenValidation, getDocumentsList);
+router.get("/getListDocumentsByBranch/", TokenValidation, getListDocumentsByBranch);
+router.post("/insertDocuments/", TokenValidation, insertDocuments);
+router.get("/readDocuments/", TokenValidation, readDocuments);
+router.put("/updateDocuments/", TokenValidation, updateDocuments);
+router.put("/swicthDocuments/", TokenValidation, swicthDocuments);
 
 export default router;

@@ -14,9 +14,9 @@ import {
 router.post("/getIncoterms", TokenValidation, getIncoterms);
 
 router.get("/getListIncoterms/", TokenValidation, getListIncoterms);
-router.post("/insertIncoterms/",  insertIncoterms);
-router.get("/readIncoterms/",  readIncoterms);
-router.put("/updateIncoterms/",  updateIncoterms);
-router.put("/switchIncoterms/",  switchIncoterms);
+router.post("/insertIncoterms/", TokenValidation,  insertIncoterms);
+router.get("/readIncoterms/", TokenValidation,  readIncoterms);
+router.put("/updateIncoterms/", TokenValidation,  updateIncoterms);
+router.put("/switchIncoterms/", TokenValidation,  switchIncoterms);
 
 export default router;

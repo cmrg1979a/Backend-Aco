@@ -14,11 +14,11 @@ import {
 
 router.post("/getSex", TokenValidation, getSex);
 
-router.get("/getListSex/", getListSex);
-router.post("/insertSex/", insertSex);
-router.get("/readSex/", readSex);
-router.put("/updateSex/", updateSex);
-router.put("/switchSex/", switchSex);
-router.get("/validateAcronymInTableSex/", validateAcronymInTableSex);
+router.get("/getListSex/", TokenValidation, getListSex);
+router.post("/insertSex/", TokenValidation, insertSex);
+router.get("/readSex/", TokenValidation, readSex);
+router.put("/updateSex/", TokenValidation, updateSex);
+router.put("/switchSex/", TokenValidation, switchSex);
+router.get("/validateAcronymInTableSex/", TokenValidation, validateAcronymInTableSex);
 
 export default router;

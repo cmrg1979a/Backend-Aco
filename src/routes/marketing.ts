@@ -12,13 +12,13 @@ import {
   lastPositionMarketing,
 } from "../controllers/marketing.controller";
 
-router.get("/getListMarketing/", getListMarketing);
-router.post("/insertMarketing/", insertMarketing);
-router.get("/readMarketing/", readMarketing);
-router.put("/switchMarketing/", switchMarketing);
-router.put("/updateMarketing/", updateMarketing);
-router.get("/validatePositionMarketing/",  validatePositionMarketing);
-router.get("/lastPositionMarketing/",  lastPositionMarketing);
+router.get("/getListMarketing/", TokenValidation, getListMarketing);
+router.post("/insertMarketing/", TokenValidation, insertMarketing);
+router.get("/readMarketing/", TokenValidation, readMarketing);
+router.put("/switchMarketing/", TokenValidation, switchMarketing);
+router.put("/updateMarketing/", TokenValidation, updateMarketing);
+router.get("/validatePositionMarketing/", TokenValidation,  validatePositionMarketing);
+router.get("/lastPositionMarketing/", TokenValidation,  lastPositionMarketing);
 
 
 export default router;
