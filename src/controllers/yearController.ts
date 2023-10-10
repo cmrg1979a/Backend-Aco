@@ -35,7 +35,7 @@ export const getListYear = async (req: Request, res: Response) => {
   let data = req.query;
   const result = await pool.query("SELECT *from function_list_table_year($1,$2, $3);", [
     data.id_branch,
-    data.code ? data.code : null,
+    data.description ? data.description : null,
     data.status
   ]);
 
@@ -44,7 +44,7 @@ export const getListYear = async (req: Request, res: Response) => {
   try {
       if (rows.length > 0) {
         return res.status(200).json(rows);
-      } else {
+      } else { 
         console.log("No se encontraron resultados");
       }
   } catch (error) {
@@ -55,7 +55,7 @@ export const getListYear = async (req: Request, res: Response) => {
 export const insertYear = async (req: Request, res: Response) => {
   let data = req.body;
   const result = await pool.query("SELECT *from function_insert_table_year($1,$2, $3);", [
-    data.code,
+    data.description,
     data.status,
     data.id_branch,
   ]);
@@ -96,7 +96,7 @@ export const updateYear = async (req: Request, res: Response) => {
   let data = req.body;
   const result = await pool.query("SELECT *from function_edit_table_year($1,$2, $3, $4);", [
     data.id,
-    data.code,
+    data.description,
     data.status,
     data.id_branch
   ]);
@@ -138,9 +138,9 @@ export const switchYear = async (req: Request, res: Response) => {
 export const validateCodeYear = async (req: Request, res: Response) => {
   let data = req.query;
 
-  const result = await pool.query("SELECT *from validate_code_in_table_year($1,$2, $3);", [
+  const result = await pool.query("SELECT *from validate_description_in_table_year($1,$2, $3);", [
     data.id,
-    data.code,
+    data.description,
     data.id_branch,
   ]);
 
