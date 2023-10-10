@@ -34,9 +34,6 @@ export const getIncoterms = async (req: Request, res: Response) => {
 
 export const getListIncoterms = async (req: Request, res: Response) => {
   let data = req.query;
-  console.log("###############");
-  console.log(data);
-  console.log("###############");
   const result = await pool.query("SELECT *from function_list_table_incoterms($1,$2, $3, $4);", [
     data.id_branch,
     data.name ? data.name : null,
