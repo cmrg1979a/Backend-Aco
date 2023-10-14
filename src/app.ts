@@ -79,7 +79,6 @@ import banksRoute from "./routes/banks";
 import { addPath } from "graphql/jsutils/Path";
 import filesRoute from "./routes/files";
 import spaymentRoute from "./routes/spayment";
-// import { connect } from "routes/database";
 import versionRoute from "./routes/version";
 import modulesPaysRoutes from "./routes/modulesPays";
 import perfomanceRoutes from "./routes/perfomance";
