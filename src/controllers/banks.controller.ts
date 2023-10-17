@@ -1274,9 +1274,8 @@ export const readBank = async (req: Request, res: Response) => {
 
 export const updateBank = async (req: Request, res: Response) => {
   let data = req.body;
-  const result = await pool.query("SELECT *from function_edit_table_banks($1,$2, $3, $4, $5, $6);", [
+  const result = await pool.query("SELECT *from function_edit_table_banks($1,$2, $3, $4, $5);", [
     data.id,
-    data.id_branch,
     data.acronym,
     data.name,
     data.description,
