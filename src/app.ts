@@ -15,6 +15,13 @@ const corsOptions = {
 };
 
 const corsMiddleware = cors(corsOptions);
+
+if (process.env.ENV === "development") {
+  console.log('development');
+} else if (process.env.ENV === "production") {
+  console.log('production');
+}
+
 /**PROUCCIÓN */
 // const pool = new Pool({
 //   host: "10.116.0.2",
@@ -298,7 +305,7 @@ app.use(balance);
 app.use(proyeccion);
 app.use(onedrive);
 app.use(masterusuario);
-app.use(marketingRoutes)
-app.use(typePhoneRoutes)
-app.use(groupservicesRoutes)
+app.use(marketingRoutes);
+app.use(typePhoneRoutes);
+app.use(groupservicesRoutes);
 export default app;

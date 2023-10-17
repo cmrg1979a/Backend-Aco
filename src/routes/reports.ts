@@ -3,7 +3,7 @@ const router: Router = Router();
 import { TokenValidation } from "../libs/verifyToken";
 
 import {
-  getControlFileAll,
+  getControlFile,
   getControlFileAllMaster,
   getControlFileAllFilter,
   getControlFileAllFilterMaster,
@@ -22,7 +22,7 @@ import {
   ExportarConsolidadoCargaMasiva,
 } from "../controllers/reports.controller";
 
-router.post("/getControlFileAll", TokenValidation, getControlFileAll);
+router.get("/getControlFile", TokenValidation, getControlFile);
 router.post(
   "/getControlFileAllMaster",
   TokenValidation,
@@ -34,6 +34,7 @@ router.post(
   TokenValidation,
   getControlFileAllFilter
 );
+
 router.post(
   "/getControlFileAllFilterMaster",
   TokenValidation,

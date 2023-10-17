@@ -1,4 +1,8 @@
 /node_modules
-dist
+dist/controllers
+dist/interface
+dist/libs
+dist/models
+dist/routes
 /uploads
 /files

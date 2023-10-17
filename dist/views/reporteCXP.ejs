@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <style type="text/css" media="print">
+      @page {
+        size: auto;
+        margin: 10mm;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+     
+      .center {
+        text-align: center;
+      }
+      #pageFooter {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body style="padding: 0cm 1cm 1cm 1cm" cellspan="0">
+    <h1 style="text-align: center"><%= title %></h1>
+    <table width="100%" min-width="100%">
+      <tr>
+        <th width="50%">
+          <h2>Operativo</h2>
+          <table>
+            <tr>
+              <td min-width="50%" width="50%">Dolar:</td>
+              <td min-width="50%" width="50%"><%= totalOpDolar %></td>
+            </tr>
+            <tr>
+              <td min-width="50%" width="50%">Soles:</td>
+              <td min-width="50%" width="50%"><%= totalOpSol %></td>
+            </tr>
+          </table>
+        </th>
+        <th width="50%">
+          <h2>Administrativo</h2>
+          <table>
+            <tr>
+              <td min-width="50%" width="50%">Dolar:</td>
+              <td min-width="50%" width="50%"><%= totalAdminDolar %></td>
+            </tr>
+            <tr>
+              <td min-width="50%" width="50%">Soles:</td>
+              <td min-width="50%" width="50%"><%= totalAdminSol %></td>
+            </tr>
+          </table>
+        </th>
+      </tr>
+    </table>
+
+    <table width="100%" min-width="100%" style="border-collapse: collapse">
+      <thead>
+        <tr>
+          <th width="5%" style="border: 1px solid black; text-align: center">
+            Tipo
+          </th>
+          <th width="19%" style="border: 1px solid black">Proveedor</th>
+          <th width="19%" style="border: 1px solid black">Cliente(s)</th>
+          <th width="5%" style="border: 1px solid black; text-align: center">
+            Correlativo
+          </th>
+          <th width="5%" style="border: 1px solid black; text-align: center">
+            Nro Master
+          </th>
+          <th width="14%" style="border: 1px solid black">Expedientes</th>
+          <th width="9%" style="border: 1px solid black; text-align: center">
+            Fecha Disponibilidad
+          </th>
+          <th width="5%" style="border: 1px solid black; text-align: center">
+            Moneda
+          </th>
+          <th width="9%" style="border: 1px solid black; text-align: center">
+            Monto
+          </th>
+          <th width="5%" style="border: 1px solid black; text-align: center">
+            Llegada
+          </th>
+          <th width="5%" style="border: 1px solid black; text-align: center">
+            Pagado
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for (let i = 0; i < data.length; i++) { %>
+        <tr>
+          <td style="border: 1px solid black; text-align: center">
+            <%=data[i].esoperativo ==true ? 'Operativo' :
+            ''%><%=data[i].esadministrativo ==true ? 'Administrativo' : ''%>
+          </td>
+          <td style="border: 1px solid black"><%=data[i].proveedor%></td>
+          <td style="border: 1px solid black"><%=data[i].nameconsigner%></td>
+          <td style="border: 1px solid black; text-align: center">
+            <%=data[i].code_correlativo%>
+          </td>
+          <td style="border: 1px solid black; text-align: center">
+            <%=data[i].nro_master%>
+          </td>
+          <td style="border: 1px solid black"><%=data[i].expedientes%></td>
+          <td style="border: 1px solid black; text-align: center">
+            <%=data[i].fecha_disponibilidad%>
+          </td>
+          <td style="border: 1px solid black; text-align: center">
+            <%=data[i].symbol%>
+          </td>
+          <td style="border: 1px solid black; text-align: center">
+            <%=data[i].total_pagar%>
+          </td>
+          <td style="border: 1px solid black; text-align: center">
+            <%=data[i].llegada%>
+          </td>
+          <td style="border: 1px solid black; text-align: center">
+            <%=data[i].pagado%>
+          </td>
+        </tr>
+        <% } %>
+      </tbody>
+    </table>
+    <div id="pageFooter">Default footer</div>
+  </body>
+</html>

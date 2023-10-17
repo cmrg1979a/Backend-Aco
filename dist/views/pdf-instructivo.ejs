@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<body style="font-size: 10px; padding: 0cm 0.5cm 0.5cm 0.5cm ">
+  <p>&nbsp;</p>
+  <table style="border-collapse: collapse; width: 100%">
+    <tbody>
+      <tr>
+        <td style="width: 40%; text-align: center">
+          <h3><strong>EXPEDIENTE <%= exp %></strong></h3>
+        </td>
+        <td style="width: 60%; text-align: center">
+          <h3><strong>PR: <%= profit %> USD / OP: <%= gananciaop %> USD</strong></h3>
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <table style="border-collapse: collapse; width: 100%; margin-bottom: 15px">
+    <tbody>
+      <tr>
+        <td style="width: 50%">
+          <p><strong>Datos Generales</strong></p>
+          <p style="margin: 0px">
+            <%= sentido %> - <%= tipo_embarque %> / Origen: <%= puerto_origen %> / Destino: <%= puerto_destino %>
+          </p>
+
+        </td>
+        <td style="
+              width: 50%;
+              margin: -10px !important;
+              padding: 0px !important;
+            ">
+          <p><strong>Datos de la carga</strong></p>
+          <p style="margin: 0px">Bultos: <%= bultos %> / Peso: <%= peso %> Kg / Volumen: <%= volumen %> m3</p>
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table style="border-collapse: collapse; width: 100%" border="1">
+    <tbody>
+      <tr>
+        <td colspan="4" style="
+                      text-align: center;
+                      font-size: 12px;
+                      font-weight: bold;
+                    ">
+          POR PAGAR
+        </td>
+      </tr>
+      <tr>
+        <td style="text-align: center; width: 40%; font-weight: bold">
+          Proveedor
+        </td>
+        <td style="text-align: center; width: 20%; font-weight: bold">
+          Monto Pricing
+        </td>
+        <td style="text-align: center; width: 20%; font-weight: bold">
+          Monto Operaciones
+        </td>
+        <td style="text-align: center; width: 20%; font-weight: bold">
+          Por Pagar
+        </td>
+      </tr>
+      <% if (itemsTotalesProveedores.length> 0) { %> <% itemsTotalesProveedores.forEach(item=> {%>
+          <tr>
+            <td style="width: 33.3333%">
+              <%= item.nameproveedor %>
+            </td>
+            <td style="text-align: center">
+              <%= item.total_pr %>
+            </td>
+            <td style="text-align: center">
+              <%= item.total_op %>
+            </td>
+            <td style="text-align: center">
+              <%= item.restante %>
+            </td>
+          </tr>
+          <% });%>
+            <% }%>
+    </tbody>
+  </table>
+
+  <table style="border-collapse: collapse; width: 100%; height: 78px" border="1">
+    <tbody style="text-align: center">
+      <tr style="height: 18px">
+        <td style="
+              text-align: center;
+              height: 18px;
+              font-size: 10px;
+              font-weight: bold;
+            ">
+          CLIENTE
+        </td>
+        <td style="
+              text-align: center;
+              height: 18px;
+              font-size: 12px;
+              font-weight: bold;
+            " colspan="7">
+          INGRESOS
+        </td>
+      </tr>
+      <tr style="height: 10px; text-align: center">
+        <td rowspan="<%= `${itemsIngreso.length + 2}` %>" colspan="1" style="height: 10px">
+          <%= consignatario %> <br />
+            <%= ruc %>
+        </td>
+
+        <td rowspan="2" style="height: 10px">Descripci&oacute;n</td>
+        <td colspan="3" style="
+              height: 10px;
+              font-size: 12px;
+              font-weight: bold;
+              background-color: #d6f4ff;
+            ">
+          Pricing
+        </td>
+        <td colspan="3" style="height: 10px; font-size: 12px; font-weight: bold">
+          Operaciones
+        </td>
+      </tr>
+      <tr style="height: 10px">
+        <td style="
+              width: 10%;
+              height: 10px;
+              background-color: #d6f4ff;
+              font-weight: bold;
+            ">
+          Monto
+        </td>
+        <td style="
+              width: 10%;
+              height: 10px;
+              background-color: #d6f4ff;
+              font-weight: bold;
+            ">
+          IGV
+        </td>
+        <td style="
+              width: 10%;
+              height: 10px;
+              background-color: #d6f4ff;
+              font-weight: bold;
+            ">
+          Total
+        </td>
+        <td style="width: 10%; height: 10px; font-weight: bold">Monto</td>
+        <td style="width: 10%; height: 10px; font-weight: bold">IGV</td>
+        <td style="width: 10%; height: 10px; font-weight: bold">Total</td>
+      </tr>
+      <% if (itemsIngreso.length> 0) { %> <% itemsIngreso.forEach(item=> {%>
+          <tr style="height: 10px">
+            <td style="height: 10px; text-align: left; font-size: 8px !important">
+              <%= item.concepto %>
+            </td>
+            <td style="
+              height: 10px;
+              background-color: #d6f4ff;
+              font-size: 8px !important;
+            ">
+              <%= item.monto_pr %>
+            </td>
+            <td style="
+              height: 10px;
+              background-color: #d6f4ff;
+              font-size: 8px !important;
+            ">
+              <%= item.igv_pr %>
+            </td>
+            <td style="
+              height: 10px;
+              background-color: #d6f4ff;
+              font-size: 8px !important;
+            ">
+              <%= item.total_pr %>
+            </td>
+            <td style="height: 10px; font-size: 8px !important">
+              <%= item.monto_op %>
+            </td>
+            <td style="height: 10px; font-size: 8px !important">
+              <%= item.igv_op %>
+            </td>
+            <td style="height: 10px; font-size: 8px !important">
+              <%= item.total_op %>
+            </td>
+          </tr>
+          <% });%>
+            <% }%>
+
+              <tr style="height: 10px; font-size: 10px; font-weight: bold">
+                <td colspan="2" style="height: 10px; text-align: left">
+                  Totales costo
+                </td>
+                <td style="height: 10px; background-color: #d6f4ff">
+                  <%= totalIngreso %>
+                </td>
+                <td style="height: 10px; background-color: #d6f4ff">
+                  <%= totalIgvIngresos %>
+                </td>
+                <td style="height: 10px; background-color: #d6f4ff">
+                  <%= totalTotalIngresos %>
+                </td>
+                <td style="height: 10px">
+                  <%= totalIngresoOp %>
+                </td>
+                <td style="height: 10px">
+                  <%= totalIgvIngresosOp %>
+                </td>
+                <td style="height: 10px">
+                  <%= totalTotalIngresosOp %>
+                </td>
+              </tr>
+    </tbody>
+  </table>
+
+  <table style="
+        border-collapse: collapse;
+        width: 100%;
+        height: 162px;
+        margin-top: 5px;
+      " border="1">
+    <tbody style="text-align: center">
+      <tr style="height: 18px; text-align: center">
+        <td style="width: 3%; height: 18px">PA</td>
+        <td colspan="8" style="height: 18px; font-size: 16px; font-weight: bold">
+          COSTOS
+        </td>
+      </tr>
+      <tr style="height: 18px; text-align: center">
+        <td rowspan="2" style="height: 16px; border: solid 1px black">
+          &nbsp;
+        </td>
+        <td rowspan="2" style="height: 18px; border: solid 1px black; font-weight: bold">
+          Proveedor
+        </td>
+        <td rowspan="2" style="height: 18px; border: solid 1px black; font-weight: bold">
+          Descripción
+        </td>
+        <td colspan="3" style="
+              height: 18px;
+              font-size: 10px;
+              font-weight: bold;
+              background-color: #d6f4ff;
+            ">
+          Pricing
+        </td>
+        <td colspan="3" style="height: 18px; font-size: 12px; font-weight: bold">
+          Operaciones
+        </td>
+      </tr>
+      <tr style="height: 18px">
+        <td style="
+              width: 10%;
+              height: 18px;
+              background-color: #d6f4ff;
+              font-weight: bold;
+            ">
+          Monto
+        </td>
+        <td style="
+              width: 10%;
+              height: 18px;
+              background-color: #d6f4ff;
+              font-weight: bold;
+            ">
+          IGV
+        </td>
+        <td style="
+              width: 10%;
+              height: 18px;
+              background-color: #d6f4ff;
+              font-weight: bold;
+            ">
+          Total
+        </td>
+        <td style="width: 10%; height: 18px; font-weight: bold">Monto</td>
+        <td style="width: 10%; height: 18px; font-weight: bold">IGV</td>
+        <td style="width: 10%; height: 18px; font-weight: bold">Total</td>
+      </tr>
+      <% if (itemsEgreso.length> 0) { %> <% itemsEgreso.forEach(item=> {%>
+          <tr style="height: 18px">
+            <td style="height: 18px">
+              <%= item.namePagado %>
+            </td>
+            <td style="text-align: left; height: 18px; font-size: 8px !important">
+              <%= item.nameproveedor %>
+            </td>
+            <td style="text-align: left; height: 18px; font-size: 8px !important">
+              <%= item.concepto %>
+            </td>
+            <td style="
+              height: 18px;
+              background-color: #d6f4ff;
+              font-size: 8px !important;
+            ">
+              <%= item.monto_pr %>
+            </td>
+            <td style="
+              height: 18px;
+              background-color: #d6f4ff;
+              font-size: 8px !important;
+            ">
+              <%= item.igv_pr %>
+            </td>
+            <td style="
+              height: 18px;
+              background-color: #d6f4ff;
+              font-size: 8px !important;
+            ">
+              <%= item.total_pr %>
+            </td>
+            <td style="height: 18px; font-size: 8px !important">
+              <%= item.monto_op %>
+            </td>
+            <td style="height: 18px; font-size: 8px !important">
+              <%= item.igv_op %>
+            </td>
+            <td style="height: 18px; font-size: 8px !important">
+              <%= item.total_op %>
+            </td>
+          </tr>
+          <% });%>
+            <% }%>
+
+              <tr style="height: 10px; font-size: 12px; font-weight: bold">
+                <td colspan="3" style="height: 10px; text-align: left">
+                  Totales costo
+                </td>
+                <td style="height: 10px; background-color: #d6f4ff">
+                  <%= totalEgreso %>
+                </td>
+                <td style="height: 10px; background-color: #d6f4ff">
+                  <%= totalIgvEgresos %>
+                </td>
+                <td style="height: 10px; background-color: #d6f4ff">
+                  <%= totalTotalEgresos %>
+                </td>
+                <td style="height: 10px">
+                  <%= totalEgresoOp %>
+                </td>
+                <td style="height: 10px">
+                  <%= totalIgvEgresosOp %>
+                </td>
+                <td style="height: 10px">
+                  <%= totalTotalEgresosOp %>
+                </td>
+              </tr>
+    </tbody>
+  </table>
+
+  <table style="
+        border-collapse: collapse;
+        width: 100%;
+        height: 36px;
+        margin-top: 5px;
+      " border="1">
+    <tbody style="text-align: center">
+      <tr style="height: 18px">
+        <td rowspan="2" style="width: 40%; height: 18px; font-size: 16px; font-weight: bold">
+          SUB TOTALES
+        </td>
+        <td style="
+              width: 10%;
+              height: 18px;
+              background-color: #d6f4ff;
+              font-weight: bold;
+            ">
+          GANANCIA
+        </td>
+        <td style="
+              width: 10%;
+              height: 18px;
+              background-color: #d6f4ff;
+              font-weight: bold;
+            ">
+          IGV <br />
+          A PAGAR
+        </td>
+        <td style="
+              width: 10%;
+              height: 18px;
+              background-color: #d6f4ff;
+              font-weight: bold;
+            ">
+          SUB <br />
+          TOTAL
+        </td>
+        <td style="width: 10%; height: 18px; font-weight: bold">GANANCIA</td>
+        <td style="width: 10%; height: 18px; font-weight: bold">
+          IGV <br />
+          A PAGAR
+        </td>
+        <td style="width: 10%; height: 18px; font-weight: bold">
+          SUB <br />
+          TOTAL
+        </td>
+      </tr>
+      <tr style="height: 18px">
+        <td style="height: 18px; background-color: #d6f4ff">
+          <%= gananciapr %>
+        </td>
+        <td style="height: 18px; background-color: #d6f4ff">
+          <%= igvpr %>
+        </td>
+        <td style="height: 18px; background-color: #d6f4ff">
+          <%= subtotalpr %>
+        </td>
+        <td style="height: 18px">
+          <%= gananciaop %>
+        </td>
+        <td style="height: 18px">
+          <%= igvop %>
+        </td>
+        <td style="height: 18px">
+          <%= subtotalop %>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+
+</body>
+
+</html>
+
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+
+  * {
+    font-family: "Roboto", sans-serif;
+  }
+</style>

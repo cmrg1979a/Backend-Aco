@@ -2,26 +2,190 @@
 <html>
     <head>
         <style>
-        table {
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid black;
-        }
+        
         </style>
+
+
     </head>
     <body>
-        <div style="width: 85%; margin: 0 7.5%;">
-            <div style="text-align: center; padding-left: 50px;">            
-                <h3>Student Report</h5>
-                <table>
-                <% if (students.length > 0) { %>
-                    <% students.forEach(student => {%>
-                       <tr><td><%= student.name %></td><td><%= student.email %></td><td><%= student.city %></td><td><%=student.country %></td></tr>
+        
+        <div style="width: 95%; margin: 0 1.5%;">
+            <div style="text-align: center; padding-left: 0px;">            
+                <h5>CONTROL DE FILE MASTER's</h5>
+<p>Sentido: <%=sentidoletra%> / Status Operativo: <%=statusLetra %> </p>
+<p>Fecha de Disponibilidad <%= fecha_ini %> - <%= fecha_fin %><p>
+<table style="text-align: left; font-size: 9px; background-color: rgb(230, 230, 230); margin-top: 10px" width="50%">
+                    <tr>
+                        <th>Operador</th>
+                        <th>Abiertas</th>
+                        <th>Cerradas</th>
+                        <th>Total</th>
+                    </tr>
+                    <% totales.forEach(ser => {%>
+                         </tr>
+                                    <td><%= ser.namelong %></td>
+                                    <td><%= ser.abiertas %></td>
+	                    <td><%= ser.cerradas %></td>
+                                    <td><%= ser.total %></td>
+                                     </tr>
+                                <%  });%>
+                </table>
+<p style="text-align: left; padding-left: 0px;">Total de Expedientes Master: <%= totalExpedientesMaster %></p>
+                <table width="100%" style="text-align: left; font-size: 9px; " class="tableMain">
+                    <tr class="encMain">
+                        <th width="15%">EXP.MASTER</th>
+                        <th width="20%">GENERALES <br>  EMBARQUES</th>
+                        <th width="25%">SERVICIOS</th>
+                        <th width="20%">FECHAS</th>
+                        <th width="20%">OPERADOR / GANANCIA</th>
+                    </tr>
+                <% if (items.length > 0) { %>
+                    <% items.forEach(item => {%>
+                       <tr 
+                       ><td>
+                           <p><%= item.dataHouse[0].nro_master %></p>
+                           <p><%= item.dataHouse[0].namemodality %> <%= item.dataHouse[0].nameshipment %></p>
+                           <p><%= item.dataHouse[0].nameportbegin %></p>
+                           <p><%= item.dataHouse[0].nameportend %></p>
+                           <% if (item.dataHouse[0].fecha_eta) { %>
+                           <p>Salida: <%= item.dataHouse[0].fecha_eta %></p>
+                           <% }%>
+                           <% if (item.dataHouse[0].fecha_etd) { %>
+                           <p>Llegada: <%= item.dataHouse[0].fecha_etd %></p>
+                            <% }%>
+                             <% if (item.dataHouse[0].fecha_disponibilidad) { %>
+                           <p>Disponibilidad: <%= item.dataHouse[0].fecha_disponibilidad_letra %></p>
+                           <% }%>
+                           <p>Incoterms: <%= item.dataHouse[0].nameincoterms %></p>
+                           <p>Número de Quote: <%= item.dataHouse[0].id_cot %></p>
+                       </td>
+                  
+                       <td>
+                           <p>A.:<%= item.dataHouse[0].nameagent %></p>
+                           <p>CSG.:<%= item.dataHouse[0].nameconsigner %></p>
+                           <p>N.:<%= item.dataHouse[0].namenotify %></p>
+                           <p>C.H.:<%= item.dataHouse[0].code_house %></p>
+                       </td>
+                       <td>
+                          
+                       
+                            
+                            <% item.dataService.forEach(ser => {%>
+                                <p><%= ser.nameservice %>:
+                                    <% if (ser.status == 0) { %>
+                                    NO
+                                    <% }%>
+                                     <% if (ser.status == 1) { %>
+                                    SI
+                                    <% }%>
+                                </p>
+                                 
+                            <%  });%>  
+                            
+                                 
+                       </td>
+                       <td>
+                           
+                           <p>Recogida: <%= item.dataHouse[0].fecha_recogida %></p>
+                           <p>CUTT-OFF-FIS: <%= item.dataHouse[0].fecha_c_f %></p>
+                           <p>CUTT-OFF-DOC: <%= item.dataHouse[0].fecha_c_d %></p>
+                       </td>
+                       <td>
+                           <p>Operador: <%= item.dataHouse[0].nameoperador %></p>
+                           <p>Creado: <%= item.dataHouse[0].created %></p>
+                           <% if ( item.dataHouse[0].ganancia_pricing > 0) { %>
+                           <p>Ganancia Pricing: <%= item.dataHouse[0].ganancia_pricing %></p>
+                           <% }%>
+                           <p>Status Expediente Op.: <%= item.dataHouse[0].statuslockletra %></p>
+                           <p>Status Expediente Adm.: <%= item.dataHouse[0].statusLockletraadm %></p>
+                            <% if ( item.dataHouse[0].statusLock == 1) { %>
+                           <p>Fecha de Cierre Op.: <%= item.dataHouse[0].datelock %></p>
+                           <% }%>
+                            <% if ( item.dataHouse[0].statusLockAdm == 1) { %>
+                           <p>Fecha de Cierre Adm.: <%= item.dataHouse[0].datelockadm %></p>
+                           <% }%>
+                       </td>
+                       
+                    </tr>
                     <%  });%>
                 <% }%>
                 </table>
+                <table style="text-align: left; font-size: 9px; background-color: rgb(230, 230, 230)" width="100%" class="table_fott">
+                    <tr>
+                        <td>
+                            <p>Total de Expedientes Master: <%= totalExpedientesMaster %></p>
+                        </td>
+                        <td>
+                            <p>Total Importación Aérea: <%= totalIA %></p>
+                            <p>Total Exportación Aérea: <%= totalEA %></p>
+                            <p>Total Importación Marítima: <%= totalIM %></p>
+                            <p>Total Exportación Marítima: <%= totalEM %></p>
+                        </td>
+                        <td>
+                            <p>Total Llegados: <%= totalLL %></p>
+                            <p>Total por Llegar: <%= totalPL %></p>
+                            
+                        </td>
+                    </tr>
+                </table>
+                <table style="text-align: left; font-size: 9px; background-color: rgb(230, 230, 230); margin-top: 10px" width="50%">
+                    <tr>
+                        <th>Operador</th>
+                        <th>Abiertas</th>
+                        <th>Cerradas</th>
+                        <th>Total</th>
+                    </tr>
+                    <% totales.forEach(ser => {%>
+                         </tr>
+                                    <td><%= ser.nameLong %></td>
+                                    <td><%= ser.abiertas %></td>
+	                    <td><%= ser.cerradas %></td>
+                                    <td><%= ser.total %></td>
+                                     </tr>
+                                <%  });%>
+                </table>
              </div>
+             <div id="pageFooter" style="border-top: 1px solid #ddd; padding-top: 5px;">
+  <p style="color: #666; width: 70%; margin: 0; padding-bottom: 5px; text-align: let; font-family: sans-serif; font-size: .65em; float: left;">Reporte Generado desde ChainSolver APP ----- Fecha/Hora Impresión: <%=fechaYHora %></p>
+  <p style="color: #666; margin: 0; padding-bottom: 5px; text-align: right; font-family: sans-serif; font-size: .65em">Página {{page}} de {{pages}}</p>
+</div>
         </div>
     </body>
+
+
+
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+        *{
+            font-family: 'Roboto', sans-serif;
+        }
+        .tableMain p{
+            padding: 0px;
+            margin: 0px;
+        }
+
+        .tableMain td{
+            padding: 5px;
+        }
+
+        .tableMain .encMain{
+            text-align: center !important;
+            background-color: rgb(226, 226, 226);
+        }
+
+        .tableMain {
+            border-collapse: collapse;
+        }
+        .tableMain, th, td {
+            border-bottom: 1px solid rgb(207, 207, 207);
+        }
+
+        .table_fott {
+            border-collapse: collapse;
+        }
+        /* .table_fott, th, td {
+            border: 1px solid black;
+        } */
+    </style>
 </html>
