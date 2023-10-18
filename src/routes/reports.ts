@@ -44,7 +44,7 @@ router.post("/getTotales", TokenValidation, getTotales);
 router.post("/getTotalesAll", TokenValidation, getTotalesAll);
 router.post("/getPdfInstructivo", TokenValidation, pdfInstructivo);
 router.post("/pdfSolicitud", TokenValidation, pdfSolicitud);
-router.post("/getReportFileDetails", TokenValidation, getReportFileDetails);
+router.get("/getReportFileDetails", TokenValidation, getReportFileDetails);
 router.post("/pdfFD", TokenValidation, pdfFD);
 router.get("/reportcxpexcel", constRexportCXPExcel);
 router.get("/reportcxcexcel", constReporteCXCExcel);

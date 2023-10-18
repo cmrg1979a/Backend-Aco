@@ -633,11 +633,13 @@ export const test = async (req: Request, res: Response) => {
 };
 
 export const getReportFileDetails = async (req: Request, res: Response) => {
-  const { dateDesde, dateHasta } = req.body;
+  const { id_branch, desde, hasta } = req.query;
   // se a movido la función existe una copia llamada totales_pagados_orders_old revisarla en caso se quiera revetir
+  // "SELECT * FROM totales_pagados_orders($1,$2)",
+
   await pool.query(
-    "SELECT * FROM totales_pagados_orders($1,$2)",
-    [dateDesde, dateHasta],
+    "SELECT * FROM function_report_filedetallado($1,$2,$3)",
+    [id_branch, desde, hasta],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
