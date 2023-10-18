@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<body>
+
+  <div style="text-align: center">
+    <h2>REPORTE DE FILES DETALLADO</h2>
+    <h4>
+      <%= dateDesde %> - <%= dateHasta %>
+    </h4>
+  </div>
+
+  <table border="1" style="width: 100%; border-collapse: collapse;
+  border-radius: 1em;
+  overflow: hidden; font-size: 10px">
+    <tr>
+      <td>EXPEDIENTES: <%= expedientes %>
+      </td>
+      <td>GANANCIA: <%= ganancia %> USD</td>
+      <td>COBRADO: <%= cobrado %> USD</td>
+      <td>POR COBRAR: <%= porcobrar %> USD</td>
+      <td>POR PAGAR: <%= porPagar %> USD</td>
+    </tr>
+  </table>
+  
+  <table border="1" style="width: 100%; border-collapse: collapse;
+  border-radius: 1em;
+  overflow: hidden; font-size: 8px">
+    <tr>
+      <th> EXP.MASTER </th>
+      <th> EXP. HOUSE</th>
+      <th> CLIENTE</th>
+      <th> GANANCIA</th>
+      <th> F. DISPONIBILIDAD </th>
+      <th> FACTURADO </th>
+      <th> POR COBRAR </th>
+      <!--  <th> DOCUMENTO </th> -->
+    </tr>
+
+    <% if (itemsDetails.length> 0) { %> <% itemsDetails.forEach(item=> {%>
+        <tr>
+          <td style="text-align: center; background: rgb(147, 206, 255) !important; font-weight: bold;">
+            <%= item.nro_master %>
+          </td>
+          <td style="background: rgb(147, 206, 255) !important; font-weight: bold;">
+            <%= item.code_house %>
+          </td>
+          <td style="background: rgb(147, 206, 255) !important; font-weight: bold;">
+            <%= item.nameconsigner %>
+          </td>
+          <td style="background: rgb(147, 206, 255) !important; font-weight: bold;">
+            <%= item.ganancia_global %>
+          </td>
+          <td style="text-align: center; background: rgb(147, 206, 255) !important; font-weight: bold;">
+            <%= item.fecha_disponibilidad %>
+          </td>
+          <td style="background: rgb(147, 206, 255) !important; font-weight: bold;">
+            <%= item.montoingreso %>
+          </td>
+          <td style="background: rgb(147, 206, 255) !important; font-weight: bold;">
+            <%= item.porcobrar %>
+          </td>
+
+
+        </tr>
+
+        <% if (item.dataegresos.length==0) { %>
+          <tr>
+            <td style="font-weight: bold; text-align: center" colspan="7">
+              NO TIENE INSTRUCTIVO NI DE PRICING NI DE OPERACIONES
+            </td>
+
+          </tr>
+          <% }%>
+
+            <% if (item.dataegresos.length> 0) { %>
+              <tr>
+                <td style="font-weight: bold;" colspan="2">
+                  PROVEEDOR
+                </td>
+                <td style="font-weight: bold;" colspan="2">
+                  BENEFICIARIO
+                </td>
+                <td style="font-weight: bold;">
+                  TOTAL PAGAR
+                </td>
+                <td style="font-weight: bold;">
+                  ORIGEN MONTO
+                </td>
+                <td style="font-weight: bold;">
+                  POR PAGAR
+                </td>
+                <td style="font-weight: bold;" colspan="2">
+                  DOCUMENTO
+                </td>
+              </tr>
+
+              <% }%>
+
+
+                <% if (item.dataegresos.length> 0) { %> <% item.dataegresos.forEach(child=> {%>
+
+                    <tr>
+                      <td colspan="2">
+                        <%= child.nameproveedor %>
+                      </td>
+                      <td colspan="2">
+                        
+                      </td>
+                      <td>
+                        <%= child.total_op %> USD
+                      </td>
+                      <td>
+                        
+                      </td>
+                      <td>
+                        <%= child.restante %>
+                      </td>
+                      <% if (child.type_pago==1) { %>
+                        <td colspan="2">
+                          FACTURA
+                        </td>
+                        <% }%>
+                          <% if (child.type_pago==2) { %>
+                            <td colspan="2">
+                              PROFORMACE
+                            </td>
+                            <% }%>
+                              <% if (child.type_pago==3) { %>
+                                <td colspan="2">
+                                  OTRO
+                                </td>
+                                <% }%>
+                                  <% if (child.type_pago==null) { %>
+                                    <td colspan="2">
+                                      SIN CARGAR
+                                    </td>
+                                    <% }%>
+                    </tr>
+
+                    <% });%>
+                      <% }%>
+                        <% });%>
+                          <% }%>
+  </table>
+
+  <table border="1" style="width: 100%; border-collapse: collapse;
+    border-radius: 1em;
+    overflow: hidden; font-size: 10px">
+    <tr>
+      <td>EXPEDIENTES: <%= expedientes %>
+      </td>
+      <td>GANANCIA: <%= ganancia %> USD</td>
+      <td>COBRADO: <%= cobrado %> USD</td>
+      <td>POR COBRAR: <%= porcobrar %> USD</td>
+      <td>POR PAGAR: <%= porPagar %> USD</td>
+    </tr>
+  </table>
+
+  <div id="pageFooter" style="border-top: 1px solid #ddd; padding-top: 5px;">
+    <p
+      style="color: #666; width: 70%; margin: 0; padding-bottom: 5px; text-align: let; font-family: sans-serif; font-size: .65em; float: left;">
+      Reporte Generado desde ChainSolver APP ----- Fecha/Hora Impresión: <%=fechaYHora %>
+    </p>
+    <p
+      style="color: #666; margin: 0; padding-bottom: 5px; text-align: right; font-family: sans-serif; font-size: .65em">
+      Página {{page}} de {{pages}}</p>
+  </div>
+
+</body>
+
+</html>
+
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+
+  * {
+    font-family: "Roboto", sans-serif;
+  }
+
+  table {
+    border-collapse: collapse;
+    border-radius: 1em;
+    overflow: hidden;
+
+  }
+
+  th {
+    padding: 0.5em;
+    background: rgb(235, 235, 235);
+    border-bottom: 2px solid white;
+  }
+
+
+  td {
+    padding: 0.5em;
+    background: rgb(248, 248, 248);
+    border-bottom: 1px solid white;
+  }
+
+  .css-mine {
+    margin-top: 2em;
+    clear: both;
+  }
+</style>

@@ -3,6 +3,7 @@ import { convertToObject, isConstructorDeclaration } from "typescript";
 // import { connect } from "../routes/database";
 import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
+import { container } from "googleapis/build/src/apis/container";
 const { Pool } = pg;
 const pool = conexion();
 
@@ -34,13 +35,18 @@ export const getItemsServices = async (req: Request, res: Response) => {
   );
 };
 
-
 export const getItemsServicesDetails = async (req: Request, res: Response) => {
-  const { id_modality, id_shipment, id_incoterms, id_branch, services } =
-    req.body;
-    
+  const {
+    id_modality,
+    id_shipment,
+    id_incoterms,
+    id_branch,
+    services,
+    container,
+  } = req.body;
+ 
   await pool.query(
-    " SELECT * FROM table_itemsservices_listardetails($1,$2,$3,$4,$5)",
+    " SELECT * FROM table_itemsservices_listardetails($1,$2,$3,$4,$5,$6)",
     [
       id_modality,
       id_shipment,
@@ -48,6 +54,9 @@ export const getItemsServicesDetails = async (req: Request, res: Response) => {
       id_branch,
       services.map((item) => {
         return item.id_groupservices;
+      }),
+      container.map((item) => {
+        return item.id_containers;
       }),
     ],
     (err, response, fields) => {

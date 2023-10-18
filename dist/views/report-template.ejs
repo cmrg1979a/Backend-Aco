@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+
+    </head>
+    <body>
+        
+        <div style="width: 95%; margin: 0 1.5%;">
+            <div style="text-align: center; padding-left: 0px;">            
+                <h5>CONTROL DE FILE MASTER's - <%= branch %></h5>
+<p>Sentido: <%=sentido%> / Status Operativo: <%=status_op %> / Status Admin: <%=status_admin %>  </p>
+<p>Fecha de Disponibilidad Desde: <%= desde %> / Hasta:  <%= hasta %><p>
+        <table style="text-align: left; font-size: 9px; background-color: rgb(230, 230, 230); margin-top: 10px" width="50%">
+            <tr>
+                <th>Operador</th>
+                <th>Abiertas</th>
+                <th>Cerradas</th>
+                <th>Total</th>
+            </tr>
+            <% operadoresArray.forEach(ser => {%>
+                    <tr>
+                        <td><%= ser.operador %></td>
+                        <td><%= ser.totalAbiertas %></td>
+                        <td><%= ser.totalCerradas %></td>
+                        <td><%= ser.totalFiles %></td>
+                    </tr>
+            <% });%>
+            <tr>
+                <td>TOTAL:</td>
+                <td><%= totalAbiertas %></td>
+                <td><%= totalCerradas %></td>
+                <td><%= totalFile %> </td>
+            </tr>
+        </table>
+        <table style="text-align: left; font-size: 9px; background-color: rgb(230, 230, 230); margin-top: 10px" width="50%">
+            <tr>
+               
+                <th>Llegadas</th>
+                <th>Por Llegar</th>
+                <th>Otras</th>
+                
+            </tr>
+            <tr>
+                <td><%= totalLlegadas %></td>
+                <td><%= totalPorLLegar %></td>
+                <td><%= totalOtras %> </td>
+            </tr>
+        </table>
+        <p style="text-align: left; padding-left: 0px;">Total de Expedientes Master: <%= totalFile %></p>
+
+        <table width="100%" style="text-align: left; font-size: 9px; " class="tableMain">
+            <tr class="encMain">
+                <th width="15%">EXP MASTER</th>
+                <th width="20%">GENERALES <br>  EMBARQUES</th>
+                <th width="25%">OPERADOR / FECHAS</th>
+            </tr>
+            <% if (list.length > 0) { %>
+                <% list.forEach(item => {%>
+                 <tr>
+                    <td>
+                        <p class="ma-0"> <b> <%= item.code_master %> </b> </p>
+                        <p class="ma-0"><%= item.modality %>  <%= item.shipment %></p>
+                        <p class="ma-0"><%= item.port_begin %> </p>
+                        <p class="ma-0"><%= item.port_end %> </p>
+                        <p class="ma-0">Salida:  <%= item.fecha_eta %> </p>
+                        <p class="ma-0">Llegada:  <%= item.fecha_etd %> </p>
+                        <p class="ma-0">Disponibilidad: <%= item.fecha_disponibilidad %> </p>
+                        <p class="ma-0">Incoterms: <%= item.incoterms %></p>
+                    </td>
+                    <td>
+                        <p class="ma-0">Cliente: <%= item.listhouse %> </p>
+                        <p class="ma-0"><b>Comentarios:</b></p>
+                        <% if(item.comentario.length >0) { %>
+                            <% item.comentario.forEach(list => { %>
+                                <p>
+                                    Fecha: <%= list.fecha %> <br />
+                                    Personal: <%= list.namelong %> <br />
+                                    Comentario: <%= list.comentario %> <br />
+                                </p>
+                                <hr>
+                            <% }); %>
+                        <% } %>
+                    </td>
+                    <td>
+                        <p class="ma-0">Operador: <%= item.operador %> </p>
+          
+                        <p class="ma-0">Fecha Registro:<%= item.created %> </p>
+                        <p class="ma-0">
+                          Status Expediente Op.: <%= item.statuslock == 0 ? "Abierto" : "Cerrado" %>
+                        
+                        </p>
+                        <p class="ma-0">
+                          Status Expediente Adm.: <%= item.statuslockadm == 0 ? "Abierto" : "Cerrado" %>
+                        </p>
+                      </td>
+                </tr>
+                <%  });%>
+            <% }%>
+        </table>
+            
+        <div id="pageFooter" style="border-top: 1px solid #ddd; padding-top: 5px;">
+            <p style="color: #666; width: 70%; margin: 0; padding-bottom: 5px; text-align: let; font-family: sans-serif; font-size: .65em; float: left;">Reporte Generado desde ChainSolver APP ----- Fecha/Hora Impresión: <%= fecha  %></p>
+            <p style="color: #666; margin: 0; padding-bottom: 5px; text-align: right; font-family: sans-serif; font-size: .65em">Página {{page}} de {{pages}}</p>
+        </div>
+        
+    </body>
+
+
+
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+        *{
+            font-family: 'Roboto', sans-serif;
+        }
+        .tableMain p{
+            padding: 0px;
+            margin: 0px;
+        }
+
+        .tableMain td{
+            padding: 5px;
+        }
+
+        .tableMain .encMain{
+            text-align: center !important;
+            background-color: rgb(226, 226, 226);
+        }
+
+        .tableMain {
+            border-collapse: collapse;
+        }
+        .tableMain, th, td {
+            border-bottom: 1px solid rgb(207, 207, 207);
+        }
+
+        .table_fott {
+            border-collapse: collapse;
+        }
+        /* .table_fott, th, td {
+            border: 1px solid black;
+        } */
+    </style>
+</html>

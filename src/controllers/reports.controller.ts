@@ -9,9 +9,17 @@ var xl = require("excel4node");
 
 import path from "path";
 
-export const getControlFileAll = async (req: Request, res: Response) => {
+export const getControlFile = async (req: Request, res: Response) => {
   await pool.query(
-    "SELECT * FROM reportFile_list();",
+    "SELECT * FROM function_reporte_file($1,$2,$3,$4,$5,$6);",
+    [
+      req.query.id_branch ? req.query.id_branch : null,
+      req.query.status_op ? req.query.status_op : null,
+      req.query.status_admin ? req.query.status_admin : null,
+      req.query.sentido ? req.query.sentido : null,
+      req.query.desde ? req.query.desde : null,
+      req.query.hasta ? req.query.hasta : null,
+    ],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -20,12 +28,14 @@ export const getControlFileAll = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            estadoflag: rows[0].estadoflag,
           });
         } else {
           res.json({
             status: 200,
             statusBol: true,
             mensaje: rows[0].mensaje,
+            estadoflag: rows[0].estadoflag,
           });
         }
       } else {
@@ -430,72 +440,92 @@ export const createdPDF = async (req: Request, res: Response) => {
   let path = require("path");
   const fechaYHora = new Date();
 
-  const {
-    idsentido,
-    fecha_ini,
-    fecha_fin,
-    idOperador,
-    idStatus,
-    idStatusAdm,
-    totalExpedientesMaster,
-    totalExpedientesHouse,
-    totalIA,
-    totalEA,
-    totalIM,
-    totalEM,
-    totalLL,
-    totalPL,
-    totalSS,
-    totalPS,
-    totales,
-    sentidoletra,
-    statusLetra,
-  } = req.body;
-
   await pool.query(
-    "SELECT * FROM reportFile_list2(null,$1,$2,$3,$4,$5);",
+    "SELECT * FROM function_reporte_file($1,$2,$3,$4,$5,$6);",
     [
-      idOperador ? idOperador : null,
-      idStatus ? idStatus : null,
-      idStatusAdm ? idStatusAdm : null,
-      fecha_ini ? fecha_ini : null,
-      fecha_fin ? fecha_fin : null,
+      req.body.id_branch ? req.body.id_branch : null,
+      req.body.status_op ? req.body.status_op : null,
+      req.body.status_admin ? req.body.status_admin : null,
+      req.body.sentido ? req.body.sentido : null,
+      req.body.desde ? req.body.desde : null,
+      req.body.hasta ? req.body.hasta : null,
     ],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+        const operadoresInfo = {};
 
-        let datanew = JSON.parse(JSON.stringify(rows));
-        let dataServiceList;
-        let itemsHouse = [];
-        rows.forEach((element) => {
-          itemsHouse.push({
-            dataHouse: element.datahouse,
-            dataService: element.dataservice ? element.dataservice : [],
-          });
+        // Itera sobre las etiquetas
+        rows.forEach((etiqueta) => {
+          const operador = etiqueta.operador;
+          if (!operadoresInfo[operador]) {
+            operadoresInfo[operador] = {
+              operador: operador,
+              totalAbiertas: 0,
+              totalCerradas: 0,
+              totalFiles: 0,
+            };
+          }
+
+          operadoresInfo[operador].totalFiles++;
+
+          if (etiqueta.statuslock === 1) {
+            operadoresInfo[operador].totalAbiertas++;
+          } else if (etiqueta.statuslock === 0) {
+            operadoresInfo[operador].totalCerradas++;
+          }
         });
+        moment.locale("es");
+        let fecha = moment().format("DD-MMM-YYYY HH:mm:ss");
+        let totalAbiertas = rows.filter((v) => v.statuslock == 1).length;
+        let totalCerradas = rows.filter((v) => v.statuslock == 0).length;
+        let totalLlegadas = rows.filter((v) => v.orden == 1).length;
+        let totalPorLLegar = rows.filter((v) => v.orden == 2).length;
+        let totalOtras = rows.filter((v) => v.orden == 3).length;
+        let totalFile = rows.length;
+        let branch = rows[0].branch;
+        let status_op = "";
+        let status_admin = "";
+        let sentido = "";
+        let desde = "";
+        let hasta = "";
+        let operadoresArray = Object.values(operadoresInfo);
+        let list = rows;
+        if (req.body.status_op) {
+          status_op = req.body.status_op == 0 ? "Abiertos" : "Cerrados";
+        }
+        if (req.body.status_admin) {
+          status_admin = req.body.status_admin == 0 ? "Abiertos" : "Cerrados";
+        }
+        if (req.body.sentido) {
+          sentido = rows[0].modality;
+        }
+        if (req.body.desde) {
+          desde = req.body.desde;
+        }
+        if (req.body.hasta) {
+          hasta = req.body.hasta;
+        }
 
         ejs.renderFile(
           path.join(__dirname, "../views/", "report-template.ejs"),
 
           {
-            items: itemsHouse,
-            fecha_ini,
-            fecha_fin,
-            totalExpedientesMaster,
-            totalExpedientesHouse,
-            totalIA,
-            totalEA,
-            totalIM,
-            totalEM,
-            totalLL,
-            totalPL,
-            totalSS,
-            totalPS,
-            totales,
-            fechaYHora,
-            sentidoletra,
-            statusLetra,
+            fecha,
+            totalFile,
+            branch,
+            status_op,
+            status_admin,
+            sentido,
+            desde,
+            hasta,
+            operadoresArray,
+            list,
+            totalAbiertas,
+            totalCerradas,
+            totalLlegadas,
+            totalPorLLegar,
+            totalOtras,
           },
 
           (err: any, data: any) => {
@@ -601,7 +631,6 @@ export const test = async (req: Request, res: Response) => {
     }
   );
 };
-
 
 export const getReportFileDetails = async (req: Request, res: Response) => {
   const { dateDesde, dateHasta } = req.body;
@@ -2076,7 +2105,6 @@ export const ExportarConsolidadoCargaMasiva = async (
               },
             });
         }
-        
 
         // ---------------------------------
         wt.cell(2, 8)
@@ -2105,7 +2133,7 @@ export const ExportarConsolidadoCargaMasiva = async (
             });
         }
 
-        // --------------------------------- 
+        // ---------------------------------
 
         let i = 1;
         wt.cell(3, 1).string("#").style(cabTitle);

@@ -15,6 +15,13 @@ const corsOptions = {
 };
 
 const corsMiddleware = cors(corsOptions);
+
+if (process.env.ENV === "development") {
+  console.log('development');
+} else if (process.env.ENV === "production") {
+  console.log('production');
+}
+
 /**PROUCCIÓN */
 // const pool = new Pool({
 //   host: "10.116.0.2",
@@ -79,7 +86,6 @@ import banksRoute from "./routes/banks";
 import { addPath } from "graphql/jsutils/Path";
 import filesRoute from "./routes/files";
 import spaymentRoute from "./routes/spayment";
-// import { connect } from "routes/database";
 import versionRoute from "./routes/version";
 import modulesPaysRoutes from "./routes/modulesPays";
 import perfomanceRoutes from "./routes/perfomance";
