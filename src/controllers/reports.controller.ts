@@ -11,9 +11,10 @@ import path from "path";
 
 export const getControlFile = async (req: Request, res: Response) => {
   await pool.query(
-    "SELECT * FROM function_reporte_file($1,$2,$3,$4,$5,$6);",
+    "SELECT * FROM function_reporte_file($1,$2,$3,$4,$5,$6,$7);",
     [
       req.query.id_branch ? req.query.id_branch : null,
+      req.query.id_operativo ? req.query.id_operativo : null,
       req.query.status_op ? req.query.status_op : null,
       req.query.status_admin ? req.query.status_admin : null,
       req.query.sentido ? req.query.sentido : null,
