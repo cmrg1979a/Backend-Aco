@@ -247,7 +247,22 @@ export const getQuoteStatus = async (req: Request, res: Response) => {
 
 export const getQuoteList = async (req: Request, res: Response) => {
   let filtro = req.query;
+  let stado = 1;
 
+  switch (filtro.estado) {
+    case "1":
+    case "true":
+      stado = 1;
+      break;
+    case "0":
+    case "false":
+      stado = 0;
+      break;
+
+    default:
+      stado = null;
+      break;
+  }
   await pool.query(
     "select * from TABLE_QUOTE_list($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
     [
@@ -260,7 +275,7 @@ export const getQuoteList = async (req: Request, res: Response) => {
       filtro.id_incoterm ? filtro.id_incoterm : null,
       filtro.fechainicio ? filtro.fechainicio : null,
       filtro.fechafin ? filtro.fechafin : null,
-      filtro.estado ? filtro.estado : null,
+      stado,
     ],
     (err, response, fields) => {
       if (!err) {

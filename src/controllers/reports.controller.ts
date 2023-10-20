@@ -633,7 +633,6 @@ export const test = async (req: Request, res: Response) => {
   );
 };
 
-
 export const getReportFileDetails = async (req: Request, res: Response) => {
   const { id_branch, desde, hasta } = req.query;
   // se a movido la función existe una copia llamada totales_pagados_orders_old revisarla en caso se quiera revetir
@@ -2282,3 +2281,127 @@ function getColumnLetter(columnNumber) {
 
   return columnName;
 }
+
+export const exportListQuote = async (req: Request, res: Response) => {
+  let ejs = require("ejs");
+  let pdf = require("html-pdf");
+  let path = require("path");
+  let { id_branch, filtro } = req.body;
+  const fechaYHora = new Date();
+  req.setTimeout(0);
+  let stado = 1;
+
+  switch (filtro.estado) {
+    case 1:
+    case true:
+      stado = 1;
+      break;
+    case 0:
+    case false:
+      stado = 0;
+      break;
+
+    default:
+      stado = null;
+      break;
+  }
+
+  await pool.query(
+    "select * from TABLE_QUOTE_list($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
+    [
+      id_branch ? id_branch : null,
+      filtro.id_marketing ? filtro.id_marketing : null,
+      filtro.id_status ? filtro.id_status : null,
+      filtro.id_entities ? filtro.id_entities : null,
+      filtro.id_modality ? filtro.id_modality : null,
+      filtro.id_shipment ? filtro.id_shipment : null,
+      filtro.id_incoterm ? filtro.id_incoterm : null,
+      filtro.fechainicio ? filtro.fechainicio : null,
+      filtro.fechafin ? filtro.fechafin : null,
+      stado,
+    ],
+    async (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        const countByStatus = {};
+        const countByActivos = {};
+        // Itera sobre el array JSON
+        await rows.forEach((item) => {
+          const status = item.status;
+          if (!countByStatus[status]) {
+            countByStatus[status] = {
+              status: status,
+              total: 0,
+            };
+          }
+          countByStatus[status].total++;
+
+          // -------------------------
+          const statusMain = item.statusmain;
+          if (!countByActivos[statusMain]) {
+            countByActivos[statusMain] = {
+              statusMain: statusMain,
+              name: statusMain == 1 ? "Activo" : "Inactivo",
+              total: 0,
+            };
+          }
+
+          countByActivos[statusMain].total++;
+        });
+        let countByStatusArray = Object.values(countByStatus);
+        const countByActivosArray: {
+          statusMain: number;
+          name: string;
+          total: number;
+        }[] = Object.values(countByActivos);
+
+        countByActivosArray.sort((a, b) => {
+          if (a.name < b.name) {
+            return -1;
+          }
+          if (a.name > b.name) {
+            return 1;
+          }
+          return 0;
+        });
+        ejs.renderFile(
+          path.join(__dirname, "../views/", "reporteListQuote.ejs"),
+          { countByStatusArray, countByActivosArray, rows },
+          (err: any, data: any) => {
+            if (err) {
+              // res.send(err);
+              console.log(err);
+            } else {
+              let options = {
+                page_size: "A4",
+                orientation: "landscape",
+                header: {
+                  height: "10mm",
+                },
+                footer: {
+                  height: "10mm",
+                },
+              };
+              pdf
+                .create(data, options)
+                .toFile(
+                  "files/REPORT_LISTADO_QUOTE.pdf",
+                  function (err: any, data: any) {
+                    if (err) {
+                      res.send(err);
+                    } else {
+                      res.download("/REPORT_LISTADO_QUOTE.pdf");
+                      res.send({
+                        msg: "File created successfully",
+                        path: path.join("REPORT_LISTADO_QUOTE.pdf"),
+                      });
+                    }
+                  }
+                );
+            }
+          }
+        );
+      }
+    }
+  );
+};
