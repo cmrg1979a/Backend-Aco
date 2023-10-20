@@ -8,12 +8,13 @@ const pool = conexion();
 var xl = require("excel4node");
 
 import path from "path";
-
+moment.locale("es");
 export const getControlFile = async (req: Request, res: Response) => {
   await pool.query(
-    "SELECT * FROM function_reporte_file($1,$2,$3,$4,$5,$6);",
+    "SELECT * FROM function_reporte_file($1,$2,$3,$4,$5,$6,$7);",
     [
       req.query.id_branch ? req.query.id_branch : null,
+      req.query.id_operativo ? req.query.id_operativo : null,
       req.query.status_op ? req.query.status_op : null,
       req.query.status_admin ? req.query.status_admin : null,
       req.query.sentido ? req.query.sentido : null,
@@ -475,7 +476,7 @@ export const createdPDF = async (req: Request, res: Response) => {
             operadoresInfo[operador].totalCerradas++;
           }
         });
-        moment.locale("es");
+
         let fecha = moment().format("DD-MMM-YYYY HH:mm:ss");
         let totalAbiertas = rows.filter((v) => v.statuslock == 1).length;
         let totalCerradas = rows.filter((v) => v.statuslock == 0).length;
@@ -632,12 +633,15 @@ export const test = async (req: Request, res: Response) => {
   );
 };
 
+
 export const getReportFileDetails = async (req: Request, res: Response) => {
-  const { dateDesde, dateHasta } = req.body;
+  const { id_branch, desde, hasta } = req.query;
   // se a movido la función existe una copia llamada totales_pagados_orders_old revisarla en caso se quiera revetir
+  // "SELECT * FROM totales_pagados_orders($1,$2)",
+
   await pool.query(
-    "SELECT * FROM totales_pagados_orders($1,$2)",
-    [dateDesde, dateHasta],
+    "SELECT * FROM function_report_filedetallado($1,$2,$3)",
+    [id_branch, desde, hasta],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -664,77 +668,119 @@ export const getReportFileDetails = async (req: Request, res: Response) => {
 };
 
 export const pdfFD = async (req: Request, res: Response) => {
+  const { id_branch, desde, hasta } = req.body;
   let ejs = require("ejs");
   let pdf = require("html-pdf");
   let path = require("path");
   const fechaYHora = new Date();
-
-  const {
-    itemsDetails,
-    fecha,
-    expedientes,
-    ganancia,
-    cobrado,
-    porcobrar,
-    porPagar,
-    dateDesde,
-    dateHasta,
-  } = req.body;
-  try {
-    ejs.renderFile(
-      path.join(__dirname, "../views/", "pdf-fileDetails.ejs"),
-      // path.join(__dirname, "../views/", "pdf-fileDetails.ejs"),
-      {
-        itemsDetails,
-        fecha,
-        expedientes,
-        ganancia,
-        cobrado,
-        porcobrar,
-        porPagar,
-        fechaYHora,
-        dateDesde,
-        dateHasta,
-      },
-      (err: any, data: any) => {
-        if (err) {
-          res.send(err);
-        } else {
-          let options = {
-            page_size: "A4",
-            orientation: "landscape",
-            header: {
-              height: "15mm",
+  await pool.query(
+    "SELECT * FROM function_report_filedetallado($1,$2,$3)",
+    [id_branch, desde, hasta],
+    (err, response, fields) => {
+      if (!err) {
+        let data = response.rows;
+        let totalExp = data.length;
+        let gananciaPr = data.reduce((total, item) => {
+          return (
+            parseFloat(total) +
+            (parseFloat(item.ingresos_pr) - parseFloat(item.egresos_pr))
+          );
+        }, 0);
+        let gananciaOp = data.reduce((total, item) => {
+          return (
+            parseFloat(total) +
+            (parseFloat(item.ingresos_op) - parseFloat(item.egresos_op))
+          );
+        }, 0);
+        let cobrado = data.reduce((total, item) => {
+          return parseFloat(total) + parseFloat(item.ingesos_pagado);
+        }, 0);
+        let porCobrar = data.reduce((total, item) => {
+          return (
+            parseFloat(total) +
+            (parseFloat(
+              item.ingresos_op != 0 ? item.ingresos_op : item.ingresos_pr
+            ) -
+              parseFloat(item.ingesos_pagado))
+          );
+        }, 0);
+        let porPagar = data.reduce((total, item) => {
+          return (
+            parseFloat(total) +
+            (parseFloat(
+              item.egresos_op != 0 ? item.egresos_op : item.egresos_pr
+            ) -
+              parseFloat(item.egresos_pagado))
+          );
+        }, 0);
+        let fecha = moment().format("YYYY_MM_DD");
+        let fechaYHora = moment().format("YYYY-MMM-DD HH:mm:ss");
+        try {
+          ejs.renderFile(
+            path.join(__dirname, "../views/", "pdf-fileDetails.ejs"),
+            // path.join(__dirname, "../views/", "pdf-fileDetails.ejs"),
+            {
+              data,
+              totalExp,
+              gananciaPr,
+              gananciaOp,
+              cobrado,
+              porCobrar,
+              porPagar,
+              desde,
+              hasta,
+              fechaYHora,
             },
-            footer: {
-              height: "15mm",
-            },
-          };
+            (err: any, data: any) => {
+              if (err) {
+                res.send(err);
+              } else {
+                let options = {
+                  page_size: "A4",
+                  orientation: "landscape",
+                  header: {
+                    height: "15mm",
+                  },
+                  footer: {
+                    height: "15mm",
+                  },
+                };
 
-          pdf
-            .create(data, options)
-            .toFile(
-              "files/REPORTE_FILES_DETALLADO_" + fecha + ".pdf",
-              function (err: any, data: any) {
-                if (err) {
-                  res.send(err);
-                } else {
-                  res.download("/REPORTE_FILES_DETALLADO_" + fecha + ".pdf");
-                  res.send({
-                    msg: "File created successfully",
-                    path: path.join(
-                      "/REPORTE_FILES_DETALLADO_" + fecha + ".pdf"
-                    ),
-                  });
-                }
+                pdf
+                  .create(data, options)
+                  .toFile(
+                    "files/REPORTE_FILES_DETALLADO_" + fecha + ".pdf",
+                    function (err: any, data: any) {
+                      if (err) {
+                        res.send(err);
+                      } else {
+                        res.download(
+                          "/REPORTE_FILES_DETALLADO_" + fecha + ".pdf"
+                        );
+                        res.send({
+                          msg: "File created successfully",
+                          path: path.join(
+                            "/REPORTE_FILES_DETALLADO_" + fecha + ".pdf"
+                          ),
+                        });
+                      }
+                    }
+                  );
               }
-            );
+            }
+          );
+        } catch (err) {
+          console.log(err);
         }
       }
-    );
-  } catch (error) {
-    console.log(error);
-  }
+    }
+  );
+
+  // try {
+
+  // } catch (error) {
+  //   console.log(error);
+  // }
 };
 
 export const constRexportCXPExcel = async (req: Request, res: Response) => {

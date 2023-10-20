@@ -7,7 +7,7 @@ import path from "path";
 var xl = require("excel4node");
 
 export const comparativo = async (req: Request, res: Response) => {
-  console.log(req.query);
+ 
   await pool.query(
     "SELECT * FROM function_comparativo_proyeccion($1,$2,$3);",
     [req.query.id_branch, req.query.month, req.query.year],

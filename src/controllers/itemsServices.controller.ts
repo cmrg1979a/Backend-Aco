@@ -42,9 +42,9 @@ export const getItemsServicesDetails = async (req: Request, res: Response) => {
     id_incoterms,
     id_branch,
     services,
-    container,
+    containers,
   } = req.body;
- 
+
   await pool.query(
     " SELECT * FROM table_itemsservices_listardetails($1,$2,$3,$4,$5,$6)",
     [
@@ -55,7 +55,8 @@ export const getItemsServicesDetails = async (req: Request, res: Response) => {
       services.map((item) => {
         return item.id_groupservices;
       }),
-      container.map((item) => {
+
+      containers.map((item) => {
         return item.id_containers;
       }),
     ],

@@ -310,6 +310,9 @@ app.use(marketing_1.default);
 app.use(type_phone_1.default);
 app.use(groupservices_1.default);
 app.use(transport_1.default);
+<<<<<<< HEAD
 app.use(gasto_1.default);
+=======
+>>>>>>> 1607fa76259a8a0b5cf2ee9fffb1da2c1219f54c
 exports.default = app;
 //# sourceMappingURL=app.js.map

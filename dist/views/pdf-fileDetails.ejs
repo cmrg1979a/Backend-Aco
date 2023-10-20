@@ -1,174 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
+  <body style="margin-top: 0 !important">
+    <div style="text-align: center">
+      <h2>REPORTE DE FILES DETALLADO</h2>
+      <h4>Desde: <%= desde %> - Hasta: <%= hasta %></h4>
+    </div>
 
-<body>
+    <table
+      border="1"
+      style="
+        width: 100%;
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden;
+        font-size: 10px;
+      "
+    >
+      <tr>
+        <th>EXPEDIENTES: <%= totalExp %></th>
+        <th>GANANCIA PR: <%= parseFloat(gananciaPr).toFixed(2) %> USD</th>
+        <th>GANANCIA OP: <%= parseFloat(gananciaOp).toFixed(2) %> USD</th>
+        <th>COBRADO: <%= parseFloat(cobrado).toFixed(2) %> USD</th>
+        <th>POR COBRAR: <%= parseFloat(porCobrar).toFixed(2) %> USD</th>
+        <th>POR PAGAR: <%= parseFloat(porPagar).toFixed(2) %> USD</th>
+      </tr>
+    </table>
 
-  <div style="text-align: center">
-    <h2>REPORTE DE FILES DETALLADO</h2>
-    <h4>
-      <%= dateDesde %> - <%= dateHasta %>
-    </h4>
-  </div>
+    <table
+      border="1"
+      style="
+        width: 100%;
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden;
+        font-size: 8px;
+      "
+    >
+      <% if (data.length> 0) { %> <% data.forEach(master=> {%>
+      <tr>
+        <th style="background: #b2ebf2 !important">NRO MASTER</th>
+        <th style="background: #b2ebf2 !important">MASTER</th>
+        <th style="background: #b2ebf2 !important">FECHA DISPONIBILIDAD</th>
+        <th style="background: #b2ebf2 !important">GANANCIA PR</th>
+        <th style="background: #b2ebf2 !important">GANANCIA OP</th>
+        <th style="background: #b2ebf2 !important">FACTURADO PR</th>
+        <th style="background: #b2ebf2 !important">FACTURADO OP</th>
+        <th style="background: #b2ebf2 !important">POR COBRAR</th>
+      </tr>
+      <tr>
+        <td style="background: #e0f7fa !important"><%= master.nro_master %></td>
+        <td style="background: #e0f7fa"><%= master.code_master %></td>
+        <td style="background: #e0f7fa"><%= master.fecha_disponibilidad %></td>
+        <td style="background: #e0f7fa">
+          <%= parseFloat( parseFloat(master.ingresos_pr) -
+          parseFloat(master.egresos_pr) ).toFixed(2) %>
+        </td>
 
-  <table border="1" style="width: 100%; border-collapse: collapse;
-  border-radius: 1em;
-  overflow: hidden; font-size: 10px">
-    <tr>
-      <td>EXPEDIENTES: <%= expedientes %>
-      </td>
-      <td>GANANCIA: <%= ganancia %> USD</td>
-      <td>COBRADO: <%= cobrado %> USD</td>
-      <td>POR COBRAR: <%= porcobrar %> USD</td>
-      <td>POR PAGAR: <%= porPagar %> USD</td>
-    </tr>
-  </table>
-  
-  <table border="1" style="width: 100%; border-collapse: collapse;
-  border-radius: 1em;
-  overflow: hidden; font-size: 8px">
-    <tr>
-      <th> EXP.MASTER </th>
-      <th> EXP. HOUSE</th>
-      <th> CLIENTE</th>
-      <th> GANANCIA</th>
-      <th> F. DISPONIBILIDAD </th>
-      <th> FACTURADO </th>
-      <th> POR COBRAR </th>
-      <!--  <th> DOCUMENTO </th> -->
-    </tr>
+        <td style="background: #e0f7fa">
+          <%= parseFloat( parseFloat(master.ingresos_op) -
+          parseFloat(master.egresos_op) ).toFixed(2) %>
+        </td>
+        <td style="background: #e0f7fa"><%= master.ingresos_pr %></td>
+        <td style="background: #e0f7fa"><%= master.ingresos_op %></td>
+        <td style="background: #e0f7fa">
+          <%= parseFloat( parseFloat( master.ingresos_op != 0 ?
+          master.ingresos_op : master.ingresos_pr ) -
+          parseFloat(master.ingesos_pagado) ).toFixed(2) %>
+        </td>
+      </tr>
+      <tr>
+        <th style="background: #b2dfdb !important" colspan="5">CLIENTE</th>
+        <th style="background: #b2dfdb !important">FACTURADO PR</th>
+        <th style="background: #b2dfdb !important">FACTURADO OP</th>
+        <th style="background: #b2dfdb !important">POR COBRAR</th>
+      </tr>
+      <% if(master.listhouse.length> 0) { %> <%master.listhouse.forEach(house=>
+      {%>
+      <tr>
+        <td style="background: #e0f2f1 !important" colspan="5">
+          <%= house.cliente %>
+        </td>
+        <td style="background: #e0f2f1 !important">
+          <%= parseFloat(house.monto_pr).toFixed(2) %>
+        </td>
+        <td style="background: #e0f2f1 !important">
+          <%= parseFloat(house.monto_op).toFixed(2) %>
+        </td>
+        
 
-    <% if (itemsDetails.length> 0) { %> <% itemsDetails.forEach(item=> {%>
-        <tr>
-          <td style="text-align: center; background: rgb(147, 206, 255) !important; font-weight: bold;">
-            <%= item.nro_master %>
-          </td>
-          <td style="background: rgb(147, 206, 255) !important; font-weight: bold;">
-            <%= item.code_house %>
-          </td>
-          <td style="background: rgb(147, 206, 255) !important; font-weight: bold;">
-            <%= item.nameconsigner %>
-          </td>
-          <td style="background: rgb(147, 206, 255) !important; font-weight: bold;">
-            <%= item.ganancia_global %>
-          </td>
-          <td style="text-align: center; background: rgb(147, 206, 255) !important; font-weight: bold;">
-            <%= item.fecha_disponibilidad %>
-          </td>
-          <td style="background: rgb(147, 206, 255) !important; font-weight: bold;">
-            <%= item.montoingreso %>
-          </td>
-          <td style="background: rgb(147, 206, 255) !important; font-weight: bold;">
-            <%= item.porcobrar %>
-          </td>
+        <td style="background: #e0f2f1 !important">
+          <%= parseFloat( parseFloat( house.monto_op != 0 ? house.monto_op :
+          house.monto_pr ) - parseFloat(house.ingresos_pagado) ).toFixed(2) %>
+        </td>
+      </tr>
 
+      <% });%> <% }%> <% if (master.listproveedor.length>0) {%>
+      <tr>
+        <th style="background: #ffccbc" colspan="4">PROVEEDOR</th>
+        <th style="background: #ffccbc">DOCUMENTO</th>
+        <th style="background: #ffccbc">FACTURADO PR</th>
+        <th style="background: #ffccbc">FACTURADO OP</th>
+        <th style="background: #ffccbc">POR PAGAR</th>
+      </tr>
+      <% master.listproveedor.forEach(proveedor => {%>
+      <tr>
+        <td style="background: #fbe9e7" colspan="4">
+          <%= proveedor.proveedor %>
+        </td>
+        <td>
+          <% if (proveedor.type_pago === 1) { %> FACTURA <% } else if
+          (proveedor.type_pago === 2) { %> PROFORMACE <% } else if
+          (proveedor.type_pago === 3) { %> OTRO <% } else { %> SIN CARGAR <% }
+          %>
+        </td>
+        <td style="background: #fbe9e7">
+          <%= parseFloat(proveedor.monto_pr).toFixed(2) %>
+        </td>
+        <td style="background: #fbe9e7">
+          <%= parseFloat(proveedor.monto_op).toFixed(2) %>
+        </td>
+        <td style="background: #fbe9e7">
+          <%= parseFloat( parseFloat( proveedor.monto_op != 0 ?
+          proveedor.monto_op : proveedor.monto_pr ) -
+          parseFloat(proveedor.egresos_pagado) ).toFixed(2) %>
+        </td>
+      </tr>
+      <%});%> <%}%> <% }); %> <% } %>
+    </table>
 
-        </tr>
-
-        <% if (item.dataegresos.length==0) { %>
-          <tr>
-            <td style="font-weight: bold; text-align: center" colspan="7">
-              NO TIENE INSTRUCTIVO NI DE PRICING NI DE OPERACIONES
-            </td>
-
-          </tr>
-          <% }%>
-
-            <% if (item.dataegresos.length> 0) { %>
-              <tr>
-                <td style="font-weight: bold;" colspan="2">
-                  PROVEEDOR
-                </td>
-                <td style="font-weight: bold;" colspan="2">
-                  BENEFICIARIO
-                </td>
-                <td style="font-weight: bold;">
-                  TOTAL PAGAR
-                </td>
-                <td style="font-weight: bold;">
-                  ORIGEN MONTO
-                </td>
-                <td style="font-weight: bold;">
-                  POR PAGAR
-                </td>
-                <td style="font-weight: bold;" colspan="2">
-                  DOCUMENTO
-                </td>
-              </tr>
-
-              <% }%>
-
-
-                <% if (item.dataegresos.length> 0) { %> <% item.dataegresos.forEach(child=> {%>
-
-                    <tr>
-                      <td colspan="2">
-                        <%= child.nameproveedor %>
-                      </td>
-                      <td colspan="2">
-                        
-                      </td>
-                      <td>
-                        <%= child.total_op %> USD
-                      </td>
-                      <td>
-                        
-                      </td>
-                      <td>
-                        <%= child.restante %>
-                      </td>
-                      <% if (child.type_pago==1) { %>
-                        <td colspan="2">
-                          FACTURA
-                        </td>
-                        <% }%>
-                          <% if (child.type_pago==2) { %>
-                            <td colspan="2">
-                              PROFORMACE
-                            </td>
-                            <% }%>
-                              <% if (child.type_pago==3) { %>
-                                <td colspan="2">
-                                  OTRO
-                                </td>
-                                <% }%>
-                                  <% if (child.type_pago==null) { %>
-                                    <td colspan="2">
-                                      SIN CARGAR
-                                    </td>
-                                    <% }%>
-                    </tr>
-
-                    <% });%>
-                      <% }%>
-                        <% });%>
-                          <% }%>
-  </table>
-
-  <table border="1" style="width: 100%; border-collapse: collapse;
-    border-radius: 1em;
-    overflow: hidden; font-size: 10px">
-    <tr>
-      <td>EXPEDIENTES: <%= expedientes %>
-      </td>
-      <td>GANANCIA: <%= ganancia %> USD</td>
-      <td>COBRADO: <%= cobrado %> USD</td>
-      <td>POR COBRAR: <%= porcobrar %> USD</td>
-      <td>POR PAGAR: <%= porPagar %> USD</td>
-    </tr>
-  </table>
-
-  <div id="pageFooter" style="border-top: 1px solid #ddd; padding-top: 5px;">
-    <p
-      style="color: #666; width: 70%; margin: 0; padding-bottom: 5px; text-align: let; font-family: sans-serif; font-size: .65em; float: left;">
-      Reporte Generado desde ChainSolver APP ----- Fecha/Hora Impresión: <%=fechaYHora %>
-    </p>
-    <p
-      style="color: #666; margin: 0; padding-bottom: 5px; text-align: right; font-family: sans-serif; font-size: .65em">
-      Página {{page}} de {{pages}}</p>
-  </div>
-
-</body>
-
+    <div id="pageFooter" style="border-top: 1px solid #ddd; padding-top: 5px">
+      <p
+        style="
+          color: #666;
+          width: 70%;
+          margin: 0;
+          padding-bottom: 5px;
+          text-align: let;
+          font-family: sans-serif;
+          font-size: 0.65em;
+          float: left;
+        "
+      >
+        Reporte Generado desde ChainSolver APP ----- Fecha/Hora Impresión:
+        <%=fechaYHora %>
+      </p>
+      <p
+        style="
+          color: #666;
+          margin: 0;
+          padding-bottom: 5px;
+          text-align: right;
+          font-family: sans-serif;
+          font-size: 0.65em;
+        "
+      >
+        Página {{ page }} de {{ pages }}
+      </p>
+    </div>
+  </body>
 </html>
 
 <style>
@@ -176,13 +165,13 @@
 
   * {
     font-family: "Roboto", sans-serif;
+    margin-top: 1em;
   }
 
   table {
     border-collapse: collapse;
     border-radius: 1em;
     overflow: hidden;
-
   }
 
   th {
@@ -191,7 +180,6 @@
     border-bottom: 2px solid white;
   }
 
-
   td {
     padding: 0.5em;
     background: rgb(248, 248, 248);
@@ -199,7 +187,7 @@
   }
 
   .css-mine {
-    margin-top: 2em;
+    margin-top: 1em;
     clear: both;
   }
 </style>
