@@ -104,6 +104,7 @@ import marketingRoutes from "./routes/marketing";
 import typePhoneRoutes from "./routes/type_phone";
 import groupservicesRoutes from "./routes/groupservices";
 import transport from "./routes/transport";
+import gasto from "./routes/gasto";
 
 // settings
 app.set("port", 9200);
@@ -310,4 +311,5 @@ app.use(marketingRoutes)
 app.use(typePhoneRoutes)
 app.use(groupservicesRoutes)
 app.use(transport)
+app.use(gasto)
 export default app;

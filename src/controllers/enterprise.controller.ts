@@ -67,7 +67,7 @@ export const insertEnterprise = async (req: Request, res: Response) => {
   let data = req.body;
   const result = await pool.query("SELECT *from function_insert_enterprise($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);", [
     data.id_branch,
-    data.id_logo,
+    data.id_logo ? data.id_logo : null,
     data.document,
     data.trade_name,
     data.business_name,
@@ -170,8 +170,9 @@ export const switchEnterprise = async (req: Request, res: Response) => {
 export const validateDocumentEnterprise = async (req: Request, res: Response) => {
   let data = req.query;
 
-  const result = await pool.query("SELECT *from function_validates_type_document_and_document_in_enterprise($1,$2, $3);", [
+  const result = await pool.query("SELECT *from function_validates_type_document_and_document_in_enterprise($1,$2, $3, $4);", [
     data.id ? data.id : 0,
+    data.id_branch,
     data.id_document,
     data.document,
   ]);
