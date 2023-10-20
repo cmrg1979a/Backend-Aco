@@ -440,130 +440,147 @@ export const createdPDF = async (req: Request, res: Response) => {
   let pdf = require("html-pdf");
   let path = require("path");
   const fechaYHora = new Date();
-
+  let {
+    id_branch,
+    id_operativo,
+    status_op,
+    status_admin,
+    sentido,
+    desde,
+    hasta,
+  } = req.body;
   await pool.query(
-    "SELECT * FROM function_reporte_file($1,$2,$3,$4,$5,$6);",
+    "SELECT * FROM function_reporte_file($1,$2,$3,$4,$5,$6,$7);",
     [
-      req.body.id_branch ? req.body.id_branch : null,
-      req.body.status_op ? req.body.status_op : null,
-      req.body.status_admin ? req.body.status_admin : null,
-      req.body.sentido ? req.body.sentido : null,
-      req.body.desde ? req.body.desde : null,
-      req.body.hasta ? req.body.hasta : null,
+      id_branch ? id_branch : null,
+      id_operativo ? id_operativo : null,
+      status_op ? status_op : null,
+      status_admin ? status_admin : null,
+      sentido ? sentido : null,
+      desde ? desde : null,
+      hasta ? hasta : null,
     ],
-    (err, response, fields) => {
+    async (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
         const operadoresInfo = {};
-
-        // Itera sobre las etiquetas
-        rows.forEach((etiqueta) => {
-          const operador = etiqueta.operador;
-          if (!operadoresInfo[operador]) {
-            operadoresInfo[operador] = {
-              operador: operador,
-              totalAbiertas: 0,
-              totalCerradas: 0,
-              totalFiles: 0,
-            };
-          }
-
-          operadoresInfo[operador].totalFiles++;
-
-          if (etiqueta.statuslock === 1) {
-            operadoresInfo[operador].totalAbiertas++;
-          } else if (etiqueta.statuslock === 0) {
-            operadoresInfo[operador].totalCerradas++;
-          }
-        });
-
-        let fecha = moment().format("DD-MMM-YYYY HH:mm:ss");
-        let totalAbiertas = rows.filter((v) => v.statuslock == 1).length;
-        let totalCerradas = rows.filter((v) => v.statuslock == 0).length;
-        let totalLlegadas = rows.filter((v) => v.orden == 1).length;
-        let totalPorLLegar = rows.filter((v) => v.orden == 2).length;
-        let totalOtras = rows.filter((v) => v.orden == 3).length;
-        let totalFile = rows.length;
-        let branch = rows[0].branch;
-        let status_op = "";
-        let status_admin = "";
-        let sentido = "";
-        let desde = "";
-        let hasta = "";
-        let operadoresArray = Object.values(operadoresInfo);
-        let list = rows;
-        if (req.body.status_op) {
-          status_op = req.body.status_op == 0 ? "Abiertos" : "Cerrados";
-        }
-        if (req.body.status_admin) {
-          status_admin = req.body.status_admin == 0 ? "Abiertos" : "Cerrados";
-        }
-        if (req.body.sentido) {
-          sentido = rows[0].modality;
-        }
-        if (req.body.desde) {
-          desde = req.body.desde;
-        }
-        if (req.body.hasta) {
-          hasta = req.body.hasta;
-        }
-
-        ejs.renderFile(
-          path.join(__dirname, "../views/", "report-template.ejs"),
-
-          {
-            fecha,
-            totalFile,
-            branch,
-            status_op,
-            status_admin,
-            sentido,
-            desde,
-            hasta,
-            operadoresArray,
-            list,
-            totalAbiertas,
-            totalCerradas,
-            totalLlegadas,
-            totalPorLLegar,
-            totalOtras,
-          },
-
-          (err: any, data: any) => {
-            if (err) {
-              // res.send(err);
-              console.log(err);
-            } else {
-              let options = {
-                page_size: "A4",
-                orientation: "landscape",
-                header: {
-                  height: "10mm",
-                },
-                footer: {
-                  height: "10mm",
-                },
+        if (rows.length > 0) {
+          // Itera sobre las etiquetas
+          await rows.forEach((etiqueta) => {
+            const operador = etiqueta.operador;
+            if (!operadoresInfo[operador]) {
+              operadoresInfo[operador] = {
+                operador: operador,
+                totalAbiertas: 0,
+                totalCerradas: 0,
+                totalFiles: 0,
               };
-
-              pdf
-                .create(data, options)
-                .toFile(
-                  "files/REPORT_CONTROL_FILE.pdf",
-                  function (err: any, data: any) {
-                    if (err) {
-                      res.send(err);
-                    } else {
-                      res.download("/REPORT_CONTROL_FILE.pdf");
-                      res.send({
-                        msg: "File created successfully",
-                        path: path.join("/REPORT_CONTROL_FILE.pdf"),
-                      });
-                    }
-                  }
-                );
             }
+
+            if (etiqueta.statuslock === 1) {
+              operadoresInfo[operador].totalAbiertas++;
+            } else if (etiqueta.statuslock === 0) {
+              operadoresInfo[operador].totalCerradas++;
+            }
+          });
+
+          let fecha = moment().format("DD-MMM-YYYY HH:mm:ss");
+          let totalAbiertas = rows.filter((v) => v.statuslock == 1).length;
+          let totalCerradas = rows.filter((v) => v.statuslock == 0).length;
+          let totalLlegadas = rows.filter((v) => v.orden == 1).length;
+          let totalPorLLegar = rows.filter((v) => v.orden == 2).length;
+          let totalOtras = rows.filter((v) => v.orden == 3).length;
+          let totalFile = rows.length;
+          let branch = rows[0].branch;
+          let status_op = "";
+          let status_admin = "";
+          let sentido = "";
+          let desde = "";
+          let hasta = "";
+          let operadoresArray = Object.values(operadoresInfo);
+          let list = rows;
+          if (req.body.status_op) {
+            status_op = req.body.status_op == 0 ? "Abiertos" : "Cerrados";
           }
-        );
+          if (req.body.status_admin) {
+            status_admin = req.body.status_admin == 0 ? "Abiertos" : "Cerrados";
+          }
+          if (req.body.sentido) {
+            sentido = rows[0].modality;
+          }
+          if (req.body.desde) {
+            desde = req.body.desde;
+          }
+          if (req.body.hasta) {
+            hasta = req.body.hasta;
+          }
+
+          ejs.renderFile(
+            path.join(__dirname, "../views/", "report-template.ejs"),
+
+            {
+              fecha,
+              totalFile,
+              branch,
+              status_op,
+              status_admin,
+              sentido,
+              desde,
+              hasta,
+              operadoresArray,
+              list,
+              totalAbiertas,
+              totalCerradas,
+              totalLlegadas,
+              totalPorLLegar,
+              totalOtras,
+            },
+
+            (err: any, data: any) => {
+              if (err) {
+                // res.send(err);
+                console.log(err);
+              } else {
+                let options = {
+                  page_size: "A4",
+                  orientation: "landscape",
+                  header: {
+                    height: "10mm",
+                  },
+                  footer: {
+                    height: "10mm",
+                  },
+                };
+
+                pdf
+                  .create(data, options)
+                  .toFile(
+                    "files/REPORT_CONTROL_FILE.pdf",
+                    function (err: any, data: any) {
+                      if (err) {
+                        res.send(err);
+                      } else {
+                        res.download("/REPORT_CONTROL_FILE.pdf");
+                        res.send({
+                          estadoflag: true,
+                          msg: "File created successfully",
+                          path: path.join("/REPORT_CONTROL_FILE.pdf"),
+                        });
+                      }
+                    }
+                  );
+              }
+            }
+          );
+        } else {
+          res.send({
+            estadoflag: false,
+            msg: "File created successfully",
+            path: path.join("/REPORT_CONTROL_FILE.pdf"),
+          });
+        }
+      } else {
+        console.log(err);
       }
     }
   );
