@@ -71,3 +71,120 @@ export const deleteContainers = async (req: Request, res: Response) => {
     }
   );
 };
+
+export const getListContainersByBranch = async (req: Request, res: Response) => {
+  let data = req.query;
+  const result = await pool.query("SELECT *from function_list_table_containers($1,$2, $3, $4, $5);", [
+    data.id_branch,
+    data.code ? data.code : null,
+    data.name ? data.name : null,
+    data.description ? data.description : null,
+    data.status
+  ]);
+
+  const { rows } = result;
+
+  try {
+      if (rows.length > 0) {
+        return res.status(200).json(rows);
+      } else { 
+        console.log("No se encontraron resultados");
+      }
+  } catch (error) {
+      console.log('Error al listar los resultados:', error);
+  }
+}
+
+export const insertContainers = async (req: Request, res: Response) => {
+  let data = req.body;
+  const result = await pool.query("SELECT *from function_insert_table_containers($1,$2, $3, $4, $5, $6, $7, $8, $9);", [
+    data.id_branch,
+    data.name,
+    data.description,
+    data.long,
+    data.width,
+    data.height,
+    data.maximumweight,
+    data.maximunvolumen,
+    data.status,
+  ]);
+
+  const { rows } = result;
+
+  try {
+      if (rows.length > 0) {
+        return res.status(200).json(rows);
+      } else {
+        console.log('No se pudo insertar el registro.');
+      }
+  } catch (error) {
+      console.log('Error al insertar el registro:', error);
+  }
+}
+
+export const readContainers = async (req: Request, res: Response) => {
+  let data = req.query;
+  const result = await pool.query("SELECT *from function_see_table_containers($1);", [
+    data.id
+  ]);
+
+  const { rows } = result;
+
+  try {
+    if (rows.length > 0) {
+      return res.status(200).json(rows);
+    } else {
+      console.log('No se encontraron resultados.');
+    }
+  } catch (error) {
+      console.log('Error al accceder el registro:', error);
+  }
+}
+
+export const updateContainers = async (req: Request, res: Response) => {
+  let data = req.body;
+  
+  const result = await pool.query("SELECT *from function_edit_table_containers($1,$2,$3,$4,$5,$6,$7,$8,$9,$10);", [
+    data.id,
+    data.name,
+    data.description,
+    data.long,
+    data.width,
+    data.height,
+    data.maximumweight,
+    data.maximunvolumen,
+    data.status
+  ]);
+
+  const { rows } = result;
+
+  try {
+      if (rows.length > 0) {
+        return res.status(200).json(rows);
+      } else {
+        console.log("No se pudo actualizar el registro");
+      }
+  } catch (error) {
+      console.log('Error al actualizar el registro:', error);
+  }
+}
+
+export const switchContainers = async (req: Request, res: Response) => {
+  let data = req.body;
+  const result = await pool.query("SELECT *from function_switch_table_containers($1, $2);", [
+    data.id,
+    data.status
+  ]);
+
+  const { rows } = result;
+
+  try {
+      if (rows.length > 0) {
+        return res.status(200).json(rows);
+      } else {
+          console.log('No se pudo eliminar el registro.');
+      }
+  } catch (error) {
+      console.log('Error al eliminar el registro:', error);
+  }
+}
