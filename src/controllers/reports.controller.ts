@@ -477,9 +477,9 @@ export const createdPDF = async (req: Request, res: Response) => {
               };
             }
 
-            if (etiqueta.statuslock === 1) {
+            if (etiqueta.statuslock === 0) {
               operadoresInfo[operador].totalAbiertas++;
-            } else if (etiqueta.statuslock === 0) {
+            } else if (etiqueta.statuslock === 1) {
               operadoresInfo[operador].totalCerradas++;
             }
           });
