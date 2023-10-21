@@ -485,8 +485,8 @@ export const createdPDF = async (req: Request, res: Response) => {
           });
 
           let fecha = moment().format("DD-MMM-YYYY HH:mm:ss");
-          let totalAbiertas = rows.filter((v) => v.statuslock == 1).length;
-          let totalCerradas = rows.filter((v) => v.statuslock == 0).length;
+          let totalAbiertas = rows.filter((v) => v.statuslock == 0).length;
+          let totalCerradas = rows.filter((v) => v.statuslock == 1).length;
           let totalLlegadas = rows.filter((v) => v.orden == 1).length;
           let totalPorLLegar = rows.filter((v) => v.orden == 2).length;
           let totalOtras = rows.filter((v) => v.orden == 3).length;
