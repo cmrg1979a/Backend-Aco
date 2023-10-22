@@ -144,7 +144,7 @@ export const readContainers = async (req: Request, res: Response) => {
 export const updateContainers = async (req: Request, res: Response) => {
   let data = req.body;
   
-  const result = await pool.query("SELECT *from function_edit_table_containers($1,$2,$3,$4,$5,$6,$7,$8,$9,$10);", [
+  const result = await pool.query("SELECT *from function_edit_table_containers($1,$2,$3,$4,$5,$6,$7,$8,$9);", [
     data.id,
     data.name,
     data.description,
