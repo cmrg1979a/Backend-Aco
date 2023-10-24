@@ -3,8 +3,11 @@ import { Request, Response } from "express";
 import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
 const { Pool } = pg;
-const pool = conexion();
 
+const pool = conexion();
+let ejs = require("ejs");
+let pdf = require("html-pdf");
+let path = require("path");
 export const setQuote = async (req: Request, res: Response) => {
   const dataObj = req.body;
 
@@ -1107,6 +1110,126 @@ export const quoteDataHouse = async (req: Request, res: Response) => {
             mensaje: rows[0].mensaje,
             estado: rows[0].estadoflag,
           });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const listadoCotizacionMercadeo = async (
+  req: Request,
+  res: Response
+) => {
+  let { filtro, id_branch } = req.body;
+  let stado = 1;
+
+  switch (filtro.estado) {
+    case "1":
+    case "true":
+    case 1:
+      stado = 1;
+      break;
+    case "0":
+    case "false":
+    case 0:
+      stado = 0;
+      break;
+
+    default:
+      stado = null;
+      break;
+  }
+
+  await pool.query(
+    "SELECT * FROM listado_cotizacion_mercadeo($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
+    [
+      id_branch ? id_branch : null,
+      filtro.fechafin ? filtro.fechafin : null,
+      filtro.fechainicio ? filtro.fechainicio : null,
+      filtro.id_entities ? filtro.id_entities : null,
+      filtro.id_incoterm ? filtro.id_incoterm : null,
+      filtro.id_marketing ? filtro.id_marketing : null,
+      filtro.id_modality ? filtro.id_modality : null,
+      filtro.id_shipment ? filtro.id_shipment : null,
+      filtro.id_status ? filtro.id_status : null,
+      stado,
+    ],
+
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          let lstTotalPorDia = rows[0].lsttotaldia;
+          let lstmarketing = rows;
+          let sucursal = rows[0].trade_name_sucursal;
+
+          const countByStatus = {};
+
+          // Itera a través del array y cuenta los estados
+          for (const item of rows) {
+            const status = item.namemarketing;
+            if (countByStatus[status]) {
+              countByStatus[status] += 1;
+            } else {
+              countByStatus[status] = 1;
+            }
+          }
+          // ------------------------
+          // let countByStatusArray = Object.values(countByStatus);
+          const countByActivosArray = Object.entries(countByStatus).map(
+            ([name, cantidad]) => ({ name, cantidad })
+          );
+
+          // console.log(lstTotalPorDia);
+
+          // ------------------------
+          ejs.renderFile(
+            path.join(__dirname, "../views/", "pdfQuoteMarketing.ejs"),
+
+            {
+              sucursal,
+              countByActivosArray,
+              lstmarketing,
+            },
+
+            (err: any, data: any) => {
+              if (err) {
+                // res.send(err);
+                console.log(err);
+              } else {
+                let options = {
+                  page_size: "A4",
+                  orientation: "landscape",
+                  header: {
+                    height: "10mm",
+                  },
+                  footer: {
+                    height: "10mm",
+                  },
+                };
+
+                pdf
+                  .create(data, options)
+                  .toFile(
+                    "files/pdfQuoteMarketing.pdf",
+                    function (err: any, data: any) {
+                      if (err) {
+                        res.send(err);
+                      } else {
+                        res.download("/pdfQuoteMarketing.pdf");
+                        res.send({
+                          estadoflag: true,
+                          msg: "File created successfully",
+                          path: path.join("pdfQuoteMarketing.pdf"),
+                        });
+                      }
+                    }
+                  );
+              }
+            }
+          );
         }
       } else {
         console.log(err);

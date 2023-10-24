@@ -1,46 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-  <body style="margin-top: 0 !important">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
     <div style="text-align: center">
-      <h1 class="title">REPORTE DE QUOTE GENERAL</h1>
+      <h1 class="title">REPORTE DE QUOTE GENERAL - MARKETEO</h1>
       <h3 class="subtitle"><%=sucursal %></h3>
     </div>
+
     <div class="container">
       <div class="item">
-        <h3>Total por Estatus:</h3>
+        <b>Total por Estatus</b>
         <table>
           <thead>
             <tr>
-              <th class="headerDetalle">Estatus</th>
+              <th class="headerDetalle">Marketing</th>
               <th class="headerDetalle">Cantidad</th>
             </tr>
           </thead>
           <tbody>
-            <% if (countByStatusArray.length > 0) {%>
-            <%countByStatusArray.forEach(element => {%>
+            <% if (countByActivosArray.length>0) { %> <%
+            countByActivosArray.forEach(mkt => {%>
             <tr>
-              <td><%= element.status %></td>
-              <td><%= element.total %></td>
-            </tr>
-            <%});%> <%}%>
-          </tbody>
-        </table>
-      </div>
-      <div class="item">
-        <b> Total Por Estatus </b>
-        <table>
-          <thead>
-            <tr>
-              <th class="headerDetalle">Estatus</th>
-              <th class="headerDetalle">Cantidad</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% if (countByActivosArray.length > 0) {%>
-            <%countByActivosArray.forEach(element => {%>
-            <tr>
-              <td><%= element.name %></td>
-              <td><%= element.total %></td>
+              <td><%= mkt.name %></td>
+              <td><%= mkt.cantidad %></td>
             </tr>
             <%});%> <%}%>
           </tbody>
@@ -52,7 +38,7 @@
       <thead>
         <tr>
           <th class="headerDetalle">FECHA</th>
-          <th class="headerDetalle">STATUS</th>
+          <th class="headerDetalle">MARKETING</th>
           <th class="headerDetalle">CÓD</th>
           <th class="headerDetalle">CLIENTE</th>
           <th class="headerDetalle">TELÉFONO</th>
@@ -66,30 +52,27 @@
         </tr>
       </thead>
       <tbody>
-        <% if (rows.length>0) {%> <% rows.forEach(element => {%>
+        <%if (lstmarketing.length>0) {%> <% lstmarketing.forEach(element => {%>
         <tr>
-          <td><%=element.created %></td>
-          <td><%=element.status %></td>
-          <td><%=element.codigo %></td>
-          <td><%=element.nombres %></td>
-          <td><%=element.telefono %></td>
-          <td><%=element.sentido %></td>
-          <td><%=element.tipo_de_carga %></td>
-          <td><%=element.incoterms %></td>
-          <td><%=element.origen %></td>
-          <td><%=element.destino %></td>
-          <td><%=element.ejecutivo_ventas %></td>
-          <td>
-            <% if (element.statusmain ==1 ) {%> Activo <% } else { %> Inactivo
-            <% }%>
-          </td>
+          <td class="center"><%=element.created%></td>
+          <td class="center"><%=element.namemarketing%></td>
+          <td class="center"><%=element.codigo%></td>
+          <td><%=element.nombres%></td>
+          <td class="center"><%=element.telefono%></td>
+          <td class="center"><%=element.sentido%></td>
+          <td class="center"><%=element.tipo_de_carga%></td>
+          <td class="center"><%=element.incoterms%></td>
+          <td class="center"><%=element.origen%></td>
+          <td class="center"><%=element.destino%></td>
+          <td class="center"><%=element.ejecutivo_ventas%></td>
+          <td class="center"><%=element.status%></td>
         </tr>
-
-        <% });%> <% }%>
+        <%});%> <%}%>
       </tbody>
     </table>
   </body>
 </html>
+
 <style>
   * {
     font-size: 0.7rem !important;
@@ -127,6 +110,9 @@
   .title {
     font-size: 1.5rem !important;
   }
+  .subtitle {
+    font-size: 1.2rem !important;
+  }
   td,
   th {
     text-align: center;
@@ -141,7 +127,7 @@
     max-width: 100%;
     white-space: nowrap;
   }
-  .subtitle {
-    font-size: 1.2rem !important;
+  .center {
+    text-align: center;
   }
 </style>

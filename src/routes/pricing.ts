@@ -35,6 +35,7 @@ import {
   cargarMasterDetalleImpuestos,
   quoteCargarNoAsignadosHouse,
   quoteDataHouse,
+  listadoCotizacionMercadeo,
 } from "../controllers/pricing.controller";
 
 router.post("/setQuote", TokenValidation, setQuote);
@@ -79,5 +80,10 @@ router.get(
   quoteCargarNoAsignadosHouse
 );
 router.get("/quote_data_house", TokenValidation, quoteDataHouse);
+router.post(
+  "/listado_cotizacion_mercadeo",
+  // TokenValidation,
+  listadoCotizacionMercadeo
+);
 
 export default router;

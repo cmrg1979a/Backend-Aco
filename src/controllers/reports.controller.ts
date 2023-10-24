@@ -2340,6 +2340,8 @@ export const exportListQuote = async (req: Request, res: Response) => {
     async (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+        let sucursal = rows[0].trade_name_sucursal;
+
         const countByStatus = {};
         const countByActivos = {};
         // Itera sobre el array JSON
@@ -2383,7 +2385,7 @@ export const exportListQuote = async (req: Request, res: Response) => {
         });
         ejs.renderFile(
           path.join(__dirname, "../views/", "reporteListQuote.ejs"),
-          { countByStatusArray, countByActivosArray, rows },
+          { sucursal, countByStatusArray, countByActivosArray, rows },
           (err: any, data: any) => {
             if (err) {
               // res.send(err);
