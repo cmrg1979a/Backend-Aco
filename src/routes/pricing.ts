@@ -73,7 +73,7 @@ router.put(
   TokenValidation,
   ActualizarFolderOneDrive
 );
-router.post("/listado_llamadas", TokenValidation, getListCalls);
+router.get("/listado_llamadas", TokenValidation, getListCalls);
 router.get(
   "/quote_cargar_noasignadoshouse",
   TokenValidation,

@@ -988,17 +988,43 @@ export const ActualizarFolderOneDrive = async (req: Request, res: Response) => {
   );
 };
 export const getListCalls = async (req: Request, res: Response) => {
-  let filtros = req.body;
+  let {
+    id_branch,
+    id_estado,
+    id_sentido,
+    id_carga,
+    id_icoterms,
+    desde,
+    hasta,
+    estado,
+  } = req.query;
+  let stado = 1;
+
+  switch (estado) {
+    case "1":
+    case "true":
+      stado = 1;
+      break;
+    case "0":
+    case "false":
+      stado = 0;
+      break;
+
+    default:
+      stado = null;
+      break;
+  }
   await pool.query(
-    "select * from lista_llamadas2($1,$2,$3,$4,$5,$6,$7)",
+    "select * from lista_llamadas2($1,$2,$3,$4,$5,$6,$7,$8)",
     [
-      req.body.id_branch ? req.body.id_branch : null,
-      filtros.id_estado ? filtros.id_estado : null,
-      filtros.id_sentido ? filtros.id_sentido : null,
-      filtros.id_carga ? filtros.id_carga : null,
-      filtros.id_icoterms ? filtros.id_icoterms : null,
-      filtros.desde ? filtros.desde : null,
-      filtros.hasta ? filtros.hasta : null,
+      id_branch ? id_branch : null,
+      id_estado ? id_estado : null,
+      id_sentido ? id_sentido : null,
+      id_carga ? id_carga : null,
+      id_icoterms ? id_icoterms : null,
+      desde ? desde : null,
+      hasta ? hasta : null,
+      stado,
     ],
     (err, response, fields) => {
       if (!err) {
