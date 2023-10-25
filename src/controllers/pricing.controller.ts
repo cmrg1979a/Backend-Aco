@@ -8,6 +8,8 @@ const pool = conexion();
 let ejs = require("ejs");
 let pdf = require("html-pdf");
 let path = require("path");
+import moment from "moment";
+moment.locale("es");
 export const setQuote = async (req: Request, res: Response) => {
   const dataObj = req.body;
 
@@ -1263,3 +1265,211 @@ export const listadoCotizacionMercadeo = async (
     }
   );
 };
+
+export const quotePreviewTotales = async (req: Request, res: Response) => {
+  let {
+    code,
+    id_branch,
+    business_name,
+    address,
+    tipo,
+    cliente,
+    slogancliente,
+    fechafin,
+    tiempoTransito,
+    origen,
+    destino,
+    impuesto,
+    flete,
+    almacen,
+    aduana,
+    local,
+    totalImpuesto,
+    incluye,
+    noincluye,
+    importante,
+    contenedor,
+    conceptos,
+    sentido,
+    embarque,
+    icoterm,
+    datosFlete,
+    datosLocales,
+    datosAduanas,
+    datosAlmacenes,
+    totalImpuestosIGV,
+    totalFlete,
+    totalLocales,
+    totalAduanas,
+    totalAlmacenes,
+    totalServicios,
+    total,
+    iso_pais,
+    numerobultos,
+    peso,
+    volumen,
+    pais,
+  } = req.body;
+  let fecha = moment().format("DD-MM-YYYY");
+
+  let servicios = getServicios({
+    flete: flete,
+    almacen: almacen,
+    aduana: aduana,
+    local: local,
+    contenedor: contenedor,
+    numerobultos: numerobultos,
+    peso: peso,
+    volumen: volumen,
+  });
+  let lengthServ = servicios.length;
+  ejs.renderFile(
+    path.join(__dirname, "../views/", "quoteDetallado.ejs"),
+    {
+      servicios,
+      lengthServ,
+      fecha,
+      code,
+      id_branch,
+      business_name,
+      address,
+      tipo,
+      cliente,
+      slogancliente,
+      fechafin,
+      tiempoTransito,
+      origen,
+      destino,
+      impuesto,
+      flete,
+      almacen,
+      aduana,
+      local,
+      totalImpuesto,
+      incluye,
+      noincluye,
+      importante,
+      contenedor,
+      conceptos,
+      sentido,
+      embarque,
+      icoterm,
+      datosFlete,
+      datosLocales,
+      datosAduanas,
+      datosAlmacenes,
+      totalImpuestosIGV,
+      totalFlete,
+      totalLocales,
+      totalAduanas,
+      totalAlmacenes,
+      totalServicios,
+      total,
+      iso_pais,
+      pais,
+    },
+
+    (err: any, data: any) => {
+      if (err) {
+        // res.send(err);
+        console.log(err);
+      } else {
+        let options = {
+          page_size: "A4",
+          header: {
+            height: "15mm",
+          },
+         
+        };
+
+        pdf
+          .create(data, options)
+          .toFile("files/quotePreview.pdf", function (err: any, data: any) {
+            if (err) {
+              res.send(err);
+            } else {
+              res.download("/quotePreview.pdf");
+              res.send({
+                estadoflag: true,
+                msg: "File created successfully",
+                path: path.join("quotePreview.pdf"),
+              });
+            }
+          });
+      }
+    }
+  );
+};
+
+function getServicios({
+  flete = [],
+  almacen = [],
+  aduana = [],
+  local = [],
+  contenedor = [],
+  numerobultos = "",
+  peso = "",
+  volumen = "",
+}) {
+  let serv = [];
+  if (flete.length > 0) {
+    flete.forEach((element) => {
+      serv.push({
+        name: element.name,
+        estado: element.estado,
+      });
+    });
+  }
+  if (almacen.length > 0) {
+    almacen.forEach((element) => {
+      serv.push({
+        name: element.name,
+        estado: element.estado,
+      });
+    });
+  }
+  if (aduana.length > 0) {
+    aduana.forEach((element) => {
+      serv.push({
+        name: element.name,
+        estado: element.estado,
+      });
+    });
+  }
+  if (local.length > 0) {
+    local.forEach((element) => {
+      serv.push({
+        name: element.name,
+        estado: element.estado,
+      });
+    });
+  }
+  if (contenedor.length > 0) {
+    contenedor.forEach((element) => {
+      serv.push({
+        name: element.name,
+        estado: element.valor,
+      });
+    });
+  }
+  if (!!numerobultos) {
+    serv.push({
+      name: numerobultos,
+      estado: numerobultos,
+    });
+  }
+  if (!!peso) {
+    serv.push({
+      name: peso,
+      estado: peso,
+    });
+  }
+  if (!!volumen) {
+    serv.push({
+      name: volumen,
+      estado: volumen,
+    });
+  }
+  // console.log(serv);
+  return serv;
+}

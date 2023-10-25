@@ -127,7 +127,6 @@ const type_phone_1 = __importDefault(require("./routes/type_phone"));
 const groupservices_1 = __importDefault(require("./routes/groupservices"));
 const transport_1 = __importDefault(require("./routes/transport"));
 const gasto_1 = __importDefault(require("./routes/gasto"));
-const ingreso_1 = __importDefault(require("./routes/ingreso"));
 // settings
 app.set("port", 9200);
 // middlewares
@@ -312,6 +311,5 @@ app.use(type_phone_1.default);
 app.use(groupservices_1.default);
 app.use(transport_1.default);
 app.use(gasto_1.default);
-app.use(ingreso_1.default);
 exports.default = app;
 //# sourceMappingURL=app.js.map
