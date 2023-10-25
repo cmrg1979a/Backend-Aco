@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div style="text-align: center">
+      <h1 class="title">REPORTE DE QUOTE GENERAL - MARKETEO</h1>
+      <h3 class="subtitle"><%=sucursal %></h3>
+    </div>
+
+    <div class="container">
+      <div class="item">
+        <b>Total por Estatus</b>
+        <table>
+          <thead>
+            <tr>
+              <th class="headerDetalle">Marketing</th>
+              <th class="headerDetalle">Cantidad</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (countByActivosArray.length>0) { %> <%
+            countByActivosArray.forEach(mkt => {%>
+            <tr>
+              <td><%= mkt.name %></td>
+              <td><%= mkt.cantidad %></td>
+            </tr>
+            <%});%> <%}%>
+          </tbody>
+        </table>
+      </div>
+      <div class="item">
+        <b> Total Por Estatus </b>
+        <table>
+          <thead>
+            <tr>
+              <th class="headerDetalle">Día</th>
+              <th class="headerDetalle">Cantidad</th>
+              <th class="headerDetalle">Cotizando Seguro</th>
+              <th class="headerDetalle">Esperando Seguro</th>
+              <th class="headerDetalle">Casilero Seguro</th>
+              <th class="headerDetalle">Otros</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% if (resultArray.length>0) {%> <% resultArray.forEach(element =>
+            {%>
+            <tr>
+              <td><%= element.name_dia %></td>
+              <td class="center">
+                <%= element.cost_seg+ element.esp_seg+ element.cas_seg+
+                element.otros %>
+              </td>
+              <td class="center"><%= element.cost_seg %></td>
+              <td class="center"><%= element.esp_seg %></td>
+              <td class="center"><%= element.cas_seg %></td>
+              <td class="center"><%= element.otros %></td>
+            </tr>
+            <%}); %> <%} else {%>
+            <tr>
+              <td>
+                (Solo se muestra el Total cuando las fechas son un máximo de 7
+                días)
+              </td>
+            </tr>
+            <%} %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <table style="width: 100% !important">
+      <thead>
+        <tr>
+          <th class="headerDetalle">FECHA</th>
+          <th class="headerDetalle">MARKETING</th>
+          <th class="headerDetalle">CÓD</th>
+          <th class="headerDetalle">CLIENTE</th>
+          <th class="headerDetalle">TELÉFONO</th>
+          <th class="headerDetalle">SENTIDO</th>
+          <th class="headerDetalle">TIPO CARGA</th>
+          <th class="headerDetalle">CCI</th>
+          <th class="headerDetalle">ORIGEN</th>
+          <th class="headerDetalle">DESTINO</th>
+          <th class="headerDetalle">VENDEDOR</th>
+          <th class="headerDetalle">ESTATUS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%if (lstmarketing.length>0) {%> <% lstmarketing.forEach(element => {%>
+        <tr>
+          <td class="center"><%=element.created%></td>
+          <td class="center"><%=element.namemarketing%></td>
+          <td class="center"><%=element.codigo%></td>
+          <td><%=element.nombres%></td>
+          <td class="center"><%=element.telefono%></td>
+          <td class="center"><%=element.sentido%></td>
+          <td class="center"><%=element.tipo_de_carga%></td>
+          <td class="center"><%=element.incoterms%></td>
+          <td class="center"><%=element.origen%></td>
+          <td class="center"><%=element.destino%></td>
+          <td class="center"><%=element.ejecutivo_ventas%></td>
+          <td class="center"><%=element.status%></td>
+        </tr>
+        <%});%> <%}%>
+      </tbody>
+    </table>
+  </body>
+</html>
+
+<style>
+  * {
+    font-size: 0.7rem !important;
+  }
+
+  .container {
+    width: 100%;
+    display: block;
+  }
+
+  .half {
+    width: 50%;
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #000;
+    display: inline-block;
+    vertical-align: top; /* Alinea los elementos en la parte superior */
+  }
+  .headerDetalle {
+    background: rgb(58, 17, 0);
+    color: white;
+  }
+  .container {
+    display: flex;
+    width: 100%;
+    margin: 1cm 0 2cm 0;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+  .item {
+    float: left !important;
+    width: 50% !important ;
+  }
+  .title {
+    font-size: 1.5rem !important;
+  }
+  .subtitle {
+    font-size: 1.2rem !important;
+  }
+  td,
+  th {
+    text-align: center;
+    vertical-align: center;
+    border-spacing: 0;
+  }
+
+  td {
+    text-align: left;
+  }
+  .td {
+    max-width: 100%;
+    white-space: nowrap;
+  }
+  .center {
+    text-align: center;
+  }
+</style>
