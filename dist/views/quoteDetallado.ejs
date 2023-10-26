@@ -312,10 +312,30 @@
         </tr>
       </tbody>
     </table>
+    <%}%> <% if (conceptos.length>0) {%>
+    <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
+      <thead>
+        <tr class="subrayado">
+          <th class="align-left" colspan="6">CONCEPTOS DE GASTOS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% conceptos.forEach(element => {%>
+        <tr>
+          <td class="align-left" colspan="6"><%=element.name%></td>
+        </tr>
+        <%});%>
+      </tbody>
+    </table>
     <%}%>
     <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
       <tbody>
-        <tr style="border-bottom: 1.5px solid black">
+        <tr
+          style="
+            border-top: 1.5px solid black;
+            border-bottom: 1.5px solid black;
+          "
+        >
           <td class="align-left st-bg" colspan="5">
             TOTAL SERVICIOS DE PIC CARGO
           </td>
@@ -325,13 +345,28 @@
     </table>
     <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
       <thead>
-        <tr>
-          <th class="align-left" colspan="5">IMPUESTO A LA ADUANA</th>
+        <tr class="subrayado">
+          <th class="align-left" colspan="4">IMPUESTO A LA ADUANA</th>
+          <th class="align-left" colspan="1"></th>
           <th class="align-right" colspan="1">MONTO</th>
         </tr>
       </thead>
       <tbody>
-        <tr style="border-bottom: 1.5px solid black">
+        <% impuesto.forEach(element => {%>
+        <tr>
+          <td class="align-left" colspan="2"><%=element.name%></td>
+          <td class="align-right" colspan="2">
+            <%=element.percentage?element.percentage: ''%>
+          </td>
+          <td class="align-right" colspan="2">$<%=element.valor%></td>
+        </tr>
+        <%});%>
+        <tr
+          style="
+            border-top: 1.5px solid black;
+            border-bottom: 1.5px solid black;
+          "
+        >
           <td class="align-right" colspan="5">Total</td>
           <td class="align-right" colspan="1"><%= totalImpuesto%></td>
         </tr>
@@ -360,7 +395,7 @@
             margin: 0;
             padding-bottom: 5px;
             font-family: sans-serif;
-            font-size: 0.65em;
+            font-size: 0.4em;
           "
         >
           <b>ESTA OFERTA INCLUYE</b>
@@ -372,7 +407,7 @@
             margin: 0;
             padding-bottom: 5px;
             font-family: sans-serif;
-            font-size: 0.65em;
+            font-size: 0.4em;
           "
         >
           <%=element.name%>
@@ -384,7 +419,7 @@
             margin: 0;
             padding-bottom: 5px;
             font-family: sans-serif;
-            font-size: 0.65em;
+            font-size: 0.4em;
           "
         >
           <b>ESTA OFERTA NO INCLUYE</b>
@@ -396,7 +431,7 @@
             margin: 0;
             padding-bottom: 5px;
             font-family: sans-serif;
-            font-size: 0.65em;
+            font-size: 0.4em;
           "
         >
           <%=element.name%>
@@ -410,7 +445,7 @@
             margin: 0;
             padding-bottom: 5px;
             font-family: sans-serif;
-            font-size: 0.65em;
+            font-size: 0.4em;
           "
         >
           <b>IMPORTANTE </b>
@@ -422,7 +457,7 @@
             margin: 0;
             padding-bottom: 5px;
             font-family: sans-serif;
-            font-size: 0.65em;
+            font-size: 0.4em;
           "
         >
           <%=element.name%>
@@ -438,7 +473,7 @@
             padding-bottom: 5px;
             text-align: right;
             font-family: sans-serif;
-            font-size: 0.65em;
+            font-size: 0.4em;
           "
         >
           <%=business_name%><%=address%> Página {{ page }} de {{ pages }}
@@ -456,11 +491,11 @@
   body {
     /*max-width: 16.59cm !important;*/
     /*max-height: 14cm !important;*/
-    margin: 0cm 2cm 20rem !important;
-    font-size: 0.32rem !important;
+    margin: 0cm 1rem 0rem !important;
+    font-size: 0.5rem !important;
   }
   .t-footer {
-    font-size: 0.3rem !important;
+    /*font-size: 0.5rem !important;*/
     line-height: 1;
   }
   .container {

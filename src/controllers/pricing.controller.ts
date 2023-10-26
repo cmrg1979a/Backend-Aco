@@ -1266,6 +1266,7 @@ export const listadoCotizacionMercadeo = async (
   );
 };
 
+
 export const quotePreviewTotales = async (req: Request, res: Response) => {
   let {
     code,
@@ -1384,15 +1385,15 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
 
         pdf
           .create(data, options)
-          .toFile("files/quotePreview.pdf", function (err: any, data: any) {
+          .toFile("files/COTIZACION.pdf", function (err: any, data: any) {
             if (err) {
               res.send(err);
             } else {
-              res.download("/quotePreview.pdf");
+              res.download("/COTIZACION.pdf");
               res.send({
                 estadoflag: true,
                 msg: "File created successfully",
-                path: path.join("quotePreview.pdf"),
+                path: path.join("COTIZACION.pdf"),
               });
             }
           });
@@ -1454,19 +1455,19 @@ function getServicios({
   }
   if (!!numerobultos) {
     serv.push({
-      name: numerobultos,
+      name: 'Nro Bultos',
       estado: numerobultos,
     });
   }
   if (!!peso) {
     serv.push({
-      name: peso,
+      name: 'Peso',
       estado: peso,
     });
   }
   if (!!volumen) {
     serv.push({
-      name: volumen,
+      name: 'Volumen',
       estado: volumen,
     });
   }
