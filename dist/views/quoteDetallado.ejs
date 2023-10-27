@@ -231,7 +231,7 @@
         </tr>
       </tbody>
     </table>
-    <%}%> <% if (!!totalLocales) {%>
+    <%}%> <% if(tipo != 'AGRUPADO'){%>
 
     <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
       <thead>
@@ -260,7 +260,7 @@
       </tbody>
     </table>
 
-    <%}%> <% if (!!totalAlmacenes) {%>
+    <%}%> <% if(tipo != 'AGRUPADO'){%>
     <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
       <thead>
         <tr class="subrayado">
@@ -286,7 +286,7 @@
         </tr>
       </tbody>
     </table>
-    <%}%> <% if (!!totalAduanas) {%>
+    <%}%> <% if(tipo != 'AGRUPADO'){%>
     <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
       <thead>
         <tr class="subrayado">
@@ -312,7 +312,7 @@
         </tr>
       </tbody>
     </table>
-    <%}%> <% if (conceptos.length>0) {%>
+    <%}%> <% if(tipo == 'AGRUPADO'){%>
     <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
       <thead>
         <tr class="subrayado">
@@ -375,14 +375,8 @@
     <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
       <tr style="border-bottom: 1.5px solid black">
         <td class="align-left st-bg" colspan="5">
-          TOTAL DE IMPUESTO
-          <% if (iso=='9589') {%>
-            SUNAT
-          <%} else {%>
-            <%=pais%>
+          TOTAL DE IMPUESTO <% if (iso=='9589') {%> SUNAT <%} else {%> <%=pais%>
           <%}%>
-          
-         
         </td>
         <td class="align-right" colspan="1"><%=totalImpuesto%></td>
       </tr>
