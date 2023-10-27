@@ -1151,24 +1151,8 @@ export const listadoCotizacionMercadeo = async (
   res: Response
 ) => {
   let { filtro, id_branch } = req.body;
-  let stado = 1;
-
-  switch (filtro.estado) {
-    case "1":
-    case "true":
-    case 1:
-      stado = 1;
-      break;
-    case "0":
-    case "false":
-    case 0:
-      stado = 0;
-      break;
-
-    default:
-      stado = null;
-      break;
-  }
+  console.log(filtro);
+  
 
   await pool.query(
     "SELECT * FROM listado_cotizacion_mercadeo($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
@@ -1182,7 +1166,7 @@ export const listadoCotizacionMercadeo = async (
       filtro.id_modality ? filtro.id_modality : null,
       filtro.id_shipment ? filtro.id_shipment : null,
       filtro.id_status ? filtro.id_status : null,
-      stado,
+      filtro.estado,
     ],
 
     (err, response, fields) => {
@@ -1265,7 +1249,6 @@ export const listadoCotizacionMercadeo = async (
     }
   );
 };
-
 
 export const quotePreviewTotales = async (req: Request, res: Response) => {
   let {
@@ -1382,7 +1365,6 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
           header: {
             height: "15mm",
           },
-         
         };
 
         pdf
@@ -1457,19 +1439,19 @@ function getServicios({
   }
   if (!!numerobultos) {
     serv.push({
-      name: 'Nro Bultos',
+      name: "Nro Bultos",
       estado: numerobultos,
     });
   }
   if (!!peso) {
     serv.push({
-      name: 'Peso',
+      name: "Peso",
       estado: peso,
     });
   }
   if (!!volumen) {
     serv.push({
-      name: 'Volumen',
+      name: "Volumen",
       estado: volumen,
     });
   }
