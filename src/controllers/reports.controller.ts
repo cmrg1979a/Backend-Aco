@@ -2306,22 +2306,6 @@ export const exportListQuote = async (req: Request, res: Response) => {
   let { id_branch, filtro } = req.body;
   const fechaYHora = new Date();
   req.setTimeout(0);
-  let stado = 1;
-
-  switch (filtro.estado) {
-    case 1:
-    case true:
-      stado = 1;
-      break;
-    case 0:
-    case false:
-      stado = 0;
-      break;
-
-    default:
-      stado = null;
-      break;
-  }
 
   await pool.query(
     "select * from TABLE_QUOTE_list($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
@@ -2335,7 +2319,7 @@ export const exportListQuote = async (req: Request, res: Response) => {
       filtro.id_incoterm ? filtro.id_incoterm : null,
       filtro.fechainicio ? filtro.fechainicio : null,
       filtro.fechafin ? filtro.fechafin : null,
-      stado,
+      filtro.estado ? filtro.estado : null,
     ],
     async (err, response, fields) => {
       if (!err) {
@@ -2347,6 +2331,8 @@ export const exportListQuote = async (req: Request, res: Response) => {
         // Itera sobre el array JSON
         await rows.forEach((item) => {
           const status = item.status;
+         
+          
           if (!countByStatus[status]) {
             countByStatus[status] = {
               status: status,

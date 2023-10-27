@@ -1270,6 +1270,7 @@ export const listadoCotizacionMercadeo = async (
 export const quotePreviewTotales = async (req: Request, res: Response) => {
   let {
     code,
+    iso,
     id_branch,
     business_name,
     address,
@@ -1327,6 +1328,7 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
   ejs.renderFile(
     path.join(__dirname, "../views/", "quoteDetallado.ejs"),
     {
+      iso,
       servicios,
       lengthServ,
       fecha,

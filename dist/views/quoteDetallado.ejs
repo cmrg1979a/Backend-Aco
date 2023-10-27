@@ -374,7 +374,16 @@
     </table>
     <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
       <tr style="border-bottom: 1.5px solid black">
-        <td class="align-left st-bg" colspan="5">TOTAL DE IMPUESTO SUNAT</td>
+        <td class="align-left st-bg" colspan="5">
+          TOTAL DE IMPUESTO
+          <% if (iso=='9589') {%>
+            SUNAT
+          <%} else {%>
+            <%=pais%>
+          <%}%>
+          
+         
+        </td>
         <td class="align-right" colspan="1"><%=totalImpuesto%></td>
       </tr>
       <tr style="border-bottom: 1.5px solid black">
