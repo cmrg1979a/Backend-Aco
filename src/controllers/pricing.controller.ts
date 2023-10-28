@@ -364,8 +364,7 @@ export const putQuote = async (req: Request, res: Response) => {
   const contenedores = dataObj.contenedores;
   const ventascasillerodetalles = dataObj.ventascasillerodetalles;
   const impuestos = dataObj.impuestos;
-  
-  
+
   // --------------------------
   let ID_BEGEND_s = serviciocotizacion.map((item: any) => {
     return item.id_begend ? item.id_begend : null;
@@ -584,8 +583,6 @@ export const putQuote = async (req: Request, res: Response) => {
       if (!err) {
         let rows = response.rows;
         if (!!rows[0].estadoflag) {
-          
-          
           res.json({
             status: 200,
             statusBol: true,
@@ -1155,7 +1152,6 @@ export const listadoCotizacionMercadeo = async (
   res: Response
 ) => {
   let { filtro, id_branch } = req.body;
-  
 
   await pool.query(
     "SELECT * FROM listado_cotizacion_mercadeo($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
@@ -1169,12 +1165,13 @@ export const listadoCotizacionMercadeo = async (
       filtro.id_modality ? filtro.id_modality : null,
       filtro.id_shipment ? filtro.id_shipment : null,
       filtro.id_status ? filtro.id_status : null,
-      filtro.estado,
+      filtro.estado ? filtro.estado : null,
     ],
 
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         if (!!rows[0].estadoflag) {
           let lstTotalPorDia = rows[0].lsttotaldia;
           let lstmarketing = rows;
@@ -1245,6 +1242,12 @@ export const listadoCotizacionMercadeo = async (
               }
             }
           );
+        } else {
+          res.send({
+            estadoflag: false,
+            msg: "No se encontraron registros",
+            // path: path.join("pdfQuoteMarketing.pdf"),
+          });
         }
       } else {
         console.log(err);
