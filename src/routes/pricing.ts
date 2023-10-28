@@ -36,6 +36,7 @@ import {
   quoteCargarNoAsignadosHouse,
   quoteDataHouse,
   listadoCotizacionMercadeo,
+  quotePreviewTotales,
 } from "../controllers/pricing.controller";
 
 router.post("/setQuote", TokenValidation, setQuote);
@@ -73,7 +74,7 @@ router.put(
   TokenValidation,
   ActualizarFolderOneDrive
 );
-router.post("/listado_llamadas", TokenValidation, getListCalls);
+router.get("/listado_llamadas", TokenValidation, getListCalls);
 router.get(
   "/quote_cargar_noasignadoshouse",
   TokenValidation,
@@ -82,8 +83,13 @@ router.get(
 router.get("/quote_data_house", TokenValidation, quoteDataHouse);
 router.post(
   "/listado_cotizacion_mercadeo",
-  // TokenValidation,
+  TokenValidation,
   listadoCotizacionMercadeo
+);
+router.post(
+  "/quote_preview_totales",
+  // TokenValidation,
+  quotePreviewTotales
 );
 
 export default router;

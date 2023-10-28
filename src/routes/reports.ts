@@ -21,6 +21,7 @@ import {
   exportarPDFCXC,
   ExportarConsolidadoCargaMasiva,
   exportListQuote,
+  exportListQuoteEXCEL,
 } from "../controllers/reports.controller";
 
 router.get("/getControlFile", TokenValidation, getControlFile);
@@ -54,5 +55,6 @@ router.get("/exportarPDFCXP", exportarPDFCXP);
 router.get("/exportarPDFCXC", exportarPDFCXC);
 router.get("/consolidado_carga_masiva", ExportarConsolidadoCargaMasiva);
 router.post("/export_list_quote", exportListQuote);
+router.post("/export_list_quote_xls", exportListQuoteEXCEL);
 
 export default router;

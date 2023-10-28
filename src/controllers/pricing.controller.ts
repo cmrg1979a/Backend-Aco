@@ -8,6 +8,8 @@ const pool = conexion();
 let ejs = require("ejs");
 let pdf = require("html-pdf");
 let path = require("path");
+import moment from "moment";
+moment.locale("es");
 export const setQuote = async (req: Request, res: Response) => {
   const dataObj = req.body;
 
@@ -988,17 +990,43 @@ export const ActualizarFolderOneDrive = async (req: Request, res: Response) => {
   );
 };
 export const getListCalls = async (req: Request, res: Response) => {
-  let filtros = req.body;
+  let {
+    id_branch,
+    id_estado,
+    id_sentido,
+    id_carga,
+    id_icoterms,
+    desde,
+    hasta,
+    estado,
+  } = req.query;
+  let stado = 1;
+
+  switch (estado) {
+    case "1":
+    case "true":
+      stado = 1;
+      break;
+    case "0":
+    case "false":
+      stado = 0;
+      break;
+
+    default:
+      stado = null;
+      break;
+  }
   await pool.query(
-    "select * from lista_llamadas2($1,$2,$3,$4,$5,$6,$7)",
+    "select * from lista_llamadas2($1,$2,$3,$4,$5,$6,$7,$8)",
     [
-      req.body.id_branch ? req.body.id_branch : null,
-      filtros.id_estado ? filtros.id_estado : null,
-      filtros.id_sentido ? filtros.id_sentido : null,
-      filtros.id_carga ? filtros.id_carga : null,
-      filtros.id_icoterms ? filtros.id_icoterms : null,
-      filtros.desde ? filtros.desde : null,
-      filtros.hasta ? filtros.hasta : null,
+      id_branch ? id_branch : null,
+      id_estado ? id_estado : null,
+      id_sentido ? id_sentido : null,
+      id_carga ? id_carga : null,
+      id_icoterms ? id_icoterms : null,
+      desde ? desde : null,
+      hasta ? hasta : null,
+      stado,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -1123,24 +1151,8 @@ export const listadoCotizacionMercadeo = async (
   res: Response
 ) => {
   let { filtro, id_branch } = req.body;
-  let stado = 1;
-
-  switch (filtro.estado) {
-    case "1":
-    case "true":
-    case 1:
-      stado = 1;
-      break;
-    case "0":
-    case "false":
-    case 0:
-      stado = 0;
-      break;
-
-    default:
-      stado = null;
-      break;
-  }
+  console.log(filtro);
+  
 
   await pool.query(
     "SELECT * FROM listado_cotizacion_mercadeo($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
@@ -1154,7 +1166,7 @@ export const listadoCotizacionMercadeo = async (
       filtro.id_modality ? filtro.id_modality : null,
       filtro.id_shipment ? filtro.id_shipment : null,
       filtro.id_status ? filtro.id_status : null,
-      stado,
+      filtro.estado,
     ],
 
     (err, response, fields) => {
@@ -1237,3 +1249,212 @@ export const listadoCotizacionMercadeo = async (
     }
   );
 };
+
+export const quotePreviewTotales = async (req: Request, res: Response) => {
+  let {
+    code,
+    iso,
+    id_branch,
+    business_name,
+    address,
+    tipo,
+    cliente,
+    slogancliente,
+    fechafin,
+    tiempoTransito,
+    origen,
+    destino,
+    impuesto,
+    flete,
+    almacen,
+    aduana,
+    local,
+    totalImpuesto,
+    incluye,
+    noincluye,
+    importante,
+    contenedor,
+    conceptos,
+    sentido,
+    embarque,
+    icoterm,
+    datosFlete,
+    datosLocales,
+    datosAduanas,
+    datosAlmacenes,
+    totalImpuestosIGV,
+    totalFlete,
+    totalLocales,
+    totalAduanas,
+    totalAlmacenes,
+    totalServicios,
+    total,
+    iso_pais,
+    numerobultos,
+    peso,
+    volumen,
+    pais,
+  } = req.body;
+  let fecha = moment().format("DD-MM-YYYY");
+
+  let servicios = getServicios({
+    flete: flete,
+    almacen: almacen,
+    aduana: aduana,
+    local: local,
+    contenedor: contenedor,
+    numerobultos: numerobultos,
+    peso: peso,
+    volumen: volumen,
+  });
+  let lengthServ = servicios.length;
+  ejs.renderFile(
+    path.join(__dirname, "../views/", "quoteDetallado.ejs"),
+    {
+      iso,
+      servicios,
+      lengthServ,
+      fecha,
+      code,
+      id_branch,
+      business_name,
+      address,
+      tipo,
+      cliente,
+      slogancliente,
+      fechafin,
+      tiempoTransito,
+      origen,
+      destino,
+      impuesto,
+      flete,
+      almacen,
+      aduana,
+      local,
+      totalImpuesto,
+      incluye,
+      noincluye,
+      importante,
+      contenedor,
+      conceptos,
+      sentido,
+      embarque,
+      icoterm,
+      datosFlete,
+      datosLocales,
+      datosAduanas,
+      datosAlmacenes,
+      totalImpuestosIGV,
+      totalFlete,
+      totalLocales,
+      totalAduanas,
+      totalAlmacenes,
+      totalServicios,
+      total,
+      iso_pais,
+      pais,
+    },
+
+    (err: any, data: any) => {
+      if (err) {
+        // res.send(err);
+        console.log(err);
+      } else {
+        let options = {
+          page_size: "A4",
+          header: {
+            height: "15mm",
+          },
+        };
+
+        pdf
+          .create(data, options)
+          .toFile("files/COTIZACION.pdf", function (err: any, data: any) {
+            if (err) {
+              res.send(err);
+            } else {
+              res.download("/COTIZACION.pdf");
+              res.send({
+                estadoflag: true,
+                msg: "File created successfully",
+                path: path.join("COTIZACION.pdf"),
+              });
+            }
+          });
+      }
+    }
+  );
+};
+
+function getServicios({
+  flete = [],
+  almacen = [],
+  aduana = [],
+  local = [],
+  contenedor = [],
+  numerobultos = "",
+  peso = "",
+  volumen = "",
+}) {
+  let serv = [];
+  if (flete.length > 0) {
+    flete.forEach((element) => {
+      serv.push({
+        name: element.name,
+        estado: element.estado,
+      });
+    });
+  }
+  if (almacen.length > 0) {
+    almacen.forEach((element) => {
+      serv.push({
+        name: element.name,
+        estado: element.estado,
+      });
+    });
+  }
+  if (aduana.length > 0) {
+    aduana.forEach((element) => {
+      serv.push({
+        name: element.name,
+        estado: element.estado,
+      });
+    });
+  }
+  if (local.length > 0) {
+    local.forEach((element) => {
+      serv.push({
+        name: element.name,
+        estado: element.estado,
+      });
+    });
+  }
+  if (contenedor.length > 0) {
+    contenedor.forEach((element) => {
+      serv.push({
+        name: element.name,
+        estado: element.valor,
+      });
+    });
+  }
+  if (!!numerobultos) {
+    serv.push({
+      name: "Nro Bultos",
+      estado: numerobultos,
+    });
+  }
+  if (!!peso) {
+    serv.push({
+      name: "Peso",
+      estado: peso,
+    });
+  }
+  if (!!volumen) {
+    serv.push({
+      name: "Volumen",
+      estado: volumen,
+    });
+  }
+  // console.log(serv);
+  return serv;
+}

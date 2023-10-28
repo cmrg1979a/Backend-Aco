@@ -2306,22 +2306,6 @@ export const exportListQuote = async (req: Request, res: Response) => {
   let { id_branch, filtro } = req.body;
   const fechaYHora = new Date();
   req.setTimeout(0);
-  let stado = 1;
-
-  switch (filtro.estado) {
-    case 1:
-    case true:
-      stado = 1;
-      break;
-    case 0:
-    case false:
-      stado = 0;
-      break;
-
-    default:
-      stado = null;
-      break;
-  }
 
   await pool.query(
     "select * from TABLE_QUOTE_list($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
@@ -2335,7 +2319,7 @@ export const exportListQuote = async (req: Request, res: Response) => {
       filtro.id_incoterm ? filtro.id_incoterm : null,
       filtro.fechainicio ? filtro.fechainicio : null,
       filtro.fechafin ? filtro.fechafin : null,
-      stado,
+      filtro.estado ? filtro.estado : null,
     ],
     async (err, response, fields) => {
       if (!err) {
@@ -2347,6 +2331,7 @@ export const exportListQuote = async (req: Request, res: Response) => {
         // Itera sobre el array JSON
         await rows.forEach((item) => {
           const status = item.status;
+
           if (!countByStatus[status]) {
             countByStatus[status] = {
               status: status,
@@ -2420,6 +2405,113 @@ export const exportListQuote = async (req: Request, res: Response) => {
             }
           }
         );
+      }
+    }
+  );
+};
+export const exportListQuoteEXCEL = async (req: Request, res: Response) => {
+  let wb = new xl.Workbook({
+    dateFormat: "dd/mm/yyyy",
+    author: "PIC CARGO - IMPORTADORES",
+  });
+  let { id_branch, filtro } = req.body;
+  const fechaYHora = new Date();
+  req.setTimeout(0);
+
+  await pool.query(
+    "select * from TABLE_QUOTE_list($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
+    [
+      id_branch ? id_branch : null,
+      filtro.id_marketing ? filtro.id_marketing : null,
+      filtro.id_status ? filtro.id_status : null,
+      filtro.id_entities ? filtro.id_entities : null,
+      filtro.id_modality ? filtro.id_modality : null,
+      filtro.id_shipment ? filtro.id_shipment : null,
+      filtro.id_incoterm ? filtro.id_incoterm : null,
+      filtro.fechainicio ? filtro.fechainicio : null,
+      filtro.fechafin ? filtro.fechafin : null,
+      filtro.estado ? filtro.estado : null,
+    ],
+    async (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+
+        let cabDetalle = wb.createStyle({
+          width: "auto",
+          fill: {
+            type: "pattern",
+            patternType: "solid",
+            fgColor: "#fff1cf",
+          },
+          alignment: {
+            vertical: "center",
+            horizontal: "center",
+          },
+        });
+        var wt = wb.addWorksheet("Listado Cotización", {
+          views: [{ state: "frozen", xSplit: 4, ySplit: 1 }],
+        });
+
+        wt.column(1).setWidth(17);
+        wt.column(2).setWidth(18);
+        wt.column(3).setWidth(10);
+        wt.column(4).setWidth(50);
+        wt.column(5).setWidth(16);
+        wt.column(6).setWidth(12);
+        wt.column(7).setWidth(15);
+        wt.column(8).setWidth(8);
+        wt.column(9).setWidth(20);
+        wt.column(10).setWidth(20);
+        wt.column(11).setWidth(18);
+        wt.column(12).setWidth(12);
+
+        wt.cell(1, 1).string("FECHA").style(cabDetalle);
+        wt.cell(1, 2).string("ESTATUS").style(cabDetalle);
+        wt.cell(1, 3).string("CÓD").style(cabDetalle);
+        wt.cell(1, 4).string("CLIENTE").style(cabDetalle);
+        wt.cell(1, 5).string("TELÉFONO").style(cabDetalle);
+        wt.cell(1, 6).string("SENTIDO").style(cabDetalle);
+        wt.cell(1, 7).string("TIPO CARGA").style(cabDetalle);
+        wt.cell(1, 8).string("CCI").style(cabDetalle);
+        wt.cell(1, 9).string("ORIGEN").style(cabDetalle);
+        wt.cell(1, 10).string("DESTINO").style(cabDetalle);
+        wt.cell(1, 11).string("VENDEDOR").style(cabDetalle);
+        wt.cell(1, 12).string("ESTATUS").style(cabDetalle);
+        let index = 2;
+        wt.row(1).filter({
+          firstColumn: 1,
+          lastColumn: 12,
+        });
+
+        rows.forEach((element) => {
+          wt.cell(index, 1).string(element.created);
+          wt.cell(index, 2).string(element.status);
+          wt.cell(index, 3).string(element.codigo);
+          wt.cell(index, 4).string(element.nombres);
+          wt.cell(index, 5).string(element.telefono);
+          wt.cell(index, 6).string(element.sentido);
+          wt.cell(index, 7).string(element.tipo_de_carga);
+          wt.cell(index, 8).string(element.incoterms);
+          wt.cell(index, 9).string(element.origen);
+          wt.cell(index, 10).string(element.destino);
+          wt.cell(index, 11).string(element.ejecutivo_ventas);
+          wt.cell(index, 12).string(
+            element.statusmain == 1 ? "Activo" : "Inactivo"
+          );
+          index++;
+        });
+
+        let pathexcel = path.join(
+          `${__dirname}../../../uploads`,
+          "Reportexls.xlsx"
+        );
+        wb.write(pathexcel, function (err, stats) {
+          if (err) {
+            console.log(err);
+          } else {
+            res.download(pathexcel);
+          }
+        });
       }
     }
   );
