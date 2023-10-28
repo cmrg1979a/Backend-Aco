@@ -14,6 +14,7 @@ import {
   getCargarHouse,
   updateFolderOneDrive,
   insertComentarioMaster,
+  cargarMaster,
 } from "../controllers/master.controller";
 
 router.post("/setMaster", TokenValidation, setMaster);
@@ -24,6 +25,7 @@ router.post("/lockMaster/:id", TokenValidation, lockMaster);
 router.post("/lockMasterAdm/:id", TokenValidation, lockMasterAdm);
 router.post("/nullMaster/:id", TokenValidation, nullMaster);
 router.get("/cargar_house", TokenValidation, getCargarHouse);
+router.get("/cargar_master", TokenValidation, cargarMaster);
 router.put("/update_folder_onedrive", TokenValidation, updateFolderOneDrive);
 router.post(
   "/insert_comentario_master",
