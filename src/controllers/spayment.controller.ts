@@ -497,7 +497,7 @@ export const setSPaymentFile = async (req: Request, res: Response) => {
             "UPDATE ControlGastos_Egresos set pagado = $1, fecha_pago = $2, id_comprobante = $3 where id = $4",
             [1, dataObj.fecha_operacion, datar.insertId, item.id_egreso],
             (err, rowss, fields) => {
-              console.log(dataObj);
+              
 
               if (!err) {
               } else {

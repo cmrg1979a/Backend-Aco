@@ -364,6 +364,8 @@ export const putQuote = async (req: Request, res: Response) => {
   const contenedores = dataObj.contenedores;
   const ventascasillerodetalles = dataObj.ventascasillerodetalles;
   const impuestos = dataObj.impuestos;
+  
+  
   // --------------------------
   let ID_BEGEND_s = serviciocotizacion.map((item: any) => {
     return item.id_begend ? item.id_begend : null;
@@ -436,7 +438,7 @@ export const putQuote = async (req: Request, res: Response) => {
     return item.id_contenedor == undefined ? null : item.id_contenedor;
   });
   let quantity_c = contenedores.map((item: any) => {
-    return item.quantity ? item.quantity : null;
+    return item.cantidad ? item.cantidad : null;
   });
   // ----------------------------
   let id_quoteSales_vd = ventascasillerodetalles.map((item: any) => {
@@ -582,6 +584,8 @@ export const putQuote = async (req: Request, res: Response) => {
       if (!err) {
         let rows = response.rows;
         if (!!rows[0].estadoflag) {
+          
+          
           res.json({
             status: 200,
             statusBol: true,
@@ -1151,7 +1155,6 @@ export const listadoCotizacionMercadeo = async (
   res: Response
 ) => {
   let { filtro, id_branch } = req.body;
-  console.log(filtro);
   
 
   await pool.query(
