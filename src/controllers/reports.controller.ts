@@ -2344,35 +2344,38 @@ export const exportListQuote = async (req: Request, res: Response) => {
         //----------------------------------------
         const v_activos = [1, 2, 3, 4, 5, 6, 8, 9, 10, 14, 7];
         const v_inactivos = [15, 11, 7, 13, 12];
-      
+
         // Contar elementos activos
         const countActivos = rows.filter((item) => {
           return (
             v_activos.includes(item.status_code) &&
-            item.statusmain === 1 &&
-            !item.aprobadoflag
+            !item.aprobadoflag &&
+            item.statusmain == 1
           );
         }).length;
 
         // Contar elementos inactivos
         const countInactivos = rows.filter((item) => {
           return (
-            (v_inactivos.includes(item.status_code) && item.statusmain === 1) ||
-            item.aprobadoflag
+            (v_inactivos.includes(item.status_code) || item.aprobadoflag) &&
+            item.statusmain == 1
           );
         }).length;
         const countEliminado = rows.filter((item) => {
-          return item.statusmain === 0 && !item.aprobadoflag;
+          return item.statusmain == 0;
         }).length;
-        console.log(countActivos);
-        console.log(countInactivos);
-        console.log(countEliminado);
+      
         //---------------------------------------- countByActivosArray
         let countByStatusArray = Object.values(countByStatus);
         let countByActivosArray = [];
         countByActivosArray.push({ name: "Activo", total: countActivos });
         countByActivosArray.push({ name: "Inactivo", total: countInactivos });
-        countByActivosArray.push({ name: "Eliminado", total: countEliminado });
+        countByActivosArray.push({
+          name: "Eliminado",
+          total:
+            parseInt(rows.length) -
+            (parseInt(countActivos) + parseInt(countInactivos)),
+        });
         ejs.renderFile(
           path.join(__dirname, "../views/", "reporteListQuote.ejs"),
           { sucursal, countByStatusArray, countByActivosArray, rows },
