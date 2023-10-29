@@ -37,6 +37,7 @@ import {
   quoteDataHouse,
   listadoCotizacionMercadeo,
   quotePreviewTotales,
+  aprobarCotizacion,
 } from "../controllers/pricing.controller";
 
 router.post("/setQuote", TokenValidation, setQuote);
@@ -88,8 +89,13 @@ router.post(
 );
 router.post(
   "/quote_preview_totales",
-  // TokenValidation,
+  TokenValidation,
   quotePreviewTotales
+);
+router.put(
+  "/aprobar_cotizacion",
+  // TokenValidation,
+  aprobarCotizacion
 );
 
 export default router;

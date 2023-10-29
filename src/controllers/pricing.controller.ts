@@ -1392,6 +1392,34 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
   );
 };
 
+export const aprobarCotizacion = async (req: Request, res: Response) => {
+  let { id_quote, nuevoexpediente, id_exp } = req.body;
+  await pool.query(
+    "SELECT * FROM function_aprobar_cotizacion($1,$2,$3);",
+    [id_quote, nuevoexpediente, id_exp],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
 function getServicios({
   flete = [],
   almacen = [],
