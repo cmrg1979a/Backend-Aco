@@ -1393,13 +1393,14 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
 };
 
 export const aprobarCotizacion = async (req: Request, res: Response) => {
-  let { id_quote, nuevoexpediente, id_exp } = req.body;
+  let { id_quote, nuevoexpediente, id_exp ,fecha_validez} = req.body;
   await pool.query(
-    "SELECT * FROM function_aprobar_cotizacion($1,$2,$3);",
+    "SELECT * FROM function_aprobar_cotizacion($1,$2,$3,$4);",
     [
       id_quote ? id_quote : null,
       nuevoexpediente ? nuevoexpediente : null,
       id_exp ? id_exp : null,
+      fecha_validez ? fecha_validez : null,
     ],
     (err, response, fields) => {
       if (!err) {
