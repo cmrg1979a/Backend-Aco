@@ -2325,9 +2325,8 @@ export const exportListQuote = async (req: Request, res: Response) => {
       if (!err) {
         let rows = response.rows;
         let sucursal = rows[0].trade_name_sucursal;
-
         const countByStatus = {};
-        const countByActivos = {};
+
         // Itera sobre el array JSON
         await rows.forEach((item) => {
           const status = item.status;
@@ -2341,33 +2340,37 @@ export const exportListQuote = async (req: Request, res: Response) => {
           countByStatus[status].total++;
 
           // -------------------------
-          const statusMain = item.statusmain;
-          if (!countByActivos[statusMain]) {
-            countByActivos[statusMain] = {
-              statusMain: statusMain,
-              name: statusMain == 1 ? "Activo" : "Inactivo",
-              total: 0,
-            };
-          }
-
-          countByActivos[statusMain].total++;
         });
+        //----------------------------------------
+        const v_activos = [1, 2, 3, 4, 5, 6, 8, 9, 10, 14, 7];
+        const v_inactivos = [15, 11, 7, 13, 12];
+
+        // Contar elementos activos
+        const countActivos = rows.filter((item) => {
+          return (
+            v_activos.includes(item.statusquote) &&
+            item.statusmain === 1 &&
+            !item.aprobadoflag
+          );
+        }).length;
+
+        // Contar elementos inactivos
+        const countInactivos = rows.filter((item) => {
+          return (
+            (v_inactivos.includes(item.statusquote) && item.statusmain === 1) ||
+            item.aprobadoflag
+          );
+        }).length;
+        const countEliminado = rows.filter((item) => {
+          return item.statusmain === 0;
+        }).length;
+
+        //---------------------------------------- countByActivosArray
         let countByStatusArray = Object.values(countByStatus);
-        const countByActivosArray: {
-          statusMain: number;
-          name: string;
-          total: number;
-        }[] = Object.values(countByActivos);
-
-        countByActivosArray.sort((a, b) => {
-          if (a.name < b.name) {
-            return -1;
-          }
-          if (a.name > b.name) {
-            return 1;
-          }
-          return 0;
-        });
+        let countByActivosArray = [];
+        countByActivosArray.push({ name: "Activo", total: countActivos });
+        countByActivosArray.push({ name: "Inactivo", total: countInactivos });
+        countByActivosArray.push({ name: "Eliminado", total: countEliminado });
         ejs.renderFile(
           path.join(__dirname, "../views/", "reporteListQuote.ejs"),
           { sucursal, countByStatusArray, countByActivosArray, rows },
