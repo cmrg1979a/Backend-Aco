@@ -298,6 +298,7 @@ export const getQuoteList = async (req: Request, res: Response) => {
             statusBol: true,
             mensaje: rows[0].mensaje,
             estadoflag: rows[0].estadoflag,
+            data: rows,
           });
         }
       } else {
