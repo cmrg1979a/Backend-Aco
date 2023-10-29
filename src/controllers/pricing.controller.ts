@@ -1396,7 +1396,11 @@ export const aprobarCotizacion = async (req: Request, res: Response) => {
   let { id_quote, nuevoexpediente, id_exp } = req.body;
   await pool.query(
     "SELECT * FROM function_aprobar_cotizacion($1,$2,$3);",
-    [id_quote, nuevoexpediente, id_exp],
+    [
+      id_quote ? id_quote : null,
+      nuevoexpediente ? nuevoexpediente : null,
+      id_exp ? id_exp : null,
+    ],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -1405,11 +1409,14 @@ export const aprobarCotizacion = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            estadoflag: rows[0].estadoflag,
+            mensaje: rows[0].mensaje,
           });
         } else {
           res.json({
             status: 200,
             statusBol: true,
+            estadoflag: rows[0].estadoflag,
             mensaje: rows[0].mensaje,
           });
         }
