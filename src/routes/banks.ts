@@ -33,7 +33,6 @@ import {
   insertBank,
   readBank,
   updateBank,
-  switchBank,
 } from "../controllers/banks.controller";
 
 router.post("/getBanksList", TokenValidation, getBanksList);
@@ -117,10 +116,9 @@ router.put("/reversar_debsproveedor", TokenValidation, reversarCxP);
 router.get("/ver_pagoscontrol_egresos", TokenValidation, verPagosControlEgresos);
 router.get("/validar_nro_operacion", TokenValidation, validarNroOperacion);
 
-router.get("/getListBank/", TokenValidation, getListBank);
-router.post("/insertBank/", TokenValidation, insertBank);
-router.get("/readBank/", TokenValidation, readBank);
-router.put("/updateBank/", TokenValidation, updateBank);
-router.put("/switchBank/", TokenValidation, switchBank);
+router.get("/listar_bank/", TokenValidation, getListBank);
+router.post("/insertar_bank/", TokenValidation, insertBank);
+router.get("/ver_bank/", TokenValidation, readBank);
+router.put("/actualizar_bank/", TokenValidation, updateBank);
 
 export default router;
