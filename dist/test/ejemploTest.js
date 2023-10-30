@@ -31,4 +31,4 @@ it("Validar listado que no trae datos ", () => __awaiter(void 0, void 0, void 0,
     expect(body.estadoflag).toBe(false);
     expect(body.data.length).toBe(1);
 }));
-//# sourceMappingURL=pricing.test.js.map
+//# sourceMappingURL=ejemploTest.js.map

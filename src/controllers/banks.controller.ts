@@ -13,19 +13,13 @@ export const getBanksList = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+        });
       } else {
         console.log(err);
       }
@@ -1208,56 +1202,17 @@ export const validarNroOperacion = async (req: Request, res: Response) => {
 
 export const getListBank = async (req: Request, res: Response) => {
   let data = req.query;
-  const result = await pool.query("SELECT *from function_list_table_banks($1,$2, $3, $4, $5, $6);", [
-    data.id_branch,
-    data.code ? data.code : null,
-    data.name ? data.name : null,
-    data.acronym ? data.acronym : null,
-    data.description ? data.description : null,
-    data.status
-  ]);
-
-  const { rows } = result;
-
-  try {
-      if (rows.length > 0) {
-        return res.status(200).json(rows);
-      } else {
-        console.log("No se encontraron resultados");
-      }
-  } catch (error) {
-      console.log('Error al listar los resultados:', error);
-  }
-}
-
-export const insertBank = async (req: Request, res: Response) => {
-  let data = req.body;
-  const result = await pool.query("SELECT *from function_insert_table_banks($1,$2, $3, $4, $5);", [
-    data.id_branch,
-    data.acronym,
-    data.name,
-    data.description,
-    data.status
-  ]);
-
-  const { rows } = result;
-
-  try {
-      if (rows.length > 0) {
-        return res.status(200).json(rows);
-      } else {
-        console.log('No se pudo insertar el registro.');
-      }
-  } catch (error) {
-      console.log('Error al insertar el registro:', error);
-  }
-}
-
-export const readBank = async (req: Request, res: Response) => {
-  let data = req.query;
-  const result = await pool.query("SELECT *from function_see_table_banks($1);", [
-    data.id
-  ]);
+  const result = await pool.query(
+    "SELECT *from function_list_table_banks($1,$2, $3, $4, $5, $6);",
+    [
+      data.id_branch,
+      data.code ? data.code : null,
+      data.name ? data.name : null,
+      data.acronym ? data.acronym : null,
+      data.description ? data.description : null,
+      data.status,
+    ]
+  );
 
   const { rows } = result;
 
@@ -1265,52 +1220,89 @@ export const readBank = async (req: Request, res: Response) => {
     if (rows.length > 0) {
       return res.status(200).json(rows);
     } else {
-      console.log('No se encontraron resultados.');
+      console.log("No se encontraron resultados");
     }
   } catch (error) {
-      console.log('Error al accceder el registro:', error);
+    console.log("Error al listar los resultados:", error);
   }
-}
+};
+
+export const insertBank = async (req: Request, res: Response) => {
+  let data = req.body;
+  const result = await pool.query(
+    "SELECT *from function_insert_table_banks($1,$2, $3, $4, $5);",
+    [data.id_branch, data.acronym, data.name, data.description, data.status]
+  );
+
+  const { rows } = result;
+
+  try {
+    if (rows.length > 0) {
+      return res.status(200).json(rows);
+    } else {
+      console.log("No se pudo insertar el registro.");
+    }
+  } catch (error) {
+    console.log("Error al insertar el registro:", error);
+  }
+};
+
+export const readBank = async (req: Request, res: Response) => {
+  let data = req.query;
+  const result = await pool.query(
+    "SELECT *from function_see_table_banks($1);",
+    [data.id]
+  );
+
+  const { rows } = result;
+
+  try {
+    if (rows.length > 0) {
+      return res.status(200).json(rows);
+    } else {
+      console.log("No se encontraron resultados.");
+    }
+  } catch (error) {
+    console.log("Error al accceder el registro:", error);
+  }
+};
 
 export const updateBank = async (req: Request, res: Response) => {
   let data = req.body;
-  const result = await pool.query("SELECT *from function_edit_table_banks($1,$2, $3, $4, $5);", [
-    data.id,
-    data.acronym,
-    data.name,
-    data.description,
-    data.status
-  ]);
+  const result = await pool.query(
+    "SELECT *from function_edit_table_banks($1,$2, $3, $4, $5);",
+    [data.id, data.acronym, data.name, data.description, data.status]
+  );
 
   const { rows } = result;
 
   try {
-      if (rows.length > 0) {
-        return res.status(200).json(rows);
-      } else {
-        console.log("No se pudo actualizar el registro");
-      }
+    if (rows.length > 0) {
+      return res.status(200).json(rows);
+    } else {
+      console.log("No se pudo actualizar el registro");
+    }
   } catch (error) {
-      console.log('Error al actualizar el registro:', error);
+    console.log("Error al actualizar el registro:", error);
   }
-}
+};
 
 export const switchBank = async (req: Request, res: Response) => {
   let data = req.body;
-  const result = await pool.query("SELECT *from function_switch_table_banks($1, $2);", [
-    data.id,
-    data.status
-  ]);
+  const result = await pool.query(
+    "SELECT *from function_switch_table_banks($1, $2);",
+    [data.id, data.status]
+  );
 
   const { rows } = result;
 
   try {
-      if (rows.length > 0) {
-        return res.status(200).json(rows);
-      } else {
-          console.log('No se pudo actualizar el registro.');
-      }
+    if (rows.length > 0) {
+      return res.status(200).json(rows);
+    } else {
+      console.log("No se pudo actualizar el registro.");
+    }
   } catch (error) {
-      console.log('Error al actualizar el registro:', error);
+    console.log("Error al actualizar el registro:", error);
   }
-}
+};
