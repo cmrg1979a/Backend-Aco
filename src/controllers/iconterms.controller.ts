@@ -34,7 +34,7 @@ export const getIncoterms = async (req: Request, res: Response) => {
 
 export const getListIncoterms = async (req: Request, res: Response) => {
   let data = req.query;
-  const result = await pool.query("SELECT *from function_listar_incoterms($1,$2, $3, $4);", [
+  await pool.query("SELECT *from function_listar_incoterms($1,$2, $3, $4);", [
     data.id_branch,
     data.name ? data.name : null,
     data.description ? data.description : null,
@@ -57,7 +57,7 @@ export const getListIncoterms = async (req: Request, res: Response) => {
 
 export const insertIncoterms = async (req: Request, res: Response) => {
   let data = req.body;
-  const result = await pool.query("SELECT *from function_insert_incoterms($1,$2, $3, $4);", [
+  await pool.query("SELECT *from function_insert_incoterms($1,$2, $3, $4);", [
     data.id_branch,
     data.name,
     data.description,
@@ -81,7 +81,7 @@ export const insertIncoterms = async (req: Request, res: Response) => {
 
 export const readIncoterms = async (req: Request, res: Response) => {
   let data = req.query;
-  const result = await pool.query("SELECT *from function_ver_incoterms($1);", [
+  await pool.query("SELECT *from function_ver_incoterms($1);", [
     data.id
   ],
   (err, response, fields) => {
@@ -102,7 +102,7 @@ export const readIncoterms = async (req: Request, res: Response) => {
 
 export const updateIncoterms = async (req: Request, res: Response) => {
   let data = req.body;
-  const result = await pool.query("SELECT *from function_actualizar_incoterms($1,$2, $3);", [
+  await pool.query("SELECT *from function_actualizar_incoterms($1,$2, $3);", [
     data.id,
     data.description,
     data.status
