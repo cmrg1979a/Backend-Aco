@@ -97,11 +97,10 @@ export const readYear = async (req: Request, res: Response) => {
 
 export const updateYear = async (req: Request, res: Response) => {
   let data = req.body;
-  await pool.query("SELECT *from function_actualizar_year($1,$2, $3, $4);", [
+  await pool.query("SELECT *from function_actualizar_year($1,$2, $3);", [
     data.id,
     data.description,
-    data.status,
-    data.id_branch
+    data.status  
   ],
   (err, response, fields) => {
     if (!err) {
