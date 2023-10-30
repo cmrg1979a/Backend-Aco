@@ -8,16 +8,14 @@ import {
     insertCoins,
     readCoins,
     updateCoins,
-    swicthCoins,
 } from "../controllers/coins.controller";
 
 router.post("/getCoinsList", TokenValidation, getCoinsList);
 
-router.get("/getListCoinsByBranch/", TokenValidation, getListCoinsByBranch);
-router.post("/insertCoins/", TokenValidation, insertCoins);
-router.get("/readCoins/", TokenValidation, readCoins);
-router.put("/updateCoins/", TokenValidation, updateCoins);
-router.put("/swicthCoins/", TokenValidation, swicthCoins);
+router.get("/listar_coins/", TokenValidation, getListCoinsByBranch);
+router.post("/insertar_coins/", TokenValidation, insertCoins);
+router.get("/ver_coins/", TokenValidation, readCoins);
+router.put("/actualizar_coins/", TokenValidation, updateCoins);
 
 getCoinsList;
 export default router;
