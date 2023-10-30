@@ -8,14 +8,12 @@ import {
     insertModality,
     readModality,
     updateModality,
-    switchModality,
 } from "../controllers/modality.controller";
 
 router.post("/getModality", TokenValidation, getModality);
-router.get("/getListModality/", TokenValidation, getListModality);
-router.post("/insertModality/", TokenValidation, insertModality);
-router.get("/readModality/", TokenValidation, readModality);
-router.put("/updateModality/", TokenValidation, updateModality);
-router.put("/switchModality/", TokenValidation, switchModality);
+router.get("/listar_modality/", TokenValidation, getListModality);
+router.post("/insertar_modality/", TokenValidation, insertModality);
+router.get("/ver_modality/", TokenValidation, readModality);
+router.put("/actualizar_modality/", TokenValidation, updateModality);
 
 export default router;
