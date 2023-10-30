@@ -8,17 +8,15 @@ import {
     insertSex,
     readSex,
     updateSex,
-    switchSex,
     validateAcronymInTableSex,
 } from "../controllers/sex.controller";
 
 router.post("/getSex", TokenValidation, getSex);
 
-router.get("/getListSex/", TokenValidation, getListSex);
-router.post("/insertSex/", TokenValidation, insertSex);
-router.get("/readSex/", TokenValidation, readSex);
-router.put("/updateSex/", TokenValidation, updateSex);
-router.put("/switchSex/", TokenValidation, switchSex);
-router.get("/validateAcronymInTableSex/", TokenValidation, validateAcronymInTableSex);
+router.get("/listar_sex/", TokenValidation, getListSex);
+router.post("/insertar_sex/", TokenValidation, insertSex);
+router.get("/ver_sex/", TokenValidation, readSex);
+router.put("/actualizar_sex/", TokenValidation, updateSex);
+router.get("/validar_acronimo_sex/", TokenValidation, validateAcronymInTableSex);
 
 export default router;
