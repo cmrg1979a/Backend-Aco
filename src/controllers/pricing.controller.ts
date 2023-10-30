@@ -1315,6 +1315,8 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
     volumen: volumen,
   });
   let lengthServ = servicios.length;
+  console.log(iso);
+  
   ejs.renderFile(
     path.join(__dirname, "../views/", "quoteDetallado.ejs"),
     {
