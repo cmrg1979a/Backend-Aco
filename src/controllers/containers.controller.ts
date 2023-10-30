@@ -74,30 +74,31 @@ export const deleteContainers = async (req: Request, res: Response) => {
 
 export const getListContainersByBranch = async (req: Request, res: Response) => {
   let data = req.query;
-  const result = await pool.query("SELECT *from function_list_table_containers($1,$2, $3, $4, $5);", [
+  await pool.query("SELECT *from function_listar_containers($1,$2, $3, $4, $5);", [
     data.id_branch,
     data.code ? data.code : null,
     data.name ? data.name : null,
     data.description ? data.description : null,
     data.status
-  ]);
-
-  const { rows } = result;
-
-  try {
-      if (rows.length > 0) {
-        return res.status(200).json(rows);
-      } else { 
-        console.log("No se encontraron resultados");
-      }
-  } catch (error) {
-      console.log('Error al listar los resultados:', error);
-  }
+  ],
+  (err, response, fields) => {
+    if (!err) {
+      let rows = response.rows;
+      res.json({
+        status: 200,
+        estadoflag: rows[0].estadoflag,
+        mensaje: rows[0].mensaje,
+        data: rows
+      })
+    } else {
+      console.log(err);
+    }
+  });
 }
 
 export const insertContainers = async (req: Request, res: Response) => {
   let data = req.body;
-  const result = await pool.query("SELECT *from function_insert_table_containers($1,$2, $3, $4, $5, $6, $7, $8, $9);", [
+  await pool.query("SELECT *from function_insertar_containers($1,$2, $3, $4, $5, $6, $7, $8, $9);", [
     data.id_branch,
     data.name,
     data.description,
@@ -107,44 +108,46 @@ export const insertContainers = async (req: Request, res: Response) => {
     data.maximumweight,
     data.maximunvolumen,
     data.status,
-  ]);
-
-  const { rows } = result;
-
-  try {
-      if (rows.length > 0) {
-        return res.status(200).json(rows);
-      } else {
-        console.log('No se pudo insertar el registro.');
-      }
-  } catch (error) {
-      console.log('Error al insertar el registro:', error);
-  }
+  ],
+  (err, response, fields) => {
+    if (!err) {
+      let rows = response.rows;
+      res.json({
+        status: 200,
+        estadoflag: rows[0].estadoflag,
+        mensaje: rows[0].mensaje,
+        data: rows
+      })
+    } else {
+      console.log(err);
+    }
+  });
 }
 
 export const readContainers = async (req: Request, res: Response) => {
   let data = req.query;
-  const result = await pool.query("SELECT *from function_see_table_containers($1);", [
+  await pool.query("SELECT *from function_ver_containers($1);", [
     data.id
-  ]);
-
-  const { rows } = result;
-
-  try {
-    if (rows.length > 0) {
-      return res.status(200).json(rows);
+  ],
+  (err, response, fields) => {
+    if (!err) {
+      let rows = response.rows;
+      res.json({
+        status: 200,
+        estadoflag: rows[0].estadoflag,
+        mensaje: rows[0].mensaje,
+        data: rows
+      })
     } else {
-      console.log('No se encontraron resultados.');
+      console.log(err);
     }
-  } catch (error) {
-      console.log('Error al accceder el registro:', error);
-  }
+  });
 }
 
 export const updateContainers = async (req: Request, res: Response) => {
   let data = req.body;
   
-  const result = await pool.query("SELECT *from function_edit_table_containers($1,$2,$3,$4,$5,$6,$7,$8,$9);", [
+  await pool.query("SELECT *from function_actualizar_containers($1,$2,$3,$4,$5,$6,$7,$8,$9);", [
     data.id,
     data.name,
     data.description,
@@ -154,37 +157,18 @@ export const updateContainers = async (req: Request, res: Response) => {
     data.maximumweight,
     data.maximunvolumen,
     data.status
-  ]);
-
-  const { rows } = result;
-
-  try {
-      if (rows.length > 0) {
-        return res.status(200).json(rows);
-      } else {
-        console.log("No se pudo actualizar el registro");
-      }
-  } catch (error) {
-      console.log('Error al actualizar el registro:', error);
-  }
-}
-
-export const switchContainers = async (req: Request, res: Response) => {
-  let data = req.body;
-  const result = await pool.query("SELECT *from function_switch_table_containers($1, $2);", [
-    data.id,
-    data.status
-  ]);
-
-  const { rows } = result;
-
-  try {
-      if (rows.length > 0) {
-        return res.status(200).json(rows);
-      } else {
-          console.log('No se pudo eliminar el registro.');
-      }
-  } catch (error) {
-      console.log('Error al eliminar el registro:', error);
-  }
+  ],
+  (err, response, fields) => {
+    if (!err) {
+      let rows = response.rows;
+      res.json({
+        status: 200,
+        estadoflag: rows[0].estadoflag,
+        mensaje: rows[0].mensaje,
+        data: rows
+      })
+    } else {
+      console.log(err);
+    }
+  });
 }

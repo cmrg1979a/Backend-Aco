@@ -10,16 +10,14 @@ import {
   insertContainers,
   readContainers,
   updateContainers,
-  switchContainers,
 } from "../controllers/containers.controller";
 
 router.post("/getContainersList", TokenValidation, getContainers);
 router.post("/setHouseContainers", TokenValidation, setHouseContainers);
 router.post("/deleteContainers", TokenValidation, deleteContainers);
 
-router.get("/getListContainersByBranch/", TokenValidation, getListContainersByBranch);
-router.post("/insertContainers/", TokenValidation, insertContainers);
-router.get("/readContainers/", TokenValidation, readContainers);
-router.put("/updateContainers/", TokenValidation, updateContainers);
-router.put("/switchContainers/", TokenValidation, switchContainers);
+router.get("/listat_containers/", TokenValidation, getListContainersByBranch);
+router.post("/insertar_containers/", TokenValidation, insertContainers);
+router.get("/ver_containers/", TokenValidation, readContainers);
+router.put("/actualizar_containers/", TokenValidation, updateContainers);
 export default router;
