@@ -35,7 +35,7 @@ export const getBracnh = async (req: Request, res: Response) => {
 
 export const getListEnterprise = async (req: Request, res: Response) => {
   let data = req.query
-  const result = await pool.query("SELECT *from function_list_enterprise($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11);", [
+  await pool.query("SELECT *from function_listar_enterprise($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11);", [
     data.id_branch,
     data.document ? data.document : null,
     data.trade_name ? data.trade_name : null,
@@ -47,25 +47,26 @@ export const getListEnterprise = async (req: Request, res: Response) => {
     data.id_city ? data.id_city : null,
     data.id_town ? data.id_town : null,
     data.id_document ? data.id_document : null,
-  ]);
-
-  const { rows } = result;
-
-  try {
-      if (rows.length > 0) {
-        return res.status(200).json(rows);
-      } else {
-        console.log("No se encontraron resultados");
-      }
-  } catch (error) {
-      console.log('Error al listar los registros:', error);
-  }
+  ],
+  (err, response, fields) => {
+    if (!err) {
+      let rows = response.rows;
+      res.json({
+        status: 200,
+        estadoflag: rows[0].estadoflag,
+        mensaje: rows[0].mensaje,
+        data: rows
+      })
+    } else {
+      console.log(err);
+    }
+  });
 }
 
 
 export const insertEnterprise = async (req: Request, res: Response) => {
   let data = req.body;
-  const result = await pool.query("SELECT *from function_insert_enterprise($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);", [
+  await pool.query("SELECT *from function_insertar_enterprise($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);", [
     data.id_branch,
     data.id_logo ? data.id_logo : null,
     data.document,
@@ -80,44 +81,46 @@ export const insertEnterprise = async (req: Request, res: Response) => {
     data.id_town,
     data.id_document,
     data.ic
-  ]);
-
-  const { rows } = result;
-
-  try {
-      if (rows.length > 0) {
-        return res.status(200).json(rows);
-      } else {
-        console.log('No se pudo insertar el registro.');
-      }
-  } catch (error) {
-      console.log('Error al listar las regiones:', error);
-  }
+  ],
+  (err, response, fields) => {
+    if (!err) {
+      let rows = response.rows;
+      res.json({
+        status: 200,
+        estadoflag: rows[0].estadoflag,
+        mensaje: rows[0].mensaje,
+        data: rows
+      })
+    } else {
+      console.log(err);
+    }
+  });
 }
 
 export const readEnterprise = async (req: Request, res: Response) => {
   let data = req.query;
-  const result = await pool.query("SELECT *from function_see_enterprise($1);", [
+  await pool.query("SELECT *from function_ver_enterprise($1);", [
     data.id
-  ]);
-
-  const { rows } = result;
-
-  try {
-      if (rows.length > 0) {
-        return res.status(200).json(rows);
-      } else {
-        console.log('No se encontraron resultados.');
-      }
-  } catch (error) {
-      console.log('Error al listar las empresas:', error);
-  }
+  ],
+  (err, response, fields) => {
+    if (!err) {
+      let rows = response.rows;
+      res.json({
+        status: 200,
+        estadoflag: rows[0].estadoflag,
+        mensaje: rows[0].mensaje,
+        data: rows
+      })
+    } else {
+      console.log(err);
+    }
+  });
 }
 
 export const updateEnterprise = async (req: Request, res: Response) => {
   let data = req.body;
 
-  const result = await pool.query("SELECT *from function_edit_enterprise($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);", [
+  await pool.query("SELECT *from function_actualizar_enterprise($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);", [
     data.id,
     data.id_logo,
     data.document,
@@ -132,60 +135,43 @@ export const updateEnterprise = async (req: Request, res: Response) => {
     data.id_town,
     data.id_document,
     data.ic
-  ]);
-
-  const { rows } = result;
-
-  try {
-      if (rows.length > 0) {
-        return res.status(200).json(rows);
-      } else {
-        console.log("No se pudo actualizar el registro");
-      }
-  } catch (error) {
-      console.log('Error al listar las empresas:', error);
-  }
+  ],
+  (err, response, fields) => {
+    if (!err) {
+      let rows = response.rows;
+      res.json({
+        status: 200,
+        estadoflag: rows[0].estadoflag,
+        mensaje: rows[0].mensaje,
+        data: rows
+      })
+    } else {
+      console.log(err);
+    }
+  });
 }
 
-export const switchEnterprise = async (req: Request, res: Response) => {
-  let data = req.body;
-  const result = await pool.query("SELECT *from function_switch_enterprise($1, $2);", [
-    data.id,
-    data.status
-  ]);
-
-  const { rows } = result;
-
-  try {
-      if (rows.length > 0) {
-        return res.status(200).json(rows);
-      } else {
-        console.log('No se pudo eliminar el registro.');
-      }
-  } catch (error) {
-      console.log('Error al listar las empresas:', error);
-  }
-}
 
 export const validateDocumentEnterprise = async (req: Request, res: Response) => {
   let data = req.query;
 
-  const result = await pool.query("SELECT *from function_validates_type_document_and_document_in_enterprise($1,$2, $3, $4);", [
+  await pool.query("SELECT *from function_validar_tipo_documento_y_documento_empresa($1,$2, $3, $4);", [
     data.id ? data.id : 0,
     data.id_branch,
     data.id_document,
     data.document,
-  ]);
-
-  const { rows } = result;
-
-  try {
-      if (rows.length > 0) {
-        return res.status(200).json(rows);
-      } else {
-        console.log("No se encontraron resultados");
-      }
-  } catch (error) {
-      console.log('Error al listar las regiones:', error);
-  }
+  ],
+  (err, response, fields) => {
+    if (!err) {
+      let rows = response.rows;
+      res.json({
+        status: 200,
+        estadoflag: rows[0].estadoflag,
+        mensaje: rows[0].mensaje,
+        data: rows
+      })
+    } else {
+      console.log(err);
+    }
+  });
 }
