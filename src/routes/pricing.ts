@@ -84,12 +84,12 @@ router.get(
 router.get("/quote_data_house", TokenValidation, quoteDataHouse);
 router.post(
   "/listado_cotizacion_mercadeo",
-  TokenValidation,
+  // TokenValidation,
   listadoCotizacionMercadeo
 );
 router.post(
   "/quote_preview_totales",
-  TokenValidation,
+  // TokenValidation,
   quotePreviewTotales
 );
 router.put(
