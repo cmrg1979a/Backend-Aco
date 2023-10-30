@@ -6,17 +6,15 @@ import {
   getListGasto,
   insertGasto,
   readGasto,
-  switchGasto,
   updateGasto,
   validateCodeGasto,
 } from "../controllers/gasto.controller";
 
-router.get("/getListGasto/", TokenValidation, getListGasto);
-router.post("/insertGasto/", TokenValidation, insertGasto);
-router.get("/readGasto/", TokenValidation, readGasto);
-router.put("/switchGasto/", TokenValidation, switchGasto);
-router.put("/updateGasto/", TokenValidation, updateGasto);
-router.get("/validateCodeGasto/", TokenValidation, validateCodeGasto);
+router.get("/listar_gasto/", TokenValidation, getListGasto);
+router.post("/insertar_gasto/", TokenValidation, insertGasto);
+router.get("/ver_gasto/", TokenValidation, readGasto);
+router.put("/actualizar_gasto/", TokenValidation, updateGasto);
+router.get("/validar_codigo_gasto/", TokenValidation, validateCodeGasto);
 
 
 export default router;
