@@ -8,17 +8,15 @@ import {
     insertShipment,
     readShipment,
     updateShipment,
-    switchShipment,
     getCargarTransport,
 } from "../controllers/shipment.controller";
 
 router.post("/getShipment", TokenValidation, getShipment);
 
-router.get("/getListShipment/", TokenValidation, getListShipment);
-router.post("/insertShipment/", TokenValidation, insertShipment);
-router.get("/readShipment/", TokenValidation, readShipment);
-router.put("/updateShipment/", TokenValidation, updateShipment);
-router.put("/switchShipment/", TokenValidation, switchShipment);
-router.get("/getCargarTransport/", TokenValidation, getCargarTransport);
+router.get("/list_shipment/", TokenValidation, getListShipment);
+router.post("/insertar_shipment/", TokenValidation, insertShipment);
+router.get("/ver_shipment/", TokenValidation, readShipment);
+router.put("/actualizar_shipment/", TokenValidation, updateShipment);
+router.get("/cargar_transports/", TokenValidation, getCargarTransport);
 
 export default router;
