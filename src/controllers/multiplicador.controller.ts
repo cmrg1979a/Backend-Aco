@@ -35,26 +35,19 @@ export const getMultiplicador = async (req: Request, res: Response) => {
     });
   }
 
-  
   await pool.query(
     "SELECT * FROM TABLE_MULTIPLICADOR_listar($1,$2,$3,$4,$5,$6)",
     [id_branch, id_shipment, code7, code10, code9, code8],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          estadoflag: rows[0].estadoflag,
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          data: rows,
+        });
       } else {
         console.log(err);
       }
