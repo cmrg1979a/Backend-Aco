@@ -14,19 +14,13 @@ export const getPerformances = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          estadoflag: rows[0].estadoflag,
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          data: rows,
+        });
       } else {
         console.log(err);
       }
