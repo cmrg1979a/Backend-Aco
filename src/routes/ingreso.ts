@@ -14,7 +14,7 @@ router.get("/listar_ingreso/", TokenValidation, getListIngreso);
 router.post("/insertar_ingreso/", TokenValidation, insertIngreso);
 router.get("/ver_ingreso/", TokenValidation, readIngreso);
 router.put("/actualizar_ingreso/", TokenValidation, updateIngreso);
-router.get("validar_codigo_ingreso/", TokenValidation, validateCodeIngreso);
+router.get("/validar_codigo_ingreso/", TokenValidation, validateCodeIngreso);
 
 
 export default router;
