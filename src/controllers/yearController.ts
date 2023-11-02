@@ -33,7 +33,7 @@ export const getChargeYear = async (req: Request, res: Response) => {
 
 export const getListYear = async (req: Request, res: Response) => {
   let data = req.query;
-  await pool.query("SELECT *from function_list_year($1,$2, $3);", [
+  await pool.query("SELECT *from function_listar_year($1,$2, $3);", [
     data.id_branch,
     data.description ? data.description : null,
     data.status
@@ -55,7 +55,7 @@ export const getListYear = async (req: Request, res: Response) => {
 
 export const insertYear = async (req: Request, res: Response) => {
   let data = req.body;
-  await pool.query("SELECT *from function_insert_year($1,$2, $3);", [
+  await pool.query("SELECT *from function_insertar_year($1,$2, $3);", [
     data.description,
     data.status,
     data.id_branch,

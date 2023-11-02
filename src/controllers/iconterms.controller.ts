@@ -57,7 +57,7 @@ export const getListIncoterms = async (req: Request, res: Response) => {
 
 export const insertIncoterms = async (req: Request, res: Response) => {
   let data = req.body;
-  await pool.query("SELECT *from function_insert_incoterms($1,$2, $3, $4);", [
+  await pool.query("SELECT *from function_insertar_incoterms($1,$2, $3, $4);", [
     data.id_branch,
     data.name,
     data.description,
