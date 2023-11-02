@@ -16,11 +16,6 @@ const corsOptions = {
 
 const corsMiddleware = cors(corsOptions);
 
-if (process.env.ENV === "development") {
-  console.log('development');
-} else if (process.env.ENV === "production") {
-  console.log('production');
-}
 
 /**PROUCCIÓN */
 // const pool = new Pool({

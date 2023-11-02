@@ -3,7 +3,6 @@ import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
 const { Pool } = pg;
 
-
 const pool = conexion();
 export const getCoinsList = async (req: Request, res: Response) => {
   await pool.query(
@@ -11,19 +10,13 @@ export const getCoinsList = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          estadoflag: rows[0].estadoflag,
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          data: rows,
+        });
       } else {
         console.log(err);
       }

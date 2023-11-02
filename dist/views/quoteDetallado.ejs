@@ -205,7 +205,7 @@
         </tr>
       </tbody>
     </table>
-    <% if(tipo != 'AGRUPADO'){%> <% if (datosFlete!= '$0.00') {%>
+    <% if(tipo != 'AGRUPADO'){%> <% if (totalFlete!= '$0.00') {%>
     <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
       <thead>
         <tr class="subrayado">
@@ -374,8 +374,10 @@
     <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
       <tr style="border-bottom: 1.5px solid black">
         <td class="align-left st-bg" colspan="5">
-          TOTAL DE IMPUESTO <% if (iso=='9589') {%> SUNAT <%} else {%> <%
-          'ADUANA' %> <%}%>
+          TOTAL DE IMPUESTO <% if (iso=='9589') {%> SUNAT <%}%>
+          <% if (iso!='9589') {%>
+            ADUANA
+          <%}%>
         </td>
         <td class="align-right" colspan="1"><%=totalImpuesto%></td>
       </tr>

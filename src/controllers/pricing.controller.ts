@@ -298,6 +298,7 @@ export const getQuoteList = async (req: Request, res: Response) => {
             statusBol: true,
             mensaje: rows[0].mensaje,
             estadoflag: rows[0].estadoflag,
+            data: rows,
           });
         }
       } else {
@@ -364,6 +365,7 @@ export const putQuote = async (req: Request, res: Response) => {
   const contenedores = dataObj.contenedores;
   const ventascasillerodetalles = dataObj.ventascasillerodetalles;
   const impuestos = dataObj.impuestos;
+
   // --------------------------
   let ID_BEGEND_s = serviciocotizacion.map((item: any) => {
     return item.id_begend ? item.id_begend : null;
@@ -401,6 +403,9 @@ export const putQuote = async (req: Request, res: Response) => {
   let concepto_cc = costocotizacion.map((item: any) => {
     return item.concepto ? item.concepto : null;
   });
+  let code_cost = costocotizacion.map((item: any) => {
+    return item.code_cost ? item.code_cost : null;
+  });
   let costounitario_cc = costocotizacion.map((item: any) => {
     return item.costounitario ? item.costounitario : 0;
   });
@@ -436,7 +441,7 @@ export const putQuote = async (req: Request, res: Response) => {
     return item.id_contenedor == undefined ? null : item.id_contenedor;
   });
   let quantity_c = contenedores.map((item: any) => {
-    return item.quantity ? item.quantity : null;
+    return item.cantidad ? item.cantidad : null;
   });
   // ----------------------------
   let id_quoteSales_vd = ventascasillerodetalles.map((item: any) => {
@@ -498,7 +503,7 @@ export const putQuote = async (req: Request, res: Response) => {
   let pid = dataObj.id_quote;
   let statusquote = dataObj.statusquote;
   await pool.query(
-    "SELECT * FROM table_quote_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53,$54,$55,$56,$57,$58,$59,$60,$61,$62,$63,$64,$65,$66,$67,$68,$69,$70)",
+    "SELECT * FROM table_quote_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53,$54,$55,$56,$57,$58,$59,$60,$61,$62,$63,$64,$65,$66,$67,$68,$69,$70,$71)",
     [
       dataObj.id_marketing ? dataObj.id_marketing : null,
       dataObj.id_entitie ? dataObj.id_entitie : null,
@@ -543,6 +548,7 @@ export const putQuote = async (req: Request, res: Response) => {
       id_proveedor_cc,
       id_multiplicador_cc,
       concepto_cc,
+      code_cost,
       costounitario_cc,
       cif_cc,
       seguro_cc,
@@ -1151,8 +1157,6 @@ export const listadoCotizacionMercadeo = async (
   res: Response
 ) => {
   let { filtro, id_branch } = req.body;
-  console.log(filtro);
-  
 
   await pool.query(
     "SELECT * FROM listado_cotizacion_mercadeo($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
@@ -1166,12 +1170,13 @@ export const listadoCotizacionMercadeo = async (
       filtro.id_modality ? filtro.id_modality : null,
       filtro.id_shipment ? filtro.id_shipment : null,
       filtro.id_status ? filtro.id_status : null,
-      filtro.estado,
+      filtro.estado ? filtro.estado : null,
     ],
 
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         if (!!rows[0].estadoflag) {
           let lstTotalPorDia = rows[0].lsttotaldia;
           let lstmarketing = rows;
@@ -1242,6 +1247,12 @@ export const listadoCotizacionMercadeo = async (
               }
             }
           );
+        } else {
+          res.send({
+            estadoflag: false,
+            msg: "No se encontraron registros",
+            // path: path.join("pdfQuoteMarketing.pdf"),
+          });
         }
       } else {
         console.log(err);
@@ -1308,6 +1319,8 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
     volumen: volumen,
   });
   let lengthServ = servicios.length;
+  console.log(iso);
+  
   ejs.renderFile(
     path.join(__dirname, "../views/", "quoteDetallado.ejs"),
     {
@@ -1381,6 +1394,42 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
               });
             }
           });
+      }
+    }
+  );
+};
+
+export const aprobarCotizacion = async (req: Request, res: Response) => {
+  let { id_quote, nuevoexpediente, id_exp ,fecha_validez} = req.body;
+  await pool.query(
+    "SELECT * FROM function_aprobar_cotizacion($1,$2,$3,$4);",
+    [
+      id_quote ? id_quote : null,
+      nuevoexpediente ? nuevoexpediente : null,
+      id_exp ? id_exp : null,
+      fecha_validez ? fecha_validez : null,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estadoflag: rows[0].estadoflag,
+            mensaje: rows[0].mensaje,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            estadoflag: rows[0].estadoflag,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
       }
     }
   );

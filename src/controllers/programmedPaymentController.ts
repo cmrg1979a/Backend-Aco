@@ -48,7 +48,6 @@ import { programmedPaymentInterface } from "interface/programmedPaymentInterface
 export const setProgrammedPayment = async (req: Request, res: Response) => {
   const dataObj = req.body;
 
-  console.log(dataObj);
   await pool.query(
     "select * from function_registrar_programacion($1,$2,$3,$4,$5,$6,$7,$8)",
     [
@@ -255,7 +254,7 @@ export const RegistrarPagosProgramados = async (
 ) => {
   let dataObj = req.body;
   let details = req.body.details;
-  console.log(details);
+  
   await pool.query(
     "SELECT * FROM function_registrar_pagoprogramado($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
     [
@@ -303,7 +302,7 @@ export const RegistrarPagosProgramados = async (
 };
 
 export const eliminarProgramacion = async (req: Request, res: Response) => {
-  console.log(req);
+  
   await pool.query(
     "SELECT * FROM function_eliminarprogramacion($1)",
     [req.body.id_details],
@@ -334,7 +333,7 @@ export const eliminarProgramacionDetalle = async (
   req: Request,
   res: Response
 ) => {
-  console.log(req.body);
+  
   await pool.query(
     "SELECT * FROM eliminar_programacion_detalle($1)",
     [req.body.id],

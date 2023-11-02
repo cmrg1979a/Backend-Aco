@@ -8,7 +8,6 @@ var xl = require("excel4node");
 
 export const setProyeccion = async (req: Request, res: Response) => {
   let data = req.body;
-  console.log(data);
   await pool.query(
     "SELECT * FROM function_proyeccion_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16);",
     [
