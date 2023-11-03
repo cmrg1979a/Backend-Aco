@@ -2445,7 +2445,6 @@ export const exportListQuoteEXCEL = async (req: Request, res: Response) => {
     async (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-
         let cabDetalle = wb.createStyle({
           width: "auto",
           fill: {
@@ -2458,7 +2457,7 @@ export const exportListQuoteEXCEL = async (req: Request, res: Response) => {
             horizontal: "center",
           },
         });
-        var wt = wb.addWorksheet("Listado Cotización", {
+        var wt = wb.addWorksheet(`Quote_${rows[0].trade_name_sucursal}`, {
           views: [{ state: "frozen", xSplit: 4, ySplit: 1 }],
         });
 
