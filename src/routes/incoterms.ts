@@ -8,15 +8,13 @@ import {
     insertIncoterms,
     readIncoterms,
     updateIncoterms,
-    switchIncoterms,
 } from "../controllers/iconterms.controller";
 
 router.post("/getIncoterms", TokenValidation, getIncoterms);
 
-router.get("/getListIncoterms/", TokenValidation, getListIncoterms);
-router.post("/insertIncoterms/", TokenValidation,  insertIncoterms);
-router.get("/readIncoterms/", TokenValidation,  readIncoterms);
-router.put("/updateIncoterms/", TokenValidation,  updateIncoterms);
-router.put("/switchIncoterms/", TokenValidation,  switchIncoterms);
+router.get("/listar_incoterms/", TokenValidation, getListIncoterms);
+router.post("/insertar_incoterms/", TokenValidation,  insertIncoterms);
+router.get("/ver_incoterms/", TokenValidation,  readIncoterms);
+router.put("/actualizar_incoterms/", TokenValidation,  updateIncoterms);
 
 export default router;

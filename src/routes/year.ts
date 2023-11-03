@@ -8,19 +8,14 @@ import {
     insertYear,
     readYear,
     updateYear,
-    switchYear,
-    validateCodeYear
 } from "../controllers/yearController";
 
 router.get("/getChargeYear", TokenValidation, getChargeYear);
 // router.post("/getPortEnd", TokenValidation, getPortEnd);
 
-router.get("/getListYear/", TokenValidation, getListYear);
-router.post("/insertYear/", TokenValidation, insertYear);
-router.get("/readYear/", TokenValidation, readYear);
-router.put("/updateYear/", TokenValidation, updateYear);
-router.put("/switchYear/", TokenValidation, switchYear);
-router.get("/validateCodeYear/", TokenValidation, validateCodeYear);
-
+router.get("/listar_year/", TokenValidation, getListYear);
+router.post("/insertar_year/", TokenValidation, insertYear);
+router.get("/ver_year/", TokenValidation, readYear);
+router.put("/actualizar_year/", TokenValidation, updateYear);
 
 export default router;

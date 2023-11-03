@@ -7,13 +7,11 @@ import {
     insertGroupservices,
     readGroupservices,
     updateGroupservices,
-    switchGroupservices,
 } from "../controllers/groupservices.controller";
 
-router.get("/getListGroupservices/", TokenValidation, getListGroupservices);
-router.post("/insertGroupservices/", TokenValidation, insertGroupservices);
-router.get("/readGroupservices/", TokenValidation, readGroupservices);
-router.put("/updateGroupservices/", TokenValidation, updateGroupservices);
-router.put("/switchGroupservices/", TokenValidation, switchGroupservices);
+router.get("/listar_groupservices/", TokenValidation, getListGroupservices);
+router.post("/insertar_groupservices/", TokenValidation, insertGroupservices);
+router.get("/ver_groupservices/", TokenValidation, readGroupservices);
+router.put("/actualizar_groupservices/", TokenValidation, updateGroupservices);
 
 export default router;

@@ -7,18 +7,16 @@ import {
   insertMarketing,
   readMarketing,
   updateMarketing,
-  switchMarketing,
   validatePositionMarketing,
-  lastPositionMarketing,
+  nextPositionMarketing,
 } from "../controllers/marketing.controller";
 
-router.get("/getListMarketing/", TokenValidation, getListMarketing);
-router.post("/insertMarketing/", TokenValidation, insertMarketing);
-router.get("/readMarketing/", TokenValidation, readMarketing);
-router.put("/switchMarketing/", TokenValidation, switchMarketing);
-router.put("/updateMarketing/", TokenValidation, updateMarketing);
-router.get("/validatePositionMarketing/", TokenValidation,  validatePositionMarketing);
-router.get("/lastPositionMarketing/", TokenValidation,  lastPositionMarketing);
+router.get("/listar_marketing/", TokenValidation, getListMarketing);
+router.post("/insertar_marketing/", TokenValidation, insertMarketing);
+router.get("/ver_marketing/", TokenValidation, readMarketing);
+router.put("/actualizar_marketing/", TokenValidation, updateMarketing);
+router.get("/validar_posicion_marketing/", TokenValidation,  validatePositionMarketing);
+router.get("/ultima_posicion_marketing/", TokenValidation,  nextPositionMarketing);
 
 
 export default router;

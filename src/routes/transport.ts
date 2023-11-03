@@ -7,13 +7,11 @@ import {
     insertTransport,
     readTransport,
     updateTransport,
-    switchTransport,
 } from "../controllers/transport.controller";
 
-router.get("/getListTransport/", TokenValidation, getListTransport);
-router.post("/insertTransport/", TokenValidation, insertTransport);
-router.get("/readTransport/", TokenValidation, readTransport);
-router.put("/updateTransport/", TokenValidation, updateTransport);
-router.put("/switchTransport/", TokenValidation, switchTransport);
+router.get("/listar_transport/", TokenValidation, getListTransport);
+router.post("/insertar_transport/", TokenValidation, insertTransport);
+router.get("/ver_transport/", TokenValidation, readTransport);
+router.put("/actualizar_transport/", TokenValidation, updateTransport);
 
 export default router;

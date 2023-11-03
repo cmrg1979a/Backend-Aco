@@ -8,14 +8,12 @@ import {
   insertDocuments,
   readDocuments,
   updateDocuments,
-  swicthDocuments,
 } from "../controllers/documents.controller";
 
 router.post("/getDocumentsList", TokenValidation, TokenValidation, getDocumentsList);
-router.get("/getListDocumentsByBranch/", TokenValidation, getListDocumentsByBranch);
-router.post("/insertDocuments/", TokenValidation, insertDocuments);
-router.get("/readDocuments/", TokenValidation, readDocuments);
-router.put("/updateDocuments/", TokenValidation, updateDocuments);
-router.put("/swicthDocuments/", TokenValidation, swicthDocuments);
+router.get("/listar_documents/", TokenValidation, getListDocumentsByBranch);
+router.post("/insertar_documents/", TokenValidation, insertDocuments);
+router.get("/ver_documents/", TokenValidation, readDocuments);
+router.put("/actualizar_documents/", TokenValidation, updateDocuments);
 
 export default router;

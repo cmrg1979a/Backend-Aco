@@ -54,3 +54,94 @@ export const getMultiplicador = async (req: Request, res: Response) => {
     }
   );
 };
+
+export const getListMultiplicador = async (req: Request, res: Response) => {
+  let data = req.query;
+  await pool.query("SELECT *from function_listar_multiplicador($1,$2, $3, $4, $5, $6);", [
+    data.id_branch,
+    data.code ? data.code : null,
+    data.name ? data.name : null,
+    data.description ? data.description : null,
+    data.id_shipment ? data.id_shipment : null,
+    data.status
+  ],
+  (err, response, fields) => {
+    if (!err) {
+      let rows = response.rows;
+      res.json({
+        status: 200,
+        estadoflag: rows[0].estadoflag,
+        mensaje: rows[0].mensaje,
+        data: rows
+      })
+    } else {
+      console.log(err);
+    }
+  });
+}
+
+export const readMultiplicador = async (req: Request, res: Response) => {
+  let data = req.query;
+  await pool.query("SELECT *from function_ver_multiplicador($1);", [
+    data.id
+  ],
+  (err, response, fields) => {
+    if (!err) {
+      let rows = response.rows;
+      res.json({
+        status: 200,
+        estadoflag: rows[0].estadoflag,
+        mensaje: rows[0].mensaje,
+        data: rows
+      })
+    } else {
+      console.log(err);
+    }
+  });
+}
+
+export const updateMultiplicador = async (req: Request, res: Response) => {
+  let data = req.body;
+  
+  await pool.query("SELECT *from function_actualizar_multiplicador($1,$2,$3,$4,$5, $6);", [
+    data.id,
+    data.name,
+    data.description,
+    data.id_shipment,
+    data.valor,
+    data.status
+  ],
+  (err, response, fields) => {
+    if (!err) {
+      let rows = response.rows;
+      res.json({
+        status: 200,
+        estadoflag: rows[0].estadoflag,
+        mensaje: rows[0].mensaje,
+        data: rows
+      })
+    } else {
+      console.log(err);
+    }
+  });
+}
+
+export const getCargarShipment = async (req: Request, res: Response) => {
+  let data = req.query;
+  await pool.query("SELECT *from function_cargar_shipment($1);", [
+    data.id_branch
+  ],
+  (err, response, fields) => {
+    if (!err) {
+      let rows = response.rows;
+      res.json({
+        status: 200,
+        estadoflag: rows[0].estadoflag,
+        mensaje: rows[0].mensaje,
+        data: rows
+      })
+    } else {
+      console.log(err);
+    }
+  });
+}

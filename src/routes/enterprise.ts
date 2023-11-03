@@ -7,18 +7,16 @@ import {
   getListEnterprise,
   insertEnterprise,
   readEnterprise,
-  switchEnterprise,
   updateEnterprise,
   validateDocumentEnterprise,
 } from "../controllers/enterprise.controller";
 
 router.post("/getBranch/:id_branch", TokenValidation, getBracnh);
-router.get("/getListEnterprise/", getListEnterprise);
-router.post("/insertEnterprise/", insertEnterprise);
-router.get("/readEnterprise/", readEnterprise);
-router.put("/switchEnterprise/", switchEnterprise);
-router.put("/updateEnterprise/", updateEnterprise);
-router.get("/validateDocumentEnterprise/", validateDocumentEnterprise);
+router.get("/listar_enterprise/", getListEnterprise);
+router.post("/insertar_enterprise/", insertEnterprise);
+router.get("/ver_enterprise/", readEnterprise);
+router.put("/actualizar_enterprise/", updateEnterprise);
+router.get("/validar_documento_enterprise/", validateDocumentEnterprise);
 
 
 export default router;
