@@ -13,7 +13,7 @@ import {
 
 router.post("/getShipment", TokenValidation, getShipment);
 
-router.get("/list_shipment/", TokenValidation, getListShipment);
+router.get("/listar_shipment/", TokenValidation, getListShipment);
 router.post("/insertar_shipment/", TokenValidation, insertShipment);
 router.get("/ver_shipment/", TokenValidation, readShipment);
 router.put("/actualizar_shipment/", TokenValidation, updateShipment);

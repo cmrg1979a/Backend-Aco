@@ -14,22 +14,37 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const supertest_1 = __importDefault(require("supertest"));
 const app_1 = __importDefault(require("../app"));
-it("validar getBanksList", () => __awaiter(void 0, void 0, void 0, function* () {
+it("validar listar_bank", () => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield (0, supertest_1.default)(app_1.default)
-        .post(`/getBanksList`)
+        .get(`/listar_bank?id_branch=1&code=&name=&acronym=&description=&status=1`)
         .set("auth-token", process.env.authToken);
     let body = response.body;
     expect(body.estadoflag).toBe(true);
     expect(body.data.length).toBeGreaterThan(1);
 }));
-it("validar getListaPagosXProveedorCxP", () => __awaiter(void 0, void 0, void 0, function* () {
+it("validar insertar_bank", () => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield (0, supertest_1.default)(app_1.default)
-        .get(`/getListaPagosXProveedorCxP/2335`)
+        .get(`/insetar_bank?`)
+        .query({
+        id_branch: 1,
+        acronym: "EJEMPLO 001",
+        name: "EJEMPLO 123",
+        description: "EJEMPLO 123",
+        status: 1,
+    })
         .set("auth-token", process.env.authToken);
     let body = response.body;
     expect(body.estadoflag).toBe(true);
-    expect(body.data.length).toBeGreaterThan(0);
+    expect(body.data.length).toEqual(1);
 }));
+// it("validar getListaPagosXProveedorCxP", async () => {
+//   const response = await request(app)
+//     .get(`/getListaPagosXProveedorCxP/2335`)
+//     .set("auth-token", process.env.authToken);
+//   let body = response.body;
+//   expect(body.estadoflag).toBe(true);
+//   expect(body.data.length).toBeGreaterThan(0);
+// });
 // it("validar getListBanksDetailsCxP", async () => {
 //   const response = await request(app)
 //     .get(
