@@ -29,30 +29,46 @@ it("Validar getPerfomance", () => __awaiter(void 0, void 0, void 0, function* ()
     expect(body.estadoflag).toBe(true); // valida que traiga el estadoflag como true
     expect(body.data.length).toBeGreaterThan(1); // valida que traiga más de un registro
 }));
-it("Validar getListPerformance", () => __awaiter(void 0, void 0, void 0, function* () {
-    const data = {
-        id_shipment: 1,
-        containers: "",
-        id_branch: 1,
-    };
+it("Validar listar_performance", () => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield (0, supertest_1.default)(app_1.default)
-        .post(`/getListPerformance?id_branch=1&code=&description=&status`)
+        .get(`/listar_performance?id_branch=1&code=&description=&status=`)
         .set("auth-token", process.env.authToken);
     let body = response.body;
-    expect(body.estadoflag).toBe(true); // valida que traiga el estadoflag como true
-    expect(body.data.length).toBeGreaterThan(1); // valida que traiga más de un registro
+    expect(body.estadoflag).toBe(true);
+    expect(body.data.length).toBeGreaterThan(1);
 }));
-it("Validar readPerformance", () => __awaiter(void 0, void 0, void 0, function* () {
-    const data = {
-        id_shipment: 1,
-        containers: "",
-        id_branch: 1,
-    };
+it("validar insertar_performance", () => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield (0, supertest_1.default)(app_1.default)
-        .post(`/readPerformance?id=1`)
+        .post(`/insertar_performance?`)
+        .send({
+        description: "TEST EJEMPLO 951",
+        status: 1,
+        id_branch: 1,
+    })
         .set("auth-token", process.env.authToken);
     let body = response.body;
-    expect(body.estadoflag).toBe(true); // valida que traiga el estadoflag como true
-    expect(body.data.length).toEqual(1); // valida que traiga más de un registro
+    expect(body.estadoflag).toBe(true);
+    expect(body.data.length).toEqual(1);
+}));
+it("Validar ver_performance", () => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield (0, supertest_1.default)(app_1.default)
+        .get(`/ver_performance?id=1`)
+        .set("auth-token", process.env.authToken);
+    let body = response.body;
+    expect(body.estadoflag).toBe(true);
+    expect(body.data.length).toEqual(1);
+}));
+it("validar actualizar_performance", () => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield (0, supertest_1.default)(app_1.default)
+        .put(`/actualizar_performance?`)
+        .send({
+        id: 5,
+        description: "EJEMPLO TEST 123",
+        status: 1,
+    })
+        .set("auth-token", process.env.authToken);
+    let body = response.body;
+    expect(body.estadoflag).toBe(true);
+    expect(body.data.length).toEqual(1);
 }));
 //# sourceMappingURL=performance.test.js.map

@@ -63,7 +63,7 @@ export const getListMultiplicador = async (req: Request, res: Response) => {
     data.name ? data.name : null,
     data.description ? data.description : null,
     data.id_shipment ? data.id_shipment : null,
-    data.status
+    data.status ? data.status : null,
   ],
   (err, response, fields) => {
     if (!err) {

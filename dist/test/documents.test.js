@@ -28,26 +28,48 @@ it("Validar getDocumentsList", () => __awaiter(void 0, void 0, void 0, function*
     expect(body.estadoflag).toBe(true);
     expect(body.data.length).toBeGreaterThan(1);
 }));
-it("Validar getListDocumentsByBranch", () => __awaiter(void 0, void 0, void 0, function* () {
-    const data = {
-        id_pais: 139,
-    };
+it("Validar listar_documents", () => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield (0, supertest_1.default)(app_1.default)
-        .get(`/getListDocumentsByBranch?code=&name=&description=&status=&id_branch=1`)
+        .get(`/listar_documents?id_branch=1&code=&name=&description=&status=1`)
         .set("auth-token", process.env.authToken);
     let body = response.body;
     expect(body.estadoflag).toBe(true);
     expect(body.data.length).toBeGreaterThan(1);
 }));
-it("Validar readDocuments", () => __awaiter(void 0, void 0, void 0, function* () {
-    const data = {
-        id_pais: 139,
-    };
+it("validar insertar_documents", () => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield (0, supertest_1.default)(app_1.default)
-        .get(`/readDocuments?id=1`)
+        .post(`/insertar_documents?`)
+        .send({
+        name: "EJEMPLO 123",
+        description: "EJEMPLO 123",
+        status: 1,
+        id_branch: 1,
+    })
         .set("auth-token", process.env.authToken);
     let body = response.body;
     expect(body.estadoflag).toBe(true);
-    expect(body.data.length).toBeGreaterThan(1);
+    expect(body.data.length).toEqual(1);
+}));
+it("Validar ver_documents", () => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield (0, supertest_1.default)(app_1.default)
+        .get(`/ver_documents?id=1`)
+        .set("auth-token", process.env.authToken);
+    let body = response.body;
+    expect(body.estadoflag).toBe(true);
+    expect(body.data.length).toEqual(1);
+}));
+it("validar actualizar_documents", () => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield (0, supertest_1.default)(app_1.default)
+        .put(`/actualizar_documents?`)
+        .send({
+        id: 1,
+        name: "EJEMPLO 123",
+        description: "EJEMPLO 123",
+        status: 1,
+    })
+        .set("auth-token", process.env.authToken);
+    let body = response.body;
+    expect(body.estadoflag).toBe(true);
+    expect(body.data.length).toEqual(1);
 }));
 //# sourceMappingURL=documents.test.js.map

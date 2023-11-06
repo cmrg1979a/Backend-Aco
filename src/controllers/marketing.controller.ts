@@ -8,12 +8,12 @@ const pool = conexion();
 
 export const getListMarketing = async (req: Request, res: Response) => {
   let data = req.query;
-  const result = await pool.query("SELECT *from function_listar_marketing($1,$2, $3, $4, $5);", [
+  await pool.query("SELECT *from function_listar_marketing($1,$2, $3, $4, $5);", [
     data.id_branch,
     data.name ? data.name : null,
     data.description ? data.description : null,
     data.position ? data.position : null,
-    data.status
+    data.status ? data.status : null,
   ], 
   (err, response, fields) => {
     if (!err) {

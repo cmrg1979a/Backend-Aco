@@ -40,7 +40,7 @@ export const getListShipment = async (req: Request, res: Response) => {
     data.id_transport ? data.id_transport : null,
     data.name ? data.name : null,
     data.description ? data.description : null,
-    data.status
+    data.status ? data.status : null,
   ],
   (err, response, fields) => {
     if (!err) {

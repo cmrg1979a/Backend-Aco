@@ -39,7 +39,7 @@ export const getListModality = async (req: Request, res: Response) => {
     data.code ? data.code : null,
     data.name ? data.name : null,
     data.description ? data.description : null,
-    data.status
+    data.status ? data.status : null,
   ],
   (err, response, fields) => {
     if (!err) {

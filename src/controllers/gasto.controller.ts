@@ -12,7 +12,7 @@ export const getListGasto = async (req: Request, res: Response) => {
     data.code ? data.code : null,
     data.description ? data.description : null,
     data.calculoflag ? data.calculoflag : null,
-    data.status
+    data.status ? data.status : null,
   ],
   (err, response, fields) => {
     if (!err) {

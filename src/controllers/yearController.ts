@@ -36,7 +36,7 @@ export const getListYear = async (req: Request, res: Response) => {
   await pool.query("SELECT *from function_listar_year($1,$2, $3);", [
     data.id_branch,
     data.description ? data.description : null,
-    data.status
+    data.status ? data.status : null,
   ],
   (err, response, fields) => {
     if (!err) {

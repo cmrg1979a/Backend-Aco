@@ -1202,7 +1202,7 @@ export const getListBank = async (req: Request, res: Response) => {
     data.name ? data.name : null,
     data.acronym ? data.acronym : null,
     data.description ? data.description : null,
-    data.status
+    data.status ? data.status : null,
   ], 
   (err, response, fields) => {
     if (!err) {

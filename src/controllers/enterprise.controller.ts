@@ -41,7 +41,7 @@ export const getListEnterprise = async (req: Request, res: Response) => {
     data.trade_name ? data.trade_name : null,
     data.business_name ? data.business_name : null,
     data.address ? data.address : null,
-    data.status,
+    data.status ? data.status : null,
     data.id_pais ? data.id_pais : null,
     data.id_state ? data.id_state : null,
     data.id_city ? data.id_city : null,
@@ -122,7 +122,7 @@ export const updateEnterprise = async (req: Request, res: Response) => {
 
   await pool.query("SELECT *from function_actualizar_enterprise($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);", [
     data.id,
-    data.id_logo,
+    data.id_logo ? data.id_logo : null,
     data.document,
     data.trade_name,
     data.business_name,

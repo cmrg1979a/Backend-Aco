@@ -33,7 +33,7 @@ export const getListSex = async (req: Request, res: Response) => {
     data.name ? data.name : null,
     data.acronym ? data.acronym : null,
     data.description ? data.description : null,
-    data.status
+    data.status ? data.status : null,
   ],
   (err, response, fields) => {
     if (!err) {
@@ -96,9 +96,8 @@ export const readSex = async (req: Request, res: Response) => {
 
 export const updateSex = async (req: Request, res: Response) => {
   let data = req.body;
-  await pool.query("SELECT *from function_actualizar_sex($1,$2, $3, $4, $5, $6);", [
+  await pool.query("SELECT *from function_actualizar_sex($1,$2, $3, $4, $5);", [
     data.id,
-    data.id_branch,
     data.acronym,
     data.name,
     data.description,

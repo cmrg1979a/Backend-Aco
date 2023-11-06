@@ -14,13 +14,51 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const supertest_1 = __importDefault(require("supertest"));
 const app_1 = __importDefault(require("../app"));
-it("validar getBanksList", () => __awaiter(void 0, void 0, void 0, function* () {
+it("validar listar_bank", () => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield (0, supertest_1.default)(app_1.default)
-        .post(`/getBanksList`)
+        .get(`/listar_bank?id_branch=1&code=&name=&acronym=&description=&status=`)
         .set("auth-token", process.env.authToken);
     let body = response.body;
     expect(body.estadoflag).toBe(true);
     expect(body.data.length).toBeGreaterThan(1);
+}));
+it("validar insertar_bank", () => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield (0, supertest_1.default)(app_1.default)
+        .post(`/insertar_bank?`)
+        .send({
+        id_branch: 1,
+        acronym: "EJ1",
+        name: "EJEMPLO 123",
+        description: "EJEMPLO 123",
+        status: 1,
+    })
+        .set("auth-token", process.env.authToken);
+    let body = response.body;
+    expect(body.estadoflag).toBe(true);
+    expect(body.data.length).toEqual(1);
+}));
+it("validar ver_bank", () => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield (0, supertest_1.default)(app_1.default)
+        .get(`/ver_bank?id=1`)
+        .set("auth-token", process.env.authToken);
+    let body = response.body;
+    expect(body.estadoflag).toBe(true);
+    expect(body.data.length).toEqual(1);
+}));
+it("validar actualizar_bank", () => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield (0, supertest_1.default)(app_1.default)
+        .put(`/actualizar_bank?`)
+        .send({
+        id: 1,
+        acronym: "EJ01",
+        name: "EJEMPLO 1234",
+        description: "EJEMPLO 1234",
+        status: 1,
+    })
+        .set("auth-token", process.env.authToken);
+    let body = response.body;
+    expect(body.estadoflag).toBe(true);
+    expect(body.data.length).toEqual(1);
 }));
 it("validar getListaPagosXProveedorCxP", () => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield (0, supertest_1.default)(app_1.default)

@@ -16,46 +16,72 @@ const supertest_1 = __importDefault(require("supertest"));
 const app_1 = __importDefault(require("../app"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-it("Validar getSex", () => __awaiter(void 0, void 0, void 0, function* () {
-    const data = {
-        id_shipment: 1,
-        containers: "",
-        id_branch: 1,
-    };
+// it("Validar getSex", async () => {
+//   const data = {
+//     id_shipment: 1,
+//     containers: "",
+//     id_branch: 1,
+//   };
+//   const response = await request(app)
+//     .post(`/getSex`)
+//     .set("auth-token", process.env.authToken)
+//     .send(data);
+//   let body = response.body;
+//   expect(body.estadoflag).toBe(true);
+//   expect(body.data.length).toBeGreaterThan(1);
+// });
+it("Validar listar_sex", () => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield (0, supertest_1.default)(app_1.default)
-        .post(`/getSex`)
-        .set("auth-token", process.env.authToken)
-        .send(data);
+        .get(`/listar_sex?id_branch=1&code=&name=&acronym=&description=&status=`)
+        .set("auth-token", process.env.authToken);
     let body = response.body;
     expect(body.estadoflag).toBe(true);
     expect(body.data.length).toBeGreaterThan(1);
 }));
-it("Validar getListSex", () => __awaiter(void 0, void 0, void 0, function* () {
-    const data = {
-        id_shipment: 1,
-        containers: "",
-        id_branch: 1,
-    };
+it("validar insertar_sex", () => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield (0, supertest_1.default)(app_1.default)
-        .get(`/getListSex?id_branch=1&code=&name=&acronym=&description=&status=`)
-        .set("auth-token", process.env.authToken)
-        .send(data);
+        .post(`/insertar_sex?`)
+        .send({
+        id_branch: 1,
+        acronym: "IND",
+        name: "EJEMPLO TEST 951",
+        description: "EJEMPLO TEST 951",
+        status: 1,
+    })
+        .set("auth-token", process.env.authToken);
     let body = response.body;
     expect(body.estadoflag).toBe(true);
-    expect(body.data.length).toBeGreaterThan(1);
+    expect(body.data.length).toEqual(1);
 }));
-it("Validar readSex", () => __awaiter(void 0, void 0, void 0, function* () {
-    const data = {
-        id_shipment: 1,
-        containers: "",
-        id_branch: 1,
-    };
+it("Validar ver_sex", () => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield (0, supertest_1.default)(app_1.default)
-        .get(`/readSex?id=1`)
-        .set("auth-token", process.env.authToken)
-        .send(data);
+        .get(`/ver_sex?id=1`)
+        .set("auth-token", process.env.authToken);
     let body = response.body;
     expect(body.estadoflag).toBe(true);
-    expect(body.data.length).toBeGreaterThan(1);
+    expect(body.data.length).toEqual(1);
+}));
+it("validar actualizar_sex", () => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield (0, supertest_1.default)(app_1.default)
+        .put(`/actualizar_sex?`)
+        .send({
+        id: 3,
+        acronym: "IND",
+        name: "EJEMPLO TEST 951",
+        description: "EJEMPLO TEST 951",
+        status: 1,
+    })
+        .set("auth-token", process.env.authToken);
+    let body = response.body;
+    expect(body.estadoflag).toBe(true);
+    expect(body.data.length).toEqual(1);
+}));
+it("Validar validar_acronimo_sex", () => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield (0, supertest_1.default)(app_1.default)
+        .get(`/validar_acronimo_sex?id=0&acronym=IND&id_branch=1`)
+        .set("auth-token", process.env.authToken);
+    let body = response.body;
+    expect(body.status).toBe(200);
+    expect(body.data.length).toEqual(1);
 }));
 //# sourceMappingURL=sex.test.js.map
