@@ -1409,7 +1409,6 @@ export const aprobarCotizacion = async (req: Request, res: Response) => {
       nuevoexpediente ? nuevoexpediente : null,
       id_exp ? id_exp : null,
       fecha_validez ? fecha_validez : null,
-      fecha_validez ? fecha_validez : null,
       totalIngreso ? totalIngreso : 0,
     ],
     (err, response, fields) => {
