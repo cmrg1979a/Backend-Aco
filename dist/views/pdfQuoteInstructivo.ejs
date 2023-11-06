@@ -141,7 +141,9 @@
     <table width="100%">
       <tbody>
         <tr>
-          <td class="title center">INSTRUCTIVO COMPRA - VENTA <%= expediente %></td>
+          <td class="title center">
+            INSTRUCTIVO COMPRA - VENTA <%= expediente %>
+          </td>
         </tr>
         <tr>
           <td class="subtitle center">
@@ -153,7 +155,7 @@
     <table width="100%">
       <tbody>
         <tr>
-          <td colspan="2" class="center bold red">DATOS DEL CLIENTE</td>
+          <td colspan="2" class="center bold t-bg">DATOS DEL CLIENTE</td>
         </tr>
         <tr>
           <td>NOMBRE</td>
@@ -212,7 +214,7 @@
       </tbody>
     </table>
     <br />
-    <div style="page-break-after: always"></div> 
+    <div style="page-break-after: always"></div>
 
     <table width="100%" class="mi-tabla">
       <thead>
@@ -271,7 +273,7 @@
           </td>
 
           <%}%>
-          <td width="35%" class="align-right"><%= element.service %></td>
+          <td width="35%"><%= element.service %></td>
           <td width="10%" class="align-right"><%= element.valor %></td>
           <td width="10%" class="align-right"><%= element.igv %></td>
           <td width="10%" class="align-right"><%= element.total %></td>
@@ -285,7 +287,7 @@
   * {
     margin: 0 64px 0 24px;
     padding: 0;
-    font-size: 0.6rem;
+    font-size: 0.7rem;
   }
   .title {
     font-weight: bold;
@@ -322,7 +324,6 @@
 
   .mi-tabla th,
   .mi-tabla td {
-    
     border: 1px solid #000; /* Un borde sólido de 1 píxel de ancho y color azul (#3498db) para celdas */
     padding: 1px; /* Añade un relleno para que el texto no esté pegado al borde */
   }
