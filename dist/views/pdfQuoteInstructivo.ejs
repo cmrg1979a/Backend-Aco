@@ -225,13 +225,15 @@
       <tbody>
         <% if (listIngresosInstructivo.length>0) {%> <%
         listIngresosInstructivo.forEach((element,index) => { %>
-        <tr>
+        <tr
+          class="<%= element.descripcion === 'TOTAL' ? 'totalClass' : element.descripcion === 'SubTotal' ? 'subTotalClass' : '', %>"
+        >
           <% if (index === 0 || element.descripcion !== listIngresosInstructivo[
           index - 1 ].descripcion ) {%>
 
           <td
             width="35%"
-            rowspan="<%=
+            rowspan="<%= element.descripcion === 'SubTotal' ? 1 :
                         listIngresosInstructivo.filter(
                           (v) => v.descripcion == element.descripcion
                         ).length %>"
@@ -258,13 +260,15 @@
       <tbody>
         <% if (listCostosInstructivo.length>0) {%> <%
         listCostosInstructivo.forEach((element,index) => { %>
-        <tr>
+        <tr
+          class="<%= element.proveedor == 'TOTAL' ? 'totalClass' : element.proveedor === 'SubTotal' ? 'subTotalClass' : ''%>"
+        >
           <% if (index === 0 || element.proveedor !== listCostosInstructivo[
           index - 1 ].proveedor ) {%>
 
           <td
             width="35%"
-            rowspan="<%=
+            rowspan="<%= element.proveedor ==='SubTotal' ? 1 : 
                         listCostosInstructivo.filter(
                           (v) => v.proveedor == element.proveedor
                         ).length %>"
@@ -326,5 +330,17 @@
   .mi-tabla td {
     border: 1px solid #000; /* Un borde sólido de 1 píxel de ancho y color azul (#3498db) para celdas */
     padding: 1px; /* Añade un relleno para que el texto no esté pegado al borde */
+  }
+
+  .totalClass {
+    font-weight: bold;
+    /* background: #1a237e !important; */
+    background: #42a5f5 !important;
+    color: black !important;
+  }
+  .subTotalClass {
+    font-weight: bold;
+    background: #bbdefb !important;
+    color: black !important;
   }
 </style>
