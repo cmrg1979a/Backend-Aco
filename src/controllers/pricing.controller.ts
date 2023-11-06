@@ -1320,7 +1320,7 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
   });
   let lengthServ = servicios.length;
   console.log(iso);
-  
+
   ejs.renderFile(
     path.join(__dirname, "../views/", "quoteDetallado.ejs"),
     {
@@ -1400,7 +1400,7 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
 };
 
 export const aprobarCotizacion = async (req: Request, res: Response) => {
-  let { id_quote, nuevoexpediente, id_exp ,fecha_validez} = req.body;
+  let { id_quote, nuevoexpediente, id_exp, fecha_validez } = req.body;
   await pool.query(
     "SELECT * FROM function_aprobar_cotizacion($1,$2,$3,$4);",
     [
@@ -1430,6 +1430,79 @@ export const aprobarCotizacion = async (req: Request, res: Response) => {
         }
       } else {
         console.log(err);
+      }
+    }
+  );
+};
+
+export const generarInstructivoQuote = async (req: Request, res: Response) => {
+  let {
+    expediente,
+    sentido,
+    carga,
+    incoterms,
+    nombre,
+    direccion,
+    telefono,
+    vendedor,
+    proveedor,
+    origen,
+    destino,
+    fiscal,
+    ruc,
+    listServiciosInstructivo,
+    listIngresosInstructivo,
+    listCostosInstructivo,
+  } = req.body;
+  let fecha = moment().format("DD-MM-YYYY");
+
+  ejs.renderFile(
+    path.join(__dirname, "../views/", "pdfQuoteInstructivo.ejs"),
+    {
+      expediente,
+      sentido,
+      carga,
+      incoterms,
+      nombre,
+      direccion,
+      telefono,
+      vendedor,
+      proveedor,
+      origen,
+      destino,
+      fiscal,
+      ruc,
+      listServiciosInstructivo,
+      listIngresosInstructivo,
+      listCostosInstructivo,
+    },
+
+    (err: any, data: any) => {
+      if (err) {
+        // res.send(err);
+        console.log(err);
+      } else {
+        let options = {
+          page_size: "A4",
+          header: {
+            height: "15mm",
+          },
+        };
+
+        pdf
+          .create(data, options)
+          .toFile("files/InstructivoQuote.pdf", function (err: any, data: any) {
+            if (err) {
+              res.send(err);
+            } else {
+              res.download("/InstructivoQuote.pdf");
+              res.send({
+                estadoflag: true,
+                msg: "File created successfully",
+                path: path.join("InstructivoQuote.pdf"),
+              });
+            }
+          });
       }
     }
   );

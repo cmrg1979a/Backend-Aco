@@ -38,6 +38,7 @@ import {
   listadoCotizacionMercadeo,
   quotePreviewTotales,
   aprobarCotizacion,
+  generarInstructivoQuote,
 } from "../controllers/pricing.controller";
 
 router.post("/setQuote", TokenValidation, setQuote);
@@ -96,6 +97,11 @@ router.put(
   "/aprobar_cotizacion",
   // TokenValidation,
   aprobarCotizacion
+);
+router.post(
+  "/quote_instructivo",
+  // TokenValidation,
+  generarInstructivoQuote
 );
 
 export default router;
