@@ -39,6 +39,7 @@ import {
   quotePreviewTotales,
   aprobarCotizacion,
   generarInstructivoQuote,
+  setNoteQuote,
 } from "../controllers/pricing.controller";
 
 router.post("/setQuote", TokenValidation, setQuote);
@@ -66,6 +67,7 @@ router.post(
   TokenValidation,
   cargarMasterDetalleImpuestos
 );
+router.post("/quote_note_insert", TokenValidation, setNoteQuote);
 router.put(
   "/update_quote_recibido_enviado",
   TokenValidation,

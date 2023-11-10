@@ -9,6 +9,7 @@ let ejs = require("ejs");
 let pdf = require("html-pdf");
 let path = require("path");
 import moment from "moment";
+import { QuoteNote } from "interface/quoteNote";
 moment.locale("es");
 export const setQuote = async (req: Request, res: Response) => {
   const dataObj = req.body;
@@ -1400,9 +1401,15 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
 };
 
 export const aprobarCotizacion = async (req: Request, res: Response) => {
-  let { id_quote, nuevoexpediente, id_exp, fecha_validez, totalIngreso,igvIngreso,
-    valorIngreso } =
-    req.body;
+  let {
+    id_quote,
+    nuevoexpediente,
+    id_exp,
+    fecha_validez,
+    totalIngreso,
+    igvIngreso,
+    valorIngreso,
+  } = req.body;
   await pool.query(
     "SELECT * FROM function_aprobar_cotizacion($1,$2,$3,$4,$5,$6,$7);",
     [
@@ -1512,6 +1519,32 @@ export const generarInstructivoQuote = async (req: Request, res: Response) => {
     }
   );
 };
+
+export const setNoteQuote = async (req: Request, res: Response) => {
+  let QuoteNote: QuoteNote = req.body;
+  await pool.query(
+    "SELECT * FROM function_quote_note_insert($1,$2);",
+    [QuoteNote.id_quote, QuoteNote.name],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          let rows = response.rows;
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+            estadoflag: rows[0].estadoflag,
+            data: rows,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
 
 function getServicios({
   flete = [],
