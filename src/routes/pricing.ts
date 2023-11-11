@@ -40,6 +40,8 @@ import {
   aprobarCotizacion,
   generarInstructivoQuote,
   setNoteQuote,
+  ListarMontoFinalesQuoteMONGODB,
+  InsertMontoFinalesQuoteMONGODB,
 } from "../controllers/pricing.controller";
 
 router.post("/setQuote", TokenValidation, setQuote);
@@ -104,6 +106,17 @@ router.post(
   "/quote_instructivo",
   // TokenValidation,
   generarInstructivoQuote
+);
+router.post(
+  "/insert_monto_finales_quote",
+  // TokenValidation,
+  InsertMontoFinalesQuoteMONGODB
+);
+
+router.post(
+  "/listar_monto_finales_quote",
+  // TokenValidation,
+  ListarMontoFinalesQuoteMONGODB
 );
 
 export default router;

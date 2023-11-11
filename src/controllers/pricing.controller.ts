@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
-// import { connect } from "../routes/database";
 import { conexion } from "../routes/databasePGOp";
+import { getCollection } from "../routes/mongoDB";
+import { Collection, InsertOneResult, UpdateResult } from "mongodb";
+
 import * as pg from "pg";
 const { Pool } = pg;
 
@@ -1409,9 +1411,10 @@ export const aprobarCotizacion = async (req: Request, res: Response) => {
     totalIngreso,
     igvIngreso,
     valorIngreso,
+    listCostosInstructivo,
   } = req.body;
   await pool.query(
-    "SELECT * FROM function_aprobar_cotizacion($1,$2,$3,$4,$5,$6,$7);",
+    "SELECT * FROM function_aprobar_cotizacion($1,$2,$3,$4,$5,$6,$7,$8,$9,$10);",
     [
       id_quote ? id_quote : null,
       nuevoexpediente ? nuevoexpediente : null,
@@ -1420,7 +1423,18 @@ export const aprobarCotizacion = async (req: Request, res: Response) => {
       igvIngreso ? igvIngreso : null,
       valorIngreso ? valorIngreso : null,
       totalIngreso ? totalIngreso : 0,
+      listCostosInstructivo.map((element: any) => {
+        return element.id;
+      }),
+     
+      listCostosInstructivo.map((element: any) => {
+        return element.service;
+      }),
+      listCostosInstructivo.map((element: any) => {
+        return element.valor;
+      }),
     ],
+
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -1545,6 +1559,64 @@ export const setNoteQuote = async (req: Request, res: Response) => {
   );
 };
 
+export const InsertMontoFinalesQuoteMONGODB = async (
+  req: Request,
+  res: Response
+) => {
+  const collectionName = "quote_montos_finales"; // Nombre de tu colección
+  const dataToInsert = req.body;
+
+  try {
+    const collection: Collection = await getCollection(collectionName);
+    const cursor = collection.find({ id: dataToInsert.id });
+    const result = await cursor.toArray();
+
+    if (result.length > 0) {
+      const update = { $set: req.body };
+
+      const result: UpdateResult = await collection.updateOne(cursor, update);
+    } else {
+      await collection.insertOne(dataToInsert);
+    }
+
+    res.json({
+      status: 200,
+      statusBol: true,
+      mensaje: "Registro Correcto",
+      estadoflag: true,
+      data: [],
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).send("Error al insertar datos");
+  }
+};
+
+export const ListarMontoFinalesQuoteMONGODB = async (
+  req: Request,
+  res: Response
+) => {
+  const collectionName = "quote_montos_finales";
+  try {
+    const collection: Collection = await getCollection(collectionName);
+    const cursor = collection.find({}); // Obtenemos el cursor
+
+    const result = await cursor.toArray(); // Convertimos el cursor a un array
+
+    if (result) {
+      res.json({
+        status: 200,
+        estadoflag: result.length > 0,
+        statusBol: true,
+        data: result,
+        mensaje: result.length > 0 ? "" : "No se encontraron registros",
+      });
+    }
+  } catch (e) {
+    console.log(e);
+    res.status(500).send("Error en la consulta");
+  }
+};
 
 function getServicios({
   flete = [],
