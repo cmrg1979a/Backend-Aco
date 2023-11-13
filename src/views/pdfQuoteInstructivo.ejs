@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <header>
-    <div class="container">
-      <div class="item"><%= sucursal %>, <%= fecha %></div>
-      <div class="item">
+    <div class="container container_div">
+      <div class="ma-0 pa-0 item align-left">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="150px"
@@ -143,155 +142,125 @@
           </g>
         </svg>
       </div>
+      <div class="ma-0 pa-0 item align-righ">
+        <h1 class="ma-0 pa-0"><%=sucursal %>, <%=fecha%></h1>
+      </div>
     </div>
   </header>
   <body>
-    <br />
-    <div class="container rosapastel">
-      INSTRUCTIVO QUOTE <%= expediente %>
-
-      <%= status %> | Exp. Master: <%=code_master? code_master : '--' %> Exp.
-      House: <%=code_house? code_house : '--' %>
+    <hr />
+    <div class="container rosapastel center">
+      <h1>INSTRUCTIVO QUOTE <%= expediente %></h1>
+      <h2>
+        <%= status %> | Exp. Master: <%=code_master? code_master : '--' %> Exp.
+        House: <%=code_house? code_house : '--' %>
+      </h2>
+      <h4>
+        Tipo de Servicio: <%= sentido %> - <%= carga %> - <%= incoterms %>
+      </h4>
     </div>
+    <div class="container container_div rosapastel align-left">
+      <div class="ma-0 pa-0 item">
+        <h4 class="t-bg">DATOS DEL CLIENTE</h4>
+        <p><b class="ma-0 pa-0">NOMBRE:</b> <%= nombre %></p>
+        <p><b class="ma-0 pa-0">DIRECCIÓN:</b> <%= direccion %></p>
+        <p><b class="ma-0 pa-0">CONTACTO:</b> <%= telefono %></p>
+        <p><b class="ma-0 pa-0">VENDEDOR:</b> <%= vendedor %></p>
+      </div>
+      <div class="ma-0 pa-0 item">
+        <h4 class="t-bg">DATOS DE LA CARGA</h4>
+        <p><b class="ma-0 pa-0">PROVEEDOR:</b> <%= proveedor %></p>
+        <p><b class="ma-0 pa-0">POL:</b> <%= origen %></p>
+        <p><b class="ma-0 pa-0">POD:</b> <%= destino %></p>
+      </div>
+    </div>
+    <hr />
+    <div class="container container_div rosapastel align-left">
+      <div class="ma-0 pa-0 item">
+        <h4 class="t-bg">SERVICIOS A REALIZAR</h4>
+        <% listServiciosInstructivo.forEach(element => { %>
+        <p><%= element.name %> - <%= element.status %></p>
+        <%});%>
+      </div>
 
-    <table width="100%">
-      <tbody>
-        <tr>
-          <td colspan="2" class="center bold t-bg">DATOS DEL CLIENTE</td>
-        </tr>
-        <tr>
-          <td>NOMBRE</td>
-          <td><%= nombre %></td>
-        </tr>
-        <tr>
-          <td>DIRECCIÓN</td>
-          <td><%= direccion %></td>
-        </tr>
-        <tr>
-          <td>CONTACTO</td>
-          <td><%= telefono %></td>
-        </tr>
-        <tr>
-          <td>VENDEDOR</td>
-          <td><%= vendedor %></td>
-        </tr>
-      </tbody>
-    </table>
-    <table width="100%">
-      <tbody>
-        <tr>
-          <td colspan="2" class="center bold t-bg">
-            DATOS DE MOVIMIENTO DE MERCANCIA
-          </td>
-        </tr>
-        <tr>
-          <td>PROVEEDOR:</td>
-          <td><%=proveedor%></td>
-        </tr>
-        <tr>
-          <td>POL:</td>
-          <td><%=origen%></td>
-        </tr>
-        <tr>
-          <td>POD:</td>
-          <td><%=destino%></td>
-        </tr>
-      </tbody>
-    </table>
-
-    <table width="100%">
-      <thead>
-        <tr>
-          <td colspan="2" class="center bold st-bg">SERVICIOS A REALIZAR</td>
-        </tr>
-      </thead>
-      <tbody>
-        <% if (listServiciosInstructivo.length>0) {%> <%
-        listServiciosInstructivo.forEach(element => { %>
-        <tr>
-          <td><%=element.name %></td>
-          <td><%=element.status %></td>
-        </tr>
-        <%}); %> <%}%>
-      </tbody>
-    </table>
-    <br />
-    <div style="page-break-after: always"></div>
-
-    <table width="100%" class="mi-tabla">
-      <thead>
-        <tr>
-          <td colspan="5" class="center bold st-bg">INGRESOS</td>
-        </tr>
-      </thead>
-      <tbody>
-        <% if (listIngresosInstructivo.length>0) {%> <%
-        listIngresosInstructivo.forEach((element,index) => { %>
-        <tr
-          class="<%= element.descripcion === 'TOTAL' ? 'totalClass' : element.descripcion === 'SubTotal' ? 'subTotalClass' : '', %>"
-        >
-          <% if (index === 0 || element.descripcion !== listIngresosInstructivo[
-          index - 1 ].descripcion ) {%>
-
-          <td
-            width="35%"
-            rowspan="<%= element.descripcion === 'SubTotal' ? 1 :
-                        listIngresosInstructivo.filter(
-                          (v) => v.descripcion == element.descripcion
-                        ).length %>"
+      <div class="ma-0 pa-0 item">
+        <h4 class="t-bg">INSTRUCCIONES/NOTAS ESPECIALES</h4>
+        <% notas.forEach(element => { %>
+        <p><%= element.description %></p>
+        <%});%>
+      </div>
+    </div>
+    <hr />
+    <div class="container container_div align-left">
+      <h1 class="st-bg">INGRESOS COTIZADOS AL CLIENTE</h1>
+      <table width="100%" class="mi-tabla">
+        <tbody>
+          <% if (listIngresosInstructivo.length>0) {%> <%
+          listIngresosInstructivo.forEach((element,index) => { %>
+          <tr
+            class="<%= element.descripcion === 'TOTAL' ? 'totalClass' : element.descripcion === 'SubTotal' ? 'subTotalClass' : '', %>"
           >
-            <%= element.descripcion %>
-          </td>
+            <% if (index === 0 || element.descripcion !==
+            listIngresosInstructivo[ index - 1 ].descripcion ) {%>
 
-          <%}%>
-          <td width="35%"><%= element.service %></td>
-          <td width="10%" class="align-right"><%= element.valor %></td>
-          <td width="10%" class="align-right"><%= element.igv %></td>
-          <td width="10%" class="align-right"><%= element.total %></td>
-        </tr>
-        <%}); %> <%}%>
-      </tbody>
-    </table>
-    <br />
-    <table width="100%" class="mi-tabla">
-      <thead>
-        <tr>
-          <td colspan="5" class="center bold st-bg">COSTOS</td>
-        </tr>
-      </thead>
-      <tbody>
-        <% if (listCostosInstructivo.length>0) {%> <%
-        listCostosInstructivo.forEach((element,index) => { %>
-        <tr
-          class="<%= element.proveedor == 'TOTAL' ? 'totalClass' : element.proveedor === 'SubTotal' ? 'subTotalClass' : ''%>"
-        >
-          <% if (index === 0 || element.proveedor !== listCostosInstructivo[
-          index - 1 ].proveedor ) {%>
+            <td
+              width="35%"
+              rowspan="<%= element.descripcion === 'SubTotal' ? 1 :
+                          listIngresosInstructivo.filter(
+                            (v) => v.descripcion == element.descripcion
+                          ).length %>"
+            >
+              <%= element.descripcion %>
+            </td>
 
-          <td
-            width="35%"
-            rowspan="<%= element.proveedor ==='SubTotal' ? 1 : 
+            <%}%>
+            <td width="35%"><%= element.service %></td>
+            <td width="10%" class="align-right"><%= element.valor %></td>
+            <td width="10%" class="align-right"><%= element.igv %></td>
+            <td width="10%" class="align-right"><%= element.total %></td>
+          </tr>
+          <%}); %> <%}%>
+        </tbody>
+      </table>
+    </div>
+    <hr />
+    <div class="container container_div align-left">
+      <h1 class="st-bg">COSTOS</h1>
+      <table width="100%" class="mi-tabla">
+        <tbody>
+          <% if (listCostosInstructivo.length>0) {%> <%
+          listCostosInstructivo.forEach((element,index) => { %>
+          <tr
+            class="<%= element.proveedor == 'TOTAL' ? 'totalClass' : element.proveedor === 'SubTotal' ? 'subTotalClass' : ''%>"
+          >
+            <% if (index === 0 || element.proveedor !== listCostosInstructivo[
+            index - 1 ].proveedor ) {%>
+
+            <td
+              width="35%"
+              rowspan="<%= element.proveedor ==='SubTotal' ? 1 : 
                         listCostosInstructivo.filter(
                           (v) => v.proveedor == element.proveedor
                         ).length %>"
-          >
-            <%= element.proveedor %>
-          </td>
+            >
+              <%= element.proveedor %>
+            </td>
 
-          <%}%>
-          <td width="35%"><%= element.service %></td>
-          <td width="10%" class="align-right"><%= element.valor %></td>
-          <td width="10%" class="align-right"><%= element.igv %></td>
-          <td width="10%" class="align-right"><%= element.total %></td>
-        </tr>
-        <%}); %> <%}%>
-      </tbody>
-    </table>
+            <%}%>
+            <td width="35%"><%= element.service %></td>
+            <td width="10%" class="align-right"><%= element.valor %></td>
+            <td width="10%" class="align-right"><%= element.igv %></td>
+            <td width="10%" class="align-right"><%= element.total %></td>
+          </tr>
+          <%}); %> <%}%>
+        </tbody>
+      </table>
+    </div>
   </body>
 </html>
 <style>
   * {
-    margin: 0 64px 0 24px;
+    margin: 0 1cm 0 0.5cm;
     padding: 0;
     font-size: 0.7rem;
   }
@@ -301,8 +270,7 @@
 
   .container_div {
     display: flex;
-    width: 100%;
-    margin: 1cm 0 2cm 0;
+    margin: 0.15cm 0 1cm 0;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: flex-start;
@@ -310,6 +278,7 @@
   .item {
     float: left !important;
     width: 50% !important ;
+    margin: 0px !important;
   }
   .title {
     font-weight: bold;
@@ -326,10 +295,12 @@
     font-weight: bold;
   }
   .t-bg {
+    width: 95%;
     background-color: #a43542 !important;
     color: white;
   }
   .st-bg {
+    width: 100%;
     background-color: #2d3b44 !important;
     color: white;
   }
@@ -339,30 +310,46 @@
   }
 
   .mi-tabla {
-    margin: 0; /* Quítale los márgenes */
-    padding: 0; /* Quítale el relleno */
     border-collapse: collapse; /* Esto evita espacios entre las celdas */
   }
 
   .mi-tabla th,
   .mi-tabla td {
-    border: 1px solid #000; /* Un borde sólido de 1 píxel de ancho y color azul (#3498db) para celdas */
+    border: 0.5px solid #000; /* Un borde sólido de 1 píxel de ancho y color azul (#3498db) para celdas */
     padding: 1px; /* Añade un relleno para que el texto no esté pegado al borde */
   }
 
   .totalClass {
     font-weight: bold;
     /* background: #1a237e !important; */
-    background: #42a5f5 !important;
+    background: #bbdefb !important;
     color: black !important;
   }
   .subTotalClass {
     font-weight: bold;
-    background: #bbdefb !important;
+    background: #e3f2fd !important;
     color: black !important;
   }
 
   .rosapastel {
     background: rgb(249, 196, 196) !important;
+  }
+
+  .align-left {
+    text-align: left !important;
+  }
+
+  .align-right {
+    text-align: right !important;
+  }
+  .ma-0 {
+    margin: 0 !important;
+  }
+  .pa-0 {
+    padding: 0 !important;
+  }
+  hr {
+    border: none; /* Quita el borde predeterminado */
+    min-width: 100% !important;
   }
 </style>

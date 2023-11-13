@@ -142,7 +142,7 @@
           </g>
         </svg>
       </div>
-      <div class="ma-0 pa-0 item align-righ">
+      <div class="ma-0 pa-0 item align-right">
         <h1 class="ma-0 pa-0"><%=sucursal %>, <%=fecha%></h1>
       </div>
     </div>
@@ -182,7 +182,7 @@
         <p><%= element.name %> - <%= element.status %></p>
         <%});%>
       </div>
-    
+
       <div class="ma-0 pa-0 item">
         <h4 class="t-bg">INSTRUCCIONES/NOTAS ESPECIALES</h4>
         <% notas.forEach(element => { %>
@@ -194,6 +194,12 @@
     <div class="container container_div align-left">
       <h1 class="st-bg">INGRESOS COTIZADOS AL CLIENTE</h1>
       <table width="100%" class="mi-tabla">
+        <thead>
+          <tr>
+            <th colspan="2"><center>Servicios</center></th>
+            <th class="align-right">Sub Total ($)</th>
+          </tr>
+        </thead>
         <tbody>
           <% if (listIngresosInstructivo.length>0) {%> <%
           listIngresosInstructivo.forEach((element,index) => { %>
@@ -204,7 +210,7 @@
             listIngresosInstructivo[ index - 1 ].descripcion ) {%>
 
             <td
-              width="35%"
+              width="20%"
               rowspan="<%= element.descripcion === 'SubTotal' ? 1 :
                           listIngresosInstructivo.filter(
                             (v) => v.descripcion == element.descripcion
@@ -214,10 +220,9 @@
             </td>
 
             <%}%>
-            <td width="35%"><%= element.service %></td>
-            <td width="10%" class="align-right"><%= element.valor %></td>
-            <td width="10%" class="align-right"><%= element.igv %></td>
-            <td width="10%" class="align-right"><%= element.total %></td>
+            <td width="47%"><%= element.service %></td>
+
+            <td width="33%" class="align-right"><%= element.total %></td>
           </tr>
           <%}); %> <%}%>
         </tbody>
@@ -227,6 +232,12 @@
     <div class="container container_div align-left">
       <h1 class="st-bg">COSTOS</h1>
       <table width="100%" class="mi-tabla">
+        <thead>
+          <tr>
+            <th colspan="2"><center>Servicios</center></th>
+            <th class="align-right">Sub Total ($)</th>
+          </tr>
+        </thead>
         <tbody>
           <% if (listCostosInstructivo.length>0) {%> <%
           listCostosInstructivo.forEach((element,index) => { %>
@@ -237,7 +248,7 @@
             index - 1 ].proveedor ) {%>
 
             <td
-              width="35%"
+              width="20%"
               rowspan="<%= element.proveedor ==='SubTotal' ? 1 : 
                         listCostosInstructivo.filter(
                           (v) => v.proveedor == element.proveedor
@@ -247,10 +258,8 @@
             </td>
 
             <%}%>
-            <td width="35%"><%= element.service %></td>
-            <td width="10%" class="align-right"><%= element.valor %></td>
-            <td width="10%" class="align-right"><%= element.igv %></td>
-            <td width="10%" class="align-right"><%= element.total %></td>
+            <td width="47%"><%= element.service %></td>
+            <td width="33%" class="align-right"><%= element.total %></td>
           </tr>
           <%}); %> <%}%>
         </tbody>
