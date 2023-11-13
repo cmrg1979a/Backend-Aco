@@ -1,9 +1,9 @@
 import { Collection, MongoClient, MongoClientOptions } from "mongodb";
 
 export function getCollection(collectionName: string): Promise<Collection> {
-  const url = "mongodb://localhost:27017";
+  // const url = "67.205.129.62";
   const dbName = "db_op_main_01";
-
+  const url = "mongodb://manager:Murc13l4g0+@67.205.129.62:27017/db_op_main_01";
   const options: MongoClientOptions = {}; // Opciones iniciales vacías
 
   // Modificar las opciones, incluyendo useUnifiedTopology

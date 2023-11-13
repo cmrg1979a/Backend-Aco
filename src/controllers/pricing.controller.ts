@@ -1424,9 +1424,9 @@ export const aprobarCotizacion = async (req: Request, res: Response) => {
       valorIngreso ? valorIngreso : null,
       totalIngreso ? totalIngreso : 0,
       listCostosInstructivo.map((element: any) => {
-        return element.id;
+        return element.id ? element.id : null;
       }),
-     
+
       listCostosInstructivo.map((element: any) => {
         return element.service;
       }),
@@ -1479,12 +1479,24 @@ export const generarInstructivoQuote = async (req: Request, res: Response) => {
     listServiciosInstructivo,
     listIngresosInstructivo,
     listCostosInstructivo,
+    sucursal,
+    status,
+    code_house,
+    code_master,
+    notas,
   } = req.body;
-  let fecha = moment().format("DD-MM-YYYY");
+  let fecha = moment().format("ll");
+  console.log(fecha);
 
   ejs.renderFile(
     path.join(__dirname, "../views/", "pdfQuoteInstructivo.ejs"),
     {
+      status,
+      notas,
+      code_house,
+      code_master,
+      sucursal,
+      fecha,
       expediente,
       sentido,
       carga,
