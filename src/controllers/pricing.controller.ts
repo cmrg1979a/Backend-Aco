@@ -1484,6 +1484,10 @@ export const generarInstructivoQuote = async (req: Request, res: Response) => {
     code_house,
     code_master,
     notas,
+    containers,
+    numerobultos,
+    peso,
+    volumen,
   } = req.body;
   let fecha = moment().format("ll");
   console.log(fecha);
@@ -1491,6 +1495,10 @@ export const generarInstructivoQuote = async (req: Request, res: Response) => {
   ejs.renderFile(
     path.join(__dirname, "../views/", "pdfQuoteInstructivo.ejs"),
     {
+      containers,
+      numerobultos,
+      peso,
+      volumen,
       status,
       notas,
       code_house,
