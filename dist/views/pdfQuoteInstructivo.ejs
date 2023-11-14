@@ -4,7 +4,7 @@
     <table width="100%">
       <tbody>
         <tr>
-          <td rowspan="2">
+          <td rowspan="2" class="align-left">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="150px"
@@ -144,11 +144,13 @@
               </g>
             </svg>
           </td>
-          <td class="align-right"><h1 class="ma-0 pa-0"><%=sucursal %>, <%=fecha%></h1></td>
+          <td class="align-right">
+            <h1 class="ma-0 pa-0"><%=sucursal %>, <%=fecha%></h1>
+          </td>
         </tr>
         <tr>
           <td class="align-right">
-            <h1  class="title ma-0 pa-0">PROFIT <%=profit %></h1>
+            <h1 class="title2 ma-0 pa-0">PROFIT <%=profit %></h1>
           </td>
         </tr>
       </tbody>
@@ -207,30 +209,8 @@
       </div>
     </div>
     <hr />
-    <div class="container container_div align-left mt-5">
-      <h1 class="st-bg">
-        <center class="title">RESUMEN INGRESOS/ COSTOS</center>
-      </h1>
-      <table width="100%" class="mi-tabla">
-        <tbody>
-          <tr>
-            <td>Ingresos</td>
-            <td class="align-right"><%=totalIngresos%></td>
-          </tr>
-          <tr>
-            <td>Costos</td>
-            <td class="align-right"><%=totalCostos%></td>
-          </tr>
-          <tr class="totalClass">
-            <td>Profit</td>
-            <td class="align-right"><%=profit%></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div style="page-break-after: always"></div>
-    <div class="container container_div align-left mt-5">
+    <!-- <div style="page-break-after: always"></div> -->
+    <div class="container container_div align-left">
       <h1 class="st-bg">
         <center class="title">INGRESOS COTIZADOS AL CLIENTE</center>
       </h1>
@@ -307,6 +287,28 @@
         </tbody>
       </table>
     </div>
+    <hr />
+    <div class="container container_div align-left">
+      <h1 class="st-bg">
+        <center class="title">RESUMEN INGRESOS/ COSTOS</center>
+      </h1>
+      <table width="100%" class="mi-tabla">
+        <tbody>
+          <tr>
+            <td>Ingresos</td>
+            <td class="align-right"><%=totalIngresos%></td>
+          </tr>
+          <tr>
+            <td>Costos</td>
+            <td class="align-right"><%=totalCostos%></td>
+          </tr>
+          <tr class="totalClass">
+            <td>Profit</td>
+            <td class="align-right"><%=profit%></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </body>
 </html>
 <style>
@@ -357,6 +359,9 @@
   }
   .title {
     font-size: 1rem !important;
+  }
+  .title2 {
+    font-size: 1.2rem !important;
   }
   .align-right {
     text-align: right;
