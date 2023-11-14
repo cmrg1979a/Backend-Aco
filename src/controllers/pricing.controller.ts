@@ -199,6 +199,7 @@ export const setQuote = async (req: Request, res: Response) => {
       statusIncluye_nc,
       statusNoIncluye_nc,
       dataObj.fullflag,
+      dataObj.tiporeporte ? dataObj.tiporeporte : null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -586,6 +587,7 @@ export const putQuote = async (req: Request, res: Response) => {
       pstatus_nt,
       pid_contenedor,
       pid,
+      dataObj.tiporeporte ? dataObj.tiporeporte : null,
     ],
     (err, response, fields) => {
       if (!err) {
