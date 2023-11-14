@@ -1490,7 +1490,6 @@ export const generarInstructivoQuote = async (req: Request, res: Response) => {
     volumen,
   } = req.body;
   let fecha = moment().format("ll");
-  console.log(fecha);
 
   ejs.renderFile(
     path.join(__dirname, "../views/", "pdfQuoteInstructivo.ejs"),
@@ -1529,10 +1528,14 @@ export const generarInstructivoQuote = async (req: Request, res: Response) => {
         console.log(err);
       } else {
         let options = {
-          page_size: "A4",
-          header: {
-            height: "15mm",
+          format: "Letter", // O el formato deseado
+          border: {
+            top: "0px", // Establecer el margen superior a 0
           },
+          page_size: "A4",
+          // header: {
+          //   height: "15mm",
+          // },
         };
 
         pdf
