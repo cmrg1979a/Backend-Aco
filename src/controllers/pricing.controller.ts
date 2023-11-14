@@ -1488,12 +1488,18 @@ export const generarInstructivoQuote = async (req: Request, res: Response) => {
     numerobultos,
     peso,
     volumen,
+    totalIngresos,
+    totalCostos,
+    profit,
   } = req.body;
   let fecha = moment().format("ll");
 
   ejs.renderFile(
     path.join(__dirname, "../views/", "pdfQuoteInstructivo.ejs"),
     {
+      totalIngresos,
+      totalCostos,
+      profit,
       containers,
       numerobultos,
       peso,
