@@ -532,7 +532,7 @@ export const putQuote = async (req: Request, res: Response) => {
       dataObj.proveedor ? dataObj.proveedor : null,
       dataObj.telefonoproveedor ? dataObj.telefonoproveedor : null,
       dataObj.direccionproveedor ? dataObj.direccionproveedor : null,
-      dataObj.date_end ? dataObj.date_end : null,
+      dataObj.fecha_fin ? dataObj.fecha_fin : null,
       dataObj.tiempo_transito ? dataObj.tiempo_transito : null,
       dataObj.ganancia ? dataObj.ganancia : null,
       dataObj.id_branch ? dataObj.id_branch : null,
