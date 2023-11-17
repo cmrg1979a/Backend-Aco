@@ -225,24 +225,12 @@
           <% if (listIngresosInstructivo.length>0) {%> <%
           listIngresosInstructivo.forEach((element,index) => { %>
           <tr
-            class="<%= element.descripcion === 'TOTAL' ? 'totalClass' : element.descripcion === 'SubTotal' ? 'subTotalClass' : '', %>"
+            class="<%= element.descripcion === 'TOTAL'|| element.service === 'TOTAL' ? 'totalClass' : element.service === 'SubTotal' || element.service === 'SubTotal' ? 'subTotalClass' : '', %>"
           >
-            <% if (index === 0 || element.descripcion !==
-            listIngresosInstructivo[ index - 1 ].descripcion ) {%>
+            <td width="20%"><%= element.descripcion %></td>
 
-            <td
-              width="20%"
-              rowspan="<%= element.descripcion === 'SubTotal' ? 1 :
-                          listIngresosInstructivo.filter(
-                            (v) => v.descripcion == element.descripcion
-                          ).length %>"
-            >
-              <%= element.descripcion %>
-            </td>
-
-            <%}%>
             <td width="47%"><%= element.service %></td>
-
+            <td width="47%"><%= element.igv %></td>
             <td width="33%" class="align-right"><%= element.total %></td>
           </tr>
           <%}); %> <%}%>
@@ -264,22 +252,10 @@
           <% if (listCostosInstructivo.length>0) {%> <%
           listCostosInstructivo.forEach((element,index) => { %>
           <tr
-            class="<%= element.proveedor == 'TOTAL' ? 'totalClass' : element.proveedor === 'SubTotal' ? 'subTotalClass' : ''%>"
+            class="<%= element.proveedor == 'TOTAL' || element.service === 'TOTAL' ? 'totalClass' : element.proveedor === 'SubTotal' || element.service === 'SubTotal'? 'subTotalClass' : ''%>"
           >
-            <% if (index === 0 || element.proveedor !== listCostosInstructivo[
-            index - 1 ].proveedor ) {%>
+            <td width="20%"><%= element.proveedor %></td>
 
-            <td
-              width="20%"
-              rowspan="<%= element.proveedor ==='SubTotal' ? 1 : 
-                        listCostosInstructivo.filter(
-                          (v) => v.proveedor == element.proveedor
-                        ).length %>"
-            >
-              <%= element.proveedor %>
-            </td>
-
-            <%}%>
             <td width="47%"><%= element.service %></td>
             <td width="33%" class="align-right"><%= element.total %></td>
           </tr>
@@ -287,6 +263,33 @@
         </tbody>
       </table>
     </div>
+
+    <hr />
+    <% if (listImpuestosInstructivo.length>0) {%>
+    <div class="container container_div align-left">
+      <h1 class="st-bg"><center class="title">IMPUESTOS</center></h1>
+      <table width="100%" class="mi-tabla">
+        <thead>
+          <tr>
+            <th colspan="2"><center>Impuesto a la Aduana</center></th>
+            <th class="align-right">Sub Total ($)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%listImpuestosInstructivo.forEach((element,index) => { %>
+          <tr
+            class="<%= element.name == 'TOTAL' ? 'totalClass' : element.proveedor === 'SubTotal' ? 'subTotalClass' : ''%>"
+          >
+            <td width="20%"><%= element.name %></td>
+
+            <td width="47%"><%= element.percentage %></td>
+            <td width="33%" class="align-right"><%= element.valor %></td>
+          </tr>
+          <%}); %>
+        </tbody>
+      </table>
+    </div>
+    <%}%>
     <hr />
     <div class="container container_div align-left">
       <h1 class="st-bg">
