@@ -1868,23 +1868,6 @@ export const exportarPDFCXP = async (req: Request, res: Response) => {
               '<div style="text-align: center;">Author: Marc Bachmann</div>',
           },
         };
-        // pdf
-        //   .create(data, options)
-        //   .toFile.toFile(
-        //     "files/REPORT_CXP.pdf",
-        //     function (err: any, data: any) {
-        //       if (err) {
-        //         res.send(err);
-        //       } else {
-        //         res.setHeader("Content-Type", "application/pdf");
-        //         res.download("/REPORT_CXP.pdf");
-        //         res.send({
-        //           msg: "File created successfully",
-        //           path: path.join("/REPORT_CXP.pdf"),
-        //         });
-        //       }
-        //     }
-        //   );
         pdf.create(html, options).toBuffer(function (err, buffer) {
           if (err) {
             res.status(500).json({ error: "Error generating PDF" });
