@@ -1496,6 +1496,7 @@ export const generarInstructivoQuote = async (req: Request, res: Response) => {
     totalCostos,
     profit,
     listImpuestosInstructivo,
+    tipoimportacionaduana,
   } = req.body;
   let fecha = moment().format("ll");
 
@@ -1532,6 +1533,7 @@ export const generarInstructivoQuote = async (req: Request, res: Response) => {
       listIngresosInstructivo,
       listCostosInstructivo,
       listImpuestosInstructivo,
+      tipoimportacionaduana,
     },
 
     (err: any, data: any) => {
