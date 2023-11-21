@@ -16,7 +16,6 @@ const corsOptions = {
 
 const corsMiddleware = cors(corsOptions);
 
-
 /**PROUCCIÓN */
 // const pool = new Pool({
 //   host: "10.116.0.2",
@@ -34,8 +33,8 @@ const pool = new Pool({
   password: "Fr3sc0l1t4+",
   port: "5432",
   // database: "db_op_main_dev",
-  database: "db_op_main_01",
-  // database: "db_op_main_qa",
+  // database: "db_op_main_01",
+  database: "db_op_main_qa",
 });
 
 const app: Application = express();
@@ -101,6 +100,7 @@ import groupservicesRoutes from "./routes/groupservices";
 import transport from "./routes/transport";
 import gasto from "./routes/gasto";
 import ingreso from "./routes/ingreso";
+import tipocostos from "./routes/tipocosto";
 
 // settings
 app.set("port", 9200);
@@ -303,10 +303,11 @@ app.use(balance);
 app.use(proyeccion);
 app.use(onedrive);
 app.use(masterusuario);
-app.use(marketingRoutes)
-app.use(typePhoneRoutes)
-app.use(groupservicesRoutes)
-app.use(transport)
-app.use(gasto)
-app.use(ingreso)
+app.use(marketingRoutes);
+app.use(typePhoneRoutes);
+app.use(groupservicesRoutes);
+app.use(transport);
+app.use(gasto);
+app.use(ingreso);
+app.use(tipocostos);
 export default app;
