@@ -5,6 +5,47 @@ const { Pool } = pg;
 const pool = conexion();
 import { postEntities } from "../interface/postEntitie";
 
+export const getListProveedor = async (req: Request, res: Response) => {
+  const {
+    id_branch,
+    correlativo,
+    bussiness_name,
+    id_document,
+    id_pais,
+    id_state,
+    status,
+    id_tipoproveedor,
+  } = req.query;
+
+  await pool.query(
+    "SELECT * FROM function_table_entities_listproveedor($1,$2,$3,$4,$5,$6,$7,$8)",
+    [
+      id_branch ? id_branch : null,
+      correlativo ? correlativo : null,
+      bussiness_name ? bussiness_name : null,
+      id_document ? id_document : null,
+      id_pais ? id_pais : null,
+      id_state ? id_state : null,
+      status ? status : null,
+      id_tipoproveedor ? id_tipoproveedor : null,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
 export const getEntitiesList = async (req: Request, res: Response) => {
   let role = req.body.id_role;
   let id_branch = req.body.id_branch;
@@ -260,7 +301,6 @@ export const addEntities = async (req: Request, res: Response) => {
   const dataContacts = req.body.dataContacts;
   const dataAccount = req.body.accounts;
 
-  
   await pool.query(
     "select * from TABLE_ENTITIES_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30)",
     [

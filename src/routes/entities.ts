@@ -16,7 +16,8 @@ import {
   CargarProveedores,
   InsertPhones,
   ListarPhons,
-  cargarPersona
+  cargarPersona,
+  getListProveedor
 } from "../controllers/entities.controller";
 
 router.post("/getEntitiesList", TokenValidation, getEntitiesList);
@@ -34,6 +35,7 @@ router.post("/CargarProveedores", TokenValidation, CargarProveedores);
 router.post("/guardar_telefono", TokenValidation, InsertPhones);
 router.get("/listar_phone/:id", TokenValidation, ListarPhons);
 router.get("/cargar_persona", TokenValidation, cargarPersona);
+router.get("/listado_proveedor", TokenValidation, getListProveedor);
 
 
 export default router;
