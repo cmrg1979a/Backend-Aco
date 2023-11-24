@@ -179,3 +179,59 @@ export const cargarPercepcionAduana = async (req: Request, res: Response) => {
     }
   );
 };
+export const cargarTipoTransaccion = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM function_masterdetalle_cargar($1,'TT')",
+    [req.query.id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estado: rows[0].estadoflag,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+            estado: rows[0].estadoflag,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const cargarTipoTelefonoPersona = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM function_masterdetalle_cargar($1,'TPP')",
+    [req.query.id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estado: rows[0].estadoflag,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+            estado: rows[0].estadoflag,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
