@@ -14,7 +14,7 @@ export const GuardarProveedor = async (req: Request, res: Response) => {
     id_ciudad,
     id_pais,
     id_role,
-    id_tipodocument,
+    id_tipodocumento,
     id_tipotransaccion,
     notas,
     lstContactos,
@@ -36,7 +36,7 @@ export const GuardarProveedor = async (req: Request, res: Response) => {
       id_ciudad ? id_ciudad : null,
       id_pais ? id_pais : null,
       id_role ? id_role : null,
-      id_tipodocument ? id_tipodocument : null,
+      id_tipodocumento ? id_tipodocumento : null,
       id_tipotransaccion ? id_tipotransaccion : null,
       direccion ? direccion : null,
       notas ? notas : null,
@@ -139,6 +139,76 @@ export const getListProveedor = async (req: Request, res: Response) => {
   );
 };
 
+export const getVerProveedor = async (req: Request, res: Response) => {
+  const { id } = req.query;
+
+  await pool.query(
+    "SELECT * FROM function_entities_verproveedor($1)",
+    [id],
+
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const eliminarProveedor = async (req: Request, res: Response) => {
+  const { id } = req.body;
+
+  await pool.query(
+    "SELECT * FROM function_entities_eliminarproveedor($1)",
+    [id],
+
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const telContactoProveedor = async (req: Request, res: Response) => {
+  const { id } = req.query;
+
+  await pool.query(
+    "SELECT * FROM function_entities_telcontacto($1)",
+    [id],
+
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
 export const getValidaRazonSocial = async (req: Request, res: Response) => {
   const { id_branch, razonsocial } = req.query;
 
@@ -190,6 +260,105 @@ export const getValidaTipoDocumentoDocument = async (
   );
 };
 
+export const actualizarProveedor = async (req: Request, res: Response) => {
+  const {
+    dias_almacenaje,
+    dias_credito,
+    dias_sobreestadia,
+    id_ciudad,
+    id_pais,
+    id_role,
+    id_tipodocumento,
+    id_tipotransaccion,
+    notas,
+    lstContactos,
+    lstInformacionBancaria,
+    lstTelefono,
+    direccion,
+
+    id,
+  } = req.body;
+
+  await pool.query(
+    "SELECT * FROM function_table_entities_actualizarproveedor($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26)",
+    [
+      id,
+      dias_almacenaje ? dias_almacenaje : null,
+      dias_credito ? dias_credito : null,
+      dias_sobreestadia ? dias_sobreestadia : null,
+      id_ciudad ? id_ciudad : null,
+      id_pais ? id_pais : null,
+      id_role ? id_role : null,
+      id_tipodocumento ? id_tipodocumento : null,
+      id_tipotransaccion ? id_tipotransaccion : null,
+      direccion ? direccion : null,
+      notas ? notas : null,
+      lstTelefono.map((tel) => {
+        return tel.id ? tel.id : null;
+      }),
+      lstTelefono.map((tel) => {
+        return tel.id_tipotelefono ? tel.id_tipotelefono : null;
+      }),
+      lstTelefono.map((tel) => {
+        return tel.telefono ? tel.telefono : null;
+      }),
+      lstContactos.map((contacto) => {
+        return contacto.id ? contacto.id : null;
+      }),
+      lstContactos.map((contacto) => {
+        return contacto.nombre ? contacto.nombre : null;
+      }),
+      lstContactos.map((contacto) => {
+        return contacto.id_tipotelefono ? contacto.id_tipotelefono : null;
+      }),
+      lstContactos.map((contacto) => {
+        return contacto.telefono ? contacto.telefono : null;
+      }),
+
+      lstInformacionBancaria.map((infbanc) => {
+        return infbanc.id ? infbanc.id : null;
+      }),
+      lstInformacionBancaria.map((infbanc) => {
+        return infbanc.nro_cuenta ? infbanc.nro_cuenta : null;
+      }),
+      lstInformacionBancaria.map((infbanc) => {
+        return infbanc.cci ? infbanc.cci : null;
+      }),
+      lstInformacionBancaria.map((infbanc) => {
+        return infbanc.id_banco ? infbanc.id_banco : null;
+      }),
+      lstInformacionBancaria.map((infbanc) => {
+        return infbanc.id_coins ? infbanc.id_coins : null;
+      }),
+      lstInformacionBancaria.map((infbanc) => {
+        return infbanc.nro_swift ? infbanc.nro_swift : null;
+      }),
+      lstInformacionBancaria.map((infbanc) => {
+        return infbanc.id_intermediario ? infbanc.id_intermediario : null;
+      }),
+      lstInformacionBancaria.map((infbanc) => {
+        return infbanc.nro_cuenta_intermediario
+          ? infbanc.nro_cuenta_intermediario
+          : null;
+      }),
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+// -------------------------------------------
 export const getEntitiesList = async (req: Request, res: Response) => {
   let role = req.body.id_role;
   let id_branch = req.body.id_branch;

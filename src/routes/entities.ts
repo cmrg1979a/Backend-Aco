@@ -8,7 +8,7 @@ import {
   getEntitiesListIc,
   addEntitie,
   addEntities,
-   editEntitie,
+  editEntitie,
   getPhones,
   getContacts,
   validationDocument,
@@ -20,7 +20,11 @@ import {
   getListProveedor,
   getValidaRazonSocial,
   GuardarProveedor,
-  getValidaTipoDocumentoDocument
+  getValidaTipoDocumentoDocument,
+  getVerProveedor,
+  actualizarProveedor,
+  eliminarProveedor,
+  telContactoProveedor,
 } from "../controllers/entities.controller";
 
 router.post("/getEntitiesList", TokenValidation, getEntitiesList);
@@ -41,7 +45,14 @@ router.get("/cargar_persona", TokenValidation, cargarPersona);
 router.get("/listado_proveedor", TokenValidation, getListProveedor);
 router.get("/validar_razon_social", TokenValidation, getValidaRazonSocial);
 router.post("/registrar_proveedor", TokenValidation, GuardarProveedor);
-router.get("/validar_documento", TokenValidation, getValidaTipoDocumentoDocument);
-
+router.get(
+  "/validar_documento",
+  TokenValidation,
+  getValidaTipoDocumentoDocument
+);
+router.get("/ver_proveedor", TokenValidation, getVerProveedor);
+router.put("/actualizar_proveedor", TokenValidation, actualizarProveedor);
+router.put("/eliminar_proveedor", TokenValidation, eliminarProveedor);
+router.get("/tel_contacto_proveedor", TokenValidation, telContactoProveedor);
 
 export default router;
