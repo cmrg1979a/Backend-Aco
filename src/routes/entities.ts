@@ -25,6 +25,10 @@ import {
   actualizarProveedor,
   eliminarProveedor,
   telContactoProveedor,
+  getListCliente,
+  GuardarCliente,
+  getVerCliente,
+  ActualizarCliente,
 } from "../controllers/entities.controller";
 
 router.post("/getEntitiesList", TokenValidation, getEntitiesList);
@@ -54,5 +58,10 @@ router.get("/ver_proveedor", TokenValidation, getVerProveedor);
 router.put("/actualizar_proveedor", TokenValidation, actualizarProveedor);
 router.put("/eliminar_proveedor", TokenValidation, eliminarProveedor);
 router.get("/tel_contacto_proveedor", TokenValidation, telContactoProveedor);
+// CLIENTES
+router.get("/listado_clientes", TokenValidation, getListCliente);
+router.post("/registrar_cliente", TokenValidation, GuardarCliente);
+router.get("/ver_cliente", TokenValidation, getVerCliente);
+router.put("/actualizar_cliente", TokenValidation, ActualizarCliente);
 
 export default router;
