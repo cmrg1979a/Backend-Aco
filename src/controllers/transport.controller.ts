@@ -8,7 +8,7 @@ const pool = conexion();
 
 export const getListTransport = async (req: Request, res: Response) => {
   let data = req.query;
-  await pool.query("SELECT *from function_listar_transport($1,$2, $3, $4, $5);", [
+  await pool.query("SELECT *from function_transport_listar($1,$2, $3, $4, $5);", [
     data.id_branch,
     data.code ? data.code : null,
     data.name ? data.name : null,
@@ -32,7 +32,7 @@ export const getListTransport = async (req: Request, res: Response) => {
 
 export const insertTransport = async (req: Request, res: Response) => {
   let data = req.body;
-  await pool.query("SELECT *from function_insertar_transport($1,$2, $3, $4, $5);", [
+  await pool.query("SELECT *from function_transport_insertar($1,$2, $3, $4, $5);", [
     data.id_branch,
     data.name,
     data.code,
@@ -56,7 +56,7 @@ export const insertTransport = async (req: Request, res: Response) => {
 
 export const readTransport = async (req: Request, res: Response) => {
   let data = req.query;
-  await pool.query("SELECT *from function_ver_transport($1);", [
+  await pool.query("SELECT *from function_transport_ver($1);", [
     data.id
   ],
   (err, response, fields) => {
@@ -76,7 +76,7 @@ export const readTransport = async (req: Request, res: Response) => {
 
 export const updateTransport = async (req: Request, res: Response) => {
   let data = req.body;
-  await pool.query("SELECT *from function_actualizar_transport($1,$2, $3, $4);", [
+  await pool.query("SELECT *from function_transport_actualizar($1,$2, $3, $4);", [
     data.id,
     data.name,
     data.description,

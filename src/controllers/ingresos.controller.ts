@@ -7,7 +7,7 @@ const pool = conexion();
 
 export const getListIngreso = async (req: Request, res: Response) => {
   let data = req.query;
-  await pool.query("SELECT *from function_listar_ingreso($1,$2, $3, $4, $5);", [
+  await pool.query("SELECT *from function_ingreso_listar($1,$2, $3, $4, $5);", [
     data.id_branch,
     data.code ? data.code : null,
     data.description ? data.description : null,
@@ -31,7 +31,7 @@ export const getListIngreso = async (req: Request, res: Response) => {
 
 export const insertIngreso = async (req: Request, res: Response) => {
   let data = req.body;
-  await pool.query("SELECT *from function_insertar_ingreso($1, $2, $3, $4, $5);", [
+  await pool.query("SELECT *from function_ingreso_insertar($1, $2, $3, $4, $5);", [
     data.id_branch,
     data.code,
     data.description,
@@ -55,7 +55,7 @@ export const insertIngreso = async (req: Request, res: Response) => {
 
 export const readIngreso = async (req: Request, res: Response) => {
   let data = req.query;
-  await pool.query("SELECT *from function_ver_ingreso($1);", [
+  await pool.query("SELECT *from function_ingreso_ver($1);", [
     data.id
   ],
   (err, response, fields) => {
@@ -75,7 +75,7 @@ export const readIngreso = async (req: Request, res: Response) => {
 
 export const updateIngreso = async (req: Request, res: Response) => {
   let data = req.body;
-  await pool.query("SELECT *from function_actualizar_ingreso($1,$2, $3, $4);", [
+  await pool.query("SELECT *from function_ingreso_actualizar($1,$2, $3, $4);", [
     data.id,
     data.description,
     data.calculoflag,

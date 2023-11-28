@@ -25,7 +25,7 @@ export const getCoinsList = async (req: Request, res: Response) => {
 };
 export const getListCoinsByBranch = async (req: Request, res: Response) => {
   let data = req.query;
-  await pool.query("SELECT *from function_listar_coins($1,$2, $3, $4, $5, $6, $7);", [
+  await pool.query("SELECT *from function_coins_listar($1,$2, $3, $4, $5, $6, $7);", [
     data.id_branch,
     data.code ? data.code : null,
     data.symbol ? data.symbol : null,
@@ -51,7 +51,7 @@ export const getListCoinsByBranch = async (req: Request, res: Response) => {
 
 export const insertCoins = async (req: Request, res: Response) => {
   let data = req.body;
-  await pool.query("SELECT *from function_insertar_coins($1,$2, $3, $4, $5, $6);", [
+  await pool.query("SELECT *from function_coins_insertar($1,$2, $3, $4, $5, $6);", [
     data.id_branch,
     data.symbol,
     data.acronym,
@@ -76,7 +76,7 @@ export const insertCoins = async (req: Request, res: Response) => {
 
 export const readCoins = async (req: Request, res: Response) => {
   let data = req.query;
-  await pool.query("SELECT *from function_ver_coins($1);", [
+  await pool.query("SELECT *from function_coins_ver($1);", [
     data.id
   ],
   (err, response, fields) => {
@@ -96,7 +96,7 @@ export const readCoins = async (req: Request, res: Response) => {
 
 export const updateCoins = async (req: Request, res: Response) => {
   let data = req.body;
-  await pool.query("SELECT *from function_actualizar_coins($1,$2, $3, $4, $5, $6);", [
+  await pool.query("SELECT *from function_coins_actualizar($1,$2, $3, $4, $5, $6);", [
     data.id,
     data.symbol,
     data.acronym,

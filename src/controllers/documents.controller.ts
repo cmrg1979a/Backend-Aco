@@ -30,7 +30,7 @@ export const getDocumentsList = async (req: Request, res: Response) => {
 
 export const getListDocumentsByBranch = async (req: Request, res: Response) => {
   let data = req.query;
-  await pool.query("SELECT *from function_listar_documents($1,$2, $3, $4, $5);", [
+  await pool.query("SELECT *from function_documents_listar($1,$2, $3, $4, $5);", [
     data.code ? data.code : null,
     data.name ? data.name : null,
     data.description ? data.description : null,
@@ -77,7 +77,7 @@ export const insertDocuments = async (req: Request, res: Response) => {
 
 export const readDocuments = async (req: Request, res: Response) => {
   let data = req.query;
-  await pool.query("SELECT *from function_ver_documents($1);", [
+  await pool.query("SELECT *from function_documents_ver($1);", [
     data.id
   ],
   (err, response, fields) => {
@@ -97,7 +97,7 @@ export const readDocuments = async (req: Request, res: Response) => {
 
 export const updateDocuments = async (req: Request, res: Response) => {
   let data = req.body;
-  await pool.query("SELECT *from function_actualizar_documents($1,$2, $3, $4);", [
+  await pool.query("SELECT *from function_documents_actualizar($1,$2, $3, $4);", [
     data.id,
     data.name,
     data.description,

@@ -35,7 +35,7 @@ export const getBracnh = async (req: Request, res: Response) => {
 
 export const getListEnterprise = async (req: Request, res: Response) => {
   let data = req.query
-  await pool.query("SELECT *from function_listar_enterprise($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11);", [
+  await pool.query("SELECT *from function_enterprise_listar($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11);", [
     data.id_branch,
     data.document ? data.document : null,
     data.trade_name ? data.trade_name : null,
@@ -66,7 +66,7 @@ export const getListEnterprise = async (req: Request, res: Response) => {
 
 export const insertEnterprise = async (req: Request, res: Response) => {
   let data = req.body;
-  await pool.query("SELECT *from function_insertar_enterprise($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);", [
+  await pool.query("SELECT *from function_enterprise_insertar($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);", [
     data.id_branch,
     data.id_logo ? data.id_logo : null,
     data.document,
@@ -99,7 +99,7 @@ export const insertEnterprise = async (req: Request, res: Response) => {
 
 export const readEnterprise = async (req: Request, res: Response) => {
   let data = req.query;
-  await pool.query("SELECT *from function_ver_enterprise($1);", [
+  await pool.query("SELECT *from function_enterprise_ver($1);", [
     data.id
   ],
   (err, response, fields) => {
@@ -120,7 +120,7 @@ export const readEnterprise = async (req: Request, res: Response) => {
 export const updateEnterprise = async (req: Request, res: Response) => {
   let data = req.body;
 
-  await pool.query("SELECT *from function_actualizar_enterprise($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);", [
+  await pool.query("SELECT *from function_enterprise_actualizar($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);", [
     data.id,
     data.id_logo ? data.id_logo : null,
     data.document,

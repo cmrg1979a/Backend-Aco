@@ -34,7 +34,7 @@ export const getModality = async (req: Request, res: Response) => {
 
 export const getListModality = async (req: Request, res: Response) => {
   let data = req.query;
-  await pool.query("SELECT *from function_listar_modality($1,$2, $3, $4, $5);", [
+  await pool.query("SELECT *from function_modality_listar($1,$2, $3, $4, $5);", [
     data.id_branch,
     data.code ? data.code : null,
     data.name ? data.name : null,
@@ -58,7 +58,7 @@ export const getListModality = async (req: Request, res: Response) => {
 
 export const insertModality = async (req: Request, res: Response) => {
   let data = req.body;
-  await pool.query("SELECT *from function_insertar_modality($1,$2, $3, $4, $5);", [
+  await pool.query("SELECT *from function_modality_insertar($1,$2, $3, $4, $5);", [
     data.id_branch,
     data.name,
     data.code,
@@ -82,7 +82,7 @@ export const insertModality = async (req: Request, res: Response) => {
 
 export const readModality = async (req: Request, res: Response) => {
   let data = req.query;
-  await pool.query("SELECT *from function_ver_modality($1);", [
+  await pool.query("SELECT *from function_modality_ver($1);", [
     data.id
   ],
   (err, response, fields) => {
@@ -102,7 +102,7 @@ export const readModality = async (req: Request, res: Response) => {
 
 export const updateModality = async (req: Request, res: Response) => {
   let data = req.body;
-  await pool.query("SELECT *from function_actualizar_modality($1,$2, $3, $4);", [
+  await pool.query("SELECT *from function_modality_actualizar($1,$2, $3, $4);", [
     data.id,
     data.name,
     data.description,

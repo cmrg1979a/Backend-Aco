@@ -33,7 +33,7 @@ export const getChargeYear = async (req: Request, res: Response) => {
 
 export const getListYear = async (req: Request, res: Response) => {
   let data = req.query;
-  await pool.query("SELECT *from function_listar_year($1,$2, $3);", [
+  await pool.query("SELECT *from function_year_listar($1,$2, $3);", [
     data.id_branch,
     data.description ? data.description : null,
     data.status ? data.status : null,
@@ -55,7 +55,7 @@ export const getListYear = async (req: Request, res: Response) => {
 
 export const insertYear = async (req: Request, res: Response) => {
   let data = req.body;
-  await pool.query("SELECT *from function_insertar_year($1,$2, $3);", [
+  await pool.query("SELECT *from function_year_insertar($1,$2, $3);", [
     data.description,
     data.status,
     data.id_branch,
@@ -77,7 +77,7 @@ export const insertYear = async (req: Request, res: Response) => {
 
 export const readYear = async (req: Request, res: Response) => {
   let data = req.query;
-  await pool.query("SELECT *from function_ver_year($1);", [
+  await pool.query("SELECT *from function_year_ver($1);", [
     data.id
   ],
   (err, response, fields) => {
@@ -97,10 +97,32 @@ export const readYear = async (req: Request, res: Response) => {
 
 export const updateYear = async (req: Request, res: Response) => {
   let data = req.body;
-  await pool.query("SELECT *from function_actualizar_year($1,$2, $3);", [
+  await pool.query("SELECT *from function_year_actualizar($1,$2, $3);", [
     data.id,
     data.description,
     data.status  
+  ],
+  (err, response, fields) => {
+    if (!err) {
+      let rows = response.rows;
+      res.json({
+        status: 200,
+        estadoflag: rows[0].estadoflag,
+        mensaje: rows[0].mensaje,
+        data: rows
+      })
+    } else {
+      console.log(err);
+    }
+  });
+}
+
+export const validateCodeInTableYear = async (req: Request, res: Response) => {
+  let data = req.query;
+
+  await pool.query("SELECT *from function_validar_codigo_year($1,$2);", [
+    data.description,
+    data.id_branch
   ],
   (err, response, fields) => {
     if (!err) {
