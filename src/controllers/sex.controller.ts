@@ -27,7 +27,7 @@ export const getSex = async (req: Request, res: Response) => {
 
 export const getListSex = async (req: Request, res: Response) => {
   let data = req.query;
-  await pool.query("SELECT *from function_listar_sex($1,$2, $3, $4, $5, $6);", [
+  await pool.query("SELECT *from function_sex_listar($1,$2, $3, $4, $5, $6);", [
     data.id_branch,
     data.code ? data.code : null,
     data.name ? data.name : null,
@@ -52,7 +52,7 @@ export const getListSex = async (req: Request, res: Response) => {
 
 export const insertSex = async (req: Request, res: Response) => {
   let data = req.body;
-  await pool.query("SELECT *from function_insertar_sex($1,$2, $3, $4, $5);", [
+  await pool.query("SELECT *from function_sex_insertar($1,$2, $3, $4, $5);", [
     data.id_branch,
     data.acronym,
     data.name,
@@ -76,7 +76,7 @@ export const insertSex = async (req: Request, res: Response) => {
 
 export const readSex = async (req: Request, res: Response) => {
   let data = req.query;
-  await pool.query("SELECT *from function_ver_sex($1);", [
+  await pool.query("SELECT *from function_sex_ver($1);", [
     data.id
   ],
   (err, response, fields) => {
@@ -96,7 +96,7 @@ export const readSex = async (req: Request, res: Response) => {
 
 export const updateSex = async (req: Request, res: Response) => {
   let data = req.body;
-  await pool.query("SELECT *from function_actualizar_sex($1,$2, $3, $4, $5);", [
+  await pool.query("SELECT *from function_sex_actualizar($1,$2, $3, $4, $5);", [
     data.id,
     data.acronym,
     data.name,

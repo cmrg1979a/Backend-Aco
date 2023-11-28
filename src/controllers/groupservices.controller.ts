@@ -8,7 +8,7 @@ const pool = conexion();
 
 export const getListGroupservices = async (req: Request, res: Response) => {
   let data = req.query;
-  await pool.query("SELECT *from function_listar_groupservices($1,$2, $3, $4, $5);", [
+  await pool.query("SELECT *from function_groupservices_listar($1,$2, $3, $4, $5);", [
     data.id_branch,
     data.code ? data.code : null,
     data.name ? data.name : null,
@@ -32,7 +32,7 @@ export const getListGroupservices = async (req: Request, res: Response) => {
 
 export const insertGroupservices = async (req: Request, res: Response) => {
   let data = req.body;
-  await pool.query("SELECT *from function_insertar_groupservices($1,$2, $3, $4);", [
+  await pool.query("SELECT *from function_groupservices_insertar($1,$2, $3, $4);", [
     data.id_branch,
     data.name,
     data.description,
@@ -55,7 +55,7 @@ export const insertGroupservices = async (req: Request, res: Response) => {
 
 export const readGroupservices = async (req: Request, res: Response) => {
   let data = req.query;
-  await pool.query("SELECT *from function_ver_groupservices($1);", [
+  await pool.query("SELECT *from function_groupservices_ver($1);", [
     data.id
   ], 
   (err, response, fields) => {
@@ -75,7 +75,7 @@ export const readGroupservices = async (req: Request, res: Response) => {
 
 export const updateGroupservices = async (req: Request, res: Response) => {
   let data = req.body;
-  await pool.query("SELECT *from function_actualizar_groupservices($1,$2, $3, $4);", [
+  await pool.query("SELECT *from function_groupservices_actualizar($1,$2, $3, $4);", [
     data.id,
     data.name,
     data.description,

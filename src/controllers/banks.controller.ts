@@ -1196,7 +1196,7 @@ export const validarNroOperacion = async (req: Request, res: Response) => {
 
 export const getListBank = async (req: Request, res: Response) => {
   let data = req.query;
-  await pool.query("SELECT *from function_listar_banks($1,$2, $3, $4, $5, $6);", [
+  await pool.query("SELECT *from function_banks_listar($1,$2, $3, $4, $5, $6);", [
     data.id_branch,
     data.code ? data.code : null,
     data.name ? data.name : null,
@@ -1221,7 +1221,7 @@ export const getListBank = async (req: Request, res: Response) => {
 
 export const insertBank = async (req: Request, res: Response) => {
   let data = req.body;
-  await pool.query("SELECT *from function_insertar_banks($1,$2, $3, $4, $5);", [
+  await pool.query("SELECT *from function_banks_insertar($1,$2, $3, $4, $5);", [
     data.id_branch,
     data.acronym,
     data.name,
@@ -1244,7 +1244,7 @@ export const insertBank = async (req: Request, res: Response) => {
 
 export const readBank = async (req: Request, res: Response) => {
   let data = req.query;
-  await pool.query("SELECT *from function_ver_banks($1);", [
+  await pool.query("SELECT *from function_banks_ver($1);", [
     data.id
   ], (err, response, fields) => {
     if (!err) {
@@ -1263,7 +1263,7 @@ export const readBank = async (req: Request, res: Response) => {
 
 export const updateBank = async (req: Request, res: Response) => {
   let data = req.body;
-  await pool.query("SELECT *from function_actualizar_banks($1,$2, $3, $4, $5);", [
+  await pool.query("SELECT *from function_banks_actualizar($1,$2, $3, $4, $5);", [
     data.id,
     data.acronym,
     data.name,

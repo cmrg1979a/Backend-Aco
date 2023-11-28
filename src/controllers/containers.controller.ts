@@ -74,7 +74,7 @@ export const deleteContainers = async (req: Request, res: Response) => {
 
 export const getListContainersByBranch = async (req: Request, res: Response) => {
   let data = req.query;
-  await pool.query("SELECT *from function_listar_containers($1,$2, $3, $4, $5);", [
+  await pool.query("SELECT *from function_containers_listar($1,$2, $3, $4, $5);", [
     data.id_branch,
     data.code ? data.code : null,
     data.name ? data.name : null,
@@ -98,7 +98,7 @@ export const getListContainersByBranch = async (req: Request, res: Response) => 
 
 export const insertContainers = async (req: Request, res: Response) => {
   let data = req.body;
-  await pool.query("SELECT *from function_insertar_containers($1,$2, $3, $4, $5, $6, $7, $8, $9);", [
+  await pool.query("SELECT *from function_containers_insertar($1,$2, $3, $4, $5, $6, $7, $8, $9);", [
     data.id_branch,
     data.name,
     data.description,
@@ -126,7 +126,7 @@ export const insertContainers = async (req: Request, res: Response) => {
 
 export const readContainers = async (req: Request, res: Response) => {
   let data = req.query;
-  await pool.query("SELECT *from function_ver_containers($1);", [
+  await pool.query("SELECT *from function_containers_ver($1);", [
     data.id
   ],
   (err, response, fields) => {
@@ -147,7 +147,7 @@ export const readContainers = async (req: Request, res: Response) => {
 export const updateContainers = async (req: Request, res: Response) => {
   let data = req.body;
   
-  await pool.query("SELECT *from function_actualizar_containers($1,$2,$3,$4,$5,$6,$7,$8,$9);", [
+  await pool.query("SELECT *from function_containers_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9);", [
     data.id,
     data.name,
     data.description,

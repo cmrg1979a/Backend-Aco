@@ -8,7 +8,7 @@ const pool = conexion();
 
 export const getListMarketing = async (req: Request, res: Response) => {
   let data = req.query;
-  await pool.query("SELECT *from function_listar_marketing($1,$2, $3, $4, $5);", [
+  await pool.query("SELECT *from function_marketing_listar($1,$2, $3, $4, $5);", [
     data.id_branch,
     data.name ? data.name : null,
     data.description ? data.description : null,
@@ -32,7 +32,7 @@ export const getListMarketing = async (req: Request, res: Response) => {
 
 export const insertMarketing = async (req: Request, res: Response) => {
   let data = req.body;
-  await pool.query("SELECT *from function_insertar_marketing($1,$2, $3, $4, $5);", [
+  await pool.query("SELECT *from function_marketing_insertar($1,$2, $3, $4, $5);", [
     data.name,
     data.description,
     data.position,
@@ -56,7 +56,7 @@ export const insertMarketing = async (req: Request, res: Response) => {
 
 export const readMarketing = async (req: Request, res: Response) => {
   let data = req.query;
-  await pool.query("SELECT *from function_ver_marketing($1);", [
+  await pool.query("SELECT *from function_marketing_ver($1);", [
     data.id
   ], 
   (err, response, fields) => {
@@ -77,7 +77,7 @@ export const readMarketing = async (req: Request, res: Response) => {
 
 export const updateMarketing = async (req: Request, res: Response) => {
   let data = req.body;
-  await pool.query("SELECT *from function_actualizar_marketing($1,$2, $3, $4, $5);", [
+  await pool.query("SELECT *from function_marketing_actualizar($1,$2, $3, $4, $5);", [
     data.id,
     data.name,
     data.description,
@@ -123,7 +123,7 @@ export const validatePositionMarketing = async (req: Request, res: Response) => 
 
 export const nextPositionMarketing = async (req: Request, res: Response) => {
   let data = req.query;
-  await pool.query("SELECT *from function_buscar_siguiente_posicion_marketing($1);", [
+  await pool.query("SELECT *from function_siguiente_posicion_marketing($1);", [
     data.id_branch
   ], 
   (err, response, fields) => {
