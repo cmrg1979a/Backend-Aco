@@ -57,7 +57,7 @@ export const getListMultiplicador = async (req: Request, res: Response) => {
     } else {
       console.log(err);
     }
-  );
+  });
 };
 
 export const readMultiplicador = async (req: Request, res: Response) => {
@@ -77,7 +77,7 @@ export const readMultiplicador = async (req: Request, res: Response) => {
     } else {
       console.log(err);
     }
-  );
+  });
 };
 
 export const updateMultiplicador = async (req: Request, res: Response) => {
@@ -103,7 +103,7 @@ export const updateMultiplicador = async (req: Request, res: Response) => {
     } else {
       console.log(err);
     }
-  );
+  });
 };
 
 export const getCargarShipment = async (req: Request, res: Response) => {
@@ -123,5 +123,5 @@ export const getCargarShipment = async (req: Request, res: Response) => {
     } else {
       console.log(err);
     }
-  );
+  });
 };
