@@ -8,6 +8,9 @@ import {
   cargarMasterDetalleNotasCotizacion,
   cargarMasterDetalleRecibido,
   cargarMasterDetalleTipoProveedor,
+  cargarPercepcionAduana,
+  cargarTipoTelefonoPersona,
+  cargarTipoTransaccion,
 } from "../controllers/masterusuario.controller";
 const corsOptions = {
   origin: "*",
@@ -39,6 +42,25 @@ router.post(
   "/cargar_master_detalle_tipo_proveedor",
   TokenValidation,
   cargarMasterDetalleTipoProveedor
+
+);
+router.get(
+  "/cargar_master_detalle_percepcion_aduana",
+  TokenValidation,
+  cargarPercepcionAduana
+
+);
+
+router.get(
+  "/cargar_master_detalle_tipo_percepcion",
+  TokenValidation,
+  cargarTipoTransaccion
+
+);
+router.get(
+  "/cargar_master_detalle_tipo_telefono",
+  TokenValidation,
+  cargarTipoTelefonoPersona
 
 );
 

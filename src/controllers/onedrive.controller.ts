@@ -2,8 +2,8 @@ import { Client } from "@microsoft/microsoft-graph-client";
 import { ClientSecretCredential } from "@azure/identity";
 
 import { Request, Response } from "express";
-
 require("isomorphic-fetch");
+require("dotenv").config();
 
 // // ------------------------------------------------------
 // export const crearCarpetaEnOneDriveCotizacion = async (
@@ -12,63 +12,20 @@ require("isomorphic-fetch");
 // ) => {
 //   const token = await obtenerTokenDeAcceso();
 //   // let namaCarpeta = "quote";
-//   let namaCarpeta = "PUBLICA";
+//   // let namaCarpeta = "PUBLICA";
 //   const client = Client.init({
 //     authProvider: (done) => {
 //       done(null, token);
 //     },
 //   });
-
+//   // console.log(process.env.authToken);
+//   // ruta => PUBLICA/COTIZACIONES/CORRELATIVO DE COTIZACION ACTUALIZADO
 //   try {
 //     const userPrincipalName = "desarrollo@piccargope.onmicrosoft.com";
+//     let id_correlativo = "01OH4EJARN66OL5VT54NEYKAY2Q4UMK657";
 
-//     const existeCarpetaQuote = await client
-//       .api(`/users/${userPrincipalName}/drive/root:/${namaCarpeta}`)
-//       .get()
-//       .then(() => true)
-//       .catch(() => false);
-
-//     if (!existeCarpetaQuote) {
-//       // Si la carpeta "quote" no existe, crearla primero
-//       await client.api(`/users/${userPrincipalName}/drive/root/children`).post({
-//         name: namaCarpeta,
-//         folder: {},
-//         "@microsoft.graph.conflictBehavior": "rename",
-//       });
-//     }
-//     let children = await client
-//       .api(`/users/${userPrincipalName}/drive/root/children`)
-//       .get();
-
-//     let idFolderQuote = children.value.filter((v) => v.name == namaCarpeta)[0]
-//       .id;
-
-//     /* sub carpeta------------------------------*/
-//     let subCarpeta = "COTIZACIONES";
-//     let childrenSubCaperta = await client
-//       .api(`/users/${userPrincipalName}/drive/items/${idFolderQuote}/children`)
-//       .get();
-
-//     let idFolderQuoteSubCaperta = childrenSubCaperta.value.filter(
-//       (v) => v.name == subCarpeta
-//     )[0].id;
-//     /** sub sub carpeta */
-//     let subSubCarpeta = "CORRELATIVO DE COTIZACION ACTUALIZADO";
-//     let childrenSubSubCaperta = await client
-//       .api(
-//         `/users/${userPrincipalName}/drive/items/${idFolderQuoteSubCaperta}/children`
-//       )
-//       .get();
-
-//     let idFolderQuoteSubSubCaperta = childrenSubSubCaperta.value.filter(
-//       (v) => v.name == subSubCarpeta
-//     )[0].id;
-
-//     // Guardando en la carpeta quote
 //     const carpeta = await client
-//       .api(
-//         `/users/${userPrincipalName}/drive/items/${idFolderQuoteSubSubCaperta}/children`
-//       )
+//       .api(`/users/${userPrincipalName}/drive/items/${id_correlativo}/children`)
 //       .post({
 //         name: req.query.nombrecotizacion,
 //         folder: {},
@@ -163,52 +120,22 @@ export const crearCarpetaEnOneDriveCotizacion = async (
 // ) => {
 //   const token = await obtenerTokenDeAcceso();
 //   // let namaCarpeta = "master";
-//   let namaCarpeta = "PUBLICA";
+//   // let namaCarpeta = "PUBLICA";
 //   const client = Client.init({
 //     authProvider: (done) => {
 //       done(null, token);
 //     },
 //   });
-
+//   // ruta => PUBLIC /OPERACIONES EXPEDIENTES
 //   try {
 //     const userPrincipalName = "desarrollo@piccargope.onmicrosoft.com";
 
-//     const existeCarpetaMaster = await client
-//       .api(`/users/${userPrincipalName}/drive/root:/${namaCarpeta}`)
-//       .get()
-//       .then(() => true)
-//       .catch(() => false);
-
-//     if (!existeCarpetaMaster) {
-//       // Si la carpeta "master" no existe, crearla primero
-//       await client.api(`/users/${userPrincipalName}/drive/root/children`).post({
-//         name: namaCarpeta,
-//         folder: {},
-//         "@microsoft.graph.conflictBehavior": "rename",
-//       });
-//     }
-//     let children = await client
-//       .api(`/users/${userPrincipalName}/drive/root/children`)
-//       .get();
-
-//     let idFolderMaster = children.value.filter((v) => v.name == namaCarpeta)[0]
-//       .id;
-//     /** */
-//     let subCarpeta = "OPERACIONES EXPEDIENTES";
-//     let childrenSubCarpeta = await client
-//       .api(`/users/${userPrincipalName}/drive/items/${idFolderMaster}/children`)
-//       .get();
-
-//     let idFolderMasterSubCarpeta = childrenSubCarpeta.value.filter(
-//       (v) => v.name == subCarpeta
-//     )[0].id;
-
-//     // Guardando en la carpeta quote
+   
+//     let id_carpeta = "01OH4EJAUKUWS4QCVCJJGJZMETZ6O2PSOY";
+   
 //     const carpeta = await client
 //       // .api(`/users/${userPrincipalName}/drive/items/root:/`)
-//       .api(
-//         `/users/${userPrincipalName}/drive/items/${idFolderMasterSubCarpeta}/children`
-//       )
+//       .api(`/users/${userPrincipalName}/drive/items/${id_carpeta}/children`)
 //       .post({
 //         name: req.query.nromaster,
 //         folder: {},
@@ -229,7 +156,7 @@ export const crearCarpetaEnOneDriveCotizacion = async (
 //     if (error.innerError) {
 //       console.error("Detalles adicionales del error:", error.innerError);
 //     }
-//     // Maneja el error y devuelve una respuesta adecuada
+   
 //   }
 // };
 export const crearCarpetaEnOneDriveMaster = async (
@@ -243,7 +170,6 @@ export const crearCarpetaEnOneDriveMaster = async (
       done(null, token);
     },
   });
-
 
   try {
     const userPrincipalName = "desarrollo@piccargope.onmicrosoft.com";

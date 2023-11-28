@@ -1,0 +1,27 @@
+import { Request, Response } from "express";
+import { conexion } from "../routes/databasePGOp";
+const pool = conexion();
+
+export const getTipoCostoPorEmbarque = async (req: Request, res: Response) => {
+  const { id_shipment } = req.query;
+
+  await pool.query(
+    "SELECT * FROM function_tipocosto_embarque_cargar($1)",
+    [id_shipment],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          estadoflag: rows[0].estadoflag,
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+

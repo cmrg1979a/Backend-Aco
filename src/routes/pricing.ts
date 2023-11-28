@@ -38,6 +38,10 @@ import {
   listadoCotizacionMercadeo,
   quotePreviewTotales,
   aprobarCotizacion,
+  generarInstructivoQuote,
+  setNoteQuote,
+  ListarMontoFinalesQuoteMONGODB,
+  InsertMontoFinalesQuoteMONGODB,
 } from "../controllers/pricing.controller";
 
 router.post("/setQuote", TokenValidation, setQuote);
@@ -65,6 +69,7 @@ router.post(
   TokenValidation,
   cargarMasterDetalleImpuestos
 );
+router.post("/quote_note_insert", TokenValidation, setNoteQuote);
 router.put(
   "/update_quote_recibido_enviado",
   TokenValidation,
@@ -96,6 +101,22 @@ router.put(
   "/aprobar_cotizacion",
   // TokenValidation,
   aprobarCotizacion
+);
+router.post(
+  "/quote_instructivo",
+  // TokenValidation,
+  generarInstructivoQuote
+);
+router.post(
+  "/insert_monto_finales_quote",
+  // TokenValidation,
+  InsertMontoFinalesQuoteMONGODB
+);
+
+router.post(
+  "/listar_monto_finales_quote",
+  // TokenValidation,
+  ListarMontoFinalesQuoteMONGODB
 );
 
 export default router;

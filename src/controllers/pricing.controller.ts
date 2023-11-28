@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
-// import { connect } from "../routes/database";
 import { conexion } from "../routes/databasePGOp";
+import { getCollection } from "../routes/mongoDB";
+import { Collection, InsertOneResult, UpdateResult } from "mongodb";
+
 import * as pg from "pg";
 const { Pool } = pg;
 
@@ -9,6 +11,7 @@ let ejs = require("ejs");
 let pdf = require("html-pdf");
 let path = require("path");
 import moment from "moment";
+import { QuoteNote } from "interface/quoteNote";
 moment.locale("es");
 export const setQuote = async (req: Request, res: Response) => {
   const dataObj = req.body;
@@ -123,7 +126,7 @@ export const setQuote = async (req: Request, res: Response) => {
   });
 
   await pool.query(
-    "SELECT * FROM table_quote_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53,$54,$55,$56,$57,$58,$59,$60,$61)",
+    "SELECT * FROM table_quote_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53,$54,$55,$56,$57,$58,$59,$60,$61,$62,$63)",
     [
       dataObj.id_marketing ? dataObj.id_marketing : null,
       dataObj.id_entitie ? dataObj.id_entitie : null,
@@ -196,6 +199,8 @@ export const setQuote = async (req: Request, res: Response) => {
       statusIncluye_nc,
       statusNoIncluye_nc,
       dataObj.fullflag,
+      dataObj.tiporeporte ? dataObj.tiporeporte : null,
+      dataObj.id_percepcionaduana ? dataObj.id_percepcionaduana : null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -503,7 +508,7 @@ export const putQuote = async (req: Request, res: Response) => {
   let pid = dataObj.id_quote;
   let statusquote = dataObj.statusquote;
   await pool.query(
-    "SELECT * FROM table_quote_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53,$54,$55,$56,$57,$58,$59,$60,$61,$62,$63,$64,$65,$66,$67,$68,$69,$70,$71)",
+    "SELECT * FROM table_quote_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53,$54,$55,$56,$57,$58,$59,$60,$61,$62,$63,$64,$65,$66,$67,$68,$69,$70,$71,$72,$73)",
     [
       dataObj.id_marketing ? dataObj.id_marketing : null,
       dataObj.id_entitie ? dataObj.id_entitie : null,
@@ -528,7 +533,7 @@ export const putQuote = async (req: Request, res: Response) => {
       dataObj.proveedor ? dataObj.proveedor : null,
       dataObj.telefonoproveedor ? dataObj.telefonoproveedor : null,
       dataObj.direccionproveedor ? dataObj.direccionproveedor : null,
-      dataObj.date_end ? dataObj.date_end : null,
+      dataObj.fecha_fin ? dataObj.fecha_fin : null,
       dataObj.tiempo_transito ? dataObj.tiempo_transito : null,
       dataObj.ganancia ? dataObj.ganancia : null,
       dataObj.id_branch ? dataObj.id_branch : null,
@@ -583,6 +588,8 @@ export const putQuote = async (req: Request, res: Response) => {
       pstatus_nt,
       pid_contenedor,
       pid,
+      dataObj.tiporeporte ? dataObj.tiporeporte : null,
+      dataObj.id_percepcionaduana ? dataObj.id_percepcionaduana : null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -1320,7 +1327,7 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
   });
   let lengthServ = servicios.length;
   console.log(iso);
-  
+
   ejs.renderFile(
     path.join(__dirname, "../views/", "quoteDetallado.ejs"),
     {
@@ -1400,15 +1407,38 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
 };
 
 export const aprobarCotizacion = async (req: Request, res: Response) => {
-  let { id_quote, nuevoexpediente, id_exp ,fecha_validez} = req.body;
+  let {
+    id_quote,
+    nuevoexpediente,
+    id_exp,
+    fecha_validez,
+    totalIngreso,
+    igvIngreso,
+    valorIngreso,
+    listCostosInstructivo,
+  } = req.body;
   await pool.query(
-    "SELECT * FROM function_aprobar_cotizacion($1,$2,$3,$4);",
+    "SELECT * FROM function_aprobar_cotizacion($1,$2,$3,$4,$5,$6,$7,$8,$9,$10);",
     [
       id_quote ? id_quote : null,
       nuevoexpediente ? nuevoexpediente : null,
       id_exp ? id_exp : null,
       fecha_validez ? fecha_validez : null,
+      igvIngreso ? igvIngreso : null,
+      valorIngreso ? valorIngreso : null,
+      totalIngreso ? totalIngreso : 0,
+      listCostosInstructivo.map((element: any) => {
+        return element.id ? element.id : null;
+      }),
+
+      listCostosInstructivo.map((element: any) => {
+        return element.service;
+      }),
+      listCostosInstructivo.map((element: any) => {
+        return element.valor;
+      }),
     ],
+
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -1433,6 +1463,196 @@ export const aprobarCotizacion = async (req: Request, res: Response) => {
       }
     }
   );
+};
+
+export const generarInstructivoQuote = async (req: Request, res: Response) => {
+  let {
+    expediente,
+    sentido,
+    carga,
+    incoterms,
+    nombre,
+    direccion,
+    telefono,
+    vendedor,
+    proveedor,
+    origen,
+    destino,
+    fiscal,
+    ruc,
+    listServiciosInstructivo,
+    listIngresosInstructivo,
+    listCostosInstructivo,
+    sucursal,
+    status,
+    code_house,
+    code_master,
+    notas,
+    containers,
+    numerobultos,
+    peso,
+    volumen,
+    totalIngresos,
+    totalCostos,
+    profit,
+    listImpuestosInstructivo,
+    tipoimportacionaduana,
+  } = req.body;
+  let fecha = moment().format("ll");
+
+  ejs.renderFile(
+    path.join(__dirname, "../views/", "pdfQuoteInstructivo.ejs"),
+    {
+      totalIngresos,
+      totalCostos,
+      profit,
+      containers,
+      numerobultos,
+      peso,
+      volumen,
+      status,
+      notas,
+      code_house,
+      code_master,
+      sucursal,
+      fecha,
+      expediente,
+      sentido,
+      carga,
+      incoterms,
+      nombre,
+      direccion,
+      telefono,
+      vendedor,
+      proveedor,
+      origen,
+      destino,
+      fiscal,
+      ruc,
+      listServiciosInstructivo,
+      listIngresosInstructivo,
+      listCostosInstructivo,
+      listImpuestosInstructivo,
+      tipoimportacionaduana,
+    },
+
+    (err: any, data: any) => {
+      if (err) {
+        // res.send(err);
+        console.log(err);
+      } else {
+        let options = {
+          format: "Letter", // O el formato deseado
+          border: {
+            top: "0px", // Establecer el margen superior a 0
+          },
+          page_size: "A4",
+          // header: {
+          //   height: "15mm",
+          // },
+        };
+
+        pdf
+          .create(data, options)
+          .toFile("files/InstructivoQuote.pdf", function (err: any, data: any) {
+            if (err) {
+              res.send(err);
+            } else {
+              res.download("/InstructivoQuote.pdf");
+              res.send({
+                estadoflag: true,
+                msg: "File created successfully",
+                path: path.join("InstructivoQuote.pdf"),
+              });
+            }
+          });
+      }
+    }
+  );
+};
+
+export const setNoteQuote = async (req: Request, res: Response) => {
+  let QuoteNote: QuoteNote = req.body;
+  await pool.query(
+    "SELECT * FROM function_quote_note_insert($1,$2);",
+    [QuoteNote.id_quote, QuoteNote.name],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          let rows = response.rows;
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+            estadoflag: rows[0].estadoflag,
+            data: rows,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const InsertMontoFinalesQuoteMONGODB = async (
+  req: Request,
+  res: Response
+) => {
+  const collectionName = "quote_montos_finales"; // Nombre de tu colección
+  const dataToInsert = req.body;
+
+  try {
+    const collection: Collection = await getCollection(collectionName);
+    const cursor = collection.find({ id: dataToInsert.id });
+    const result = await cursor.toArray();
+
+    if (result.length > 0) {
+      const update = { $set: req.body };
+
+      const result: UpdateResult = await collection.updateOne(cursor, update);
+    } else {
+      await collection.insertOne(dataToInsert);
+    }
+
+    res.json({
+      status: 200,
+      statusBol: true,
+      mensaje: "Registro Correcto",
+      estadoflag: true,
+      data: [],
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).send("Error al insertar datos");
+  }
+};
+
+export const ListarMontoFinalesQuoteMONGODB = async (
+  req: Request,
+  res: Response
+) => {
+  const collectionName = "quote_montos_finales";
+  try {
+    const collection: Collection = await getCollection(collectionName);
+    const cursor = collection.find({}); // Obtenemos el cursor
+
+    const result = await cursor.toArray(); // Convertimos el cursor a un array
+
+    if (result) {
+      res.json({
+        status: 200,
+        estadoflag: result.length > 0,
+        statusBol: true,
+        data: result,
+        mensaje: result.length > 0 ? "" : "No se encontraron registros",
+      });
+    }
+  } catch (e) {
+    console.log(e);
+    res.status(500).send("Error en la consulta");
+  }
 };
 
 function getServicios({
