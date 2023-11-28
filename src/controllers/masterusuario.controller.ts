@@ -177,3 +177,28 @@ export const cargarTipoTelefonoPersona = async (
     }
   );
 };
+
+
+export const cargarMasterDetalleImpuestos = async (
+  req: Request,
+  res: Response
+) => {
+  await pool.query(
+    "SELECT * FROM function_masterdetalle_cargar($1,'IMP')",
+    [req.query.id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
