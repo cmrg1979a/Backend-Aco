@@ -23,6 +23,7 @@ import {
   exportListQuote,
   exportListQuoteEXCEL,
   exportarListProveedor,
+  exportarListCliente,
 } from "../controllers/reports.controller";
 
 router.get("/getControlFile", TokenValidation, getControlFile);
@@ -58,5 +59,6 @@ router.get("/consolidado_carga_masiva", ExportarConsolidadoCargaMasiva);
 router.post("/export_list_quote", exportListQuote);
 router.post("/export_list_quote_xls", exportListQuoteEXCEL);
 router.post("/export_list_proveedor", exportarListProveedor);
+router.post("/export_list_cliente", exportarListCliente);
 
 export default router;

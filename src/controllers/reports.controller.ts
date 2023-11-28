@@ -2616,3 +2616,106 @@ export const exportarListProveedor = async (req: Request, res: Response) => {
     }
   );
 };
+export const exportarListCliente = async (req: Request, res: Response) => {
+  var wb = new xl.Workbook({
+    dateFormat: "dd/mm/yyyy",
+    author: "PIC CARGO - IMPORTADORES",
+  });
+  const {
+    id_branch,
+    correlativo,
+    names,
+    surname,
+    second_surname,
+    id_document,
+    id_pais,
+    id_state,
+    status,
+    id_tipoproveedor,
+  } = req.body;
+
+  await pool.query(
+    "SELECT * FROM function_table_entities_listcliente($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
+    [
+      id_branch ? id_branch : null,
+      correlativo ? correlativo : null,
+      names ? names : null,
+      surname ? surname : null,
+      second_surname ? second_surname : null,
+      id_document ? id_document : null,
+      id_pais ? id_pais : null,
+      id_state ? id_state : null,
+      status ? status : null,
+      id_tipoproveedor ? id_tipoproveedor : null,
+    ],
+
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        let cabDetalle = wb.createStyle({
+          width: "auto",
+          fill: {
+            type: "pattern",
+            patternType: "solid",
+            fgColor: "#fff1cf",
+          },
+          alignment: {
+            vertical: "center",
+            horizontal: "center",
+          },
+        });
+
+        var wt = wb.addWorksheet(`Listado Proveedor`, {
+          views: [{ state: "frozen", xSplit: 4, ySplit: 1 }],
+        });
+
+        wt.cell(1, 1).string("Cat").style(cabDetalle);
+        wt.cell(1, 2).string("Correlativo").style(cabDetalle);
+        wt.cell(1, 3).string("Documento").style(cabDetalle);
+        wt.cell(1, 4).string("Ap. Paterno").style(cabDetalle);
+        wt.cell(1, 5).string("Ap. Materno").style(cabDetalle);
+        wt.cell(1, 6).string("Nombres").style(cabDetalle);
+        wt.cell(1, 7).string("Ubigeo").style(cabDetalle);
+        wt.cell(1, 8).string("Dirección").style(cabDetalle);
+        wt.cell(1, 9).string("Estado").style(cabDetalle);
+
+        let index = 2;
+        wt.row(1).filter({
+          firstColumn: 1,
+          lastColumn: 8,
+        });
+
+        rows.forEach((element) => {
+          wt.cell(index, 1).string("CLI");
+          wt.cell(index, 2).string(element.correlativo);
+          wt.cell(index, 3).string(element.documento);
+          wt.cell(index, 4).string(element.surname);
+          wt.cell(index, 5).string(element.second_surname);
+          wt.cell(index, 6).string(element.names);
+          wt.cell(index, 7).string(
+            (element.pais ? element.pais : "") +
+              "-" +
+              (element.city ? element.city : "")
+          );
+          wt.cell(index, 8).string(element.address ? element.address : "");
+          wt.cell(index, 9).string(element.estado ? element.estado : "");
+          index++;
+        });
+
+        let pathexcel = path.join(
+          `${__dirname}../../../uploads`,
+          "Reportexls.xlsx"
+        );
+        wb.write(pathexcel, function (err, stats) {
+          if (err) {
+            console.log(err);
+          } else {
+            res.download(pathexcel);
+          }
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};

@@ -425,6 +425,7 @@ export const GuardarCliente = async (req: Request, res: Response) => {
     id_sex,
     birthday,
   } = req.body;
+  console.log(req.body);
 
   await pool.query(
     "SELECT * FROM function_table_entities_registrarcliente($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26)",
@@ -546,7 +547,7 @@ export const ActualizarCliente = async (req: Request, res: Response) => {
   } = req.body;
 
   console.log(req.body);
-  
+
   await pool.query(
     "SELECT * FROM function_table_entities_actualizarcliente($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29)",
     [
