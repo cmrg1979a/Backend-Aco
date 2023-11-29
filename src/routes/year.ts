@@ -18,6 +18,6 @@ router.get("/listar_year/", TokenValidation, getListYear);
 router.post("/insertar_year/", TokenValidation, insertYear);
 router.get("/ver_year/", TokenValidation, readYear);
 router.put("/actualizar_year/", TokenValidation, updateYear);
-router.get("/validar_code_sex/", TokenValidation, validateCodeInTableYear);
+router.get("/validar_code_year/", TokenValidation, validateCodeInTableYear);
 
 export default router;
