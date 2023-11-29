@@ -32,7 +32,6 @@ import {
   updateQuoteRecibidoEnviado,
   ActualizarFolderOneDrive,
   getListCalls,
-  cargarMasterDetalleImpuestos,
   quoteCargarNoAsignadosHouse,
   quoteDataHouse,
   listadoCotizacionMercadeo,
@@ -64,11 +63,6 @@ router.post("/getInstructivoId/:id_quote", TokenValidation, getInstructivoId);
 // router.post("/putInstructivo/:id_quote", TokenValidation, putInstructivo);
 router.post("/getMarketingList", TokenValidation, getMarketingList);
 
-router.post(
-  "/cargar_master_detalle_impuesto",
-  TokenValidation,
-  cargarMasterDetalleImpuestos
-);
 router.post("/quote_note_insert", TokenValidation, setNoteQuote);
 router.put(
   "/update_quote_recibido_enviado",

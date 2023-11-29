@@ -5,6 +5,7 @@ import cors from "cors";
 import {
   cargarMasterDetalleCanal,
   cargarMasterDetalleEnviado,
+  cargarMasterDetalleImpuestos,
   cargarMasterDetalleNotasCotizacion,
   cargarMasterDetalleRecibido,
   cargarMasterDetalleTipoProveedor,
@@ -64,6 +65,11 @@ router.get(
 
 );
 
+router.post(
+  "/cargar_master_detalle_impuesto",
+  TokenValidation,
+  cargarMasterDetalleImpuestos
+);
 export default router;
 
 
