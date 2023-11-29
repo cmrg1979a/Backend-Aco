@@ -24,6 +24,7 @@ export function conexion() {
     // database: "db_op_main_dev",
     // database: "db_op_main_02",
     database: "db_op_main_qa",
+    
   });
   return pool;
 }
