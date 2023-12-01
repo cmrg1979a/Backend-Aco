@@ -29,6 +29,8 @@ import {
   GuardarCliente,
   getVerCliente,
   ActualizarCliente,
+  ListarPersonaTipoPersona,
+  guardarRolProveedor,
 } from "../controllers/entities.controller";
 
 router.post("/getEntitiesList", TokenValidation, getEntitiesList);
@@ -41,8 +43,8 @@ router.post("/getPhone/:id_entitie", TokenValidation, getPhones);
 
 router.post("/getContacts/:id_entitie", TokenValidation, getContacts);
 router.get("/validationDocument", TokenValidation, validationDocument);
-router.post("/CargarClientes", TokenValidation, CargarClientes);
-router.post("/CargarProveedores", TokenValidation, CargarProveedores);
+router.get("/CargarClientes", TokenValidation, CargarClientes);
+router.get("/CargarProveedores", TokenValidation, CargarProveedores);
 router.post("/guardar_telefono", TokenValidation, InsertPhones);
 router.get("/listar_phone/:id", TokenValidation, ListarPhons);
 router.get("/cargar_persona", TokenValidation, cargarPersona);
@@ -63,5 +65,7 @@ router.get("/listado_clientes", TokenValidation, getListCliente);
 router.post("/registrar_cliente", TokenValidation, GuardarCliente);
 router.get("/ver_cliente", TokenValidation, getVerCliente);
 router.put("/actualizar_cliente", TokenValidation, ActualizarCliente);
+router.get("/listar_persona_tipo_persona", TokenValidation, ListarPersonaTipoPersona);
+router.put("/actualizar_rol_proveedor", TokenValidation, guardarRolProveedor);
 
 export default router;

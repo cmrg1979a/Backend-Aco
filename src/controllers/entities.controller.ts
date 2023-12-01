@@ -1037,31 +1037,14 @@ export const validationDocument = async (req: Request, res: Response) => {
         console.log(err);
       }
     }
-    // (err, rows, fields) => {
-
-    //   let cant: JSON;
-    //   cant = JSON.parse(JSON.stringify(rows));
-    //   if (cant[0].cantidad > 0) {
-    //     res.json({
-    //       status: 200,
-    //       statusBol: true,
-    //       msg: "El documento ya se encuentra registrado.",
-    //     });
-    //   } else {
-    //     res.json({
-    //       status: 200,
-    //       statusBol: false,
-    //       msg: "",
-    //     });
-    //   }
-    // }
+   
   );
 };
 
 export const CargarClientes = async (req: Request, res: Response) => {
-  let id_branch = req.body.id_branch;
+  let id_branch = req.query.id_branch;
   await pool.query(
-    "select * from TABLE_ENTITIES_cargar($1);",
+    "select * from function_cargar_clientes($1);",
     [id_branch],
     (err, response, fields) => {
       if (!err) {
@@ -1087,26 +1070,20 @@ export const CargarClientes = async (req: Request, res: Response) => {
 };
 
 export const CargarProveedores = async (req: Request, res: Response) => {
-  let id_branch = req.body.id_branch;
+  let id_branch = req.query.id_branch;
   await pool.query(
-    "select * from TABLE_ENTITIES_cargar($1);",
+    "select * from function_cargar_proveedor($1);",
     [id_branch],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+        });
       } else {
         console.log(err);
       }
@@ -1196,6 +1173,50 @@ export const cargarPersona = async (req: Request, res: Response) => {
             estadoflag: rows[0].estadoflag,
           });
         }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const ListarPersonaTipoPersona = async (req: Request, res: Response) => {
+  const id = req.params.id;
+
+  await pool.query(
+    "SELECT * FROM function_list_entities_tipo($1)",
+    [req.query.id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const guardarRolProveedor = async (req: Request, res: Response) => {
+  const { id, proveedorflag, clienteflag, personalflag } = req.body;
+
+  await pool.query(
+    "SELECT * FROM function_actualizar_rol_persona($1,$2,$3,$4)",
+    [id, proveedorflag, clienteflag, personalflag],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+        });
       } else {
         console.log(err);
       }
