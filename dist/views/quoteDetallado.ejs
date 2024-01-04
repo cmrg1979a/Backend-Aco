@@ -374,10 +374,8 @@
     <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
       <tr style="border-bottom: 1.5px solid black">
         <td class="align-left st-bg" colspan="5">
-          TOTAL DE IMPUESTO <% if (iso=='9589') {%> SUNAT <%}%>
-          <% if (iso!='9589') {%>
-            ADUANA
-          <%}%>
+          TOTAL DE IMPUESTO <% if (iso=='9589') {%> SUNAT <%}%> <% if
+          (iso!='9589') {%> ADUANA <%}%>
         </td>
         <td class="align-right" colspan="1"><%=totalImpuesto%></td>
       </tr>
@@ -390,85 +388,45 @@
         <td class="align-right" colspan="1"><%=total%></td>
       </tr>
     </table>
+    <table
+      width="100%"
+      style="padding: 0 2rem; border-collapse: collapse; margin: 2rem 0 0 0 !important"
+    >
+      <%if (incluye.length>0) {%>
+      <th class="align-left">
+        <b> <span style="color: green">&#10004;</span> Esta oferta incluye</b>
+      </th>
+      <% incluye.forEach(element => {%>
+      <tr style="border-bottom: 1.5px solid black">
+        <td><%=element.name%></td>
+      </tr>
+      <%});%> <%}%>
+    </table>
+    <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
+      <%if (noincluye.length>0) {%>
+      <th class="align-left">
+        <b> <span style="color: red">&#10004;</span> Esta oferta NO incluye</b>
+      </th>
+      <% noincluye.forEach(element => {%>
+
+      <tr style="border-bottom: 1.5px solid black">
+        <td><%=element.name%></td>
+      </tr>
+      <%});%> <%}%>
+    </table>
+    <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
+      <th class="align-left">
+        <b><span style="color: blue">&#9888;</span> Notas Importantes </b>
+      </th>
+
+      <%if (importante.length>0) {%> <% importante.forEach(element => {%>
+      <tr style="border-bottom: 1.5px solid black">
+        <td><%=element.name%></td>
+      </tr>
+      <%});%> <%}%>
+    </table>
 
     <div id="pageFooter" style="border-top: 1px solid #ddd; padding-top: 5px">
-      <div class="item-footer-left t-footer">
-        <p
-          style="
-            color: #666;
-            margin: 0;
-            padding-bottom: 5px;
-            font-family: sans-serif;
-            font-size: 0.5em;
-          "
-        >
-          <b>ESTA OFERTA INCLUYE</b>
-        </p>
-        <%if (incluye.length>0) {%> <% incluye.forEach(element => {%>
-        <p
-          style="
-            color: #666;
-            margin: 0;
-            padding-bottom: 5px;
-            font-family: sans-serif;
-            font-size: 0.5em;
-          "
-        >
-          <%=element.name%>
-        </p>
-        <%});%> <%}%>
-        <p
-          style="
-            color: #666;
-            margin: 0;
-            padding-bottom: 5px;
-            font-family: sans-serif;
-            font-size: 0.5em;
-          "
-        >
-          <b>ESTA OFERTA NO INCLUYE</b>
-        </p>
-        <%if (noincluye.length>0) {%> <% noincluye.forEach(element => {%>
-        <p
-          style="
-            color: #666;
-            margin: 0;
-            padding-bottom: 5px;
-            font-family: sans-serif;
-            font-size: 0.5em;
-          "
-        >
-          <%=element.name%>
-        </p>
-        <%});%> <%}%>
-      </div>
-      <div class="item-footer-rigth t-footer">
-        <p
-          style="
-            color: #666;
-            margin: 0;
-            padding-bottom: 5px;
-            font-family: sans-serif;
-            font-size: 0.5em;
-          "
-        >
-          <b>IMPORTANTE </b>
-        </p>
-        <%if (importante.length>0) {%> <% importante.forEach(element => {%>
-        <p
-          style="
-            color: #666;
-            margin: 0;
-            padding-bottom: 5px;
-            font-family: sans-serif;
-            font-size: 0.5em;
-          "
-        >
-          <%=element.name%>
-        </p>
-        <%});%> <%}%>
-      </div>
-
       <div class="item-center t-footer">
         <p
           style="
@@ -477,10 +435,10 @@
             padding-bottom: 5px;
             text-align: right;
             font-family: sans-serif;
-            font-size: 0.5em;
+            font-size: 0.8em;
           "
         >
-          <%=business_name%><%=address%> Página {{ page }} de {{ pages }}
+          <%=business_name%><%=address%>
         </p>
       </div>
     </div>
@@ -582,6 +540,9 @@
   }
   .pt-5 {
     padding: 0.2rem 0rem !important;
+  }
+  .mt-5 {
+    margin-top: 0.2rem 0rem !important;
   }
   .align-left {
     text-align: left;
