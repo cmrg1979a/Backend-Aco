@@ -388,16 +388,21 @@
         <td class="align-right" colspan="1"><%=total%></td>
       </tr>
     </table>
+    // ----------------------------
     <table
       width="100%"
-      style="padding: 0 2rem; border-collapse: collapse; margin: 2rem 0 0 0 !important"
+      style="
+        padding: 0 2rem;
+        border-collapse: collapse;
+        margin: 2rem 0 0 0 !important;
+      "
     >
       <%if (incluye.length>0) {%>
       <th class="align-left">
         <b> <span style="color: green">&#10004;</span> Esta oferta incluye</b>
       </th>
       <% incluye.forEach(element => {%>
-      <tr style="border-bottom: 1.5px solid black">
+      <tr>
         <td><%=element.name%></td>
       </tr>
       <%});%> <%}%>
@@ -409,7 +414,7 @@
       </th>
       <% noincluye.forEach(element => {%>
 
-      <tr style="border-bottom: 1.5px solid black">
+      <tr>
         <td><%=element.name%></td>
       </tr>
       <%});%> <%}%>
@@ -420,7 +425,7 @@
       </th>
 
       <%if (importante.length>0) {%> <% importante.forEach(element => {%>
-      <tr style="border-bottom: 1.5px solid black">
+      <tr>
         <td><%=element.name%></td>
       </tr>
       <%});%> <%}%>
