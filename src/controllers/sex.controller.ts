@@ -27,117 +27,116 @@ export const getSex = async (req: Request, res: Response) => {
 
 export const getListSex = async (req: Request, res: Response) => {
   let data = req.query;
-  await pool.query("SELECT *from function_sex_listar($1,$2, $3, $4, $5, $6);", [
-    data.id_branch,
-    data.code ? data.code : null,
-    data.name ? data.name : null,
-    data.acronym ? data.acronym : null,
-    data.description ? data.description : null,
-    data.status ? data.status : null,
-  ],
-  (err, response, fields) => {
-    if (!err) {
-      let rows = response.rows;
-      res.json({
-        status: 200,
-        estadoflag: rows[0].estadoflag,
-        mensaje: rows[0].mensaje,
-        data: rows
-      })
-    } else {
-      console.log(err);
+  await pool.query(
+    "SELECT *from function_sex_listar($1,$2, $3, $4, $5, $6);",
+    [
+      data.id_branch,
+      data.code ? data.code : null,
+      data.name ? data.name : null,
+      data.acronym ? data.acronym : null,
+      data.description ? data.description : null,
+      data.status ? data.status : null,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
     }
-  });
-}
+  );
+};
 
 export const insertSex = async (req: Request, res: Response) => {
   let data = req.body;
-  await pool.query("SELECT *from function_sex_insertar($1,$2, $3, $4, $5);", [
-    data.id_branch,
-    data.acronym,
-    data.name,
-    data.description,
-    data.status
-  ],
-  (err, response, fields) => {
-    if (!err) {
-      let rows = response.rows;
-      res.json({
-        status: 200,
-        estadoflag: rows[0].estadoflag,
-        mensaje: rows[0].mensaje,
-        data: rows
-      })
-    } else {
-      console.log(err);
+  await pool.query(
+    "SELECT *from function_sex_insertar($1,$2, $3, $4, $5);",
+    [data.id_branch, data.acronym, data.name, data.description, data.status],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
     }
-  });
-}
+  );
+};
 
 export const readSex = async (req: Request, res: Response) => {
   let data = req.query;
-  await pool.query("SELECT *from function_sex_ver($1);", [
-    data.id
-  ],
-  (err, response, fields) => {
-    if (!err) {
-      let rows = response.rows;
-      res.json({
-        status: 200,
-        estadoflag: rows[0].estadoflag,
-        mensaje: rows[0].mensaje,
-        data: rows
-      })
-    } else {
-      console.log(err);
+  await pool.query(
+    "SELECT *from function_sex_ver($1);",
+    [data.id],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
     }
-  });
-}
+  );
+};
 
 export const updateSex = async (req: Request, res: Response) => {
   let data = req.body;
-  await pool.query("SELECT *from function_sex_actualizar($1,$2, $3, $4, $5);", [
-    data.id,
-    data.acronym,
-    data.name,
-    data.description,
-    data.status
-  ],
-  (err, response, fields) => {
-    if (!err) {
-      let rows = response.rows;
-      res.json({
-        status: 200,
-        estadoflag: rows[0].estadoflag,
-        mensaje: rows[0].mensaje,
-        data: rows
-      })
-    } else {
-      console.log(err);
+  await pool.query(
+    "SELECT *from function_sex_actualizar($1,$2, $3, $4, $5);",
+    [data.id, data.acronym, data.name, data.description, data.status],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
     }
-  });
-}
+  );
+};
 
-
-export const validateAcronymInTableSex = async (req: Request, res: Response) => {
+export const validateAcronymInTableSex = async (
+  req: Request,
+  res: Response
+) => {
   let data = req.query;
 
-  await pool.query("SELECT *from function_validar_acronimo_sexo($1,$2, $3);", [
-    data.id,
-    data.acronym,
-    data.id_branch,
-  ],
-  (err, response, fields) => {
-    if (!err) {
-      let rows = response.rows;
-      res.json({
-        status: 200,
-        estadoflag: rows[0].estadoflag,
-        mensaje: rows[0].mensaje,
-        data: rows
-      })
-    } else {
-      console.log(err);
+  await pool.query(
+    "SELECT *from function_validar_acronimo_sexo($1,$2, $3);",
+    [data.id, data.acronym, data.id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
     }
-  });
-}
+  );
+};
