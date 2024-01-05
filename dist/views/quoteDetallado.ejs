@@ -406,11 +406,10 @@
             margin: 1rem 0 0 0;
           "
         >
-          <u>
-            <b
-              ><span style="color: green">&#10004;</span> ESTA OFERTA INCLUYE</b
-            >
-          </u>
+          <b
+            ><span style="color: green; font-size: 2em">&#10004;</span>
+            <u>ESTA OFERTA INCLUYE </u></b
+          >
         </p>
         <%if (incluye.length>0) {%> <% incluye.forEach(element => {%>
         <p
@@ -433,12 +432,10 @@
             margin: 1rem 0 0 0;
           "
         >
-          <u>
-            <b
-              ><span style="color: red">&#10007;</span> ESTA OFERTA NO
-              INCLUYE</b
-            ></u
-          >
+          <b
+            ><span style="color: red; font-size: 2em">&#10007;</span>
+            <u> ESTA OFERTA NO INCLUYE </u>
+          </b>
         </p>
         <%if (noincluye.length>0) {%> <% noincluye.forEach(element => {%>
         <p
@@ -464,7 +461,8 @@
           "
         >
           <b>
-            <u><span style="color: darkgoldenrod">&#9888;</span> IMPORTANTE </u>
+            <span style="color: darkgoldenrod; font-size: 2em">&#9888;</span>
+            <u> IMPORTANTE </u>
           </b>
         </p>
         <%if (importante.length>0) {%> <% importante.forEach(element => {%>
@@ -489,7 +487,7 @@
             padding-bottom: 5px;
             text-align: right;
             font-family: sans-serif;
-            font-size: 0.6em;
+            font-size: 0.7em;
           "
         >
           <%=business_name%><%=address%> Página {{page}} de {{pages}}
