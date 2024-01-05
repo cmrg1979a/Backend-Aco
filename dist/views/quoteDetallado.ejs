@@ -395,7 +395,7 @@
       </tr>
     </table>
 
-    <div style="padding-top: 5px; margin: 1rem 0 0 0">
+    <div style="padding-top: 5px">
       <div class="item-footer-left t-footer">
         <p
           style="
@@ -403,9 +403,14 @@
             padding-bottom: 5px;
             font-family: sans-serif;
             text-transform: uppercase;
+            margin: 1rem 0 0 0;
           "
         >
-          <b><span style="color: green">&#10004;</span> ESTA OFERTA INCLUYE</b>
+          <u>
+            <b
+              ><span style="color: green">&#10004;</span> ESTA OFERTA INCLUYE</b
+            >
+          </u>
         </p>
         <%if (incluye.length>0) {%> <% incluye.forEach(element => {%>
         <p
@@ -425,9 +430,15 @@
             padding-bottom: 5px;
             font-family: sans-serif;
             text-transform: uppercase;
+            margin: 1rem 0 0 0;
           "
         >
-          <b><span style="color: red">&#10007;</span> ESTA OFERTA NO INCLUYE</b>
+          <u>
+            <b
+              ><span style="color: red">&#10007;</span> ESTA OFERTA NO
+              INCLUYE</b
+            ></u
+          >
         </p>
         <%if (noincluye.length>0) {%> <% noincluye.forEach(element => {%>
         <p
@@ -449,9 +460,12 @@
             padding-bottom: 5px;
             font-family: sans-serif;
             text-transform: uppercase;
+            margin: 1rem 0 0 0;
           "
         >
-          <b><span style="color: yellow">&#9888;</span> IMPORTANTE </b>
+          <b>
+            <u><span style="color: darkgoldenrod">&#9888;</span> IMPORTANTE </u>
+          </b>
         </p>
         <%if (importante.length>0) {%> <% importante.forEach(element => {%>
         <p
