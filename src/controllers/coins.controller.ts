@@ -4,6 +4,8 @@ import * as pg from "pg";
 const { Pool } = pg;
 
 const pool = conexion();
+import { postCoins } from "../interface/coins";
+
 export const getCoinsList = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM Table_Coins_listar();",
@@ -24,7 +26,8 @@ export const getCoinsList = async (req: Request, res: Response) => {
   );
 };
 export const getListCoinsByBranch = async (req: Request, res: Response) => {
-  let data = req.query;
+  const data = req.query;
+
   await pool.query("SELECT *from function_coins_listar($1,$2, $3, $4, $5, $6, $7);", [
     data.id_branch,
     data.code ? data.code : null,
@@ -50,14 +53,15 @@ export const getListCoinsByBranch = async (req: Request, res: Response) => {
 }
 
 export const insertCoins = async (req: Request, res: Response) => {
-  let data = req.body;
+  const dataObj: postCoins = req.body;
+
   await pool.query("SELECT *from function_coins_insertar($1,$2, $3, $4, $5, $6);", [
-    data.id_branch,
-    data.symbol,
-    data.acronym,
-    data.name,
-    data.description,
-    data.status,
+    dataObj.id_branch,
+    dataObj.symbol,
+    dataObj.acronym,
+    dataObj.name,
+    dataObj.description,
+    dataObj.status,
   ],
   (err, response, fields) => {
     if (!err) {
@@ -75,7 +79,8 @@ export const insertCoins = async (req: Request, res: Response) => {
 }
 
 export const readCoins = async (req: Request, res: Response) => {
-  let data = req.query;
+  const data = req.query;
+
   await pool.query("SELECT *from function_coins_ver($1);", [
     data.id
   ],
@@ -95,14 +100,15 @@ export const readCoins = async (req: Request, res: Response) => {
 }
 
 export const updateCoins = async (req: Request, res: Response) => {
-  let data = req.body;
+  const dataObj: postCoins = req.body;
+
   await pool.query("SELECT *from function_coins_actualizar($1,$2, $3, $4, $5, $6);", [
-    data.id,
-    data.symbol,
-    data.acronym,
-    data.name,
-    data.description,
-    data.status
+    dataObj.id,
+    dataObj.symbol,
+    dataObj.acronym,
+    dataObj.name,
+    dataObj.description,
+    dataObj.status
   ],
   (err, response, fields) => {
     if (!err) {

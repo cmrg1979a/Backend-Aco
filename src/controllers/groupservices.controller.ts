@@ -5,9 +5,11 @@ import * as pg from "pg";
 const { Pool } = pg;
 const pool = conexion();
 
+import { postGroupServices } from "../interface/groupservices";
 
 export const getListGroupservices = async (req: Request, res: Response) => {
-  let data = req.query;
+  const data = req.query;
+
   await pool.query("SELECT *from function_groupservices_listar($1,$2, $3, $4, $5);", [
     data.id_branch,
     data.code ? data.code : null,
@@ -31,12 +33,13 @@ export const getListGroupservices = async (req: Request, res: Response) => {
 }
 
 export const insertGroupservices = async (req: Request, res: Response) => {
-  let data = req.body;
+  const dataObj: postGroupServices = req.body;
+
   await pool.query("SELECT *from function_groupservices_insertar($1,$2, $3, $4);", [
-    data.id_branch,
-    data.name,
-    data.description,
-    data.status
+    dataObj.id_branch,
+    dataObj.name,
+    dataObj.description,
+    dataObj.status
   ], 
   (err, response, fields) => {
     if (!err) {
@@ -54,7 +57,8 @@ export const insertGroupservices = async (req: Request, res: Response) => {
 }
 
 export const readGroupservices = async (req: Request, res: Response) => {
-  let data = req.query;
+  const data = req.query;
+
   await pool.query("SELECT *from function_groupservices_ver($1);", [
     data.id
   ], 
@@ -74,12 +78,13 @@ export const readGroupservices = async (req: Request, res: Response) => {
 }
 
 export const updateGroupservices = async (req: Request, res: Response) => {
-  let data = req.body;
+  const dataObj: postGroupServices = req.body;
+
   await pool.query("SELECT *from function_groupservices_actualizar($1,$2, $3, $4);", [
-    data.id,
-    data.name,
-    data.description,
-    data.status
+    dataObj.id,
+    dataObj.name,
+    dataObj.description,
+    dataObj.status
   ], 
   (err, response, fields) => {
     if (!err) {

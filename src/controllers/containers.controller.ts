@@ -73,7 +73,8 @@ export const deleteContainers = async (req: Request, res: Response) => {
 };
 
 export const getListContainersByBranch = async (req: Request, res: Response) => {
-  let data = req.query;
+  const data = req.query;
+
   await pool.query("SELECT *from function_containers_listar($1,$2, $3, $4, $5);", [
     data.id_branch,
     data.code ? data.code : null,
@@ -97,17 +98,18 @@ export const getListContainersByBranch = async (req: Request, res: Response) => 
 }
 
 export const insertContainers = async (req: Request, res: Response) => {
-  let data = req.body;
+  const dataObj: postContainers = req.body;
+
   await pool.query("SELECT *from function_containers_insertar($1,$2, $3, $4, $5, $6, $7, $8, $9);", [
-    data.id_branch,
-    data.name,
-    data.description,
-    data.long,
-    data.width,
-    data.height,
-    data.maximumweight,
-    data.maximunvolumen,
-    data.status,
+    dataObj.id_branch,
+    dataObj.name,
+    dataObj.description,
+    dataObj.long,
+    dataObj.width,
+    dataObj.height,
+    dataObj.maximumweight,
+    dataObj.maximunvolumen,
+    dataObj.status,
   ],
   (err, response, fields) => {
     if (!err) {
@@ -125,7 +127,8 @@ export const insertContainers = async (req: Request, res: Response) => {
 }
 
 export const readContainers = async (req: Request, res: Response) => {
-  let data = req.query;
+  const data = req.query;
+
   await pool.query("SELECT *from function_containers_ver($1);", [
     data.id
   ],
@@ -145,18 +148,18 @@ export const readContainers = async (req: Request, res: Response) => {
 }
 
 export const updateContainers = async (req: Request, res: Response) => {
-  let data = req.body;
+  const dataObj: postContainers = req.body;
   
   await pool.query("SELECT *from function_containers_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9);", [
-    data.id,
-    data.name,
-    data.description,
-    data.long,
-    data.width,
-    data.height,
-    data.maximumweight,
-    data.maximunvolumen,
-    data.status
+    dataObj.id,
+    dataObj.name,
+    dataObj.description,
+    dataObj.long,
+    dataObj.width,
+    dataObj.height,
+    dataObj.maximumweight,
+    dataObj.maximunvolumen,
+    dataObj.status
   ],
   (err, response, fields) => {
     if (!err) {

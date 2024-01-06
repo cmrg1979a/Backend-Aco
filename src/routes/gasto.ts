@@ -7,14 +7,14 @@ import {
   insertGasto,
   readGasto,
   updateGasto,
-  validateCodeGasto,
+  validateCodeGastoNuevo,
 } from "../controllers/gasto.controller";
 
 router.get("/listar_gasto/", TokenValidation, getListGasto);
 router.post("/insertar_gasto/", TokenValidation, insertGasto);
 router.get("/ver_gasto/", TokenValidation, readGasto);
 router.put("/actualizar_gasto/", TokenValidation, updateGasto);
-router.get("/validar_codigo_gasto/", TokenValidation, validateCodeGasto);
+router.get("/validar_nuevo_codigo_gasto/", TokenValidation, validateCodeGastoNuevo);
 
 
 export default router;

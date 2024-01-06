@@ -6,6 +6,8 @@ import * as pg from "pg";
 const { Pool } = pg;
 const pool = conexion();
 
+import { postShipment } from "../interface/shipment";
+
 export const getShipment = async (req: Request, res: Response) => {
   await pool.query(
     `SELECT * FROM TABLE_SHIPMENT_LISTAR($1)`,
@@ -34,7 +36,8 @@ export const getShipment = async (req: Request, res: Response) => {
 };
 
 export const getListShipment = async (req: Request, res: Response) => {
-  let data = req.query;
+  const data = req.query;
+
   await pool.query("SELECT *from function_shipment_listar($1,$2, $3, $4, $5);", [
     data.id_branch,
     data.id_transport ? data.id_transport : null,
@@ -58,14 +61,15 @@ export const getListShipment = async (req: Request, res: Response) => {
 }
 
 export const insertShipment = async (req: Request, res: Response) => {
-  let data = req.body;
+  const dataObj: postShipment = req.body;
+
   await pool.query("SELECT *from function_shipment_insertar($1,$2, $3, $4, $5, $6);", [
-    data.id_branch,
-    data.code,
-    data.name,
-    data.id_transport,
-    data.description,
-    data.status,
+    dataObj.id_branch,
+    dataObj.code,
+    dataObj.name,
+    dataObj.id_transport,
+    dataObj.description,
+    dataObj.status,
   ],
   (err, response, fields) => {
     if (!err) {
@@ -83,7 +87,8 @@ export const insertShipment = async (req: Request, res: Response) => {
 }
 
 export const readShipment = async (req: Request, res: Response) => {
-  let data = req.query;
+  const data = req.query;
+
   await pool.query("SELECT *from function_shipment_ver($1);", [
     data.id
   ],
@@ -103,14 +108,14 @@ export const readShipment = async (req: Request, res: Response) => {
 }
 
 export const updateShipment = async (req: Request, res: Response) => {
-  let data = req.body;
+  const dataObj: postShipment = req.body;
   
   await pool.query("SELECT *from function_shipment_actualizar($1,$2,$3,$4,$5);", [
-    data.id,
-    data.name,
-    data.description,
-    data.id_transport,
-    data.status
+    dataObj.id,
+    dataObj.name,
+    dataObj.description,
+    dataObj.id_transport,
+    dataObj.status
   ],
   (err, response, fields) => {
     if (!err) {
@@ -128,7 +133,8 @@ export const updateShipment = async (req: Request, res: Response) => {
 }
 
 export const getCargarTransport = async (req: Request, res: Response) => {
-  let data = req.query;
+  const data = req.query;
+
   await pool.query("SELECT *from function_transport_cargar($1);", [
     data.id_branch
   ],

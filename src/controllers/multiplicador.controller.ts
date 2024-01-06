@@ -5,6 +5,8 @@ import * as pg from "pg";
 const { Pool } = pg;
 
 const pool = conexion();
+import { postMultiplicador } from "../interface/multiplicador";
+
 
 export const getMultiplicador = async (req: Request, res: Response) => {
   const { id_shipment, containers, id_branch } = req.body;
@@ -36,7 +38,8 @@ export const getMultiplicador = async (req: Request, res: Response) => {
 };
 
 export const getListMultiplicador = async (req: Request, res: Response) => {
-  let data = req.query;
+  const data = req.query;
+
   await pool.query("SELECT *from function_multiplicador_listar($1,$2, $3, $4, $5, $6);", [
     data.id_branch,
     data.code ? data.code : null,
@@ -61,7 +64,8 @@ export const getListMultiplicador = async (req: Request, res: Response) => {
 };
 
 export const readMultiplicador = async (req: Request, res: Response) => {
-  let data = req.query;
+  const data = req.query;
+
   await pool.query("SELECT *from function_multiplicador_ver($1);", [
     data.id
   ],
@@ -81,15 +85,15 @@ export const readMultiplicador = async (req: Request, res: Response) => {
 };
 
 export const updateMultiplicador = async (req: Request, res: Response) => {
-  let data = req.body;
+  const dataObj: postMultiplicador = req.body;
   
   await pool.query("SELECT *from function_multiplicador_actualizar($1,$2,$3,$4,$5, $6);", [
-    data.id,
-    data.name,
-    data.description,
-    data.id_shipment,
-    data.valor,
-    data.status
+    dataObj.id,
+    dataObj.name,
+    dataObj.description,
+    dataObj.id_shipment,
+    dataObj.valor,
+    dataObj.status
   ],
   (err, response, fields) => {
     if (!err) {
@@ -107,7 +111,8 @@ export const updateMultiplicador = async (req: Request, res: Response) => {
 };
 
 export const getCargarShipment = async (req: Request, res: Response) => {
-  let data = req.query;
+  const data = req.query;
+
   await pool.query("SELECT *from function_shipment_cargar($1);", [
     data.id_branch
   ],

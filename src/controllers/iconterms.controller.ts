@@ -4,6 +4,7 @@ import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
 const { Pool } = pg;
 const pool = conexion();
+import { postIncoterms } from "../interface/incoterms";
 
 export const getIncoterms = async (req: Request, res: Response) => {
   await pool.query(
@@ -33,7 +34,8 @@ export const getIncoterms = async (req: Request, res: Response) => {
 };
 
 export const getListIncoterms = async (req: Request, res: Response) => {
-  let data = req.query;
+  const data = req.query;
+
   await pool.query("SELECT *from function_incoterms_listar($1,$2, $3, $4);", [
     data.id_branch,
     data.name ? data.name : null,
@@ -56,12 +58,13 @@ export const getListIncoterms = async (req: Request, res: Response) => {
 }
 
 export const insertIncoterms = async (req: Request, res: Response) => {
-  let data = req.body;
+  const dataObj: postIncoterms = req.body;
+
   await pool.query("SELECT *from function_incoterms_insertar($1,$2, $3, $4);", [
-    data.id_branch,
-    data.name,
-    data.description,
-    data.status
+    dataObj.id_branch,
+    dataObj.name,
+    dataObj.description,
+    dataObj.status
   ],
   (err, response, fields) => {
     if (!err) {
@@ -80,7 +83,8 @@ export const insertIncoterms = async (req: Request, res: Response) => {
 }
 
 export const readIncoterms = async (req: Request, res: Response) => {
-  let data = req.query;
+  const data = req.query;
+
   await pool.query("SELECT *from function_incoterms_ver($1);", [
     data.id
   ],
@@ -101,11 +105,12 @@ export const readIncoterms = async (req: Request, res: Response) => {
 }
 
 export const updateIncoterms = async (req: Request, res: Response) => {
-  let data = req.body;
+  const dataObj: postIncoterms = req.body;
+
   await pool.query("SELECT *from function_incoterms_actualizar($1,$2, $3);", [
-    data.id,
-    data.description,
-    data.status
+    dataObj.id,
+    dataObj.description,
+    dataObj.status
   ],
   (err, response, fields) => {
     if (!err) {

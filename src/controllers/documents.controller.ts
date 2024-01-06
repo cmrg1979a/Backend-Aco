@@ -5,6 +5,8 @@ import * as pg from "pg";
 const { Pool } = pg;
 
 const pool = conexion();
+import { postDocuments } from "../interface/documentos";
+
 
 export const getDocumentsList = async (req: Request, res: Response) => {
   const { id_pais } = req.body;
@@ -29,7 +31,8 @@ export const getDocumentsList = async (req: Request, res: Response) => {
 };
 
 export const getListDocumentsByBranch = async (req: Request, res: Response) => {
-  let data = req.query;
+  const data = req.query;
+
   await pool.query("SELECT *from function_documents_listar($1,$2, $3, $4, $5);", [
     data.code ? data.code : null,
     data.name ? data.name : null,
@@ -53,12 +56,13 @@ export const getListDocumentsByBranch = async (req: Request, res: Response) => {
 }
 
 export const insertDocuments = async (req: Request, res: Response) => {
-  let data = req.body;
+  const dataObj: postDocuments = req.body;
+
   await pool.query("SELECT *from function_insertar_documents($1,$2, $3, $4);", [
-    data.name,
-    data.description,
-    data.status,
-    data.id_branch
+    dataObj.name,
+    dataObj.description,
+    dataObj.status,
+    dataObj.id_branch
   ],
   (err, response, fields) => {
     if (!err) {
@@ -76,7 +80,7 @@ export const insertDocuments = async (req: Request, res: Response) => {
 }
 
 export const readDocuments = async (req: Request, res: Response) => {
-  let data = req.query;
+  const data = req.query;
   await pool.query("SELECT *from function_documents_ver($1);", [
     data.id
   ],
@@ -96,12 +100,13 @@ export const readDocuments = async (req: Request, res: Response) => {
 }
 
 export const updateDocuments = async (req: Request, res: Response) => {
-  let data = req.body;
+  const dataObj: postDocuments = req.body;
+
   await pool.query("SELECT *from function_documents_actualizar($1,$2, $3, $4);", [
-    data.id,
-    data.name,
-    data.description,
-    data.status
+    dataObj.id,
+    dataObj.name,
+    dataObj.description,
+    dataObj.status
   ],
   (err, response, fields) => {
     if (!err) {

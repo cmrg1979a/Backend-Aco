@@ -5,8 +5,11 @@ import * as pg from "pg";
 const { Pool } = pg;
 const pool = conexion();
 
+import { postIngresos } from "../interface/ingresos";
+
 export const getListIngreso = async (req: Request, res: Response) => {
-  let data = req.query;
+  const data = req.query;
+
   await pool.query("SELECT *from function_ingreso_listar($1,$2, $3, $4, $5);", [
     data.id_branch,
     data.code ? data.code : null,
@@ -30,13 +33,14 @@ export const getListIngreso = async (req: Request, res: Response) => {
 }
 
 export const insertIngreso = async (req: Request, res: Response) => {
-  let data = req.body;
+  const dataObj: postIngresos = req.body;
+
   await pool.query("SELECT *from function_ingreso_insertar($1, $2, $3, $4, $5);", [
-    data.id_branch,
-    data.code,
-    data.description,
-    data.calculoflag,
-    data.status,
+    dataObj.id_branch,
+    dataObj.code,
+    dataObj.description,
+    dataObj.calculoflag,
+    dataObj.status,
   ],
   (err, response, fields) => {
     if (!err) {
@@ -54,7 +58,8 @@ export const insertIngreso = async (req: Request, res: Response) => {
 }
 
 export const readIngreso = async (req: Request, res: Response) => {
-  let data = req.query;
+  const data = req.query;
+  
   await pool.query("SELECT *from function_ingreso_ver($1);", [
     data.id
   ],
@@ -74,12 +79,13 @@ export const readIngreso = async (req: Request, res: Response) => {
 }
 
 export const updateIngreso = async (req: Request, res: Response) => {
-  let data = req.body;
+  const dataObj: postIngresos = req.body;
+
   await pool.query("SELECT *from function_ingreso_actualizar($1,$2, $3, $4);", [
-    data.id,
-    data.description,
-    data.calculoflag,
-    data.status,
+    dataObj.id,
+    dataObj.description,
+    dataObj.calculoflag,
+    dataObj.status,
   ],
   (err, response, fields) => {
     if (!err) {
@@ -96,11 +102,10 @@ export const updateIngreso = async (req: Request, res: Response) => {
   });
 }
 
-export const validateCodeIngreso = async (req: Request, res: Response) => {
-  let data = req.query;
+export const validateCodeIngresoNuevo = async (req: Request, res: Response) => {
+  const data = req.query;
 
-  await pool.query("SELECT *from function_validar_codigo_ingreso($1,$2, $3);", [
-    data.id,
+  await pool.query("SELECT *from function_validar_codigo_nuevo_ingreso($1,$2);", [
     data.id_branch,
     data.code,
   ],
