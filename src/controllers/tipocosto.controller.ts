@@ -3,11 +3,11 @@ import { conexion } from "../routes/databasePGOp";
 const pool = conexion();
 
 export const getTipoCostoPorEmbarque = async (req: Request, res: Response) => {
-  const { id_shipment } = req.query;
+  const { id_modality, id_shipment } = req.query;
 
   await pool.query(
-    "SELECT * FROM function_tipocosto_embarque_cargar($1)",
-    [id_shipment],
+    "SELECT * FROM function_tipocosto_embarque_cargar($1,$2)",
+    [id_modality, id_shipment],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -24,4 +24,3 @@ export const getTipoCostoPorEmbarque = async (req: Request, res: Response) => {
     }
   );
 };
-

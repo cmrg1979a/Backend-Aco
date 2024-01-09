@@ -50,7 +50,7 @@ export const getListSex = async (req: Request, res: Response) => {
       console.log(err);
     }
   });
-}
+};
 
 export const insertSex = async (req: Request, res: Response) => {
   const dataObj: postSex = req.body;
@@ -75,7 +75,7 @@ export const insertSex = async (req: Request, res: Response) => {
       console.log(err);
     }
   });
-}
+};
 
 export const readSex = async (req: Request, res: Response) => {
   const data = req.query;
@@ -96,7 +96,7 @@ export const readSex = async (req: Request, res: Response) => {
       console.log(err);
     }
   });
-}
+};
 
 export const updateSex = async (req: Request, res: Response) => {
   const dataObj: postSex = req.body;
@@ -121,7 +121,7 @@ export const updateSex = async (req: Request, res: Response) => {
       console.log(err);
     }
   });
-}
+};
 
 
 export const validateAcronymInTableSexNuevo = async (req: Request, res: Response) => {
@@ -167,4 +167,4 @@ export const validateAcronymInTableSexEditar = async (req: Request, res: Respons
       console.log(err);
     }
   });
-}
+};
