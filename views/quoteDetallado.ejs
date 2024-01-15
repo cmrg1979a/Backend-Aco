@@ -312,7 +312,10 @@
       </tbody>
     </table>
     <%}%> <%}%> <% if(tipo == 'AGRUPADO'){%>
-    <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
+    <table
+      width="100%"
+      style="padding: 0 2rem; border-collapse: collapse; margin: 1rem 0 0 0"
+    >
       <thead>
         <tr class="subrayado">
           <th class="align-left" colspan="6">CONCEPTOS DE GASTOS</th>
@@ -327,7 +330,10 @@
       </tbody>
     </table>
     <%}%>
-    <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
+    <table
+      width="100%"
+      style="padding: 0 2rem; border-collapse: collapse; margin: 1rem 0 0 0"
+    >
       <tbody>
         <tr
           style="
@@ -389,75 +395,102 @@
       </tr>
     </table>
 
-    <table
-      width="100%"
-      style="
-        padding: 0 2rem;
-        border-collapse: collapse;
-        margin: 1rem 0 0 0 !important;
-      "
-    >
-      <%if (incluye.length>0) {%>
-      <th class="align-left">
-        <b> <span style="color: green">&#10004;</span> Esta oferta incluye</b>
-      </th>
-      <% incluye.forEach(element => {%>
-      <tr>
-        <td><%=element.name%></td>
-      </tr>
-      <%});%> <%}%>
-    </table>
-    <table
-      width="100%"
-      style="
-        padding: 0 2rem;
-        border-collapse: collapse;
-        margin: 0.5rem 0 0 0 !important;
-      "
-    >
-      <%if (noincluye.length>0) {%>
-      <th class="align-left">
-        <b> <span style="color: red">&#10007;</span> Esta oferta NO incluye</b>
-      </th>
-      <% noincluye.forEach(element => {%>
-
-      <tr>
-        <td><%=element.name%></td>
-      </tr>
-      <%});%> <%}%>
-    </table>
-    <table
-      width="100%"
-      style="
-        padding: 0 2rem;
-        border-collapse: collapse;
-        margin: 0.5rem 0 0 0 !important;
-      "
-    >
-      <th class="align-left">
-        <b><span style="color: blue">&#9888;</span> Notas Importantes </b>
-      </th>
-
-      <%if (importante.length>0) {%> <% importante.forEach(element => {%>
-      <tr>
-        <td><%=element.name%></td>
-      </tr>
-      <%});%> <%}%>
-    </table>
-
+    <div style="padding-top: 5px">
+      <div class="item-footer-left t-footer">
+        <p
+          style="
+            margin: 0;
+            padding-bottom: 5px;
+            font-family: sans-serif;
+            text-transform: uppercase;
+            margin: 1rem 0 0 0;
+          "
+        >
+          <b
+            ><span style="color: green; font-size: 2em">&#10004;</span>
+            <u>ESTA OFERTA INCLUYE </u></b
+          >
+        </p>
+        <%if (incluye.length>0) {%> <% incluye.forEach(element => {%>
+        <p
+          style="
+            margin: 0;
+            padding-bottom: 5px;
+            font-family: sans-serif;
+            text-transform: uppercase;
+          "
+        >
+          <%=element.name%>
+        </p>
+        <%});%> <%}%>
+        <p
+          style="
+            margin: 0;
+            padding-bottom: 5px;
+            font-family: sans-serif;
+            text-transform: uppercase;
+            margin: 1rem 0 0 0;
+          "
+        >
+          <b
+            ><span style="color: red; font-size: 2em">&#10007;</span>
+            <u> ESTA OFERTA NO INCLUYE </u>
+          </b>
+        </p>
+        <%if (noincluye.length>0) {%> <% noincluye.forEach(element => {%>
+        <p
+          style="
+            margin: 0;
+            padding-bottom: 5px;
+            font-family: sans-serif;
+            text-transform: uppercase;
+          "
+        >
+          <%=element.name%>
+        </p>
+        <%});%> <%}%>
+      </div>
+      <div class="item-footer-rigth t-footer">
+        <p
+          style="
+            margin: 0;
+            padding-bottom: 5px;
+            font-family: sans-serif;
+            text-transform: uppercase;
+            margin: 1rem 0 0 0;
+          "
+        >
+          <b>
+            <span style="color: darkgoldenrod; font-size: 2em">&#9888;</span>
+            <u> IMPORTANTE </u>
+          </b>
+        </p>
+        <%if (importante.length>0) {%> <% importante.forEach(element => {%>
+        <p
+          style="
+            margin: 0;
+            padding-bottom: 5px;
+            font-family: sans-serif;
+            text-transform: uppercase;
+          "
+        >
+          <%=element.name%>
+        </p>
+        <%});%> <%}%>
+      </div>
+    </div>
     <div id="pageFooter" style="border-top: 1px solid #ddd; padding-top: 5px">
       <div class="item-center t-footer">
         <p
           style="
-            color: #666;
             margin: 0;
             padding-bottom: 5px;
             text-align: right;
             font-family: sans-serif;
-            font-size: 0.8em;
+            font-size: 0.7em;
           "
         >
-          <%=business_name%><%=address%>
+          <%=business_name%><%=address%> Página {{ page }} de {{ pages }}
         </p>
       </div>
     </div>
@@ -559,9 +592,6 @@
   }
   .pt-5 {
     padding: 0.2rem 0rem !important;
-  }
-  .mt-5 {
-    margin-top: 0.2rem 0rem !important;
   }
   .align-left {
     text-align: left;

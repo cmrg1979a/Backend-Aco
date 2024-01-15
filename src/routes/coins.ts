@@ -10,7 +10,7 @@ import {
     updateCoins,
 } from "../controllers/coins.controller";
 
-router.post("/getCoinsList", TokenValidation, getCoinsList);
+router.get("/getCoinsList", TokenValidation, getCoinsList);
 
 router.get("/listar_coins/", TokenValidation, getListCoinsByBranch);
 router.post("/insertar_coins/", TokenValidation, insertCoins);

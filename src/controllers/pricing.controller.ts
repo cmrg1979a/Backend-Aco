@@ -78,6 +78,9 @@ export const setQuote = async (req: Request, res: Response) => {
   let esorigenflag_cc = costocotizacion.map((item: any) => {
     return item.esorigenflag;
   });
+  let esfleteflag_cc = costocotizacion.map((item: any) => {
+    return item.esfleteflag;
+  });
   let eslocalflag_cc = costocotizacion.map((item: any) => {
     return item.eslocalflag;
   });
@@ -126,7 +129,7 @@ export const setQuote = async (req: Request, res: Response) => {
   });
 
   await pool.query(
-    "SELECT * FROM table_quote_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53,$54,$55,$56,$57,$58,$59,$60,$61,$62,$63)",
+    "SELECT * FROM table_quote_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53,$54,$55,$56,$57,$58,$59,$60,$61,$62,$63,$64)",
     [
       dataObj.id_marketing ? dataObj.id_marketing : null,
       dataObj.id_entitie ? dataObj.id_entitie : null,
@@ -179,6 +182,7 @@ export const setQuote = async (req: Request, res: Response) => {
       cif_cc,
       seguro_cc,
       ubptotal_cc,
+      esfleteflag_cc,
       esorigenflag_cc,
       eslocalflag_cc,
       sadpuanaflag_cc,
@@ -423,6 +427,9 @@ export const putQuote = async (req: Request, res: Response) => {
   let ubptotal_cc = costocotizacion.map((item: any) => {
     return item.ubptotal ? item.ubptotal : null;
   });
+  let esfleteflag_cc = costocotizacion.map((item: any) => {
+    return item.esfleteflag ? item.esfleteflag : null;
+  });
   let esorigenflag_cc = costocotizacion.map((item: any) => {
     return item.esorigenflag ? item.esorigenflag : null;
   });
@@ -508,7 +515,7 @@ export const putQuote = async (req: Request, res: Response) => {
   let pid = dataObj.id_quote;
   let statusquote = dataObj.statusquote;
   await pool.query(
-    "SELECT * FROM table_quote_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53,$54,$55,$56,$57,$58,$59,$60,$61,$62,$63,$64,$65,$66,$67,$68,$69,$70,$71,$72,$73)",
+    "SELECT * FROM table_quote_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53,$54,$55,$56,$57,$58,$59,$60,$61,$62,$63,$64,$65,$66,$67,$68,$69,$70,$71,$72,$73,$74)",
     [
       dataObj.id_marketing ? dataObj.id_marketing : null,
       dataObj.id_entitie ? dataObj.id_entitie : null,
@@ -558,6 +565,7 @@ export const putQuote = async (req: Request, res: Response) => {
       cif_cc,
       seguro_cc,
       ubptotal_cc,
+      esfleteflag_cc,
       esorigenflag_cc,
       eslocalflag_cc,
       sadpuanaflag_cc,
@@ -1066,7 +1074,6 @@ export const getListCalls = async (req: Request, res: Response) => {
   );
 };
 
-
 export const quoteCargarNoAsignadosHouse = async (
   req: Request,
   res: Response
@@ -1240,6 +1247,10 @@ export const listadoCotizacionMercadeo = async (
 
 export const quotePreviewTotales = async (req: Request, res: Response) => {
   let {
+    TipoCostos,
+    isImport,
+    datosOrigen,
+    totalOrigen,
     code,
     iso,
     id_branch,
@@ -1285,6 +1296,7 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
   } = req.body;
   let fecha = moment().format("DD-MM-YYYY");
 
+
   let servicios = getServicios({
     flete: flete,
     almacen: almacen,
@@ -1301,6 +1313,10 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
   ejs.renderFile(
     path.join(__dirname, "../views/", "quoteDetallado.ejs"),
     {
+      TipoCostos,
+      isImport,
+      datosOrigen,
+      totalOrigen,
       iso,
       servicios,
       lengthServ,

@@ -205,11 +205,15 @@
         </tr>
       </tbody>
     </table>
-    <% if(tipo != 'AGRUPADO'){%> <% if (totalFlete!= '$0.00') {%>
+    <% if(tipo != 'AGRUPADO'){%> <% if (totalFlete!= '$0.00' && isImport) {%>
     <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
       <thead>
         <tr class="subrayado">
-          <th class="align-left" colspan="5">FLETES Y GASTOS DE ORIGEN</th>
+          <th class="align-left" colspan="5">
+            <% var matchingTipoCostos = TipoCostos.filter((v) => v.codigo ==
+            "FL"); var result = matchingTipoCostos.length > 0 ?
+            matchingTipoCostos[0].name : ""; %> <%= result %>
+          </th>
           <th class="align-right" colspan="1">MONTO</th>
         </tr>
       </thead>
@@ -231,11 +235,48 @@
         </tr>
       </tbody>
     </table>
-    <%}%> <%}%> <% if(tipo != 'AGRUPADO'){%> <% if (totalLocales!= '$0.00') {%>
+    <%}%> <%}%> 
+    <% if(tipo != 'AGRUPADO'){%> <% if (totalOrigen!= '$0.00') {%>
     <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
       <thead>
         <tr class="subrayado">
-          <th class="align-left" colspan="5">GASTOS LOGÍSTICOS EN <%=pais%></th>
+          <th class="align-left" colspan="5">
+            <% var matchingTipoCostos = TipoCostos.filter((v) => v.codigo ==
+            "OR"); var result = matchingTipoCostos.length > 0 ?
+            matchingTipoCostos[0].name : ""; %> <%= result %>
+          </th>
+          <th class="align-right" colspan="1">MONTO</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% datosOrigen.forEach(element => {%>
+        <tr>
+          <td class="align-left" colspan="5"><%=element.name%></td>
+          <td class="align-right" colspan="1"><%=element.valor%></td>
+        </tr>
+        <%});%>
+        <tr
+          style="
+            border-top: 1.5px solid black;
+            border-bottom: 1.5px solid black;
+          "
+        >
+          <td class="align-right" colspan="5">Total:</td>
+          <td class="align-right" colspan="1"><%=totalOrigen %></td>
+        </tr>
+      </tbody>
+    </table>
+    <%}%> <%}%> 
+    
+    <% if(tipo != 'AGRUPADO'){%> <% if (totalLocales!= '$0.00') {%>
+    <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
+      <thead>
+        <tr class="subrayado">
+          <th class="align-left" colspan="5">
+            <% var matchingTipoCostos = TipoCostos.filter((v) => v.codigo ==
+            "LO"); var result = matchingTipoCostos.length > 0 ?
+            matchingTipoCostos[0].name : ""; %> <%= result %>
+          </th>
           <th class="align-right" colspan="1">MONTO</th>
         </tr>
       </thead>
@@ -258,38 +299,15 @@
         </tr>
       </tbody>
     </table>
-    <%}%> <%}%> <% if(tipo != 'AGRUPADO'){%> <% if (totalAlmacenes!= '$0.00')
-    {%>
-    <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
-      <thead>
-        <tr class="subrayado">
-          <th class="align-left" colspan="5">ALMACÉN</th>
-          <th class="align-right" colspan="1">MONTO</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% datosAlmacenes.forEach(element => {%>
-        <tr>
-          <td class="align-left" colspan="5"><%=element.name%></td>
-          <td class="align-right" colspan="1"><%=element.valor%></td>
-        </tr>
-        <%});%>
-        <tr
-          style="
-            border-top: 1.5px solid black;
-            border-bottom: 1.5px solid black;
-          "
-        >
-          <td class="align-right" colspan="5">Total:</td>
-          <td class="align-right" colspan="1"><%=totalAlmacenes %></td>
-        </tr>
-      </tbody>
-    </table>
     <%}%> <%}%> <% if(tipo != 'AGRUPADO'){%> <% if (totalAduanas!= '$0.00') {%>
     <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
       <thead>
         <tr class="subrayado">
-          <th class="align-left" colspan="5">SERVICIOS DE ADUANA</th>
+          <th class="align-left" colspan="5">
+            <% var matchingTipoCostos = TipoCostos.filter((v) => v.codigo ==
+            "AD"); var result = matchingTipoCostos.length > 0 ?
+            matchingTipoCostos[0].name : ""; %> <%= result %>
+          </th>
           <th class="align-right" colspan="1">MONTO</th>
         </tr>
       </thead>
@@ -308,6 +326,71 @@
         >
           <td class="align-right" colspan="5">Total:</td>
           <td class="align-right" colspan="1"><%=totalAduanas %></td>
+        </tr>
+      </tbody>
+    </table>
+    <%}%> <%}%> 
+    <% if(tipo != 'AGRUPADO'){%> <% if (totalFlete!= '$0.00' &&
+    !isImport) {%>
+    <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
+      <thead>
+        <tr class="subrayado">
+          <th class="align-left" colspan="5">
+            <% var matchingTipoCostos = TipoCostos.filter((v) => v.codigo ==
+            "FL"); var result = matchingTipoCostos.length > 0 ?
+            matchingTipoCostos[0].name : ""; %> <%= result %>
+          </th>
+          <th class="align-right" colspan="1">MONTO</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% datosFlete.forEach(element => {%>
+        <tr>
+          <td class="align-left" colspan="5"><%=element.name%></td>
+          <td class="align-right" colspan="1"><%=element.valor%></td>
+        </tr>
+        <%});%>
+        <tr
+          style="
+            border-top: 1.5px solid black;
+            border-bottom: 1.5px solid black;
+          "
+        >
+          <td class="align-right" colspan="5">Total:</td>
+          <td class="align-right" colspan="1"><%=totalFlete %></td>
+        </tr>
+      </tbody>
+    </table>
+    <%}%> <%}%> 
+   
+    <% if(tipo != 'AGRUPADO'){%> <% if (totalAlmacenes!= '$0.00')
+    {%>
+    <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
+      <thead>
+        <tr class="subrayado">
+          <th class="align-left" colspan="5">
+            <% var matchingTipoCostos = TipoCostos.filter((v) => v.codigo ==
+            "AL"); var result = matchingTipoCostos.length > 0 ?
+            matchingTipoCostos[0].name : ""; %> <%= result %>
+          </th>
+          <th class="align-right" colspan="1">MONTO</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% datosAlmacenes.forEach(element => {%>
+        <tr>
+          <td class="align-left" colspan="5"><%=element.name%></td>
+          <td class="align-right" colspan="1"><%=element.valor%></td>
+        </tr>
+        <%});%>
+        <tr
+          style="
+            border-top: 1.5px solid black;
+            border-bottom: 1.5px solid black;
+          "
+        >
+          <td class="align-right" colspan="5">Total:</td>
+          <td class="align-right" colspan="1"><%=totalAlmacenes %></td>
         </tr>
       </tbody>
     </table>
