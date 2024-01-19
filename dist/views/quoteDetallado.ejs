@@ -449,18 +449,9 @@
           <td class="align-right" colspan="2">$<%=element.valor%></td>
         </tr>
         <%});%>
-        <tr
-          style="
-            border-top: 1.5px solid black;
-            border-bottom: 1.5px solid black;
-          "
-        >
-          <td class="align-right" colspan="5">Total</td>
-          <td class="align-right" colspan="1"><%= totalImpuesto%></td>
-        </tr>
       </tbody>
     </table>
-    <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
+    <table width="100%" style="padding: 0 2rem; border-collapse: collapse;margin-top: 2px;">
       <tr style="border-bottom: 1.5px solid black">
         <td class="align-left st-bg" colspan="5">
           TOTAL DE IMPUESTO <% if (iso=='9589') {%> SUNAT <%}%> <% if

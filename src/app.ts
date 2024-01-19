@@ -5,8 +5,8 @@ import path from "path";
 import multer from "multer";
 import bodyParser from "body-parser";
 import * as pg from "pg";
-const { Pool } = pg;
 require("dotenv").config();
+const { Pool } = pg;
 
 const corsOptions = {
   origin: "*",
@@ -15,11 +15,6 @@ const corsOptions = {
 };
 
 const corsMiddleware = cors(corsOptions);
-let host = "";
-let user = "";
-let password = "";
-let port = "";
-let database = "";
 
 /**PROUCCIÓN */
 // const pool = new Pool({
@@ -41,16 +36,6 @@ const pool = new Pool({
   // database: "db_op_main_01",
   database: "db_op_main_qa",
 });
-export function conexion() {
-  const pool = new Pool({
-    host: host,
-    user: user,
-    password: password,
-    port: port,
-    database: database,
-  });
-  return pool;
-}
 
 const app: Application = express();
 
@@ -92,6 +77,7 @@ import depositoRoute from "./routes/deposito";
 import enterpriseRoute from "./routes/enterprise";
 import accountRoute from "./routes/account";
 import banksRoute from "./routes/banks";
+import { addPath } from "graphql/jsutils/Path";
 import filesRoute from "./routes/files";
 import spaymentRoute from "./routes/spayment";
 import versionRoute from "./routes/version";
@@ -201,7 +187,7 @@ app.post("/uploadAllPath", function (req, res) {
     if (err) {
       return res.end("Error uploading file.");
     }
-    Pool.query(
+    pool.query(
       "select * from Table_AllPath_insertar($1,$2,$3,$4,$5,$6 )",
       [newName, type, size, process.env.RUTA_FILE + ruta, fileName[0], 1],
       (err, response, fields) => {
