@@ -5,8 +5,8 @@ import path from "path";
 import multer from "multer";
 import bodyParser from "body-parser";
 import * as pg from "pg";
-require("dotenv").config();
 const { Pool } = pg;
+require("dotenv").config();
 
 const corsOptions = {
   origin: "*",
@@ -222,7 +222,7 @@ app.post("/uploadAllPath", function (req, res) {
     if (err) {
       return res.end("Error uploading file.");
     }
-    pool.query(
+    Pool.query(
       "select * from Table_AllPath_insertar($1,$2,$3,$4,$5,$6 )",
       [newName, type, size, process.env.RUTA_FILE + ruta, fileName[0], 1],
       (err, response, fields) => {
