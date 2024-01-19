@@ -473,7 +473,12 @@
         <td class="align-right" colspan="1"><%=totalImpuestosIGV %></td>
       </tr>
       <tr style="border-bottom: 1.5px solid black">
-        <td class="align-left st-bg" colspan="5">TOTAL SERVICO PIC CARGO</td>
+        <td class="align-left st-bg" colspan="5">TOTAL SERVICO PIC CARGO
+        <% if (impuesto.length>0) { %>
+          + IMPUESTO DE ADUANA SUNAT 
+          <%} %>
+        
+        </td>
         <td class="align-right" colspan="1"><%=total%></td>
       </tr>
     </table>

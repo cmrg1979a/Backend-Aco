@@ -15,6 +15,32 @@ const corsOptions = {
 };
 
 const corsMiddleware = cors(corsOptions);
+let host = "";
+let user = "";
+let password = "";
+let port = "";
+let database = "";
+if (process.env.NODE_ENV == "development") {
+  host = "67.205.129.62";
+  user = "chainsolver";
+  password = "Fr3sc0l1t4+";
+  port = "5432";
+  database = "db_op_main_qa_2";
+}
+if (process.env.NODE_ENV == "test") {
+  host = "67.205.129.62";
+  user = "chainsolver";
+  password = "Fr3sc0l1t4+";
+  port = "5432";
+  database = "db_op_main_qa";
+}
+if (process.env.NODE_ENV == "production") {
+  host = "10.116.0.2";
+  user = "postgres";
+  password = "@Developer2021Pic";
+  port = "5432";
+  database = "db_op_main_01";
+}
 
 /**PROUCCIÓN */
 // const pool = new Pool({
@@ -27,15 +53,25 @@ const corsMiddleware = cors(corsOptions);
 // });
 /** DESARROLLO */
 // Cache de opciones de cors
-const pool = new Pool({
-  host: "67.205.129.62",
-  user: "chainsolver",
-  password: "Fr3sc0l1t4+",
-  port: "5432",
-  // database: "db_op_main_dev",
-  // database: "db_op_main_01",
-  database: "db_op_main_qa",
-});
+// const pool = new Pool({
+//   host: "67.205.129.62",
+//   user: "chainsolver",
+//   password: "Fr3sc0l1t4+",
+//   port: "5432",
+//   // database: "db_op_main_dev",
+//   // database: "db_op_main_01",
+//   database: "db_op_main_qa",
+// });
+export function conexion() {
+  const pool = new Pool({
+    host: host,
+    user: user,
+    password: password,
+    port: port,
+    database: database,
+  });
+  return pool;
+}
 
 const app: Application = express();
 
@@ -77,7 +113,6 @@ import depositoRoute from "./routes/deposito";
 import enterpriseRoute from "./routes/enterprise";
 import accountRoute from "./routes/account";
 import banksRoute from "./routes/banks";
-import { addPath } from "graphql/jsutils/Path";
 import filesRoute from "./routes/files";
 import spaymentRoute from "./routes/spayment";
 import versionRoute from "./routes/version";

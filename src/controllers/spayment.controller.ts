@@ -992,7 +992,7 @@ export const getReporteCXP = async (req: Request, res: Response) => {
       req.query.llegada ? req.query.llegada : null,
       req.query.desde ? req.query.desde : null,
       req.query.hasta ? req.query.hasta : null,
-      req.query.nro_operacion ? req.query.nro_operacion : null,
+      req.query.nro_expediente ? req.query.nro_expediente : null,
     ],
     (errs, response, fields) => {
       if (!errs) {

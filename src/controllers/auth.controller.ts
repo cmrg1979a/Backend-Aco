@@ -70,66 +70,46 @@ export const singup = async (req: Request, res: Response) => {
   );
 };
 
-
-
 export const validToken = async (req: Request, res: Response) => {
   const token = req.header("auth-token");
   const secret = process.env.TOKEN_SECRET || "tokentest"; // La clave secreta utilizada para firmar el JWT
   try {
-    // Verificar y decodificar el JWT
     const decodedToken = jwt.verify(token, secret) as JwtPayload;
-
-    // Obtener la fecha de expiración del JWT
     const expirationTimestamp = decodedToken.exp;
-
-    // Obtener la hora actual
     const currentTimestamp = Math.floor(Date.now() / 1000);
-
-    // Verificar si el JWT ha expirado
+    
     if (expirationTimestamp && expirationTimestamp <= currentTimestamp) {
-      res.json({
+      return res.json({
         status: 500,
         statusBol: true,
         estadoflag: false,
         mensaje: "El JWT ha expirado",
       });
-
-      // Aquí puedes realizar las acciones que desees cuando el JWT haya expirado
     } else {
-      res.json({
+      return res.json({
         status: 500,
         statusBol: true,
         estadoflag: true,
         mensaje: "El JWT aún es válido",
       });
-
-      // Aquí puedes realizar las acciones que desees cuando el JWT aún sea válido
     }
   } catch (error) {
     if (error instanceof TokenExpiredError) {
-      res.json({
+      return res.json({
         status: 500,
         statusBol: true,
         estadoflag: false,
         mensaje: "Error: JWT expirado",
       });
-
-      // Aquí puedes realizar las acciones que desees cuando el JWT haya expirado
     }
     if (error instanceof JsonWebTokenError) {
-      res.json({
+      return res.json({
         status: 500,
         statusBol: true,
         estadoflag: false,
         mensaje: "Error: JWT expirado",
       });
-    } else {
-      console.log("Error al verificar el JWT:", error.message);
     }
-    // if else(error instanceof JsonWebTokenError) else {
-    //   console.log("Error al verificar el JWT:", error.message);
-    //   // Aquí puedes manejar otros errores de verificación del JWT
-    // }
   }
 };
 
