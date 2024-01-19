@@ -4,5 +4,5 @@ export interface postGasto {
   code: string;
   description: string;
   calculoflag: boolean;
-  status: number;
+  status: boolean;
 }
