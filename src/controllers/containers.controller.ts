@@ -11,7 +11,6 @@ export const getContainers = async (req: Request, res: Response) => {
   await pool.query(
     `SELECT * FROM Table_Containers_listar();`,
     (err, response, fields) => {
-
       if (!err) {
         let rows = response.rows;
         if (!!rows[0].estadoflag) {
@@ -72,103 +71,119 @@ export const deleteContainers = async (req: Request, res: Response) => {
   );
 };
 
-export const getListContainersByBranch = async (req: Request, res: Response) => {
-  let data = req.query;
-  await pool.query("SELECT *from function_containers_listar($1,$2, $3, $4, $5);", [
-    data.id_branch,
-    data.code ? data.code : null,
-    data.name ? data.name : null,
-    data.description ? data.description : null,
-    data.status ? data.status : null,
-  ],
-  (err, response, fields) => {
-    if (!err) {
-      let rows = response.rows;
-      res.json({
-        status: 200,
-        estadoflag: rows[0].estadoflag,
-        mensaje: rows[0].mensaje,
-        data: rows
-      })
-    } else {
-      console.log(err);
+export const getListContainersByBranch = async (
+  req: Request,
+  res: Response
+) => {
+  const data = req.query;
+
+  await pool.query(
+    "SELECT *from function_containers_listar($1,$2, $3, $4, $5);",
+    [
+      data.id_branch,
+      data.code ? data.code : null,
+      data.name ? data.name : null,
+      data.description ? data.description : null,
+      data.status ? data.status : null,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
     }
-  });
-}
+  );
+};
 
 export const insertContainers = async (req: Request, res: Response) => {
-  let data = req.body;
-  await pool.query("SELECT *from function_containers_insertar($1,$2, $3, $4, $5, $6, $7, $8, $9);", [
-    data.id_branch,
-    data.name,
-    data.description,
-    data.long,
-    data.width,
-    data.height,
-    data.maximumweight,
-    data.maximunvolumen,
-    data.status,
-  ],
-  (err, response, fields) => {
-    if (!err) {
-      let rows = response.rows;
-      res.json({
-        status: 200,
-        estadoflag: rows[0].estadoflag,
-        mensaje: rows[0].mensaje,
-        data: rows
-      })
-    } else {
-      console.log(err);
+  const dataObj: postContainers = req.body;
+
+  await pool.query(
+    "SELECT *from function_containers_insertar($1,$2, $3, $4, $5, $6, $7, $8, $9);",
+    [
+      dataObj.id_branch,
+      dataObj.name,
+      dataObj.description,
+      dataObj.long,
+      dataObj.width,
+      dataObj.height,
+      dataObj.maximumweight,
+      dataObj.maximunvolumen,
+      dataObj.status,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
     }
-  });
-}
+  );
+};
 
 export const readContainers = async (req: Request, res: Response) => {
-  let data = req.query;
-  await pool.query("SELECT *from function_containers_ver($1);", [
-    data.id
-  ],
-  (err, response, fields) => {
-    if (!err) {
-      let rows = response.rows;
-      res.json({
-        status: 200,
-        estadoflag: rows[0].estadoflag,
-        mensaje: rows[0].mensaje,
-        data: rows
-      })
-    } else {
-      console.log(err);
+  const data = req.query;
+
+  await pool.query(
+    "SELECT *from function_containers_ver($1);",
+    [data.id],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
     }
-  });
-}
+  );
+};
 
 export const updateContainers = async (req: Request, res: Response) => {
-  let data = req.body;
-  
-  await pool.query("SELECT *from function_containers_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9);", [
-    data.id,
-    data.name,
-    data.description,
-    data.long,
-    data.width,
-    data.height,
-    data.maximumweight,
-    data.maximunvolumen,
-    data.status
-  ],
-  (err, response, fields) => {
-    if (!err) {
-      let rows = response.rows;
-      res.json({
-        status: 200,
-        estadoflag: rows[0].estadoflag,
-        mensaje: rows[0].mensaje,
-        data: rows
-      })
-    } else {
-      console.log(err);
+  const dataObj: postContainers = req.body;
+
+  await pool.query(
+    "SELECT *from function_containers_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9);",
+    [
+      dataObj.id,
+      dataObj.name,
+      dataObj.description,
+      dataObj.long,
+      dataObj.width,
+      dataObj.height,
+      dataObj.maximumweight,
+      dataObj.maximunvolumen,
+      dataObj.status,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
     }
-  });
-}
+  );
+};
