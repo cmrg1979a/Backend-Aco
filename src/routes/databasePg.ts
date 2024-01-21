@@ -3,11 +3,6 @@ const { Pool } = pg;
 
 require("dotenv").config();
 
-let host = "";
-let user = "";
-let password = "";
-let port = "";
-let database = "";
 // /**PROUCCIÓN  */
 // export function conexion() {
 //   const pool = new Pool({
