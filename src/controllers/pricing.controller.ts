@@ -64,19 +64,19 @@ export const setQuote = async (req: Request, res: Response) => {
     return item.concepto;
   });
   let costounitario_cc = costocotizacion.map((item: any) => {
-    return item.costounitario;
+    return item.costounitario ? item.costounitario : 0;
   });
   let cif_cc = costocotizacion.map((item: any) => {
-    return item.cif;
+    return item.cif ? item.cif : 0;
   });
   let seguro_cc = costocotizacion.map((item: any) => {
-    return item.seguro;
+    return item.seguro ? item.seguro : 0;
   });
   let ubptotal_cc = costocotizacion.map((item: any) => {
     return item.subtotal;
   });
   let esorigenflag_cc = costocotizacion.map((item: any) => {
-    return item.esorigenflag;
+    return item.esorigenflag ? item.esorigenflag : 0;
   });
   let esfleteflag_cc = costocotizacion.map((item: any) => {
     return item.esfleteflag;
@@ -1295,7 +1295,6 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
     pais,
   } = req.body;
   let fecha = moment().format("DD-MM-YYYY");
-
 
   let servicios = getServicios({
     flete: flete,
