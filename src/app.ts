@@ -34,8 +34,23 @@ const pool = new Pool({
   port: "5432",
   // database: "db_op_main_dev",
   // database: "db_op_main_01",
-  database: "db_op_main_qa",
+  // database: "db_op_main_qa",
+  database: "db_op_main_edison"
 });
+
+/*pool
+  .connect()
+  .then(conn => {
+    conn
+      .query("SELECT users FROM table_users WHERE users = $1", ["bmegon"])
+      .then(res => {
+        conn.release()
+
+        console.log(res)
+      })
+      .catch(err => console.log(err))
+  })
+  .catch(err => console.log(err))*/
 
 const app: Application = express();
 
@@ -310,4 +325,5 @@ app.use(transport);
 app.use(gasto);
 app.use(ingreso);
 app.use(tipocostos);
+
 export default app;
