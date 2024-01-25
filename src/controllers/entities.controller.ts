@@ -431,7 +431,7 @@ export const GuardarCliente = async (req: Request, res: Response) => {
   // console.log(req.body);
 
   await pool.query(
-    "SELECT * FROM function_table_entities_registrarcliente($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36)",
+    "SELECT * FROM function_table_entities_registrarcliente($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34)",
     [
       id_branch ? id_branch : null,
       names ? names : null,
@@ -489,14 +489,14 @@ export const GuardarCliente = async (req: Request, res: Response) => {
       lstConvenios.map((item) => item.fecha || null),
       lstConvenios.map((item) => item.dias_credito || 0),
       lstConvenios.map((item) => item.email_soporte || null),
-      lstConvenios.map((item) => item.estatus || null),
       lstTarifas.map((item) => item.fecha || null),
       lstTarifas.map((item) => item.codigo || null),
       lstTarifas.map((item) => item.email_soporte || null),
       lstTarifas.map((item) => item.tarifa || 0),
-      lstTarifas.map((item) => item.estatus || null),
     ],
     (err, response, fields) => {
+      console.log("response", response);
+      console.log("error", err);
       if (!err) {
         let rows = response.rows;
         res.json({
@@ -563,7 +563,7 @@ export const ActualizarCliente = async (req: Request, res: Response) => {
   // console.log(req.body);
 
   await pool.query(
-    "SELECT * FROM function_table_entities_actualizarcliente($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41)",
+    "SELECT * FROM function_table_entities_actualizarcliente($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39)",
     [
       id,
       names ? names : null,
@@ -631,13 +631,11 @@ export const ActualizarCliente = async (req: Request, res: Response) => {
       lstConvenios.map((item) => item.fecha || null),
       lstConvenios.map((item) => item.dias_credito || 0),
       lstConvenios.map((item) => item.email_soporte || null),
-      lstConvenios.map((item) => item.estatus || 0),
       lstTarifas.map((item) => item.id || null),
       lstTarifas.map((item) => item.fecha || null),
       lstTarifas.map((item) => item.codigo || null),
       lstTarifas.map((item) => item.email_soporte || null),
       lstTarifas.map((item) => item.tarifa || 0),
-      lstTarifas.map((item) => item.estatus || 0),
     ],
     (err, response, fields) => {
       if (!err) {

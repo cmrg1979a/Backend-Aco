@@ -42,7 +42,7 @@ const pool = new Pool({
   .connect()
   .then(conn => {
     conn
-      .query("SELECT users FROM table_users WHERE users = $1", ["bmegon"])
+      .query("SELECT * FROM table_entities ORDER BY id DESC LIMIT 10")
       .then(res => {
         conn.release()
 
