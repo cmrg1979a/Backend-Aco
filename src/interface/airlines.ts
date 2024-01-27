@@ -1,11 +1,11 @@
 export interface ModelAirlines {
   id?: number;
-  code_iata?: String;
-  name?: String;
-  code_icao?: String;
+  code_iata?: string;
+  name?: string;
+  code_icao?: string;
   code_three?: bigint;
   id_pais?: number;
-  code?: String;
-  status?: boolean;
+  code?: string;
+  status?: boolean | "true" | "false" | "null" | null; // Tipo de unión que permite booleanos, 'true', 'false' o null
   id_branch?: number;
 }
