@@ -234,6 +234,7 @@ export const getMasterList = async (req: Request, res: Response) => {
     }
   );
 };
+
 export const cargarMaster = async (req: Request, res: Response) => {
   let {id_branch} = req.query;
   await pool.query(
@@ -343,6 +344,7 @@ export const updateFolderOneDrive = async (req: Request, res: Response) => {
     }
   );
 };
+
 export const insertComentarioMaster = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM function_comentariomaster_insert($1,$2,$3,$4);",
