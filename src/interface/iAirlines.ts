@@ -1,4 +1,4 @@
-export interface ModelAirlines {
+export interface IAirlines {
   id?: number;
   code_iata?: string;
   name?: string;

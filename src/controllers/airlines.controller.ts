@@ -2,24 +2,23 @@ import { Request, Response } from "express";
 
 import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
-import { ModelAirlines } from "interface/airlines";
+import { IAirlines } from "interface/iAirlines";
 const { Pool } = pg;
 const pool = conexion();
 
 export const ListarAirlines = async (req: Request, res: Response) => {
-  const modelAirlines: ModelAirlines = req.query;
+  const iAirlines: IAirlines = req.query;
 
   await pool.query(
     "SELECT * FROM function_airlines_listar($1,$2,$3,$4,$5,$6,$7)",
     [
-      modelAirlines.id_branch,
-      modelAirlines.code || null,
-      modelAirlines.code_iata || null,
-      modelAirlines.code_icao || null,
-      modelAirlines.name || null,
-      modelAirlines.status !== "null" ? modelAirlines.status === "true" : null,
-
-      modelAirlines.id_pais || null,
+      iAirlines.id_branch,
+      iAirlines.code || null,
+      iAirlines.code_iata || null,
+      iAirlines.code_icao || null,
+      iAirlines.name || null,
+      iAirlines.status !== "null" ? iAirlines.status === "true" : null,
+      iAirlines.id_pais || null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -38,11 +37,11 @@ export const ListarAirlines = async (req: Request, res: Response) => {
   );
 };
 export const validateIATANuevo = async (req: Request, res: Response) => {
-  const modelAirlines: ModelAirlines = req.query;
+  const iAirlines: IAirlines = req.query;
 
   await pool.query(
     "SELECT * FROM function_airlines_validariata_nuevo($1,$2)",
-    [modelAirlines.id_branch, modelAirlines.code_iata || null],
+    [iAirlines.id_branch, iAirlines.code_iata || null],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -60,11 +59,11 @@ export const validateIATANuevo = async (req: Request, res: Response) => {
   );
 };
 export const validateICAONuevo = async (req: Request, res: Response) => {
-  const modelAirlines: ModelAirlines = req.query;
+  const iAirlines: IAirlines = req.query;
 
   await pool.query(
     "SELECT * FROM function_airlines_validaricao_nuevo($1,$2)",
-    [modelAirlines.id_branch, modelAirlines.code_icao || null],
+    [iAirlines.id_branch, iAirlines.code_icao || null],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -83,18 +82,18 @@ export const validateICAONuevo = async (req: Request, res: Response) => {
 };
 
 export const GuardarAirlines = async (req: Request, res: Response) => {
-  const modelAirlines: ModelAirlines = req.body;
-  console.log(modelAirlines);
+  const iAirlines: IAirlines = req.body;
+  console.log(iAirlines);
 
   await pool.query(
     "SELECT * FROM function_airlines_insertar($1,$2,$3,$4,$5,$6)",
     [
-      modelAirlines.id_branch,
-      modelAirlines.id_pais || null,
-      modelAirlines.code_iata,
-      modelAirlines.code_icao,
-      modelAirlines.name,
-      modelAirlines.status,
+      iAirlines.id_branch,
+      iAirlines.id_pais || null,
+      iAirlines.code_iata,
+      iAirlines.code_icao,
+      iAirlines.name,
+      iAirlines.status,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -114,15 +113,11 @@ export const GuardarAirlines = async (req: Request, res: Response) => {
 };
 
 export const validateIATAEditar = async (req: Request, res: Response) => {
-  const modelAirlines: ModelAirlines = req.query;
+  const iAirlines: IAirlines = req.query;
 
   await pool.query(
     "SELECT * FROM function_airlines_validariata_editar($1,$2,$3)",
-    [
-      modelAirlines.id_branch,
-      modelAirlines.code_iata || null,
-      modelAirlines.id,
-    ],
+    [iAirlines.id_branch, iAirlines.code_iata || null, iAirlines.id],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -140,15 +135,11 @@ export const validateIATAEditar = async (req: Request, res: Response) => {
   );
 };
 export const validateICAOEditar = async (req: Request, res: Response) => {
-  const modelAirlines: ModelAirlines = req.query;
+  const iAirlines: IAirlines = req.query;
 
   await pool.query(
     "SELECT * FROM function_airlines_validaricao_editar($1,$2,$3)",
-    [
-      modelAirlines.id_branch,
-      modelAirlines.code_icao || null,
-      modelAirlines.id,
-    ],
+    [iAirlines.id_branch, iAirlines.code_icao || null, iAirlines.id],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -167,17 +158,17 @@ export const validateICAOEditar = async (req: Request, res: Response) => {
 };
 
 export const GuardarEditar = async (req: Request, res: Response) => {
-  const modelAirlines: ModelAirlines = req.body;
+  const iAirlines: IAirlines = req.body;
 
   await pool.query(
     "SELECT * FROM function_airlines_editar($1,$2,$3,$4,$5,$6)",
     [
-      modelAirlines.id,
-      modelAirlines.id_pais || null,
-      modelAirlines.code_iata,
-      modelAirlines.code_icao,
-      modelAirlines.name,
-      modelAirlines.status,
+      iAirlines.id,
+      iAirlines.id_pais || null,
+      iAirlines.code_iata,
+      iAirlines.code_icao,
+      iAirlines.name,
+      iAirlines.status,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -196,10 +187,10 @@ export const GuardarEditar = async (req: Request, res: Response) => {
   );
 };
 export const getAilrines = async (req: Request, res: Response) => {
-  const modelAirlines: ModelAirlines = req.query;
+  const iAirlines: IAirlines = req.query;
   await pool.query(
     "SELECT * FROM Table_airlines_cargar($1)",
-    [modelAirlines.id_branch],
+    [iAirlines.id_branch],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;

@@ -9,9 +9,9 @@ import {
     updateTransport,
 } from "../controllers/transport.controller";
 
-router.get("/listar_transport/", TokenValidation, getListTransport);
-router.post("/insertar_transport/", TokenValidation, insertTransport);
-router.get("/ver_transport/", TokenValidation, readTransport);
-router.put("/actualizar_transport/", TokenValidation, updateTransport);
+router.get("/listar_transport", TokenValidation, getListTransport);
+router.post("/insertar_transport", TokenValidation, insertTransport);
+router.get("/ver_transport", TokenValidation, readTransport);
+router.put("/actualizar_transport", TokenValidation, updateTransport);
 
 export default router;
