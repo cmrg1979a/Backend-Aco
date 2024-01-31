@@ -111,7 +111,6 @@ export const InsertarPuertos = async (req: Request, res: Response) => {
 };
 export const ActualizarPuertos = async (req: Request, res: Response) => {
   const puerto: IPort = req.body;
-
   await pool.query(
     "SELECT * FROM function_port_actualizar($1,$2,$3,$4,$5,$6);",
     [
