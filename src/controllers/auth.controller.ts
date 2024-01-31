@@ -21,8 +21,9 @@ export const singin = async (req: Request, res: Response) => {
 
       if (!err) {
         if (!!rows[0].estadoflag) {
+          let data = rows[0];
           const token: string = jwt.sign(
-            { rows },
+            { data },
             process.env.TOKEN_SECRET || "tokentest",
             {
               expiresIn: 60 * 60 * 24,
@@ -77,7 +78,7 @@ export const validToken = async (req: Request, res: Response) => {
     const decodedToken = jwt.verify(token, secret) as JwtPayload;
     const expirationTimestamp = decodedToken.exp;
     const currentTimestamp = Math.floor(Date.now() / 1000);
-    
+
     if (expirationTimestamp && expirationTimestamp <= currentTimestamp) {
       return res.json({
         status: 500,

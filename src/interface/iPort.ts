@@ -1,9 +1,10 @@
-export interface postTransport {
+export interface IPort {
   id?: number;
-  id_branch?: number;
+  id_pais?: number;
   code?: string;
   name?: string;
   description?: string;
-  id_shipment?: number;
+  id_branch?: Number;
+  id_transporte?: Number;
   status?: number;
 }

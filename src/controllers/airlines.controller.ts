@@ -3,12 +3,12 @@ import { Request, Response } from "express";
 import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
 import { IAirlines } from "interface/iAirlines";
+// import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 const { Pool } = pg;
 const pool = conexion();
 
 export const ListarAirlines = async (req: Request, res: Response) => {
   const iAirlines: IAirlines = req.query;
-
   await pool.query(
     "SELECT * FROM function_airlines_listar($1,$2,$3,$4,$5,$6,$7)",
     [
@@ -83,8 +83,6 @@ export const validateICAONuevo = async (req: Request, res: Response) => {
 
 export const GuardarAirlines = async (req: Request, res: Response) => {
   const iAirlines: IAirlines = req.body;
-  console.log(iAirlines);
-
   await pool.query(
     "SELECT * FROM function_airlines_insertar($1,$2,$3,$4,$5,$6)",
     [

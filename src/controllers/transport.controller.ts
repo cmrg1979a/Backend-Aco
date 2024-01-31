@@ -106,3 +106,24 @@ export const updateTransport = async (req: Request, res: Response) => {
     }
   );
 };
+export const cargarTransport = async (req: Request, res: Response) => {
+  const dataObj: postTransport = req.query;
+
+  await pool.query(
+    "SELECT *from table_transport_cargar($1);",
+    [dataObj.id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
