@@ -28,7 +28,7 @@ export const getMotonave = async (req: Request, res: Response) => {
     }
   );
 };
-export const ListarMontonave = async (req: Request, res: Response) => {
+export const ListarMotonave = async (req: Request, res: Response) => {
   let motonave: IMotonave = req.query;
   await pool.query(
     " SELECT * FROM function_motonave_listar($1,$2,$3,$4)",
@@ -54,7 +54,7 @@ export const ListarMontonave = async (req: Request, res: Response) => {
     }
   );
 };
-export const InsertarMontonave = async (req: Request, res: Response) => {
+export const InsertarMotonave = async (req: Request, res: Response) => {
   let motonave: IMotonave = req.body;
   await pool.query(
     " SELECT * FROM function_motonave_insertar($1,$2,$3,$4)",
