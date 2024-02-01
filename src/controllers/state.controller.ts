@@ -9,7 +9,7 @@ export const getCargarState = async (req: Request, res: Response) => {
   let regiones: IRegiones = req.query;
   await pool.query(
     " SELECT * FROM function_state_cargar($1)",
-    [regiones.id_pais],
+    [regiones.id_pais ? regiones.id_pais : null],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -53,6 +53,7 @@ export const ListarState = async (req: Request, res: Response) => {
     }
   );
 };
+
 export const InsertarState = async (req: Request, res: Response) => {
   let regiones: IRegiones = req.body;
   await pool.query(
