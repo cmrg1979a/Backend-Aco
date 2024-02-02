@@ -10,23 +10,17 @@ export const getCity = async (req: Request, res: Response) => {
   const city: ICity = req.body;
   await pool.query(
     "SELECT * FROM function_city_cargar($1);",
-    [city.idState],
+    [city.idState ? city.idState : null],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+        });
       } else {
         console.log(err);
       }
