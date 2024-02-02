@@ -5,7 +5,7 @@ export interface IMasterDetalle {
   codigo01?: string;
   codigo02?: string;
   description?: string;
-  status?: boolean;
+  status?: any;
   id_branch?: number;
-  escomunflag?: boolean;
+  escomunflag?: any;
 }

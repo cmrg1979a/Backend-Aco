@@ -160,7 +160,7 @@ export const cargarTipoTelefonoPersona = async (
   res: Response
 ) => {
   await pool.query(
-    "SELECT * FROM function_masterdetalle_cargar($1,'TPP')",
+    "SELECT * FROM function_masterdetalle_cargar($1,'TIPOTELF')",
     [req.query.id_branch],
     (err, response, fields) => {
       if (!err) {
@@ -266,7 +266,7 @@ export const InsertarMasterDetalleImpuestos = async (
     }
   );
 };
-export const ActualizarMasterDetalleImpuestos = async (
+export const ActualizarMasterDetalle = async (
   req: Request,
   res: Response
 ) => {
@@ -298,3 +298,138 @@ export const ActualizarMasterDetalleImpuestos = async (
     }
   );
 };
+
+
+export const ListarMasterDetalleTipoTelefonos = async (
+  req: Request,
+  res: Response
+) => {
+  let iMasterDetalle: IMasterDetalle = req.query;
+
+  await pool.query(
+    "SELECT * FROM function_masterdetalle_listar('TIPOTELF',$1,$2,$3,$4)",
+    [
+      iMasterDetalle.id_branch,
+      iMasterDetalle.valorcodigo,
+      iMasterDetalle.description,
+      iMasterDetalle.status === "null" ? null : iMasterDetalle.status,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const InsertarMasterDetalleTipoTelefono = async (
+  req: Request,
+  res: Response
+) => {
+  let iMasterDetalle: IMasterDetalle = req.body;
+  await pool.query(
+    "SELECT * FROM function_masterdetalle_insertar('TIPOTELF',$1,$2,$3,$4,$5,$6,$7)",
+    [
+      iMasterDetalle.valorcodigo ? iMasterDetalle.valorcodigo : null,
+      iMasterDetalle.codigo01 ? iMasterDetalle.codigo01 : null,
+      iMasterDetalle.codigo02 ? iMasterDetalle.codigo02 : null,
+      iMasterDetalle.description ? iMasterDetalle.description : null,
+      iMasterDetalle.status ? iMasterDetalle.status : null,
+      iMasterDetalle.id_branch ? iMasterDetalle.id_branch : null,
+      iMasterDetalle.escomunflag ? iMasterDetalle.escomunflag : null,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+
+
+
+
+export const ListarMasterDetalleTNotasCotizacion = async (
+  req: Request,
+  res: Response
+) => {
+  let iMasterDetalle: IMasterDetalle = req.query;
+
+  await pool.query(
+    "SELECT * FROM function_masterdetalle_listar('NQ',$1,$2,$3,$4)",
+    [
+      iMasterDetalle.id_branch,
+      iMasterDetalle.valorcodigo,
+      iMasterDetalle.description,
+      iMasterDetalle.status === "null" ? null : iMasterDetalle.status,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const InsertarMasterDetalleNotasCotizacion = async (
+  req: Request,
+  res: Response
+) => {
+  let iMasterDetalle: IMasterDetalle = req.body;
+  await pool.query(
+    "SELECT * FROM function_masterdetalle_insertar('NQ',$1,$2,$3,$4,$5,$6,$7)",
+    [
+      iMasterDetalle.valorcodigo ? iMasterDetalle.valorcodigo : null,
+      iMasterDetalle.codigo01 ? iMasterDetalle.codigo01 : null,
+      iMasterDetalle.codigo02 ? iMasterDetalle.codigo02 : null,
+      iMasterDetalle.description ? iMasterDetalle.description : null,
+      iMasterDetalle.status ? iMasterDetalle.status : null,
+      iMasterDetalle.id_branch ? iMasterDetalle.id_branch : null,
+      iMasterDetalle.escomunflag ? iMasterDetalle.escomunflag : null,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+
