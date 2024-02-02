@@ -3,6 +3,9 @@ const router: Router = Router();
 import { TokenValidation } from "../libs/verifyToken";
 import cors from "cors";
 import {
+  ActualizarMasterDetalleImpuestos,
+  InsertarMasterDetalleImpuestos,
+  ListarMasterDetalleImpuestos,
   cargarMasterDetalleCanal,
   cargarMasterDetalleEnviado,
   cargarMasterDetalleImpuestos,
@@ -43,26 +46,22 @@ router.post(
   "/cargar_master_detalle_tipo_proveedor",
   TokenValidation,
   cargarMasterDetalleTipoProveedor
-
 );
 router.get(
   "/cargar_master_detalle_percepcion_aduana",
   TokenValidation,
   cargarPercepcionAduana
-
 );
 
 router.get(
   "/cargar_master_detalle_tipo_percepcion",
   TokenValidation,
   cargarTipoTransaccion
-
 );
 router.get(
   "/cargar_master_detalle_tipo_telefono",
   TokenValidation,
   cargarTipoTelefonoPersona
-
 );
 
 router.post(
@@ -70,7 +69,20 @@ router.post(
   TokenValidation,
   cargarMasterDetalleImpuestos
 );
+router.get(
+  "/listar_master_detalle_impuesto",
+  TokenValidation,
+  ListarMasterDetalleImpuestos
+);
+router.post(
+  "/insertar_master_detalle_impuesto",
+  TokenValidation,
+  InsertarMasterDetalleImpuestos
+);
+router.put(
+  "/actualizar_master_detalle_impuesto",
+  TokenValidation,
+  ActualizarMasterDetalleImpuestos
+);
+
 export default router;
-
-
-
