@@ -12,7 +12,7 @@ export const setMaster = async (req: Request, res: Response) => {
   const dataObj = req.body;
   
   await pool.query(
-    "SELECT * FROM table_mastercontrol_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40)",
+    "SELECT * FROM table_mastercontrol_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44)",
     [
       dataObj.nro_master,
       dataObj.code_master,
@@ -54,6 +54,10 @@ export const setMaster = async (req: Request, res: Response) => {
       dataObj.id_canal ? dataObj.id_canal : null,
       dataObj.nro_manifiesto ? dataObj.nro_manifiesto : null,
       dataObj.namecampaign ? dataObj.namecampaign : null,
+      dataObj.master_itemsContainers.map(item => item.id_container || null),
+      dataObj.master_itemsContainers.map(item => item.nro_container || null),
+      dataObj.master_itemsContainers.map(item => item.nro_precinto || null),
+      dataObj.master_itemsContainers.map(item => item.cantidad || 0),
     ],
     (err, response, fields) => {
       if (!err) {
@@ -82,7 +86,7 @@ export const editMaster = async (req: Request, res: Response) => {
   const dataObj = req.body;
   const id = req.params.id;
   await pool.query(
-    "SELECT * FROM function_mastercontrol_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43)",
+    "SELECT * FROM function_mastercontrol_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48)",
     [
       id,
       dataObj.id_branch ? dataObj.id_branch : null,
@@ -127,6 +131,11 @@ export const editMaster = async (req: Request, res: Response) => {
       dataObj.id_canal ? dataObj.id_canal : null,
       dataObj.nro_manifiesto ? dataObj.nro_manifiesto : null,
       dataObj.namecampaign ? dataObj.namecampaign : null,
+      dataObj.master_itemsContainers.map(item => item.id || null),
+      dataObj.master_itemsContainers.map(item => item.id_container || null),
+      dataObj.master_itemsContainers.map(item => item.nro_container || null),
+      dataObj.master_itemsContainers.map(item => item.nro_precinto || null),
+      dataObj.master_itemsContainers.map(item => item.cantidad || 0),
     ],
     (err, rows, fields) => {
       if (!err) {
