@@ -17,18 +17,22 @@ import {
 } from "../controllers/statusquote.controller";
 
 router.get("/list_quote_status", TokenValidation, ListStatusQuote);
-router.get("/validate_position", TokenValidation, validatePosition);
 router.get(
-  "/validate_position_select",
+  "/validate_position_status_quote",
+  TokenValidation,
+  validatePosition
+);
+router.get(
+  "/validate_position_select_status_quote",
   TokenValidation,
   validatePositionSelect
 );
 router.get(
-  "/validate_position_report",
+  "/validate_position_report_status_quote",
   TokenValidation,
   validatePositionReport
 );
-router.get("/validate_position_calls", TokenValidation, validatePositionCalls);
+router.get("/validate_position_calls_status_quote", TokenValidation, validatePositionCalls);
 router.post(
   "/insertar_position_calls",
   TokenValidation,
@@ -36,22 +40,22 @@ router.post(
 );
 
 router.get(
-  "/validate_position_actualizar",
+  "/validate_position_actualizar_status_quote",
   TokenValidation,
   validatePositionActualizar
 );
 router.get(
-  "/validate_position_select_actualizar",
+  "/validate_position_select_actualizar_status_quote",
   TokenValidation,
   validatePositionSelectActualizar
 );
 router.get(
-  "/validate_position_report_actualizar",
+  "/validate_position_report_actualizar_status_quote",
   TokenValidation,
   validatePositionReportActualizar
 );
 router.get(
-  "/validate_position_calls_actualizar",
+  "/validate_position_calls_actualizar_status_quote",
   TokenValidation,
   validatePositionCallsActualizar
 );
