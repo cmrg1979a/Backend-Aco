@@ -102,6 +102,7 @@ import gasto from "./routes/gasto";
 import ingreso from "./routes/ingreso";
 import tipocostos from "./routes/tipocosto";
 import stateQuote from "./routes/stateQuote";
+import typepayments from "./routes/typepayments";
 
 // settings
 app.set("port", 9200);
@@ -312,4 +313,5 @@ app.use(gasto);
 app.use(ingreso);
 app.use(tipocostos);
 app.use(stateQuote);
+app.use(typepayments);
 export default app;
