@@ -6,6 +6,7 @@ const { Pool } = pg;
 const pool = conexion();
 
 import { postGasto } from "../interface/gastos";
+import { ISubGasto } from "interface/iSubGasto";
 
 export const getListGasto = async (req: Request, res: Response) => {
   const data = req.query;
@@ -120,6 +121,42 @@ export const validateCodeGastoNuevo = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const ListSubGasto = async (req: Request, res: Response) => {
+  const subgasto: ISubGasto = req.query;
+  console.log(subgasto.mostrarflag);
+
+  await pool.query(
+    `SELECT * FROM function_subgasto_listar($1,$2,$3,$4,$5,$6,$7);`,
+    [
+      subgasto.id_branch ? subgasto.id_branch : null,
+      subgasto.id_gasto ? subgasto.id_gasto : null,
+      subgasto.code ? subgasto.code : null,
+      subgasto.description ? subgasto.description : null,
+      subgasto.status !== "null" ? subgasto.status === "true" : null,
+      subgasto.calculoflag == "" || subgasto.calculoflag == "null"
+        ? null
+        : subgasto.calculoflag,
+      subgasto.mostrarflag == "" || subgasto.mostrarflag == "null"
+        ? null
+        : subgasto.mostrarflag,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
           data: rows,
         });
       } else {
