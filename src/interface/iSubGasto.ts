@@ -1,4 +1,4 @@
-export interface ISubIngreso {
+export interface ISubGasto {
   id?: number;
   id_gasto?: number;
   code?: string;

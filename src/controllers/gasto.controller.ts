@@ -8,6 +8,29 @@ const pool = conexion();
 import { postGasto } from "../interface/gastos";
 import { ISubGasto } from "interface/iSubGasto";
 
+export const CargarGasto = async (req: Request, res: Response) => {
+  const gasto: postGasto = req.query;
+
+  await pool.query(
+    `SELECT * FROM function_gasto_cargar($1);`,
+    [gasto.id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
 export const getListGasto = async (req: Request, res: Response) => {
   const data = req.query;
 
@@ -132,7 +155,6 @@ export const validateCodeGastoNuevo = async (req: Request, res: Response) => {
 
 export const ListSubGasto = async (req: Request, res: Response) => {
   const subgasto: ISubGasto = req.query;
-  console.log(subgasto.mostrarflag);
 
   await pool.query(
     `SELECT * FROM function_subgasto_listar($1,$2,$3,$4,$5,$6,$7);`,
@@ -141,13 +163,93 @@ export const ListSubGasto = async (req: Request, res: Response) => {
       subgasto.id_gasto ? subgasto.id_gasto : null,
       subgasto.code ? subgasto.code : null,
       subgasto.description ? subgasto.description : null,
-      subgasto.status !== "null" ? subgasto.status === "true" : null,
-      subgasto.calculoflag == "" || subgasto.calculoflag == "null"
-        ? null
-        : subgasto.calculoflag,
-      subgasto.mostrarflag == "" || subgasto.mostrarflag == "null"
-        ? null
-        : subgasto.mostrarflag,
+      Boolean(subgasto.status) ? subgasto.status : null,
+      Boolean(subgasto.calculoflag) ? subgasto.calculoflag : null,
+      Boolean(subgasto.mostrarflag) ? subgasto.mostrarflag : null,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const ValidarCodigoSubGasto = async (req: Request, res: Response) => {
+  const subgasto: ISubGasto = req.query;
+  await pool.query(
+    `SELECT * FROM function_subgasto_validarcodigo($1,$2);`,
+    [
+      subgasto.id_branch ? subgasto.id_branch : null,
+      subgasto.code ? subgasto.code : null,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const InsertarSubGasto = async (req: Request, res: Response) => {
+  const subgasto: ISubGasto = req.body;
+
+  await pool.query(
+    `SELECT * FROM function_subgasto_insertar($1,$2,$3,$4,$5,$6,$7);`,
+    [
+      subgasto.id_gasto,
+      subgasto.code,
+      subgasto.description ? subgasto.description : null,
+      subgasto.status,
+      subgasto.id_branch,
+      subgasto.calculoflag,
+      subgasto.mostrarflag,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const ActualizarSubGasto = async (req: Request, res: Response) => {
+  const subgasto: ISubGasto = req.body;
+  await pool.query(
+    `SELECT * FROM function_subgasto_actualizar($1,$2,$3,$4,$5,$6);`,
+    [
+      subgasto.id_gasto,
+      subgasto.description ? subgasto.description : null,
+      subgasto.status,
+      subgasto.calculoflag,
+      subgasto.mostrarflag,
+      subgasto.id,
     ],
     (err, response, fields) => {
       if (!err) {
