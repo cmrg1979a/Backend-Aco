@@ -82,11 +82,32 @@ export const getHouseList = async (req: Request, res: Response) => {
 };
 
 export const getHouseListAll = async (req: Request, res: Response) => {
-  const { id_branch } = req.body;
+  const { 
+    id_branch,
+    id_master,
+    id_sentido,
+    id_tipo_embarque,
+    id_origen,
+    id_destino,
+    id_cliente,
+    fecha_etd,
+    fecha_eta
+  } = req.query;
+  console.log(req.query)
 
   await pool.query(
-    "SELECT * FROM Table_HouseControl_listarall($1,null);",
-    [id_branch],
+    "SELECT * FROM Table_HouseControl_listarall($1,null,$2,$3,$4,$5,$6,$7,$8,$9);",
+    [
+      id_branch,
+      id_master || null,
+      id_sentido || null,
+      id_tipo_embarque || null,
+      id_origen || null,
+      id_destino || null,
+      id_cliente || null,
+      fecha_etd || null,
+      fecha_eta || null
+    ],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -111,11 +132,10 @@ export const getHouseListAll = async (req: Request, res: Response) => {
 };
 
 export const getHouseListId = async (req: Request, res: Response) => {
-  const { id } = req.body;
-  const { id_branch } = req.body;
+  const { id, id_branch } = req.body;
 
   await pool.query(
-    "SELECT * FROM Table_HouseControl_listarall($1,$2)",
+    "SELECT * FROM Table_HouseControl_listarall($1,$2,null,null,null,null,null,null,null,null)",
     [id_branch, id],
     (err, response, fields) => {
       if (!err) {

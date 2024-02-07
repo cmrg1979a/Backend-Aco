@@ -217,10 +217,36 @@ export const lockMasterAdm = async (req: Request, res: Response) => {
 };
 
 export const getMasterList = async (req: Request, res: Response) => {
-  let id_branch = req.body.id_branch;
+  const { 
+    id_branch,
+    id_canal,
+    id_sentido,
+    id_tipo_embarque,
+    id_origen,
+    id_destino,
+    id_agente,
+    fecha_etd,
+    fecha_eta,
+    status_op,
+    status_adm
+  } = req.query;
+  // console.log(req.query)
+
   await pool.query(
-    "SELECT * FROM TABLE_MASTERCONTROL_listar($1);",
-    [id_branch],
+    "SELECT * FROM TABLE_MASTERCONTROL_listar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11);",
+    [
+      id_branch,
+      id_canal || null,
+      id_sentido || null,
+      id_tipo_embarque || null,
+      id_origen || null,
+      id_destino || null,
+      id_agente || null,
+      fecha_etd || null,
+      fecha_eta || null,
+      status_op || null,
+      status_adm || null
+    ],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
