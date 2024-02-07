@@ -87,7 +87,11 @@ export const ActualizarMotonave = async (req: Request, res: Response) => {
     [
       motonave.name,
       motonave.description ? motonave.description : null,
-      motonave.status,
+      motonave.status === true ||
+      motonave.status === "true" ||
+      motonave.status === 1
+        ? 1
+        : 0,
       motonave.id,
     ],
     (err, response, fields) => {

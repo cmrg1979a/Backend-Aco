@@ -19,8 +19,30 @@ export const ListStatusQuote = async (req: Request, res: Response) => {
       statusQuote.position_calls ? statusQuote.position_calls : null,
       statusQuote.status_calls ? statusQuote.status_calls : null,
       statusQuote.status_calls_all ? statusQuote.status_calls_all : null,
-      Number(statusQuote.status) ? statusQuote.status : null,
+      statusQuote.status !== "" ? statusQuote.status : null,
     ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          estadoflag: rows[0].estadoflag,
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const MaxPositionQuoteStatus = async (req: Request, res: Response) => {
+  const statusQuote: iStatusQuote = req.query;
+
+  await pool.query(
+    "SELECT * FROM function_quote_status_max_position($1)",
+    [statusQuote.id_branch ? statusQuote.id_branch : null],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;

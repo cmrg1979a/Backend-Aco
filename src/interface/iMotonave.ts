@@ -2,6 +2,6 @@ export interface IMotonave {
   id?: number;
   name?: string;
   description?: string;
-  status?: number;
+  status?: any;
   id_branch?: number;
 }

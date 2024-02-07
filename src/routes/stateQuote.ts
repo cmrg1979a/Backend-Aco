@@ -5,6 +5,7 @@ import { TokenValidation } from "../libs/verifyToken";
 import {
   ActualizarPositionCalls,
   ListStatusQuote,
+  MaxPositionQuoteStatus,
   RegistrarPositionCalls,
   validatePosition,
   validatePositionActualizar,
@@ -17,6 +18,7 @@ import {
 } from "../controllers/statusquote.controller";
 
 router.get("/list_quote_status", TokenValidation, ListStatusQuote);
+router.get("/max_position_quote_status", TokenValidation, MaxPositionQuoteStatus);
 router.get(
   "/validate_position_status_quote",
   TokenValidation,

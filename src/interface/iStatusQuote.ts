@@ -9,6 +9,6 @@ export interface iStatusQuote {
   status_calls?: number;
   status_calls_all?: number;
   description?: string;
-  status?: number;
+  status?: any;
   id_branch?: number;
 }

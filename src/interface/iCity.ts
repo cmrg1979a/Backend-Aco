@@ -6,5 +6,5 @@ export interface ICity {
   code?: number;
   name?: string;
   description?: string;
-  status?: number;
+  status?: any;
 }

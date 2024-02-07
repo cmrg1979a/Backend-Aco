@@ -61,6 +61,7 @@ export const InsertarTypePayments = async (req: Request, res: Response) => {
     }
   );
 };
+
 export const ActualizarTypePayments = async (req: Request, res: Response) => {
   const typePayments: ITypePayments = req.body;
   await pool.query(

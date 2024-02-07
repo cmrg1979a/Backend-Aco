@@ -91,7 +91,7 @@ export const ActualizarCity = async (req: Request, res: Response) => {
       city.id_state,
       city.name,
       city.description ? city.description : null,
-      city.status,
+      city.status == "true" || city.status == 1 ? 1 : 0,
       city.id,
     ],
     (err, response, fields) => {
