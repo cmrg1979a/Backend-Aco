@@ -2,16 +2,23 @@ import { Router } from "express";
 const router: Router = Router();
 import { TokenValidation } from "../libs/verifyToken";
 
-import { 
-    getListGroupservices,
-    insertGroupservices,
-    readGroupservices,
-    updateGroupservices,
+import {
+  ActualizarItemServices,
+  CargarGroupservices,
+  InsertarItemServices,
+  ListarItemServices,
+  getListGroupservices,
+  insertGroupservices,
+  readGroupservices,
+  updateGroupservices,
 } from "../controllers/groupservices.controller";
 
+router.get("/cargar_groupservices", TokenValidation, CargarGroupservices);
 router.get("/listar_groupservices/", TokenValidation, getListGroupservices);
 router.post("/insertar_groupservices/", TokenValidation, insertGroupservices);
 router.get("/ver_groupservices/", TokenValidation, readGroupservices);
 router.put("/actualizar_groupservices/", TokenValidation, updateGroupservices);
-
+router.get("/listar_itemservices", TokenValidation, ListarItemServices);
+router.post("/insertar_itemservices", TokenValidation, InsertarItemServices);
+router.put("/actualizar_itemservices", TokenValidation, ActualizarItemServices);
 export default router;
