@@ -1093,7 +1093,8 @@ export const CargarClientes = async (req: Request, res: Response) => {
 };
 
 export const CargarProveedores = async (req: Request, res: Response) => {
-  let id_branch = req.query.id_branch;
+  const { id_branch } = req.query;
+
   await pool.query(
     "select * from function_cargar_proveedor($1);",
     [id_branch],
