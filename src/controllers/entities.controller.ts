@@ -1115,6 +1115,55 @@ export const CargarProveedores = async (req: Request, res: Response) => {
   );
 };
 
+export const cargarProveedoresRolNoShipper = async (req: Request, res: Response) => {
+  const { id_branch } = req.query;
+
+  await pool.query(
+    "select * from function_cargar_proveedor_rol_no_shipper($1);",
+    [id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const cargarProveedoresXRol = async (req: Request, res: Response) => {
+  const { id_branch, rol } = req.query;
+
+  await pool.query(
+    "select * from function_cargar_proveedor_x_rol($1,$2);",
+    [
+      id_branch,
+      rol || null
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
 export const InsertPhones = async (req: Request, res: Response) => {
   const dataObj: postEntities = req.body;
 
