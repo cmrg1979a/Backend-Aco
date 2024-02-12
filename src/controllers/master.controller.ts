@@ -228,12 +228,14 @@ export const getMasterList = async (req: Request, res: Response) => {
     fecha_etd,
     fecha_eta,
     status_op,
-    status_adm
+    status_adm,
+    pagina,
+    limite,
   } = req.query;
   // console.log(req.query)
 
   await pool.query(
-    "SELECT * FROM TABLE_MASTERCONTROL_listar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11);",
+    "SELECT * FROM TABLE_MASTERCONTROL_listar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13);",
     [
       id_branch,
       id_canal || null,
@@ -245,7 +247,9 @@ export const getMasterList = async (req: Request, res: Response) => {
       fecha_etd || null,
       fecha_eta || null,
       status_op || null,
-      status_adm || null
+      status_adm || null,
+      pagina || null,
+      limite || null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -255,6 +259,60 @@ export const getMasterList = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const getTotalMasterList = async (req: Request, res: Response) => {
+  const { 
+    id_branch,
+    id_canal,
+    id_sentido,
+    id_tipo_embarque,
+    id_origen,
+    id_destino,
+    id_agente,
+    fecha_etd,
+    fecha_eta,
+    status_op,
+    status_adm
+  } = req.query;
+  // console.log(req.query)
+
+  await pool.query(
+    "SELECT * FROM TABLE_MASTERCONTROL_consultar_total($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11);",
+    [
+      id_branch,
+      id_canal || null,
+      id_sentido || null,
+      id_tipo_embarque || null,
+      id_origen || null,
+      id_destino || null,
+      id_agente || null,
+      fecha_etd || null,
+      fecha_eta || null,
+      status_op || null,
+      status_adm || null,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            total: rows[0].total,
           });
         } else {
           res.json({
