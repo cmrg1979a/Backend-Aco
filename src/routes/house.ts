@@ -13,6 +13,7 @@ import {
   getHouseContainers,
   setHouseEdit,
   setHouseDelete,
+  getTotalHouseListAll,
 } from "../controllers/house.controller";
 
 router.post("/setHouse", TokenValidation, setHouse);
@@ -22,6 +23,7 @@ router.post("/getHouseServices", TokenValidation, getHouseServices);
 router.post("/getHouseBitacora", TokenValidation, getHouseBitacora);
 router.post("/getHouseContainers", TokenValidation, getHouseContainers);
 router.get("/getHouseListAll", TokenValidation, getHouseListAll);
+router.get("/getTotalHouseListAll", TokenValidation, getTotalHouseListAll);
 router.put("/setHouseEdit", TokenValidation, setHouseEdit);
 router.put("/setHouseDelete/:id", TokenValidation, setHouseDelete);
 

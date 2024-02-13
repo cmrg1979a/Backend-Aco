@@ -91,12 +91,14 @@ export const getHouseListAll = async (req: Request, res: Response) => {
     id_destino,
     id_cliente,
     fecha_etd,
-    fecha_eta
+    fecha_eta,
+    pagina,
+    limite,    
   } = req.query;
-  console.log(req.query)
+  // console.log(req.query)
 
   await pool.query(
-    "SELECT * FROM Table_HouseControl_listarall($1,null,$2,$3,$4,$5,$6,$7,$8,$9);",
+    "SELECT * FROM Table_HouseControl_listarall($1,null,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11);",
     [
       id_branch,
       id_master || null,
@@ -106,7 +108,9 @@ export const getHouseListAll = async (req: Request, res: Response) => {
       id_destino || null,
       id_cliente || null,
       fecha_etd || null,
-      fecha_eta || null
+      fecha_eta || null,
+      pagina || null,
+      limite || null
     ],
     (err, response, fields) => {
       if (!err) {
@@ -116,6 +120,56 @@ export const getHouseListAll = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const getTotalHouseListAll = async (req: Request, res: Response) => {
+  const { 
+    id_branch,
+    id_master,
+    id_sentido,
+    id_tipo_embarque,
+    id_origen,
+    id_destino,
+    id_cliente,
+    fecha_etd,
+    fecha_eta,
+  } = req.query;
+  // console.log(req.query)
+
+  await pool.query(
+    "SELECT * FROM Table_HouseControl_consultar_total($1,null,$2,$3,$4,$5,$6,$7,$8,$9);",
+    [
+      id_branch,
+      id_master || null,
+      id_sentido || null,
+      id_tipo_embarque || null,
+      id_origen || null,
+      id_destino || null,
+      id_cliente || null,
+      fecha_etd || null,
+      fecha_eta || null,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            total: rows[0].total,
           });
         } else {
           res.json({
