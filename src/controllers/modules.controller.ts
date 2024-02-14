@@ -65,11 +65,11 @@ export const getEntitieModules = async (req: Request, res: Response) => {
 };
 
 export const getMenuModules = async (req: Request, res: Response) => {
-  const { id_entitie, id_group } = req.body;
-  let id_module = parseInt(req.body.id_module);
+  const { id_entitie, id_branch } = req.body;
+
   await pool.query(
-    "SELECT * FROM ENTITIE_MENU_cargar($1,$2,$3);",
-    [id_entitie, id_module, id_group],
+    "SELECT * FROM ENTITIE_MENU_cargar($1,$2);",
+    [id_entitie, id_branch],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -92,7 +92,6 @@ export const getMenuModules = async (req: Request, res: Response) => {
     }
   );
 };
-
 
 export const getGroupList = async (req: Request, res: Response) => {
   const { id_entitie, id_module } = req.body;
@@ -121,3 +120,4 @@ export const getGroupList = async (req: Request, res: Response) => {
     }
   );
 };
+

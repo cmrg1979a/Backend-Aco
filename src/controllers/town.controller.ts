@@ -7,10 +7,10 @@ const { Pool } = pg;
 const pool = conexion();
 
 export const getTown = async (req: Request, res: Response) => {
-  const { idTown } = req.body;
+  const { idCity } = req.body;
   await pool.query(
     " select * from LOC_TOWN_listar($1);",
-    [idTown],
+    [idCity],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
