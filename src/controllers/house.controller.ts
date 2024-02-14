@@ -189,7 +189,7 @@ export const getHouseListId = async (req: Request, res: Response) => {
   const { id, id_branch } = req.body;
 
   await pool.query(
-    "SELECT * FROM Table_HouseControl_listarall($1,$2,null,null,null,null,null,null,null,null)",
+    "SELECT * FROM Table_HouseControl_listarall($1,$2,null,null,null,null,null,null,null,null,null,null)",
     [id_branch, id],
     (err, response, fields) => {
       if (!err) {
