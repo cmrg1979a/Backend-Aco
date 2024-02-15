@@ -8,33 +8,37 @@ import { postHouse } from "../interface/house";
 import { postHouseEdit } from "../interface/house";
 
 export const setHouse = async (req: Request, res: Response) => {
-  const dataObj: postHouse = req.body;
+  const dataObj = req.body;
 
   await pool.query(
-    "INSERT INTO Table_HouseControl (id_master,nro_house,code_house,id_cot,id_agent,id_consigner,id_notify,id_aerolinea,id_coloader,id_naviera,id_incoterms,nro_hbl,id_motonave,nro_viaje,bultos,peso,volumen,id_conditions,id_moneda,monto,status,id_branch) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22)",
+    "SELECT * FROM table_housecontrol_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26)",
     [
-      dataObj.id_master,
-      dataObj.nro_house,
-      dataObj.code_house,
-      dataObj.id_cot,
-      dataObj.id_agent,
-      dataObj.id_consigner,
-      dataObj.id_notify,
-      dataObj.id_aerolinea,
-      dataObj.id_coloader,
-      dataObj.id_naviera,
-      dataObj.id_incoterms,
-      dataObj.nro_hbl,
-      dataObj.id_motonave,
-      dataObj.nro_viaje,
-      dataObj.bultos,
-      dataObj.peso,
-      dataObj.volumen,
-      dataObj.id_conditions,
-      dataObj.id_moneda,
-      dataObj.monto,
-      dataObj.status,
-      dataObj.id_branch,
+      dataObj.id_master ? dataObj.id_master : null,
+      dataObj.nro_house ? dataObj.nro_house : null,
+      dataObj.code_house ? dataObj.code_house : null,
+      dataObj.id_cot ? dataObj.id_cot : null,
+      dataObj.id_modality ? dataObj.id_modality : null,
+      dataObj.id_shipment ? dataObj.id_shipment : null,
+      dataObj.id_port_begin ? dataObj.id_port_begin : null,
+      dataObj.id_port_end ? dataObj.id_port_end : null,
+      dataObj.id_agent ? dataObj.id_agent : null,
+      dataObj.id_consigner ? dataObj.id_consigner : null,
+      dataObj.id_notify ? dataObj.id_notify : null,
+      dataObj.id_aerolinea ? dataObj.id_aerolinea : null,
+      dataObj.id_coloader ? dataObj.id_coloader : null,
+      dataObj.id_naviera ? dataObj.id_naviera : null,
+      dataObj.id_incoterms ? dataObj.id_incoterms : null,
+      dataObj.nro_hbl ? dataObj.nro_hbl : null,
+      dataObj.id_motonave ? dataObj.id_motonave : null,
+      dataObj.nro_viaje ? dataObj.nro_viaje : null,
+      dataObj.bultos ? dataObj.bultos : null,
+      dataObj.peso ? dataObj.peso : null,
+      dataObj.volumen ? dataObj.volumen : null,
+      dataObj.id_conditions ? dataObj.id_conditions : null,
+      dataObj.id_moneda ? dataObj.id_moneda : null,
+      dataObj.monto ? dataObj.monto : null,
+      dataObj.id_branch ? dataObj.id_branch : null,
+      dataObj.id_consigner_real ? dataObj.id_consigner_real : null,
     ],
     (err, rows, fields) => {
       if (!err) {
@@ -368,6 +372,7 @@ export const setHouseEdit = async (req: Request, res: Response) => {
     }
   );
 };
+
 export const setHouseDelete = async (req: Request, res: Response) => {
   // const dataObj: postHouseEdit = req.body;
   const id = req.params.id;
