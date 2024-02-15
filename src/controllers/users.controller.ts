@@ -40,6 +40,29 @@ export const ListarUsuarios = async (req: Request, res: Response) => {
     }
   );
 };
+export const verUsuarios = async (req: Request, res: Response) => {
+  const user: IUser = req.query;
+  let newtoken = renewTokenMiddleware(req);
+  await pool.query(
+    "SELECT * FROM function_users_ver($1,$2)",
+    [user.id, user.id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: newtoken,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
 export const validarUsersUsuarios = async (req: Request, res: Response) => {
   const user: IUser = req.query;
   let newtoken = renewTokenMiddleware(req);
@@ -111,15 +134,12 @@ export const validarEmailtUsuarios = async (req: Request, res: Response) => {
 };
 export const InsertarUsuarios = async (req: Request, res: Response) => {
   const user: IUser = req.body;
-  console.log(user);
-  let clave = generarContrasenaAleatoria(8);
-  console.log(clave);
-
+  let clave = generarContrasenaAleatoria(10);
   let newtoken = renewTokenMiddleware(req);
   await pool.query(
-    "SELECT * FROM function_users_insert($1)",
+    "SELECT * FROM function_users_insert($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23)",
     [
-      user.id,
+      user.id_entitie ? user.id_entitie : null,
       user.names,
       user.surname,
       user.second_surname,
@@ -134,12 +154,13 @@ export const InsertarUsuarios = async (req: Request, res: Response) => {
       user.id_sex,
       user.id_document,
       user.id_branch,
-      user.socialprincipal,
-      user.socialsecundary,
+      user.socialprincipal ? user.socialprincipal : null,
+      user.socialsecundary ? user.socialsecundary : null,
       user.users,
       clave,
       user.departamento,
       user.email,
+      user.phone,
       user.positions.map((element) => {
         return element.id;
       }),
@@ -152,6 +173,58 @@ export const InsertarUsuarios = async (req: Request, res: Response) => {
         let rows = response.rows;
         user.clave = clave;
         EnvioCorreo(user);
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: newtoken,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const ActualizarUsuarios = async (req: Request, res: Response) => {
+  const user: IUser = req.body;
+  console.log(user);
+
+  let newtoken = renewTokenMiddleware(req);
+  await pool.query(
+    "SELECT * FROM function_users_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)",
+    [
+      user.id_entitie,
+      user.birthday,
+      user.address,
+      user.status,
+      user.id_pais,
+      user.id_city,
+      user.id_state,
+      user.id_town,
+      user.id_sex,
+      user.socialprincipal ? user.socialprincipal : null,
+      user.socialsecundary ? user.socialsecundary : null,
+      user.departamento,
+      user.phone,
+      user.positions.map((element) => {
+        return element.id_position;
+      }),
+      user.positions.map((element) => {
+        return element.status;
+      }),
+      user.sucursales.map((element) => {
+        return element.id_branch;
+      }),
+      user.sucursales.map((element) => {
+        return element.status;
+      }),
+      user.id,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
         res.json({
           status: 200,
           statusBol: true,
@@ -223,14 +296,15 @@ async function EnvioCorreo(datos) {
   let info = await transporter.sendMail({
     from: 'CHAIN-SOLVER" <sistema1@pic-cargo.com>',
     to: datos.email,
-    subject: "ChainSolver – Establecer Contraseña",
+    subject: "ChainSolver – Registro de USUARIO",
     text: "Recuperación de contraseña",
     html: `
     <p> Hola ${datos.surname} ${datos.second_surname}, ${datos.names} </p>
     <p> Se ha creado tu usuario  </p>
     <p> <b>usuario: </b> ${datos.users} </p>
     <p> <b>clave: </b> ${datos.clave} </p>
-    Para acceder de click <a href="https://chainsolver.piccargo.com/"> Aqui </a>    
+    Para acceder de click <a href="https://chainsolver.piccargo.com/"> Aqui </a>  
+    <p><img src="https://i.ibb.co/ypKb7q1/chain-Solver.png" alt="LogoChain" width="404" height="112" /></p>  
     `,
   });
 }

@@ -23,5 +23,6 @@ export interface IUser {
   departamento?: number;
   positions?: any;
   sucursales?: any;
-  clave?: any;  
+  clave?: any;
+  id_entitie?: number;
 }

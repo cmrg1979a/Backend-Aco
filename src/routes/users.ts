@@ -3,11 +3,13 @@ import { TokenValidation } from "../libs/verifyToken";
 const router: Router = Router();
 
 import {
+  ActualizarUsuarios,
   InsertarUsuarios,
   ListarUsuarios,
   validarDocumentUsuarios,
   validarEmailtUsuarios,
   validarUsersUsuarios,
+  verUsuarios,
 } from "../controllers/users.controller";
 
 router.get("/listar_usuarios", TokenValidation, ListarUsuarios);
@@ -19,7 +21,7 @@ router.get(
 );
 router.get("/validate_email_usuarios", TokenValidation, validarEmailtUsuarios);
 router.post("/insertar_usuario", TokenValidation, InsertarUsuarios);
+router.put("/actualizar_usuario", TokenValidation, ActualizarUsuarios);
+router.get("/ver_usuario", TokenValidation, verUsuarios);
 
 export default router;
-
-
