@@ -6,7 +6,7 @@ const { Pool } = pg;
 const pool = conexion();
 // const ExcelJS = require("exceljs/dist/es5");
 var xl = require("excel4node");
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 import path from "path";
 moment.locale("es");
 export const getControlFile = async (req: Request, res: Response) => {
@@ -28,7 +28,8 @@ export const getControlFile = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
             estadoflag: rows[0].estadoflag,
           });
         } else {
@@ -56,7 +57,8 @@ export const getControlFileAllMaster = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -100,7 +102,8 @@ export const getControlFileAllFilter = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -137,7 +140,8 @@ export const getTotales = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -166,7 +170,8 @@ export const getTotalesAll = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -198,7 +203,8 @@ export const getControlFileAllFilterMaster = async (
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -665,7 +671,8 @@ export const getReportFileDetails = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
             estadoflag: rows[0].estadoflag,
           });
         } else {

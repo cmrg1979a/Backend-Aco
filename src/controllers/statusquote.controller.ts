@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { conexion } from "../routes/databasePGOp";
 import { iStatusQuote } from "../interface/iStatusQuote";
 const pool = conexion();
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 export const ListStatusQuote = async (req: Request, res: Response) => {
   const statusQuote: iStatusQuote = req.query;
 
@@ -29,7 +29,7 @@ export const ListStatusQuote = async (req: Request, res: Response) => {
           status: 200,
           statusBol: true,
           mensaje: rows[0].mensaje,
-          data: rows,
+         data: rows,          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -51,7 +51,7 @@ export const MaxPositionQuoteStatus = async (req: Request, res: Response) => {
           status: 200,
           statusBol: true,
           mensaje: rows[0].mensaje,
-          data: rows,
+         data: rows,          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -73,7 +73,7 @@ export const validatePosition = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -94,7 +94,7 @@ export const validatePositionSelect = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -116,7 +116,7 @@ export const validatePositionReport = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -138,7 +138,7 @@ export const validatePositionCalls = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -171,7 +171,7 @@ export const RegistrarPositionCalls = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -196,7 +196,7 @@ export const validatePositionActualizar = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -224,7 +224,7 @@ export const validatePositionSelectActualizar = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -252,7 +252,7 @@ export const validatePositionReportActualizar = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -276,7 +276,7 @@ export const validatePositionCallsActualizar = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -310,7 +310,7 @@ export const ActualizarPositionCalls = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);

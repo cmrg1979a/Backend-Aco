@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 import { postRoleEntities } from "../interface/postRoleEntitie";
 
 import { conexion } from "../routes/databasePGOp";
@@ -20,7 +20,8 @@ export const addEntitieRole = async (req: Request, res: Response) => {
         res.json({
           status: 200,
           statusBol: true,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);

@@ -5,7 +5,7 @@ import * as pg from "pg";
 const { Pool } = pg;
 const pool = conexion();
 import { postIncoterms } from "../interface/incoterms";
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 export const getIncoterms = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM TABLE_INCOTERMS_LISTAR($1)",
@@ -18,6 +18,7 @@ export const getIncoterms = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -52,6 +53,7 @@ export const getListIncoterms = async (req: Request, res: Response) => {
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -74,6 +76,7 @@ export const insertIncoterms = async (req: Request, res: Response) => {
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -96,6 +99,7 @@ export const readIncoterms = async (req: Request, res: Response) => {
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -118,6 +122,7 @@ export const updateIncoterms = async (req: Request, res: Response) => {
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);

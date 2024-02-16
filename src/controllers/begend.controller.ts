@@ -3,7 +3,7 @@ import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
 import { IBegend } from "interface/iBegend";
 const { Pool } = pg;
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 const pool = conexion();
 
 export const cargarBegend = async (req: Request, res: Response) => {
@@ -12,12 +12,14 @@ export const cargarBegend = async (req: Request, res: Response) => {
     [req.body.id_branch],
     (err, response, fields) => {
       if (!err) {
+        
         let rows = response.rows;
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -49,6 +51,7 @@ export const ListBegend = async (req: Request, res: Response) => {
     ],
     (err, response, fields) => {
       if (!err) {
+        
         let rows = response.rows;
         res.json({
           status: 200,
@@ -56,6 +59,7 @@ export const ListBegend = async (req: Request, res: Response) => {
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -78,6 +82,7 @@ export const InsertarBegend = async (req: Request, res: Response) => {
     ],
     (err, response, fields) => {
       if (!err) {
+        
         let rows = response.rows;
         res.json({
           status: 200,
@@ -85,6 +90,7 @@ export const InsertarBegend = async (req: Request, res: Response) => {
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -108,6 +114,7 @@ export const ActualizarBegend = async (req: Request, res: Response) => {
     ],
     (err, response, fields) => {
       if (!err) {
+        
         let rows = response.rows;
         res.json({
           status: 200,
@@ -115,6 +122,7 @@ export const ActualizarBegend = async (req: Request, res: Response) => {
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -136,6 +144,7 @@ export const ValidateBegendPositionInsert = async (
     ],
     (err, response, fields) => {
       if (!err) {
+        
         let rows = response.rows;
         res.json({
           status: 200,
@@ -143,6 +152,7 @@ export const ValidateBegendPositionInsert = async (
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -164,6 +174,7 @@ export const ValidateBegendPositionActualizar = async (
     ],
     (err, response, fields) => {
       if (!err) {
+        
         let rows = response.rows;
         res.json({
           status: 200,
@@ -171,6 +182,7 @@ export const ValidateBegendPositionActualizar = async (
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);

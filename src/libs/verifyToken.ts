@@ -14,7 +14,7 @@ export const TokenValidation = (
     next();
   } catch (error) {
     res.json({
-      status: 500,
+      status: 401,
       statusBol: false,
       estadoflag: false,
       mensaje: "Sesión Expirada",

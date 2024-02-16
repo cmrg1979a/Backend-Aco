@@ -4,7 +4,7 @@ import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
 const { Pool } = pg;
 const pool = conexion();
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 import { programmedPaymentInterface } from "interface/programmedPaymentInterface";
 
 // export const setProgrammedPayment = async (req: Request, res: Response) => {
@@ -30,7 +30,8 @@ import { programmedPaymentInterface } from "interface/programmedPaymentInterface
 //           res.json({
 //             status: 200,
 //             statusBol: true,
-//             data: rows,
+//            data: rows,
+// token: renewTokenMiddleware(req),
 //           });
 //         } else {
 //           res.json({
@@ -78,6 +79,7 @@ export const setProgrammedPayment = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
             mensaje: rows[0].mensaje,
           });
         } else {
@@ -106,6 +108,7 @@ export const ListProgrammedPayment = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
             mensaje: rows[0].mensaje,
           });
         } else {
@@ -132,6 +135,7 @@ export const updateProgrammedPayment = async (req: Request, res: Response) => {
           status: 200,
           statusBol: true,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -156,6 +160,7 @@ export const ListProgrammedPaymentDetails = async (
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -181,6 +186,7 @@ export const deleteProgrammedPayment = async (req: Request, res: Response) => {
           status: 200,
           statusBol: true,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -202,6 +208,7 @@ export const CargarProgramacion = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -223,7 +230,12 @@ export const PagosProgramadosPorProveedor = async (
 ) => {
   await pool.query(
     "SELECT * FROM programmed_payment_x_proveedor($1,$2,$3,$4)",
-    [req.query.id_branch, req.query.id_proveedor, req.query.id_programend,req.query.id_coins],
+    [
+      req.query.id_branch,
+      req.query.id_proveedor,
+      req.query.id_programend,
+      req.query.id_coins,
+    ],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -233,6 +245,7 @@ export const PagosProgramadosPorProveedor = async (
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -254,7 +267,7 @@ export const RegistrarPagosProgramados = async (
 ) => {
   let dataObj = req.body;
   let details = req.body.details;
-  
+
   await pool.query(
     "SELECT * FROM function_registrar_pagoprogramado($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
     [
@@ -264,7 +277,7 @@ export const RegistrarPagosProgramados = async (
       dataObj.nro_operacion, // varchar,
       details.map((element) => {
         return element.tipocambio;
-      }),//dataObj.tipocambio, // numeric,
+      }), //dataObj.tipocambio, // numeric,
       dataObj.id_coins, // int,
       details.map((element) => {
         return element.id;
@@ -286,6 +299,7 @@ export const RegistrarPagosProgramados = async (
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -302,7 +316,6 @@ export const RegistrarPagosProgramados = async (
 };
 
 export const eliminarProgramacion = async (req: Request, res: Response) => {
-  
   await pool.query(
     "SELECT * FROM function_eliminarprogramacion($1)",
     [req.body.id_details],
@@ -315,6 +328,7 @@ export const eliminarProgramacion = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -333,7 +347,6 @@ export const eliminarProgramacionDetalle = async (
   req: Request,
   res: Response
 ) => {
-  
   await pool.query(
     "SELECT * FROM eliminar_programacion_detalle($1)",
     [req.body.id],
@@ -346,6 +359,7 @@ export const eliminarProgramacionDetalle = async (
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
             mensaje: rows[0].mensaje,
             estadoflag: rows[0].estadoflag,
           });

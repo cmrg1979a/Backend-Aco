@@ -10,7 +10,7 @@ import { IUser } from "interface/iUsers";
 
 export const ListarUsuarios = async (req: Request, res: Response) => {
   const user: IUser = req.query;
-  let newtoken = renewTokenMiddleware(req);
+  
   await pool.query(
     "SELECT * FROM function_users_listar($1,$2,$3,$4,$5,$6,$7,$8)",
     [
@@ -32,7 +32,7 @@ export const ListarUsuarios = async (req: Request, res: Response) => {
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
-          token: newtoken,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -42,7 +42,7 @@ export const ListarUsuarios = async (req: Request, res: Response) => {
 };
 export const verUsuarios = async (req: Request, res: Response) => {
   const user: IUser = req.query;
-  let newtoken = renewTokenMiddleware(req);
+  
   await pool.query(
     "SELECT * FROM function_users_ver($1,$2)",
     [user.id, user.id_branch],
@@ -55,7 +55,7 @@ export const verUsuarios = async (req: Request, res: Response) => {
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
-          token: newtoken,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -65,7 +65,7 @@ export const verUsuarios = async (req: Request, res: Response) => {
 };
 export const validarUsersUsuarios = async (req: Request, res: Response) => {
   const user: IUser = req.query;
-  let newtoken = renewTokenMiddleware(req);
+  
   await pool.query(
     "SELECT * FROM function_users_validareuser($1)",
     [user.users],
@@ -78,7 +78,7 @@ export const validarUsersUsuarios = async (req: Request, res: Response) => {
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
-          token: newtoken,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -88,7 +88,7 @@ export const validarUsersUsuarios = async (req: Request, res: Response) => {
 };
 export const validarDocumentUsuarios = async (req: Request, res: Response) => {
   const user: IUser = req.query;
-  let newtoken = renewTokenMiddleware(req);
+  
   await pool.query(
     "SELECT * FROM function_entitie_validardocument($1,$2,$3)",
     [user.id_branch, user.id_document, user.document],
@@ -101,7 +101,7 @@ export const validarDocumentUsuarios = async (req: Request, res: Response) => {
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
-          token: newtoken,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -111,7 +111,7 @@ export const validarDocumentUsuarios = async (req: Request, res: Response) => {
 };
 export const validarEmailtUsuarios = async (req: Request, res: Response) => {
   const user: IUser = req.query;
-  let newtoken = renewTokenMiddleware(req);
+  
   await pool.query(
     "SELECT * FROM function_users_validateemail($1)",
     [user.email],
@@ -124,7 +124,7 @@ export const validarEmailtUsuarios = async (req: Request, res: Response) => {
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
-          token: newtoken,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -135,7 +135,7 @@ export const validarEmailtUsuarios = async (req: Request, res: Response) => {
 export const InsertarUsuarios = async (req: Request, res: Response) => {
   const user: IUser = req.body;
   let clave = generarContrasenaAleatoria(10);
-  let newtoken = renewTokenMiddleware(req);
+  
   await pool.query(
     "SELECT * FROM function_users_insert($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23)",
     [
@@ -179,7 +179,7 @@ export const InsertarUsuarios = async (req: Request, res: Response) => {
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
-          token: newtoken,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -191,7 +191,7 @@ export const ActualizarUsuarios = async (req: Request, res: Response) => {
   const user: IUser = req.body;
   console.log(user);
 
-  let newtoken = renewTokenMiddleware(req);
+  
   await pool.query(
     "SELECT * FROM function_users_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)",
     [
@@ -231,7 +231,7 @@ export const ActualizarUsuarios = async (req: Request, res: Response) => {
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
-          token: newtoken,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);

@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { conexion } from "../routes/databasePGOp";
 import { IMasterDetalle } from "interface/iMasterDetalle";
 const pool = conexion();
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 export const cargarMasterDetalleRecibido = async (
   req: Request,
   res: Response
@@ -18,7 +18,8 @@ export const cargarMasterDetalleRecibido = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -41,7 +42,8 @@ export const cargarMasterDetalleEnviado = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -64,7 +66,8 @@ export const cargarMasterDetalleNotasCotizacion = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -84,7 +87,8 @@ export const cargarMasterDetalleCanal = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -107,7 +111,8 @@ export const cargarMasterDetalleTipoProveedor = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -127,7 +132,8 @@ export const cargarPercepcionAduana = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -147,7 +153,8 @@ export const cargarTipoTransaccion = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -170,7 +177,8 @@ export const cargarTipoTelefonoPersona = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -194,7 +202,8 @@ export const cargarMasterDetalleImpuestos = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -225,7 +234,8 @@ export const ListarMasterDetalleImpuestos = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -258,7 +268,8 @@ export const InsertarMasterDetalleImpuestos = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -290,7 +301,8 @@ export const ActualizarMasterDetalle = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -322,7 +334,8 @@ export const ListarMasterDetalleTipoTelefonos = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -355,7 +368,8 @@ export const InsertarMasterDetalleTipoTelefono = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -390,7 +404,8 @@ export const ListarMasterDetalleTNotasCotizacion = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -423,7 +438,8 @@ export const InsertarMasterDetalleNotasCotizacion = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);

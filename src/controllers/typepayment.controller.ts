@@ -3,7 +3,7 @@ import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
 import { ITypePayments } from "interface/iTypePayments";
 const { Pool } = pg;
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 const pool = conexion();
 
 export const ListTypePayments = async (req: Request, res: Response) => {
@@ -27,7 +27,7 @@ export const ListTypePayments = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -53,7 +53,7 @@ export const InsertarTypePayments = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -80,7 +80,7 @@ export const ActualizarTypePayments = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
 const { Pool } = pg;
@@ -20,6 +20,7 @@ export const getBanksList = async (req: Request, res: Response) => {
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -46,6 +47,7 @@ export const getListaPagosXProveedorCxP = async (
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -83,6 +85,7 @@ export const setPayForProveedor = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -113,6 +116,7 @@ export const getListBanksDetailsCargar = async (
               status: 200,
               statusBol: true,
               data: rows,
+              token: renewTokenMiddleware(req),
             });
           } else {
             res.json({
@@ -159,6 +163,7 @@ export const getListarBancosgastos = async (req: Request, res: Response) => {
             estadoflag: rows[0].estadoflag,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -189,6 +194,7 @@ export const getVerPagosPorProveedor = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -247,6 +253,7 @@ export const setPayForCustomer = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -254,6 +261,7 @@ export const setPayForCustomer = async (req: Request, res: Response) => {
             statusBol: false,
             mensaje: rows[0].mensaje,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         }
       } else {
@@ -292,6 +300,7 @@ export const getListarPayForCustomer = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -320,6 +329,7 @@ export const getVerPagosPorCustomer = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -352,6 +362,7 @@ export const getListaPagosXProveedorCxC = async (
             statusBol: true,
             estadoflag: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -494,6 +505,7 @@ export const RegistroPagoDetalles = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -523,6 +535,7 @@ export const getVerPagosInvoice = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
             estadoflag: true,
           });
         } else {
@@ -563,6 +576,7 @@ export const getActualizarPagosInvoice = async (
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
             estadoflag: true,
           });
         } else {
@@ -594,6 +608,7 @@ export const getVerPagosCGEgresos = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
             estadoflag: true,
           });
         } else {
@@ -636,6 +651,7 @@ export const getActualizarPagosCGEgreso = async (
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
             estadoflag: true,
           });
         } else {
@@ -670,6 +686,7 @@ export const getVerPagosIngresosInvoice = async (
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
             estadoflag: true,
           });
         } else {
@@ -701,6 +718,7 @@ export const getVerPagosDebsClient = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
             estadoflag: true,
           });
         } else {
@@ -744,6 +762,7 @@ export const getActualizarPagosInvoiceIngreso = async (
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
             estadoflag: true,
           });
         } else {
@@ -787,6 +806,7 @@ export const getActualizarIngresoDebsCliente = async (
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
             estadoflag: true,
           });
         } else {
@@ -1099,6 +1119,7 @@ export const reversarCxC = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -1126,6 +1147,7 @@ export const reversarCxP = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -1152,6 +1174,7 @@ export const verPagosControlEgresos = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -1216,6 +1239,7 @@ export const getListBank = async (req: Request, res: Response) => {
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -1242,6 +1266,7 @@ export const insertBank = async (req: Request, res: Response) => {
         res.json({
           status: 200,
           data: rows,
+          token: renewTokenMiddleware(req),
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
         });
@@ -1264,6 +1289,7 @@ export const readBank = async (req: Request, res: Response) => {
         res.json({
           status: 200,
           data: rows,
+          token: renewTokenMiddleware(req),
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
         });
@@ -1292,6 +1318,7 @@ export const updateBank = async (req: Request, res: Response) => {
         res.json({
           status: 200,
           data: rows,
+          token: renewTokenMiddleware(req),
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
         });

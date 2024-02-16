@@ -3,7 +3,7 @@ import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
 import { ICity } from "../interface/iCity";
 const { Pool } = pg;
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 const pool = conexion();
 
 export const getCity = async (req: Request, res: Response) => {
@@ -14,12 +14,14 @@ export const getCity = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+        
         res.json({
           status: 200,
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -43,12 +45,14 @@ export const ListarCity = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+        
         res.json({
           status: 200,
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -70,12 +74,14 @@ export const InsertarCity = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+        
         res.json({
           status: 200,
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -97,12 +103,14 @@ export const ActualizarCity = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+        
         res.json({
           status: 200,
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);

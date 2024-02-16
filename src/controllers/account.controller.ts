@@ -4,7 +4,7 @@ import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
 const { Pool } = pg;
 const pool = conexion();
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 export const getTypeAccount = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM table_type_account_listar($1)",
@@ -17,6 +17,7 @@ export const getTypeAccount = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -63,7 +64,7 @@ export const setAccount = async (req: Request, res: Response) => {
 export const getAccountsNumber = async (req: Request, res: Response) => {
   let id_branch = req.body.id_branch;
   let id_entities = req.params.id_entities;
-  
+
   await pool.query(
     "SELECT * FROM entities_accounts_list($1,$2)",
     [id_branch, id_entities === "undefined" ? 0 : id_entities],
@@ -75,6 +76,7 @@ export const getAccountsNumber = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({

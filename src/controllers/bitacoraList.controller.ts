@@ -5,7 +5,7 @@ import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
 const { Pool } = pg;
 const pool = conexion();
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 export const getBitacoraList = async (req: Request, res: Response) => {
   pool.query(
     " SELECT * FROM TABLE_BITACORA_LISTAR(NULL);",
@@ -18,6 +18,7 @@ export const getBitacoraList = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -44,6 +45,7 @@ export const getBitacoraLineal = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({

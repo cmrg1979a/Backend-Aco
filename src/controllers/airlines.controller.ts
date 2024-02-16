@@ -3,12 +3,13 @@ import { Request, Response } from "express";
 import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
 import { IAirlines } from "interface/iAirlines";
-// import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 const { Pool } = pg;
 const pool = conexion();
 
 export const ListarAirlines = async (req: Request, res: Response) => {
   const iAirlines: IAirlines = req.query;
+
   await pool.query(
     "SELECT * FROM function_airlines_listar($1,$2,$3,$4,$5,$6,$7)",
     [
@@ -29,6 +30,7 @@ export const ListarAirlines = async (req: Request, res: Response) => {
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -38,7 +40,6 @@ export const ListarAirlines = async (req: Request, res: Response) => {
 };
 export const validateIATANuevo = async (req: Request, res: Response) => {
   const iAirlines: IAirlines = req.query;
-
   await pool.query(
     "SELECT * FROM function_airlines_validariata_nuevo($1,$2)",
     [iAirlines.id_branch, iAirlines.code_iata || null],
@@ -51,6 +52,7 @@ export const validateIATANuevo = async (req: Request, res: Response) => {
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -73,6 +75,7 @@ export const validateICAONuevo = async (req: Request, res: Response) => {
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -83,6 +86,7 @@ export const validateICAONuevo = async (req: Request, res: Response) => {
 
 export const GuardarAirlines = async (req: Request, res: Response) => {
   const iAirlines: IAirlines = req.body;
+
   await pool.query(
     "SELECT * FROM function_airlines_insertar($1,$2,$3,$4,$5,$6)",
     [
@@ -102,6 +106,7 @@ export const GuardarAirlines = async (req: Request, res: Response) => {
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -125,6 +130,7 @@ export const validateIATAEditar = async (req: Request, res: Response) => {
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -147,6 +153,7 @@ export const validateICAOEditar = async (req: Request, res: Response) => {
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -177,6 +184,7 @@ export const GuardarEditar = async (req: Request, res: Response) => {
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -186,6 +194,7 @@ export const GuardarEditar = async (req: Request, res: Response) => {
 };
 export const getAilrines = async (req: Request, res: Response) => {
   const iAirlines: IAirlines = req.query;
+
   await pool.query(
     "SELECT * FROM Table_airlines_cargar($1)",
     [iAirlines.id_branch],
@@ -197,6 +206,7 @@ export const getAilrines = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({

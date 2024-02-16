@@ -3,9 +3,9 @@ import { Request, Response } from "express";
 import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
 const { Pool } = pg;
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 
 const pool = conexion();
-
 export const getListTypePhone = async (req: Request, res: Response) => {
   let data = req.query;
   const result = await pool.query("SELECT *from function_list_table_type_phone($1,$2, $3, $4);", [

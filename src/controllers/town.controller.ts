@@ -5,7 +5,7 @@ import * as pg from "pg";
 import { ITown } from "interface/iTown";
 const { Pool } = pg;
 const pool = conexion();
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 export const getTown = async (req: Request, res: Response) => {
   const { idCity } = req.body;
   await pool.query(
@@ -18,7 +18,7 @@ export const getTown = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -55,7 +55,7 @@ export const ListarTown = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -82,7 +82,7 @@ export const InsertarTown = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -109,7 +109,7 @@ export const ActualizarTown = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);

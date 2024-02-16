@@ -4,6 +4,7 @@ import * as pg from "pg";
 const { Pool } = pg;
 const pool = conexion();
 import { postEntities } from "../interface/postEntitie";
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 
 export const GuardarProveedor = async (req: Request, res: Response) => {
   const {
@@ -84,12 +85,14 @@ export const GuardarProveedor = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         res.json({
           status: 200,
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -125,12 +128,14 @@ export const getListProveedor = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         res.json({
           status: 200,
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -149,12 +154,14 @@ export const getVerProveedor = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         res.json({
           status: 200,
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -172,12 +179,14 @@ export const eliminarProveedor = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         res.json({
           status: 200,
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -195,12 +204,14 @@ export const telContactoProveedor = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         res.json({
           status: 200,
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -219,12 +230,14 @@ export const getValidaRazonSocial = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         res.json({
           status: 200,
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -246,12 +259,14 @@ export const getValidaTipoDocumentoDocument = async (
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         res.json({
           status: 200,
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -345,12 +360,14 @@ export const actualizarProveedor = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         res.json({
           status: 200,
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -391,12 +408,14 @@ export const getListCliente = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         res.json({
           status: 200,
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -487,12 +506,14 @@ export const GuardarCliente = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         res.json({
           status: 200,
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -511,12 +532,14 @@ export const getVerCliente = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         res.json({
           status: 200,
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -617,12 +640,14 @@ export const ActualizarCliente = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         res.json({
           status: 200,
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -658,11 +683,13 @@ export const getEntitiesList = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -687,11 +714,13 @@ export const getEntitiesListId = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -716,12 +745,14 @@ export const getEntitiesListIc = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
             statusBol: true,
             estadoflag: rows[0].estadoflag,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -747,11 +778,13 @@ export const getPhones = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -776,11 +809,13 @@ export const getContacts = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -838,6 +873,7 @@ export const addEntitie = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         if (!!rows[0].estadoflag) {
           let data = response.rows;
           res.json({
@@ -942,11 +978,13 @@ export const addEntities = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -993,11 +1031,13 @@ export const editEntitie = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -1020,6 +1060,7 @@ export const validationDocument = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
@@ -1037,7 +1078,6 @@ export const validationDocument = async (req: Request, res: Response) => {
         console.log(err);
       }
     }
-   
   );
 };
 
@@ -1049,11 +1089,13 @@ export const CargarClientes = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -1077,12 +1119,14 @@ export const CargarProveedores = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         res.json({
           status: 200,
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -1100,11 +1144,13 @@ export const InsertPhones = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -1129,11 +1175,13 @@ export const ListarPhons = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -1157,11 +1205,13 @@ export const cargarPersona = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
             mensaje: rows[0].mensaje,
             estadoflag: rows[0].estadoflag,
           });
@@ -1188,12 +1238,14 @@ export const ListarPersonaTipoPersona = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         res.json({
           status: 200,
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -1210,12 +1262,14 @@ export const guardarRolProveedor = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         res.json({
           status: 200,
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);

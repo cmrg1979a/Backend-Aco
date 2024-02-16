@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
 import { IRegiones } from "interface/iRegiones";
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 const { Pool } = pg;
 const pool = conexion();
 export const getCargarState = async (req: Request, res: Response) => {
@@ -18,7 +18,7 @@ export const getCargarState = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -45,7 +45,7 @@ export const ListarState = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -72,7 +72,7 @@ export const InsertarState = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -99,7 +99,7 @@ export const ActualizarState = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-          data: rows,
+         data: rows,          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);

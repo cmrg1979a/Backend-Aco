@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { conexion } from "../routes/databasePGOp";
 import { getCollection } from "../routes/mongoDB";
 import { Collection, InsertOneResult, UpdateResult } from "mongodb";
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 import * as pg from "pg";
 const { Pool } = pg;
 
@@ -213,7 +213,8 @@ export const setQuote = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
             mensaje: rows[0].mensaje,
             insertId: rows[0].insertid,
             nro_quote: rows[0].nro_quote,
@@ -243,7 +244,8 @@ export const getQuoteStatus = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -299,7 +301,8 @@ export const getQuoteList = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             estadoflag: rows[0].estadoflag,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -307,7 +310,8 @@ export const getQuoteList = async (req: Request, res: Response) => {
             statusBol: true,
             mensaje: rows[0].mensaje,
             estadoflag: rows[0].estadoflag,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         }
       } else {
@@ -329,7 +333,8 @@ export const getQuoteId = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
             number: rows[0].number,
           });
         } else {
@@ -356,7 +361,8 @@ export const delQuote = async (req: Request, res: Response) => {
         res.json({
           status: 200,
           statusBol: true,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -606,7 +612,8 @@ export const putQuote = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
             mensaje: rows[0].mensaje,
             insertId: rows[0].insertid,
             nro_quote: rows[0].nro_quote,
@@ -636,7 +643,8 @@ export const getReportsRangeDays = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
             number: rows[0].number,
           });
         } else {
@@ -687,7 +695,8 @@ export const setPath = async (req: Request, res: Response) => {
         res.json({
           status: 200,
           statusBol: true,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         res.json({
@@ -711,7 +720,8 @@ export const putPath = async (req: Request, res: Response) => {
         res.json({
           status: 200,
           statusBol: true,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         res.json({
@@ -734,7 +744,8 @@ export const deletePath = async (req: Request, res: Response) => {
         res.json({
           status: 200,
           statusBol: true,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         res.json({
@@ -758,7 +769,8 @@ export const updateCalls = async (req: Request, res: Response) => {
         res.json({
           status: 200,
           statusBol: true,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         res.json({
@@ -785,7 +797,8 @@ export const getCalls = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -813,7 +826,8 @@ export const getCallsId = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -840,7 +854,8 @@ export const getQuoteCalls = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -867,7 +882,8 @@ export const getInstructivoId = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -894,7 +910,8 @@ export const getMarketingList = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -922,7 +939,8 @@ export const getModulesEntities = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -963,7 +981,8 @@ export const updateQuoteRecibidoEnviado = async (
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
             estado: rows[0].estadoflag,
             mensaje: rows[0].mensaje,
           });
@@ -993,7 +1012,8 @@ export const ActualizarFolderOneDrive = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
             estado: rows[0].estadoflag,
           });
         } else {
@@ -1056,7 +1076,8 @@ export const getListCalls = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
             estado: rows[0].estadoflag,
           });
         } else {
@@ -1088,7 +1109,8 @@ export const quoteCargarNoAsignadosHouse = async (
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
             mensaje: rows[0].mensaje,
             estado: rows[0].estadoflag,
           });
@@ -1117,7 +1139,8 @@ export const quoteDataHouse = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
             mensaje: rows[0].mensaje,
             estado: rows[0].estadoflag,
           });
@@ -1431,7 +1454,8 @@ export const aprobarCotizacion = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
             estadoflag: rows[0].estadoflag,
             mensaje: rows[0].mensaje,
           });
@@ -1571,7 +1595,8 @@ export const setNoteQuote = async (req: Request, res: Response) => {
             statusBol: true,
             mensaje: rows[0].mensaje,
             estadoflag: rows[0].estadoflag,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         }
       } else {

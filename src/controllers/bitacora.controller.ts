@@ -4,7 +4,7 @@ import { postBitacora } from "../interface/bitacora";
 import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
 const { Pool } = pg;
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 const pool = conexion();
 
 export const setBitacora = async (req: Request, res: Response) => {
@@ -24,7 +24,7 @@ export const setBitacora = async (req: Request, res: Response) => {
         res.json({
           status: 200,
           statusBol: true,
-          data: rows,
+         data: rows,          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -43,7 +43,7 @@ export const deleteBitacora = async (req: Request, res: Response) => {
         res.json({
           status: 200,
           statusBol: true,
-          data: rows,
+         data: rows,          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
