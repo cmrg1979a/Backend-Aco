@@ -14,9 +14,11 @@ import {
   setHouseEdit,
   setHouseDelete,
   getTotalHouseListAll,
+  insertComentarioHouse
 } from "../controllers/house.controller";
 
 router.post("/setHouse", TokenValidation, setHouse);
+router.post("/insertComentarioHouse", TokenValidation, insertComentarioHouse);
 router.post("/getHouseList", TokenValidation, getHouseList);
 router.post("/getHouseListId", TokenValidation, getHouseListId);
 router.post("/getHouseServices", TokenValidation, getHouseServices);

@@ -118,7 +118,7 @@ export const getHouseListAll = async (req: Request, res: Response) => {
     ],
     (err, response, fields) => {
       if (!err) {
-        let rows = response.rows;
+        let rows = response.rows
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
@@ -380,6 +380,31 @@ export const setHouseDelete = async (req: Request, res: Response) => {
   await pool.query(
     "UPDATE Table_HouseControl SET status = 0  WHERE id = $1",
     [id],
+    (err, rows, fields) => {
+      if (!err) {
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const insertComentarioHouse = async (req: Request, res: Response) => {
+  const dataObj = req.body;
+
+  await pool.query(
+    "SELECT * FROM function_comentariohouse_insertar($1,$2,$3,$4)",
+    [
+      dataObj.id_house ? dataObj.id_house : null,
+      dataObj.id_entities ? dataObj.id_entities : null,
+      dataObj.fecha ? dataObj.fecha : null,
+      dataObj.comentario ? dataObj.comentario : null
+    ],
     (err, rows, fields) => {
       if (!err) {
         res.json({
