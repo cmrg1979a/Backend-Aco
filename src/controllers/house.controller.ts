@@ -118,7 +118,7 @@ export const getHouseListAll = async (req: Request, res: Response) => {
     ],
     (err, response, fields) => {
       if (!err) {
-        let rows = response.rows
+        let rows = response.rows;
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
@@ -405,12 +405,15 @@ export const insertComentarioHouse = async (req: Request, res: Response) => {
       dataObj.fecha ? dataObj.fecha : null,
       dataObj.comentario ? dataObj.comentario : null
     ],
-    (err, rows, fields) => {
+    (err, response, fields) => {
+      let rows = response.rows;
       if (!err) {
         res.json({
           status: 200,
           statusBol: true,
           data: rows,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
         });
       } else {
         console.log(err);
