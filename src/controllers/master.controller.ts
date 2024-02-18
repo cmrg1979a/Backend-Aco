@@ -231,11 +231,12 @@ export const getMasterList = async (req: Request, res: Response) => {
     status_adm,
     pagina,
     limite,
+    orden
   } = req.query;
   // console.log(req.query)
 
   await pool.query(
-    "SELECT * FROM TABLE_MASTERCONTROL_listar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13);",
+    "SELECT * FROM TABLE_MASTERCONTROL_listar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14);",
     [
       id_branch,
       id_canal || null,
@@ -250,6 +251,7 @@ export const getMasterList = async (req: Request, res: Response) => {
       status_adm || null,
       pagina || null,
       limite || null,
+      orden || null,
     ],
     (err, response, fields) => {
       if (!err) {
