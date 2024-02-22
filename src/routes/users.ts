@@ -6,6 +6,7 @@ import {
   ActualizarUsuarios,
   InsertarUsuarios,
   ListarUsuarios,
+  cambiarEstadoUser,
   validarDocumentUsuarios,
   validarEmailtUsuarios,
   validarUsersUsuarios,
@@ -23,5 +24,6 @@ router.get("/validate_email_usuarios", TokenValidation, validarEmailtUsuarios);
 router.post("/insertar_usuario", TokenValidation, InsertarUsuarios);
 router.put("/actualizar_usuario", TokenValidation, ActualizarUsuarios);
 router.get("/ver_usuario", TokenValidation, verUsuarios);
+router.get("/cambiar_estado_usuario", TokenValidation, cambiarEstadoUser);
 
 export default router;

@@ -6,6 +6,7 @@ import {
   CargarPosicion,
   CargarUsuarioNoAsignadoPosicion,
   ListarPosicion,
+  cambiarEstadoPosicion,
   insertarActualizarUsuarioPosicion,
   verPosicion,
 } from "../controllers/position.controller";
@@ -23,5 +24,6 @@ router.put(
   TokenValidation,
   insertarActualizarUsuarioPosicion
 );
+router.put("/cambiar_estado_posicion", TokenValidation, cambiarEstadoPosicion);
 
 export default router;

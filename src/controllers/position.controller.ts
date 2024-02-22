@@ -140,3 +140,26 @@ export const insertarActualizarUsuarioPosicion = async (
     }
   );
 };
+
+export const cambiarEstadoPosicion = async (req: Request, res: Response) => {
+  const position = req.body;
+  await pool.query(
+    "SELECT * FROM function_position_cambiarestado($1)",
+    [position.id],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
