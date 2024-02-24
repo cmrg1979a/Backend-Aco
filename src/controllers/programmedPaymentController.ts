@@ -74,21 +74,14 @@ export const setProgrammedPayment = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-            token: renewTokenMiddleware(req),
-            mensaje: rows[0].mensaje,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -100,24 +93,16 @@ export const ListProgrammedPayment = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM programmed_payment_listar($1);",
     [req.body.id_branch],
-    (err, response, fields) => {
+    (err, rows, fields) => {
       if (!err) {
-        let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-            token: renewTokenMiddleware(req),
-            mensaje: rows[0].mensaje,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -129,11 +114,14 @@ export const updateProgrammedPayment = async (req: Request, res: Response) => {
   await pool.query(
     "UPDATE details_programendpaymet SET status = $1 where id = $2",
     [0, req.params.id],
-    (err, rows, fields) => {
+    (err, response, fields) => {
       if (!err) {
+        let rows = response.rows;
         res.json({
           status: 200,
           statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
           data: rows,
           token: renewTokenMiddleware(req),
         });
@@ -154,21 +142,14 @@ export const ListProgrammedPaymentDetails = async (
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-            token: renewTokenMiddleware(req),
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -180,11 +161,14 @@ export const deleteProgrammedPayment = async (req: Request, res: Response) => {
   await pool.query(
     "UPDATE details_programendpaymet SET elimado = 1 where id = $1",
     [req.body.id],
-    (err, rows, fields) => {
+    (err, response, fields) => {
       if (!err) {
+        let rows = response.rows;
         res.json({
           status: 200,
           statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
           data: rows,
           token: renewTokenMiddleware(req),
         });
@@ -202,21 +186,14 @@ export const CargarProgramacion = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-            token: renewTokenMiddleware(req),
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -239,21 +216,14 @@ export const PagosProgramadosPorProveedor = async (
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-            token: renewTokenMiddleware(req),
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -293,21 +263,14 @@ export const RegistrarPagosProgramados = async (
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-            token: renewTokenMiddleware(req),
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -322,21 +285,14 @@ export const eliminarProgramacion = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-            token: renewTokenMiddleware(req),
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -353,24 +309,14 @@ export const eliminarProgramacionDetalle = async (
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-            token: renewTokenMiddleware(req),
-            mensaje: rows[0].mensaje,
-            estadoflag: rows[0].estadoflag,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            estadoflag: rows[0].estadoflag,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }

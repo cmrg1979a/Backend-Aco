@@ -4,7 +4,6 @@ import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
 const { Pool } = pg;
 const pool = conexion();
-
 var xl = require("excel4node");
 import path from "path";
 import { postBank } from "../interface/bank";

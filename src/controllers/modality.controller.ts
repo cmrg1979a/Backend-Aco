@@ -13,20 +13,14 @@ export const getModality = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-           data: rows,
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
           token: renewTokenMiddleware(req),
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        });
       } else {
         console.log(err);
       }
@@ -53,7 +47,7 @@ export const getListModality = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -82,7 +76,7 @@ export const insertModality = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -105,7 +99,7 @@ export const readModality = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -128,7 +122,7 @@ export const updateModality = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
