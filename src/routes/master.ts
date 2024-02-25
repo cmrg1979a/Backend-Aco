@@ -16,6 +16,7 @@ import {
   insertComentarioMaster,
   cargarMaster,
   getTotalMasterList,
+  deleteMaster,
 } from "../controllers/master.controller";
 
 router.post("/setMaster", TokenValidation, setMaster);
@@ -29,10 +30,8 @@ router.get("/getTotalMasterList", TokenValidation, getTotalMasterList);
 router.get("/cargar_house", TokenValidation, getCargarHouse);
 router.get("/cargar_master", TokenValidation, cargarMaster);
 router.put("/update_folder_onedrive", TokenValidation, updateFolderOneDrive);
-router.post(
-  "/insert_comentario_master",
-  TokenValidation,
-  insertComentarioMaster
-);
+router.post("/insert_comentario_master", TokenValidation, insertComentarioMaster);
+router.delete("/deleteMaster/:id", TokenValidation, deleteMaster);
+
 
 export default router;

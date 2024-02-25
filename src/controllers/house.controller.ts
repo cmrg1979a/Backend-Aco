@@ -312,7 +312,7 @@ export const setHouseEdit = async (req: Request, res: Response) => {
   const id = req.params.id;
 
   await pool.query(
-    "select function_housecontrol_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26)",
+    "select function_housecontrol_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25)",
     [
       dataObj.id,
       dataObj.id_cot ? dataObj.id_cot : null,
@@ -337,15 +337,8 @@ export const setHouseEdit = async (req: Request, res: Response) => {
       dataObj.id_consigner_real ? dataObj.id_consigner_real : null,
       dataObj.id_port_begin ? dataObj.id_port_begin : null,
       dataObj.id_port_end ? dataObj.id_port_end : null,
-      dataObj.lstservices.map((item: any) => {
-        return item.id ? item.id : null;
-      }),
-      dataObj.lstservices.map((item: any) => {
-        return item.nameservice ? item.nameservice : null;
-      }),
-      dataObj.lstservices.map((item: any) => {
-        return item.status ? item.status : null;
-      }),
+      dataObj.lstservices.map((item: any) => item.id || null),
+      dataObj.lstservices.map((item: any) => item.nameservice || null),
     ],
     (err, response, fields) => {
       if (!err) {
