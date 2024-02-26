@@ -14,7 +14,7 @@ export const getCity = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        
+
         res.json({
           status: 200,
           statusBol: true,
@@ -45,7 +45,7 @@ export const ListarCity = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        
+
         res.json({
           status: 200,
           statusBol: true,
@@ -69,12 +69,12 @@ export const InsertarCity = async (req: Request, res: Response) => {
       city.id_state,
       city.name,
       city.description ? city.description : city.description,
-      city.status,
+      city.status == true || city.status == 1 ? 1 : 0,
     ],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        
+
         res.json({
           status: 200,
           statusBol: true,
@@ -103,7 +103,7 @@ export const ActualizarCity = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        
+
         res.json({
           status: 200,
           statusBol: true,

@@ -18,7 +18,8 @@ export const getCargarState = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,          token: renewTokenMiddleware(req),
+          data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -45,7 +46,8 @@ export const ListarState = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,          token: renewTokenMiddleware(req),
+          data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -62,7 +64,7 @@ export const InsertarState = async (req: Request, res: Response) => {
       regiones.id_pais,
       regiones.name,
       regiones.description ? regiones.description : regiones.description,
-      regiones.status,
+      regiones.status == true || regiones.status == 1 ? 1 : 0,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -72,7 +74,8 @@ export const InsertarState = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,          token: renewTokenMiddleware(req),
+          data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -88,7 +91,7 @@ export const ActualizarState = async (req: Request, res: Response) => {
       regiones.id_pais,
       regiones.name,
       regiones.description ? regiones.description : null,
-      regiones.status,
+      regiones.status == true || regiones.status == 1 ? 1 : 0,
       regiones.id,
     ],
     (err, response, fields) => {
@@ -99,7 +102,8 @@ export const ActualizarState = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,          token: renewTokenMiddleware(req),
+          data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);

@@ -18,7 +18,8 @@ export const getTown = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -45,7 +46,7 @@ export const ListarTown = async (req: Request, res: Response) => {
       town.code ? town.code : null,
       town.name ? town.name : null,
       town.description ? town.description : null,
-      town.status ? town.status : null,
+      town.status == "null" ? null : town.status,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -55,7 +56,8 @@ export const ListarTown = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,          token: renewTokenMiddleware(req),
+          data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -72,7 +74,7 @@ export const InsertarTown = async (req: Request, res: Response) => {
       town.id_city,
       town.name,
       town.description ? town.description : town.description,
-      town.status,
+      town.status == true || town.status == 1 ? 1 : 0,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -82,7 +84,8 @@ export const InsertarTown = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,          token: renewTokenMiddleware(req),
+          data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -98,7 +101,7 @@ export const ActualizarTown = async (req: Request, res: Response) => {
       town.id_city,
       town.name,
       town.description ? town.description : null,
-      town.status,
+      town.status == true || town.status == 1 ? 1 : 0,
       town.id,
     ],
     (err, response, fields) => {
@@ -109,7 +112,8 @@ export const ActualizarTown = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,          token: renewTokenMiddleware(req),
+          data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);

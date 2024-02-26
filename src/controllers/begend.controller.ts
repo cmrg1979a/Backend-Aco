@@ -12,7 +12,6 @@ export const cargarBegend = async (req: Request, res: Response) => {
     [req.body.id_branch],
     (err, response, fields) => {
       if (!err) {
-        
         let rows = response.rows;
         if (!!rows[0].estadoflag) {
           res.json({
@@ -51,7 +50,6 @@ export const ListBegend = async (req: Request, res: Response) => {
     ],
     (err, response, fields) => {
       if (!err) {
-        
         let rows = response.rows;
         res.json({
           status: 200,
@@ -78,11 +76,10 @@ export const InsertarBegend = async (req: Request, res: Response) => {
       begend.description ? begend.description : null,
       begend.color ? begend.color : null,
       begend.id_branch,
-      begend.status,
+      begend.status == true || begend.status == 1 ? 1 : 0,
     ],
     (err, response, fields) => {
       if (!err) {
-        
         let rows = response.rows;
         res.json({
           status: 200,
@@ -109,12 +106,11 @@ export const ActualizarBegend = async (req: Request, res: Response) => {
       begend.name,
       begend.description ? begend.description : null,
       begend.color ? begend.color : null,
-      begend.status,
+      begend.status == true || begend.status == 1 ? 1 : 0,
       begend.id,
     ],
     (err, response, fields) => {
       if (!err) {
-        
         let rows = response.rows;
         res.json({
           status: 200,
@@ -144,7 +140,6 @@ export const ValidateBegendPositionInsert = async (
     ],
     (err, response, fields) => {
       if (!err) {
-        
         let rows = response.rows;
         res.json({
           status: 200,
@@ -174,7 +169,6 @@ export const ValidateBegendPositionActualizar = async (
     ],
     (err, response, fields) => {
       if (!err) {
-        
         let rows = response.rows;
         res.json({
           status: 200,

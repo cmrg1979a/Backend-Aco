@@ -128,6 +128,7 @@ export const updateGroupservices = async (req: Request, res: Response) => {
   );
 };
 
+
 export const ListarItemServices = async (req: Request, res: Response) => {
   const itemservice: IITemServices = req.query;
 
@@ -139,8 +140,7 @@ export const ListarItemServices = async (req: Request, res: Response) => {
       itemservice.code ? itemservice.code : null,
       itemservice.name ? itemservice.name : null,
       itemservice.description ? itemservice.description : null,
-
-      itemservice.status === "null" ? null : itemservice.status,
+      itemservice.status === "" ? null : itemservice.status,
     ],
     (err, response, fields) => {
       if (!err) {

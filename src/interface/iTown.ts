@@ -3,8 +3,8 @@ export interface ITown {
   id_city?: number;
   id_state?: number;
   id_pais?: number;
-  code?: number;
+  code?: any;
   name?: string;
   description?: string;
-  status?: number;
+  status?: any;
 }
