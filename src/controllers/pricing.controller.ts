@@ -785,8 +785,8 @@ export const getMarketingList = async (req: Request, res: Response) => {
 export const getModulesEntities = async (req: Request, res: Response) => {
   const { id_module, id_branch } = req.body;
   await pool.query(
-    "SELECT * FROM ModulesEntities_list($1,$2)",
-    [id_branch, id_module],
+    "SELECT * FROM ModulesEntities_list($1)",
+    [id_branch],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
