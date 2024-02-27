@@ -18,7 +18,7 @@ export const cargarMasterDetalleRecibido = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -42,7 +42,7 @@ export const cargarMasterDetalleEnviado = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -66,7 +66,7 @@ export const cargarMasterDetalleNotasCotizacion = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -87,7 +87,7 @@ export const cargarMasterDetalleCanal = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -111,7 +111,7 @@ export const cargarMasterDetalleTipoProveedor = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -132,7 +132,7 @@ export const cargarPercepcionAduana = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -153,7 +153,7 @@ export const cargarTipoTransaccion = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -177,7 +177,7 @@ export const cargarTipoTelefonoPersona = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -202,7 +202,7 @@ export const cargarMasterDetalleImpuestos = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -234,7 +234,7 @@ export const ListarMasterDetalleImpuestos = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -256,9 +256,13 @@ export const InsertarMasterDetalleImpuestos = async (
       iMasterDetalle.codigo01 ? iMasterDetalle.codigo01 : null,
       iMasterDetalle.codigo02 ? iMasterDetalle.codigo02 : null,
       iMasterDetalle.description ? iMasterDetalle.description : null,
-      iMasterDetalle.status ? iMasterDetalle.status : null,
+      iMasterDetalle.status == true || iMasterDetalle.status == 1
+        ? true
+        : false,
       iMasterDetalle.id_branch ? iMasterDetalle.id_branch : null,
-      iMasterDetalle.escomunflag ? iMasterDetalle.escomunflag : null,
+      iMasterDetalle.escomunflag == true || iMasterDetalle.escomunflag == 1
+        ? true
+        : false,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -268,7 +272,7 @@ export const InsertarMasterDetalleImpuestos = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -277,10 +281,7 @@ export const InsertarMasterDetalleImpuestos = async (
     }
   );
 };
-export const ActualizarMasterDetalle = async (
-  req: Request,
-  res: Response
-) => {
+export const ActualizarMasterDetalle = async (req: Request, res: Response) => {
   let iMasterDetalle: IMasterDetalle = req.body;
 
   await pool.query(
@@ -289,8 +290,12 @@ export const ActualizarMasterDetalle = async (
       iMasterDetalle.codigo01 ? iMasterDetalle.codigo01 : null,
       iMasterDetalle.codigo02 ? iMasterDetalle.codigo02 : null,
       iMasterDetalle.description ? iMasterDetalle.description : null,
-      iMasterDetalle.status,
-      iMasterDetalle.escomunflag,
+      iMasterDetalle.status == true || iMasterDetalle.status == 1
+        ? true
+        : false,
+      iMasterDetalle.escomunflag == true || iMasterDetalle.escomunflag == 1
+        ? true
+        : false,
       iMasterDetalle.id ? iMasterDetalle.id : null,
     ],
     (err, response, fields) => {
@@ -301,7 +306,7 @@ export const ActualizarMasterDetalle = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -310,7 +315,6 @@ export const ActualizarMasterDetalle = async (
     }
   );
 };
-
 
 export const ListarMasterDetalleTipoTelefonos = async (
   req: Request,
@@ -334,7 +338,7 @@ export const ListarMasterDetalleTipoTelefonos = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -356,9 +360,13 @@ export const InsertarMasterDetalleTipoTelefono = async (
       iMasterDetalle.codigo01 ? iMasterDetalle.codigo01 : null,
       iMasterDetalle.codigo02 ? iMasterDetalle.codigo02 : null,
       iMasterDetalle.description ? iMasterDetalle.description : null,
-      iMasterDetalle.status ? iMasterDetalle.status : null,
+      iMasterDetalle.status == 1 || iMasterDetalle.status == true
+        ? true
+        : false,
       iMasterDetalle.id_branch ? iMasterDetalle.id_branch : null,
-      iMasterDetalle.escomunflag ? iMasterDetalle.escomunflag : null,
+      iMasterDetalle.escomunflag == 1 || iMasterDetalle.escomunflag == true
+        ? true
+        : false,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -368,7 +376,7 @@ export const InsertarMasterDetalleTipoTelefono = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -377,10 +385,6 @@ export const InsertarMasterDetalleTipoTelefono = async (
     }
   );
 };
-
-
-
-
 
 export const ListarMasterDetalleTNotasCotizacion = async (
   req: Request,
@@ -404,7 +408,7 @@ export const ListarMasterDetalleTNotasCotizacion = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -426,9 +430,13 @@ export const InsertarMasterDetalleNotasCotizacion = async (
       iMasterDetalle.codigo01 ? iMasterDetalle.codigo01 : null,
       iMasterDetalle.codigo02 ? iMasterDetalle.codigo02 : null,
       iMasterDetalle.description ? iMasterDetalle.description : null,
-      iMasterDetalle.status ? iMasterDetalle.status : null,
+      iMasterDetalle.status == true || iMasterDetalle.status == 1
+        ? true
+        : false,
       iMasterDetalle.id_branch ? iMasterDetalle.id_branch : null,
-      iMasterDetalle.escomunflag ? iMasterDetalle.escomunflag : null,
+      iMasterDetalle.escomunflag == true || iMasterDetalle.escomunflag == 1
+        ? true
+        : false,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -438,7 +446,7 @@ export const InsertarMasterDetalleNotasCotizacion = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -447,5 +455,3 @@ export const InsertarMasterDetalleNotasCotizacion = async (
     }
   );
 };
-
-

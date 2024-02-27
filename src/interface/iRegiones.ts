@@ -1,6 +1,6 @@
 export interface IRegiones {
   id?: number;
-  code?: number;
+  code?: any;
   name?: String;
   description?: String;
   status?: any;
