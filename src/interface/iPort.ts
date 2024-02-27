@@ -6,5 +6,5 @@ export interface IPort {
   description?: string;
   id_branch?: Number;
   id_transporte?: Number;
-  status?: number;
+  status?: any;
 }

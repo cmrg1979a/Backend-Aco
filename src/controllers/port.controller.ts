@@ -20,7 +20,7 @@ export const getPortBegin = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -43,7 +43,7 @@ export const getPortEnd = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -62,7 +62,7 @@ export const ListarPuertos = async (req: Request, res: Response) => {
       puerto.name ? puerto.name : null,
       puerto.description ? puerto.description : null,
       puerto.id_pais ? puerto.id_pais : null,
-      puerto.status ? puerto.status : null,
+      puerto.status == 1 || puerto.status == 0 ? puerto.status : null,
       puerto.id_transporte ? puerto.id_transporte : null,
     ],
     (err, response, fields) => {
@@ -73,7 +73,7 @@ export const ListarPuertos = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -93,7 +93,7 @@ export const InsertarPuertos = async (req: Request, res: Response) => {
       puerto.code ? puerto.code : null,
       puerto.name ? puerto.name : null,
       puerto.description ? puerto.description : null,
-      puerto.status ? puerto.status : null,
+      puerto.status == true || puerto.status == 1 ? 1 : 0,
       puerto.id_branch,
     ],
     (err, response, fields) => {
@@ -104,7 +104,7 @@ export const InsertarPuertos = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -121,7 +121,7 @@ export const ActualizarPuertos = async (req: Request, res: Response) => {
       puerto.id_pais ? puerto.id_pais : null,
       puerto.name ? puerto.name : null,
       puerto.description ? puerto.description : null,
-      puerto.status ? puerto.status : null,
+      puerto.status == true || puerto.status == 1 ? 1 : 0,
       puerto.id_transporte ? puerto.id_transporte : null,
       puerto.id,
     ],
@@ -133,7 +133,7 @@ export const ActualizarPuertos = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {

@@ -27,7 +27,7 @@ export const getListIngreso = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -56,7 +56,7 @@ export const insertIngreso = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -79,7 +79,7 @@ export const readIngreso = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -102,7 +102,7 @@ export const updateIngreso = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -125,7 +125,7 @@ export const validateCodeIngresoNuevo = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -148,7 +148,7 @@ export const CargarIngreso = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -160,7 +160,7 @@ export const CargarIngreso = async (req: Request, res: Response) => {
 
 export const ListSubIngreso = async (req: Request, res: Response) => {
   const subingreso: ISubIngreso = req.query;
-  console.log(subingreso.mostrarflag);
+  console.log(Boolean(subingreso.calculoflag));
 
   await pool.query(
     `SELECT * FROM function_subingreso_listar($1,$2,$3,$4,$5,$6,$7);`,
@@ -169,13 +169,9 @@ export const ListSubIngreso = async (req: Request, res: Response) => {
       subingreso.id_ingreso ? subingreso.id_ingreso : null,
       subingreso.code ? subingreso.code : null,
       subingreso.description ? subingreso.description : null,
-      subingreso.status !== "null" ? subingreso.status === "true" : null,
-      subingreso.calculoflag == "" || subingreso.calculoflag == "null"
-        ? null
-        : subingreso.calculoflag,
-      subingreso.mostrarflag == "" || subingreso.mostrarflag == "null"
-        ? null
-        : subingreso.mostrarflag,
+      Boolean(subingreso.status) ? subingreso.status : null,
+      Boolean(subingreso.calculoflag) ? subingreso.calculoflag : null,
+      Boolean(subingreso.mostrarflag) ? subingreso.mostrarflag : null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -185,7 +181,7 @@ export const ListSubIngreso = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -194,6 +190,7 @@ export const ListSubIngreso = async (req: Request, res: Response) => {
     }
   );
 };
+
 export const ValidarCodigoSubIngreso = async (req: Request, res: Response) => {
   const subingreso: ISubIngreso = req.query;
   console.log(subingreso.mostrarflag);
@@ -212,7 +209,7 @@ export const ValidarCodigoSubIngreso = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -243,7 +240,7 @@ export const InsertarSubIngreso = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -273,7 +270,7 @@ export const ActualizarSubIngreso = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
