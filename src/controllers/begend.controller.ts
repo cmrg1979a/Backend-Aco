@@ -6,6 +6,28 @@ const { Pool } = pg;
 import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 const pool = conexion();
 
+export const getBegEndList = async (req: Request, res: Response) => {
+  await pool.query(
+    `SELECT * FROM table_begend_cargar($1);`,
+    [req.body.id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
 export const cargarBegend = async (req: Request, res: Response) => {
   await pool.query(
     `SELECT * FROM table_begend_cargar($1);`,
@@ -13,20 +35,14 @@ export const cargarBegend = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-            token: renewTokenMiddleware(req),
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }

@@ -86,9 +86,9 @@ export const insertEnterprise = async (req: Request, res: Response) => {
       enterprise.business_name,
       enterprise.slogan,
       enterprise.address,
-      enterprise.status,
+      enterprise.status == true || enterprise.status == 1 ? 1 : 0,
       enterprise.id_pais,
-      enterprise.id_state == true || enterprise.id_state == 1 ? 1 : 0,
+      enterprise.id_state,
       enterprise.id_city,
       enterprise.id_town,
       enterprise.id_document,
@@ -311,7 +311,9 @@ async function EnvioCorreo(datos) {
     <p> Se ha creado tu usuario  </p>
     <p> <b>usuario: </b> ${datos.users} </p>
     <p> <b>clave: </b> ${datos.clave} </p>
+    <br/>
     Para acceder de click <a href="https://chainsolver.piccargo.com/"> Aqui </a>  
+    <br/>
     <p><img src="https://i.ibb.co/ypKb7q1/chain-Solver.png" alt="LogoChain" width="404" height="112" /></p>  
     `,
   });

@@ -9,8 +9,9 @@ import {
   ValidateBegendPositionActualizar,
   ValidateBegendPositionInsert,
   cargarBegend,
+  getBegEndList,
 } from "../controllers/begend.controller";
-
+router.post("/getBegEndList", TokenValidation, getBegEndList);
 router.post("/cargarBegend", TokenValidation, cargarBegend);
 router.get("/listar_begend", TokenValidation, ListBegend);
 router.post("/insertar_begend", TokenValidation, InsertarBegend);
