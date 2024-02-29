@@ -16,7 +16,8 @@ export const getTipoCostoPorEmbarque = async (req: Request, res: Response) => {
           status: 200,
           statusBol: true,
           mensaje: rows[0].mensaje,
-         data: rows,          token: renewTokenMiddleware(req),
+          data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
