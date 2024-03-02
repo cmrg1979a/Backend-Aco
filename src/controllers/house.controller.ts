@@ -312,7 +312,7 @@ export const setHouseEdit = async (req: Request, res: Response) => {
   const id = req.params.id;
 
   await pool.query(
-    "select function_housecontrol_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25)",
+    "select function_housecontrol_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27)",
     [
       dataObj.id,
       dataObj.id_cot ? dataObj.id_cot : null,
@@ -338,7 +338,9 @@ export const setHouseEdit = async (req: Request, res: Response) => {
       dataObj.id_port_begin ? dataObj.id_port_begin : null,
       dataObj.id_port_end ? dataObj.id_port_end : null,
       dataObj.lstservices.map((item: any) => item.id || null),
+      dataObj.lstservices.map((item: any) => item.id_begend || null),
       dataObj.lstservices.map((item: any) => item.nameservice || null),
+      dataObj.lstservices.map((item: any) => item.status || 0),
     ],
     (err, response, fields) => {
       if (!err) {
@@ -367,11 +369,10 @@ export const setHouseEdit = async (req: Request, res: Response) => {
 };
 
 export const setHouseDelete = async (req: Request, res: Response) => {
-  // const dataObj: postHouseEdit = req.body;
-  const id = req.params.id;
+  const { id } = req.params;
 
   await pool.query(
-    "UPDATE Table_HouseControl SET status = 0  WHERE id = $1",
+    "SELECT * FROM function_housecontrol_eliminar($1)",
     [id],
     (err, rows, fields) => {
       if (!err) {

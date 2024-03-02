@@ -41,6 +41,7 @@ import {
   setNoteQuote,
   ListarMontoFinalesQuoteMONGODB,
   InsertMontoFinalesQuoteMONGODB,
+  getQuoteDataHouseByIncoterms,
 } from "../controllers/pricing.controller";
 
 router.post("/setQuote", TokenValidation, setQuote);
@@ -81,6 +82,7 @@ router.get(
   quoteCargarNoAsignadosHouse
 );
 router.get("/quote_data_house", TokenValidation, quoteDataHouse);
+router.get("/quote_data_house_x_incoterms", TokenValidation, getQuoteDataHouseByIncoterms);
 router.post(
   "/listado_cotizacion_mercadeo",
   // TokenValidation,
