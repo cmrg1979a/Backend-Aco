@@ -17,7 +17,7 @@ export const getListTransport = async (req: Request, res: Response) => {
       data.code ? data.code : null,
       data.name ? data.name : null,
       data.description ? data.description : null,
-      data.status,
+      data.status == "1" || data.status == "0" ? data.status : null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -26,7 +26,8 @@ export const getListTransport = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-         data: rows,          token: renewTokenMiddleware(req),
+          data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -54,7 +55,8 @@ export const insertTransport = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-         data: rows,          token: renewTokenMiddleware(req),
+          data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -76,7 +78,8 @@ export const readTransport = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-         data: rows,          token: renewTokenMiddleware(req),
+          data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -98,7 +101,8 @@ export const updateTransport = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-         data: rows,          token: renewTokenMiddleware(req),
+          data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -119,7 +123,8 @@ export const cargarTransport = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-         data: rows,          token: renewTokenMiddleware(req),
+          data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);

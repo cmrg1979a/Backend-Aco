@@ -36,7 +36,7 @@ export const ListarState = async (req: Request, res: Response) => {
       regiones.code ? regiones.code : null,
       regiones.name ? regiones.name : null,
       regiones.description ? regiones.description : null,
-      regiones.status ? regiones.status : null,
+      regiones.status == 1 || regiones.status == 0 ? regiones.status : null,
     ],
     (err, response, fields) => {
       if (!err) {
