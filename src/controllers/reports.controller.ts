@@ -28,8 +28,8 @@ export const getControlFile = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
             estadoflag: rows[0].estadoflag,
           });
         } else {
@@ -57,8 +57,8 @@ export const getControlFileAllMaster = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -102,8 +102,8 @@ export const getControlFileAllFilter = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -140,8 +140,8 @@ export const getTotales = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -170,8 +170,8 @@ export const getTotalesAll = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -203,8 +203,8 @@ export const getControlFileAllFilterMaster = async (
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -671,8 +671,8 @@ export const getReportFileDetails = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
             estadoflag: rows[0].estadoflag,
           });
         } else {
@@ -798,12 +798,6 @@ export const pdfFD = async (req: Request, res: Response) => {
       }
     }
   );
-
-  // try {
-
-  // } catch (error) {
-  //   console.log(error);
-  // }
 };
 
 export const constRexportCXPExcel = async (req: Request, res: Response) => {
@@ -1765,7 +1759,7 @@ function resumenCXC(rows, rows2) {
       }
     });
   });
-  // console.log(res);
+
   return res;
 }
 
@@ -2256,7 +2250,7 @@ export const ExportarConsolidadoCargaMasiva = async (
 
           fila++;
         });
-        // console.log(rows);
+
         let pathexcel = path.join(
           `${__dirname}../../../uploads`,
           "Reportexls.xlsx"
@@ -2357,7 +2351,6 @@ export const exportListQuote = async (req: Request, res: Response) => {
         const countEliminados = rows.filter((v) => {
           return v.statusmain == 0;
         }).length;
-        console.log(countEliminados);
 
         //---------------------------------------- countByActivosArray
         let countByStatusArray = Object.values(countByStatus);

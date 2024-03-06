@@ -83,9 +83,10 @@ export const CargarUsuarioNoAsignadoPosicion = async (
   res: Response
 ) => {
   const position: IPosition = req.query;
+
   await pool.query(
     "SELECT * FROM function_user_noasignadosposicion($1,$2)",
-    [position.id, position.id_branch],
+    [position.id_branch, position.id],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -98,7 +99,7 @@ export const CargarUsuarioNoAsignadoPosicion = async (
           token: renewTokenMiddleware(req),
         });
       } else {
-        console.log(err);
+        console.error(err);
       }
     }
   );

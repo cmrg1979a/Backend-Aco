@@ -227,7 +227,6 @@ export const setQuote = async (req: Request, res: Response) => {
   );
 };
 
-
 export const getQuoteStatus = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM QUOTE_STATUS_listar($1);",
@@ -1012,8 +1011,6 @@ export const listadoCotizacionMercadeo = async (
             ([name, cantidad]) => ({ name, cantidad })
           );
 
-          // console.log(lstTotalPorDia);
-
           // ------------------------
           ejs.renderFile(
             path.join(__dirname, "../views/", "pdfQuoteMarketing.ejs"),
@@ -1528,6 +1525,6 @@ function getServicios({
       estado: volumen,
     });
   }
-  // console.log(serv);
+
   return serv;
 }

@@ -21,20 +21,17 @@ export const TokenValidation = (
     });
     console.log(error);
   }
-
-  //console.log(payload);
 };
 
 export class AuthService {
   static generateToken(userId: any): string {
-
     return jwt.sign({ userId }, secretKey, { expiresIn: "2h" });
   }
 
   static verifyToken(token: string): number | null {
     try {
       const payload = jwt.verify(token, secretKey);
-      return (payload as any);
+      return payload as any;
     } catch (error) {
       return null;
     }

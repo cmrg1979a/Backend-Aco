@@ -160,7 +160,6 @@ export const CargarIngreso = async (req: Request, res: Response) => {
 
 export const ListSubIngreso = async (req: Request, res: Response) => {
   const subingreso: ISubIngreso = req.query;
-  console.log(Boolean(subingreso.calculoflag));
 
   await pool.query(
     `SELECT * FROM function_subingreso_listar($1,$2,$3,$4,$5,$6,$7);`,
@@ -193,7 +192,6 @@ export const ListSubIngreso = async (req: Request, res: Response) => {
 
 export const ValidarCodigoSubIngreso = async (req: Request, res: Response) => {
   const subingreso: ISubIngreso = req.query;
-  console.log(subingreso.mostrarflag);
 
   await pool.query(
     `SELECT * FROM function_subingreso_validarcodigo($1,$2);`,

@@ -113,8 +113,6 @@ export const InsertarBegend = async (req: Request, res: Response) => {
 };
 export const ActualizarBegend = async (req: Request, res: Response) => {
   const begend: IBegend = req.body;
-  console.log(begend);
-
   await pool.query(
     `SELECT * FROM function_begend_actualizar($1,$2,$3,$4,$5,$6);`,
     [
