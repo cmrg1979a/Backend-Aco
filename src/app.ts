@@ -116,7 +116,8 @@ import transport from "./routes/transport";
 import gasto from "./routes/gasto";
 import ingreso from "./routes/ingreso";
 import tipocostos from "./routes/tipocosto";
-import comentariosRoute from "./routes/comentarios";
+import comentariosRoute from "./routes/comentarios"
+
 
 // settings
 app.set("port", 9200);
