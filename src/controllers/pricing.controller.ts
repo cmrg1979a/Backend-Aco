@@ -933,6 +933,7 @@ export const quoteCargarNoAsignadosHouse = async (
           statusBol: true,
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
+          estado: rows[0].estadoflag,
           data: rows,
           token: renewTokenMiddleware(req),
         });
