@@ -8,16 +8,17 @@ import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 const pool = conexion();
 
 export const setBitacora = async (req: Request, res: Response) => {
-  const dataObj: postBitacora = req.body;
+  const dataObj = req.body;
+
   await pool.query(
-    "INSERT INTO House_Bitacora (id_house,id_bitacora,ic,comentario,date,status)values ($1,$2,$3,$4,$5,$6)",
+    "SELECT * FROM house_bitacora_insertar($1,$2,$3,$4,$5,$6)",
     [
-      dataObj.id_house,
-      dataObj.id_bitacora,
-      dataObj.ic,
-      dataObj.comentario,
-      dataObj.date,
-      dataObj.status == true ? 1 : 0,
+      dataObj.id_house ? dataObj.id_house : null,
+      dataObj.id_bitacora ? dataObj.id_bitacora : null,
+      dataObj.id_comentario ? dataObj.id_comentario : null,
+      dataObj.comentario ? dataObj.comentario : null,
+      dataObj.fecha ? dataObj.fecha : null,
+      dataObj.status ? dataObj.status : null,
     ],
     (err, rows, fields) => {
       if (!err) {
@@ -35,8 +36,9 @@ export const setBitacora = async (req: Request, res: Response) => {
 
 export const deleteBitacora = async (req: Request, res: Response) => {
   const { id } = req.body;
+
   await pool.query(
-    "DELETE FROM House_Bitacora WHERE id = $1",
+    "SELECT * FROM house_bitacora_eliminar($1)",
     [id],
     (err, rows, fields) => {
       if (!err) {
