@@ -65,22 +65,14 @@ export const setIngresos = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        (err, response, fields) => {
-          if (!err) {
-            
-            let rows = response.rows;
-            res.json({
-              status: 200,
-              statusBol: true,
-              mensaje: rows[0].mensaje,
-              estadoflag: rows[0].estadoflag,
-              data: rows,
-              token: renewTokenMiddleware(req),
-            });
-          } else {
-            console.log(err);
-          }
-        };
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
