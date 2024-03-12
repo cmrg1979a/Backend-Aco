@@ -26,7 +26,7 @@ export const singin = async (req: Request, res: Response) => {
             { data },
             process.env.TOKEN_SECRET || "tokentest",
             {
-              expiresIn: 60 * 60 * 2,
+              expiresIn: 60 * 60 * 8,
             }
           );
           res.json({
