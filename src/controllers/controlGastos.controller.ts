@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { postControl } from "../interface/controlGastos";
 import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 const { Pool } = pg;
 const pool = conexion();
 
@@ -16,19 +17,22 @@ export const setControl = async (req: Request, res: Response) => {
       if (!err) {
         let rows = response.rows;
 
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        (err, response, fields) => {
+          if (!err) {
+            
+            let rows = response.rows;
+            res.json({
+              status: 200,
+              statusBol: true,
+              mensaje: rows[0].mensaje,
+              estadoflag: rows[0].estadoflag,
+              data: rows,
+              token: renewTokenMiddleware(req),
+            });
+          } else {
+            console.log(err);
+          }
+        };
       } else {
         console.log(err);
       }
@@ -61,19 +65,14 @@ export const setIngresos = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -106,11 +105,13 @@ export const setEgresos = async (req: Request, res: Response) => {
       dataObj.tipocambio,
     ],
     (err, rows, fields) => {
+      
       if (!err) {
         res.json({
           status: 200,
           statusBol: true,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -128,19 +129,22 @@ export const getIngresosList = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        (err, response, fields) => {
+          if (!err) {
+            
+            let rows = response.rows;
+            res.json({
+              status: 200,
+              statusBol: true,
+              mensaje: rows[0].mensaje,
+              estadoflag: rows[0].estadoflag,
+              data: rows,
+              token: renewTokenMiddleware(req),
+            });
+          } else {
+            console.log(err);
+          }
+        };
       } else {
         console.log(err);
       }
@@ -157,19 +161,22 @@ export const getEgresosList = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        (err, response, fields) => {
+          if (!err) {
+            
+            let rows = response.rows;
+            res.json({
+              status: 200,
+              statusBol: true,
+              mensaje: rows[0].mensaje,
+              estadoflag: rows[0].estadoflag,
+              data: rows,
+              token: renewTokenMiddleware(req),
+            });
+          } else {
+            console.log(err);
+          }
+        };
       } else {
         console.log(err);
       }
@@ -186,19 +193,22 @@ export const getEgresosExpediente = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        (err, response, fields) => {
+          if (!err) {
+            
+            let rows = response.rows;
+            res.json({
+              status: 200,
+              statusBol: true,
+              mensaje: rows[0].mensaje,
+              estadoflag: rows[0].estadoflag,
+              data: rows,
+              token: renewTokenMiddleware(req),
+            });
+          } else {
+            console.log(err);
+          }
+        };
       } else {
         console.log(err);
       }
@@ -216,19 +226,22 @@ export const getEgresosProveedorList = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        (err, response, fields) => {
+          if (!err) {
+            
+            let rows = response.rows;
+            res.json({
+              status: 200,
+              statusBol: true,
+              mensaje: rows[0].mensaje,
+              estadoflag: rows[0].estadoflag,
+              data: rows,
+              token: renewTokenMiddleware(req),
+            });
+          } else {
+            console.log(err);
+          }
+        };
       } else {
         console.log(err);
       }
@@ -245,19 +258,22 @@ export const getTotalesProveedor = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        (err, response, fields) => {
+          if (!err) {
+            
+            let rows = response.rows;
+            res.json({
+              status: 200,
+              statusBol: true,
+              mensaje: rows[0].mensaje,
+              estadoflag: rows[0].estadoflag,
+              data: rows,
+              token: renewTokenMiddleware(req),
+            });
+          } else {
+            console.log(err);
+          }
+        };
       } else {
         console.log(err);
       }
@@ -272,11 +288,13 @@ export const delEgresos = async (req: Request, res: Response) => {
     "delete from ControlGastos_Egresos where id = $1",
     [id],
     (err, rows, fields) => {
+      
       if (!err) {
         res.json({
           status: 200,
           statusBol: true,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -293,21 +311,16 @@ export const delIngresos = async (req: Request, res: Response) => {
     [id],
     (err, response, fields) => {
       if (!err) {
+        
         let rows = response.rows;
-
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -352,20 +365,16 @@ export const getControlList = async (req: Request, res: Response) => {
     [req.body.id_branch],
     (err, response, fields) => {
       if (!err) {
+        
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -395,21 +404,16 @@ export const editIngreso = async (req: Request, res: Response) => {
     ],
     (err, response, fields) => {
       if (!err) {
+        
         let rows = response.rows;
-
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -446,20 +450,16 @@ export const editEgreso = async (req: Request, res: Response) => {
     ],
     (err, response, fields) => {
       if (!err) {
+        
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -474,20 +474,16 @@ export const ControlGastosList = async (req: Request, res: Response) => {
     [code_master],
     (err, response, fields) => {
       if (!err) {
+        
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -502,20 +498,16 @@ export const cargarCorrelativo = async (req: Request, res: Response) => {
     [id_branch ? id_branch : null],
     (err, response, fields) => {
       if (!err) {
+        
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -530,20 +522,16 @@ export const listarCGECcorralativo = async (req: Request, res: Response) => {
     [id_proveedor ? id_proveedor : null],
     (err, response, fields) => {
       if (!err) {
+        
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -571,20 +559,16 @@ export const registrarCGECcorralativo = async (req: Request, res: Response) => {
     ],
     (err, response, fields) => {
       if (!err) {
+        
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -633,20 +617,16 @@ export const cargaMasivaControlDeGasto = async (
     ],
     (err, response, fields) => {
       if (!err) {
+        
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -659,22 +639,16 @@ export const obtenerNombreCamapania = async (req: Request, res: Response) => {
     [req.query.id_master],
     (err, response, fields) => {
       if (!err) {
+        
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            estadoflag: rows[0].estadoflag,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            estadoflag: rows[0].estadoflag,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -696,22 +670,16 @@ export const cuotasMasterTipoProveedorInsertarActualizar = async (
     ],
     (err, response, fields) => {
       if (!err) {
+        
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            estadoflag: rows[0].estadoflag,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            estadoflag: rows[0].estadoflag,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }

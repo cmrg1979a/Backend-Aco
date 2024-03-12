@@ -2,9 +2,10 @@ import { Request, Response } from "express";
 
 import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
+import { ITown } from "interface/iTown";
 const { Pool } = pg;
 const pool = conexion();
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 export const getTown = async (req: Request, res: Response) => {
   const { idCity } = req.body;
   await pool.query(
@@ -18,6 +19,7 @@ export const getTown = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -26,6 +28,93 @@ export const getTown = async (req: Request, res: Response) => {
             mensaje: rows[0].mensaje,
           });
         }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const ListarTown = async (req: Request, res: Response) => {
+  let town: ITown = req.query;
+  await pool.query(
+    " SELECT * FROM function_town_listar($1,$2,$3,$4,$5,$6,$7)",
+    [
+      town.id_pais ? town.id_pais : null,
+      town.id_state ? town.id_state : null,
+      town.id_city ? town.id_city : null,
+      town.code ? town.code : null,
+      town.name ? town.name : null,
+      town.description ? town.description : null,
+      town.status == "null" ? null : town.status,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const InsertarTown = async (req: Request, res: Response) => {
+  let town: ITown = req.body;
+  await pool.query(
+    " SELECT * FROM function_town_insertar($1,$2,$3,$4)",
+    [
+      town.id_city,
+      town.name,
+      town.description ? town.description : town.description,
+      town.status == true || town.status == 1 ? 1 : 0,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const ActualizarTown = async (req: Request, res: Response) => {
+  let town: ITown = req.body;
+  await pool.query(
+    " SELECT * FROM function_town_actualizar($1,$2,$3,$4,$5)",
+    [
+      town.id_city,
+      town.name,
+      town.description ? town.description : null,
+      town.status == true || town.status == 1 ? 1 : 0,
+      town.id,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }

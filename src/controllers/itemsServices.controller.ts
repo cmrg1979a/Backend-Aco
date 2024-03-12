@@ -6,7 +6,7 @@ import * as pg from "pg";
 import { container } from "googleapis/build/src/apis/container";
 const { Pool } = pg;
 const pool = conexion();
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 export const getItemsServices = async (req: Request, res: Response) => {
   const { id_modality, id_shipment, id_incoterms, id_branch } = req.body;
   await pool.query(
@@ -19,7 +19,8 @@ export const getItemsServices = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -67,7 +68,8 @@ export const getItemsServicesDetails = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -95,7 +97,8 @@ export const getItemsServicesList = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({

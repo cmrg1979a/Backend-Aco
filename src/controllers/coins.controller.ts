@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 const { Pool } = pg;
 
 const pool = conexion();
@@ -13,12 +14,14 @@ export const getCoinsList = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+        
         res.json({
           estadoflag: rows[0].estadoflag,
           status: 200,
           statusBol: true,
           mensaje: rows[0].mensaje,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -43,11 +46,13 @@ export const getListCoinsByBranch = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+        
         res.json({
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -72,11 +77,13 @@ export const insertCoins = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+        
         res.json({
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -94,11 +101,13 @@ export const readCoins = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+        
         res.json({
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -123,11 +132,13 @@ export const updateCoins = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+        
         res.json({
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);

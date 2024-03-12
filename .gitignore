@@ -1,12 +1,5 @@
 /node_modules
-dist/controllers
-dist/interface
-dist/libs
-dist/models
-dist/app.js
-dist/app.js.map
-dist/index.js.map
-dist/routes
+dist
 /uploads
 /files
 

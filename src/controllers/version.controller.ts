@@ -3,7 +3,7 @@ import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
 const { Pool } = pg;
 const pool = conexion();
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 export const getVersion = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM TABLE_VERSION_validar($1);",
@@ -16,6 +16,7 @@ export const getVersion = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({

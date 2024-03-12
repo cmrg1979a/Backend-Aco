@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { conexion } from "../routes/databasePGOp";
+import { IMasterDetalle } from "interface/iMasterDetalle";
 const pool = conexion();
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 export const cargarMasterDetalleRecibido = async (
   req: Request,
   res: Response
@@ -18,6 +19,7 @@ export const cargarMasterDetalleRecibido = async (
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -41,6 +43,7 @@ export const cargarMasterDetalleEnviado = async (
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -64,6 +67,7 @@ export const cargarMasterDetalleNotasCotizacion = async (
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -84,6 +88,7 @@ export const cargarMasterDetalleCanal = async (req: Request, res: Response) => {
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -107,6 +112,7 @@ export const cargarMasterDetalleTipoProveedor = async (
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -127,6 +133,7 @@ export const cargarPercepcionAduana = async (req: Request, res: Response) => {
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -147,6 +154,7 @@ export const cargarTipoTransaccion = async (req: Request, res: Response) => {
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -159,7 +167,7 @@ export const cargarTipoTelefonoPersona = async (
   res: Response
 ) => {
   await pool.query(
-    "SELECT * FROM function_masterdetalle_cargar($1,'TPP')",
+    "SELECT * FROM function_masterdetalle_cargar($1,'TIPOTELF')",
     [req.query.id_branch],
     (err, response, fields) => {
       if (!err) {
@@ -170,6 +178,7 @@ export const cargarTipoTelefonoPersona = async (
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -177,7 +186,6 @@ export const cargarTipoTelefonoPersona = async (
     }
   );
 };
-
 
 export const cargarMasterDetalleImpuestos = async (
   req: Request,
@@ -195,6 +203,251 @@ export const cargarMasterDetalleImpuestos = async (
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const ListarMasterDetalleImpuestos = async (
+  req: Request,
+  res: Response
+) => {
+  let iMasterDetalle: IMasterDetalle = req.query;
+
+  await pool.query(
+    "SELECT * FROM function_masterdetalle_listar('IMP',$1,$2,$3,$4)",
+    [
+      iMasterDetalle.id_branch,
+      iMasterDetalle.valorcodigo,
+      iMasterDetalle.description,
+      iMasterDetalle.status === "null" ? null : iMasterDetalle.status,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const InsertarMasterDetalleImpuestos = async (
+  req: Request,
+  res: Response
+) => {
+  let iMasterDetalle: IMasterDetalle = req.body;
+  await pool.query(
+    "SELECT * FROM function_masterdetalle_insertar('IMP',$1,$2,$3,$4,$5,$6,$7,$8)",
+    [
+      iMasterDetalle.valorcodigo ? iMasterDetalle.valorcodigo : null,
+      iMasterDetalle.codigo01 ? iMasterDetalle.codigo01 : null,
+      iMasterDetalle.codigo02 ? iMasterDetalle.codigo02 : null,
+      iMasterDetalle.description ? iMasterDetalle.description : null,
+      iMasterDetalle.status == true || iMasterDetalle.status == 1
+        ? true
+        : false,
+      iMasterDetalle.id_branch ? iMasterDetalle.id_branch : null,
+      iMasterDetalle.escomunflag == true || iMasterDetalle.escomunflag == 1
+        ? true
+        : false,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const ActualizarMasterDetalle = async (req: Request, res: Response) => {
+  let iMasterDetalle: IMasterDetalle = req.body;
+
+  await pool.query(
+    "SELECT * FROM function_masterdetalle_actualizar($1,$2,$3,$4,$5,$6)",
+    [
+      iMasterDetalle.codigo01 ? iMasterDetalle.codigo01 : null,
+      iMasterDetalle.codigo02 ? iMasterDetalle.codigo02 : null,
+      iMasterDetalle.description ? iMasterDetalle.description : null,
+      iMasterDetalle.status == true || iMasterDetalle.status == 1
+        ? true
+        : false,
+      iMasterDetalle.escomunflag == true || iMasterDetalle.escomunflag == 1
+        ? true
+        : false,
+      iMasterDetalle.id ? iMasterDetalle.id : null,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const ListarMasterDetalleTipoTelefonos = async (
+  req: Request,
+  res: Response
+) => {
+  let iMasterDetalle: IMasterDetalle = req.query;
+
+  await pool.query(
+    "SELECT * FROM function_masterdetalle_listar('TIPOTELF',$1,$2,$3,$4)",
+    [
+      iMasterDetalle.id_branch,
+      iMasterDetalle.valorcodigo,
+      iMasterDetalle.description,
+      iMasterDetalle.status === "null" ? null : iMasterDetalle.status,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const InsertarMasterDetalleTipoTelefono = async (
+  req: Request,
+  res: Response
+) => {
+  let iMasterDetalle: IMasterDetalle = req.body;
+  await pool.query(
+    "SELECT * FROM function_masterdetalle_insertar('TIPOTELF',$1,$2,$3,$4,$5,$6,$7)",
+    [
+      iMasterDetalle.valorcodigo ? iMasterDetalle.valorcodigo : null,
+      iMasterDetalle.codigo01 ? iMasterDetalle.codigo01 : null,
+      iMasterDetalle.codigo02 ? iMasterDetalle.codigo02 : null,
+      iMasterDetalle.description ? iMasterDetalle.description : null,
+      iMasterDetalle.status == 1 || iMasterDetalle.status == true
+        ? true
+        : false,
+      iMasterDetalle.id_branch ? iMasterDetalle.id_branch : null,
+      iMasterDetalle.escomunflag == 1 || iMasterDetalle.escomunflag == true
+        ? true
+        : false,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const ListarMasterDetalleTNotasCotizacion = async (
+  req: Request,
+  res: Response
+) => {
+  let iMasterDetalle: IMasterDetalle = req.query;
+
+  await pool.query(
+    "SELECT * FROM function_masterdetalle_listar('NQ',$1,$2,$3,$4)",
+    [
+      iMasterDetalle.id_branch,
+      iMasterDetalle.valorcodigo,
+      iMasterDetalle.description,
+      iMasterDetalle.status === "null" ? null : iMasterDetalle.status,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const InsertarMasterDetalleNotasCotizacion = async (
+  req: Request,
+  res: Response
+) => {
+  let iMasterDetalle: IMasterDetalle = req.body;
+  await pool.query(
+    "SELECT * FROM function_masterdetalle_insertar('NQ',$1,$2,$3,$4,$5,$6,$7)",
+    [
+      iMasterDetalle.valorcodigo ? iMasterDetalle.valorcodigo : null,
+      iMasterDetalle.codigo01 ? iMasterDetalle.codigo01 : null,
+      iMasterDetalle.codigo02 ? iMasterDetalle.codigo02 : null,
+      iMasterDetalle.description ? iMasterDetalle.description : null,
+      iMasterDetalle.status == true || iMasterDetalle.status == 1
+        ? true
+        : false,
+      iMasterDetalle.id_branch ? iMasterDetalle.id_branch : null,
+      iMasterDetalle.escomunflag == true || iMasterDetalle.escomunflag == 1
+        ? true
+        : false,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);

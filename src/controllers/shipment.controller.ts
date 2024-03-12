@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 const { Pool } = pg;
 const pool = conexion();
 
@@ -20,6 +20,7 @@ export const getShipment = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -55,6 +56,7 @@ export const getListShipment = async (req: Request, res: Response) => {
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -84,6 +86,7 @@ export const insertShipment = async (req: Request, res: Response) => {
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -106,6 +109,7 @@ export const readShipment = async (req: Request, res: Response) => {
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -134,6 +138,7 @@ export const updateShipment = async (req: Request, res: Response) => {
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -151,11 +156,14 @@ export const getCargarTransport = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+        console.log(rows);
+
         res.json({
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);

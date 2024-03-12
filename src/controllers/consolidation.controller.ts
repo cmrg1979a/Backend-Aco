@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { conexion } from "../routes/databasePGOp";
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 const pool = conexion();
 
 export const generarConsolidacion = async (req: Request, res: Response) => {
@@ -23,11 +24,13 @@ export const generarConsolidacion = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+        
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({

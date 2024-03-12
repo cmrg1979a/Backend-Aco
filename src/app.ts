@@ -33,9 +33,8 @@ const pool = new Pool({
   password: "Fr3sc0l1t4+",
   port: "5432",
   // database: "db_op_main_dev",
-  // database: "db_op_main_01",
-  // database: "db_op_main_qa",
-  database: "db_op_main_edison"
+  // database: "db_op_main_02",
+  database: "db_op_main_qa",
 });
 
 /*pool
@@ -116,8 +115,11 @@ import transport from "./routes/transport";
 import gasto from "./routes/gasto";
 import ingreso from "./routes/ingreso";
 import tipocostos from "./routes/tipocosto";
-import comentariosRoute from "./routes/comentarios"
-
+import comentariosRoute from "./routes/comentarios";
+import stateQuote from "./routes/stateQuote";
+import typepayments from "./routes/typepayments";
+import users from "./routes/users";
+import position from "./routes/position";
 
 // settings
 app.set("port", 9200);
@@ -328,5 +330,9 @@ app.use(gasto);
 app.use(ingreso);
 app.use(tipocostos);
 app.use(comentariosRoute);
+app.use(stateQuote);
+app.use(typepayments);
+app.use(users);
+app.use(position);
 
 export default app;

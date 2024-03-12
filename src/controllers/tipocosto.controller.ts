@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { conexion } from "../routes/databasePGOp";
 const pool = conexion();
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 export const getTipoCostoPorEmbarque = async (req: Request, res: Response) => {
   const { id_modality, id_shipment } = req.query;
 
@@ -17,6 +17,7 @@ export const getTipoCostoPorEmbarque = async (req: Request, res: Response) => {
           statusBol: true,
           mensaje: rows[0].mensaje,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);

@@ -4,6 +4,7 @@ import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
 const { Pool } = pg;
 const pool = conexion();
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 
 export const datosFactura = async (req: Request, res: Response) => {
   let id_house = req.params.id_house;
@@ -15,11 +16,13 @@ export const datosFactura = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -75,7 +78,7 @@ export const generarFactura = async (req: Request, res: Response) => {
     tipo_imp,
     coins,
   } = req.body;
-  
+
   let fechaActual = `${fecha.getUTCDay()}_${fecha.getMonth()}_${fecha.getFullYear()}_${fecha.getTime()}`;
   let fechaRegistro = fecha.toLocaleDateString();
   // ejs.renderFile(path.join(__dirname, "../views", "pdf-factura.ejs")),
@@ -159,7 +162,6 @@ export const registrarFactura = async (req: Request, res: Response) => {
   const datos: factura = req.body;
   const details = req.body.details;
 
-  
   await pool.query(
     "SELECT * FROM table_Factura_insertar($1,$2,$3,$4,$5,$6,$7,1,$8,$9,$10,$11,$12)",
     [
@@ -187,11 +189,13 @@ export const registrarFactura = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -214,11 +218,13 @@ export const listarFactura = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+
         if (!!rows[0].estadoflag) {
           res.json({
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -246,6 +252,7 @@ export const AnularFacutar = async (req: Request, res: Response) => {
           status: 200,
           statusBol: true,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);

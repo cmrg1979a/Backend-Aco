@@ -1,10 +1,16 @@
 import { Router } from "express";
 const router: Router = Router();
-import { TokenValidation } from "../libs/verifyToken";
 
-import { getState, getStatePricing } from "../controllers/state.controller";
+import {
+  getCargarState,
+  ListarState,
+  InsertarState,
+  ActualizarState,
+} from "../controllers/state.controller";
 
-router.post("/getState", TokenValidation, getState);
-router.post("/getStatePricing", TokenValidation, getStatePricing);
+router.get("/cargar_state", getCargarState);
+router.get("/listar_state", ListarState);
+router.post("/insertar_state", InsertarState);
+router.put("/actualizar_state", ActualizarState);
 
 export default router;

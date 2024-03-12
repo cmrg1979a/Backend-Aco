@@ -5,9 +5,8 @@ const { Pool } = pg;
 const pool = conexion();
 import path from "path";
 var xl = require("excel4node");
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 export const comparativo = async (req: Request, res: Response) => {
- 
   await pool.query(
     "SELECT * FROM function_comparativo_proyeccion($1,$2,$3);",
     [req.query.id_branch, req.query.month, req.query.year],
@@ -19,6 +18,7 @@ export const comparativo = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
             estado: rows[0].estadoflag,
           });
         } else {
@@ -60,6 +60,7 @@ export const flujoGastoPrePostMes = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
             estado: rows[0].estadoflag,
           });
         } else {
@@ -88,6 +89,7 @@ export const arbolGastos = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
             estado: rows[0].estadoflag,
           });
         } else {
@@ -116,6 +118,7 @@ export const arbolIngreso = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
             estado: rows[0].estadoflag,
           });
         } else {
@@ -144,6 +147,7 @@ export const cargarTipoIngreso = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
             estado: rows[0].estadoflag,
           });
         } else {
@@ -172,6 +176,7 @@ export const cargarTipoSubIngreso = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
             estado: rows[0].estadoflag,
           });
         } else {
@@ -200,6 +205,7 @@ export const cargarTipoGastos = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
             estado: rows[0].estadoflag,
           });
         } else {
@@ -276,6 +282,7 @@ export const detalleGanancia = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
             estado: rows[0].estadoflag,
           });
         } else {
@@ -305,6 +312,7 @@ export const resumenGanancia = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
             estado: rows[0].estadoflag,
           });
         } else {
@@ -341,6 +349,7 @@ export const detalleGastos = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
             estado: rows[0].estadoflag,
           });
         } else {
@@ -370,6 +379,7 @@ export const resumenGastos = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
             estado: rows[0].estadoflag,
           });
         } else {
@@ -399,6 +409,7 @@ export const resumenGastosxTipoGasto = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
             estado: rows[0].estadoflag,
           });
         } else {
@@ -430,6 +441,7 @@ export const resumenGananciaPorTipoIngreso = async (
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
             estado: rows[0].estadoflag,
           });
         } else {
@@ -1495,6 +1507,7 @@ export const flujoDineroPorMes = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            token: renewTokenMiddleware(req),
             estado: rows[0].estadoflag,
           });
         } else {

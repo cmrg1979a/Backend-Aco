@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { conexion } from "../routes/databasePGOp";
 import { getCollection } from "../routes/mongoDB";
 import { Collection, InsertOneResult, UpdateResult } from "mongodb";
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 import * as pg from "pg";
 const { Pool } = pg;
 
@@ -209,22 +209,17 @@ export const setQuote = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-            mensaje: rows[0].mensaje,
-            insertId: rows[0].insertid,
-            nro_quote: rows[0].nro_quote,
-            msg: "Cotización ingresada con el número " + rows[0].nro_quote,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-          });
-        }
+        res.json({
+          estadoflag: rows[0].estadoflag,
+          status: 200,
+          statusBol: true,
+          data: rows,
+          token: renewTokenMiddleware(req),
+          mensaje: rows[0].mensaje,
+          insertId: rows[0].insertid,
+          nro_quote: rows[0].nro_quote,
+          msg: "Cotización ingresada con el número " + rows[0].nro_quote,
+        });
       } else {
         console.log(err);
       }
@@ -239,19 +234,14 @@ export const getQuoteStatus = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -294,22 +284,14 @@ export const getQuoteList = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            estadoflag: rows[0].estadoflag,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-            estadoflag: rows[0].estadoflag,
-            data: rows,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -325,20 +307,14 @@ export const getQuoteId = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-            number: rows[0].number,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -357,6 +333,7 @@ export const delQuote = async (req: Request, res: Response) => {
           status: 200,
           statusBol: true,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -602,22 +579,17 @@ export const putQuote = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-            mensaje: rows[0].mensaje,
-            insertId: rows[0].insertid,
-            nro_quote: rows[0].nro_quote,
-            msg: "Cotización ingresada con el número " + rows[0].nro_quote,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-          });
-        }
+        res.json({
+          estadoflag: rows[0].estadoflag,
+          status: 200,
+          statusBol: true,
+          data: rows,
+          token: renewTokenMiddleware(req),
+          mensaje: rows[0].mensaje,
+          insertId: rows[0].insertid,
+          nro_quote: rows[0].nro_quote,
+          msg: "Cotización ingresada con el número " + rows[0].nro_quote,
+        });
       } else {
         console.log(err);
       }
@@ -632,20 +604,14 @@ export const getReportsRangeDays = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-            number: rows[0].number,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -677,95 +643,25 @@ export const setCalls = async (req: Request, res: Response) => {
   );
 };
 
-export const setPath = async (req: Request, res: Response) => {
-  const { id_quote, name, type, size, path } = req.body;
-  await pool.query(
-    "INSERT INTO Table_Path (id_quote, name, type, size, path, status) VALUES($1,$2,$3,$4,$5,$6)",
-    [id_quote, name, type, size, path, 1],
-    (err, rows, fields) => {
-      if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
-      } else {
-        res.json({
-          status: 400,
-          statusBol: false,
-          data: err,
-        });
-      }
-    }
-  );
-};
-
-export const putPath = async (req: Request, res: Response) => {
-  const { name } = req.body;
-  const { id } = req.params;
-  await pool.query(
-    "UPDATE Table_Path SET name = $1 where id = $2",
-    [name, id],
-    (err, rows, fields) => {
-      if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
-      } else {
-        res.json({
-          status: 400,
-          statusBol: false,
-          data: err,
-        });
-      }
-    }
-  );
-};
-
-export const deletePath = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  await pool.query(
-    "UPDATE Table_Path SET status = 0 where id = $1",
-    [id],
-    (err, rows, fields) => {
-      if (!err) {
-        res.json({
-          status: 200,
-          statusBol: true,
-          data: rows,
-        });
-      } else {
-        res.json({
-          status: 400,
-          statusBol: false,
-          data: err,
-        });
-      }
-    }
-  );
-};
-
 export const updateCalls = async (req: Request, res: Response) => {
   const { fecha, id_operador, comentario, status } = req.body;
   const id = req.params.id;
   await pool.query(
     "UPDATE Quote_Calls set date = $1, id_pricing = $2, notes = $3, status = $4 where id = $5",
     [fecha, id_operador, comentario, status, id],
-    (err, rows, fields) => {
+    (err, response, fields) => {
       if (!err) {
+        // let rows = response.rows;
         res.json({
           status: 200,
           statusBol: true,
-          data: rows,
+          mensaje: "Actualización correcta",
+          estadoflag: true,
+          data: [],
+          token: renewTokenMiddleware(req),
         });
       } else {
-        res.json({
-          status: 400,
-          statusBol: false,
-          data: err,
-        });
+        console.log(err);
       }
     }
   );
@@ -781,19 +677,14 @@ export const getCalls = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -809,19 +700,14 @@ export const getCallsId = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -836,19 +722,14 @@ export const getQuoteCalls = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -863,19 +744,14 @@ export const getInstructivoId = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -890,19 +766,14 @@ export const getMarketingList = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -913,24 +784,19 @@ export const getMarketingList = async (req: Request, res: Response) => {
 export const getModulesEntities = async (req: Request, res: Response) => {
   const { id_module, id_branch } = req.body;
   await pool.query(
-    "SELECT * FROM ModulesEntities_list($1,$2)",
-    [id_branch, id_module],
+    "SELECT * FROM ModulesEntities_list($1)",
+    [id_branch],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -960,22 +826,14 @@ export const updateQuoteRecibidoEnviado = async (
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-            estado: rows[0].estadoflag,
-            mensaje: rows[0].mensaje,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-            estado: rows[0].estadoflag,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -990,21 +848,14 @@ export const ActualizarFolderOneDrive = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-            estado: rows[0].estadoflag,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-            estado: rows[0].estadoflag,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -1054,21 +905,14 @@ export const getListCalls = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-            estado: rows[0].estadoflag,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-            estado: rows[0].estadoflag,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -1086,22 +930,15 @@ export const quoteCargarNoAsignadosHouse = async (
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-            mensaje: rows[0].mensaje,
-            estado: rows[0].estadoflag,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-            estado: rows[0].estadoflag,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          estado: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -1116,22 +953,14 @@ export const quoteDataHouse = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-            mensaje: rows[0].mensaje,
-            estado: rows[0].estadoflag,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-            estado: rows[0].estadoflag,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -1225,8 +1054,6 @@ export const listadoCotizacionMercadeo = async (
           const countByActivosArray = Object.entries(countByStatus).map(
             ([name, cantidad]) => ({ name, cantidad })
           );
-
-          // console.log(lstTotalPorDia);
 
           // ------------------------
           ejs.renderFile(
@@ -1470,22 +1297,14 @@ export const aprobarCotizacion = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-            estadoflag: rows[0].estadoflag,
-            mensaje: rows[0].mensaje,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            estadoflag: rows[0].estadoflag,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -1607,16 +1426,14 @@ export const setNoteQuote = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          let rows = response.rows;
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-            estadoflag: rows[0].estadoflag,
-            data: rows,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -1752,6 +1569,6 @@ function getServicios({
       estado: volumen,
     });
   }
-  // console.log(serv);
+
   return serv;
 }

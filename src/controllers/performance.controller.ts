@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
 const { Pool } = pg;
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 const pool = conexion();
 import { postPerformance } from "../interface/performance";
 
@@ -20,7 +20,8 @@ export const getPerformances = async (req: Request, res: Response) => {
           status: 200,
           statusBol: true,
           mensaje: rows[0].mensaje,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -47,7 +48,8 @@ export const getListPerformance = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -69,7 +71,8 @@ export const insertPerformance = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -91,7 +94,8 @@ export const readPerformance = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -113,7 +117,8 @@ export const updatePerformance = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);

@@ -5,7 +5,7 @@ import * as pg from "pg";
 import { InvoiceAdminCxC } from "interface/InvoiceAdminCxC";
 const { Pool } = pg;
 const pool = conexion();
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 export const setInvoiceAdmin = async (req: Request, res: Response) => {
   const dataObj = req.body;
   const dataDetails = req.body.detalle;
@@ -172,7 +172,8 @@ export const getInvoiceAdmin = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -201,7 +202,8 @@ export const delPro = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -228,7 +230,8 @@ export const getRegularizar = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -256,7 +259,8 @@ export const getVerInvoiceAdmin = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -335,7 +339,8 @@ export const setUpdateInvoiceAdmin = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -364,7 +369,8 @@ export const getInvoiceAdminCxC = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -440,7 +446,8 @@ export const setInvoiceAdminCxC = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -468,7 +475,8 @@ export const getVerInvoiceAdminCxC = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -548,7 +556,8 @@ export const setUpdateInvoiceAdminCxC = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({

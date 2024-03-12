@@ -1,7 +1,7 @@
 import { Request, response, Response } from "express";
 import { convertToObject } from "typescript";
 // import { connect } from "../routes/database";
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
 const { Pool } = pg;
@@ -31,7 +31,8 @@ export const setSPaymentPro = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
             number: rows[0].number,
           });
         } else {
@@ -65,7 +66,8 @@ export const putSPaymentPro = async (req: Request, res: Response) => {
         res.json({
           status: 200,
           statusBol: true,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -91,7 +93,8 @@ export const getSPaymentPro = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -119,7 +122,8 @@ export const getListInvoice = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -147,7 +151,8 @@ export const getListInvoiceExp = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -173,7 +178,8 @@ export const delInvoice = async (req: Request, res: Response) => {
         res.json({
           status: 200,
           statusBol: true,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -192,7 +198,8 @@ export const delDebsClient = async (req: Request, res: Response) => {
         res.json({
           status: 200,
           statusBol: true,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -213,7 +220,8 @@ export const getRequestPayment = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -245,7 +253,8 @@ export const getRequestPaymentConceptos = async (
             status: 200,
             statusBol: true,
             estadoflag: rows[0].estadoflag,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -281,7 +290,8 @@ export const getDebsToPayAdmin = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             estadoflag: rows[0].estadoflag,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -309,7 +319,8 @@ export const getDebsToPay = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -336,7 +347,8 @@ export const getReportAccounts = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -363,7 +375,8 @@ export const getReportAccountsFilter = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -393,7 +406,8 @@ export const getDebsClient = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -421,7 +435,8 @@ export const getDebsClientList = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -603,7 +618,8 @@ export const setDebsClient = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -639,7 +655,8 @@ export const setCheckDebsClient = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -1002,7 +1019,8 @@ export const getReporteCXP = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             estadoflag: rows[0].estadoflag,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -1036,7 +1054,8 @@ export const getReporteCXC = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -1070,7 +1089,8 @@ export const getReporteCXCAdmin = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -1094,7 +1114,8 @@ export const getReporteCXCAdmin = async (req: Request, res: Response) => {
 //         res.json({
 //           status: 200,
 //           statusBol: true,
-//           data: rows,
+//          data: rows,
+          // token: renewTokenMiddleware(req),
 //         });
 //       } else {
 //         console.log(err);
@@ -1119,7 +1140,8 @@ export const listPagoControlGastoXProveedor = async (
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -1162,7 +1184,8 @@ export const updateDebsClient = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -1189,7 +1212,8 @@ export const eliminarSpaymentpro = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
             estadoflag: rows[0].estadoflag,
           });
         } else {

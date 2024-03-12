@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
 const { Pool } = pg;
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 const pool = conexion();
 import { postMultiplicador } from "../interface/multiplicador";
 
@@ -27,7 +27,8 @@ export const getMultiplicador = async (req: Request, res: Response) => {
           status: 200,
           statusBol: true,
           mensaje: rows[0].mensaje,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -56,7 +57,8 @@ export const getListMultiplicador = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -78,7 +80,8 @@ export const readMultiplicador = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -107,7 +110,8 @@ export const updateMultiplicador = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -129,7 +133,8 @@ export const getCargarShipment = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);

@@ -23,9 +23,7 @@ import {
   getCallsId,
   getInstructivoId,
   // putInstructivo,
-  putPath,
-  deletePath,
-  setPath,
+
   // getQuoteCalls,
   getMarketingList,
   getQuoteCalls,
@@ -56,10 +54,9 @@ router.post("/setCalls", TokenValidation, setCalls);
 // router.post("/updateCalls/:id", TokenValidation, updateCalls);
 router.post("/getCalls", TokenValidation, getCalls);
 router.post("/getCallsId/:id", TokenValidation, getCallsId);
-router.post("/setPath", TokenValidation, setPath);
-router.post("/putPath/:id", TokenValidation, putPath);
+
 router.post("/listadoLlamadas", TokenValidation, getQuoteCalls);
-router.post("/deletePath/:id", TokenValidation, deletePath);
+
 router.post("/getInstructivoId/:id_quote", TokenValidation, getInstructivoId);
 // router.post("/putInstructivo/:id_quote", TokenValidation, putInstructivo);
 router.post("/getMarketingList", TokenValidation, getMarketingList);

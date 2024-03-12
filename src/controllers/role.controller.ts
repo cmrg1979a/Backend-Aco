@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
 const { Pool } = pg;
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 const pool = conexion();
 
 export const getModuleRole = async (req: Request, res: Response) => {
@@ -19,7 +19,8 @@ export const getModuleRole = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -45,7 +46,8 @@ export const getRole = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-            data: rows,
+           data: rows,
+          token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -72,7 +74,8 @@ export const editRole = async (req: Request, res: Response) => {
         res.json({
           status: 200,
           statusBol: true,
-          data: rows,
+         data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
