@@ -3,9 +3,12 @@ import { Request, Response } from "express";
 import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
 const { Pool } = pg;
+const nodemailer = require("nodemailer");
 const pool = conexion();
 import { postHouse } from "../interface/house";
 import { postHouseEdit } from "../interface/house";
+
+import moment from "moment";
 
 export const setHouse = async (req: Request, res: Response) => {
   const dataObj = req.body;
@@ -417,3 +420,195 @@ export const insertComentarioHouse = async (req: Request, res: Response) => {
     }
   );
 };
+
+export const sendNotificacionHouse = async (req: Request, res: Response) => {
+  const dataObj = req.body;
+  // console.log(req.body);
+
+  await sendCorreo(dataObj);
+
+  res.json({
+    status: 200,
+    statusBol: true,
+  });
+};
+
+async function sendCorreo(data) {
+  let transporter = nodemailer.createTransport({
+    host: "mail.pic-cargo.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: "sistema1@pic-cargo.com", // "testkaysen@gmail.com", //
+      pass: "b@+p@f21e48c", // "csyvzaysfnmntjws", //
+    },
+  });
+
+  const { 
+    user, 
+    house, 
+    notificacion: { title: tipoNotificacion = "", value: indiceNotificacion = 0 }, 
+    sentido, 
+    tipoEmbarque, 
+    cuentasBancarias 
+  } = data;
+
+  let tabla = "";
+  if (tipoEmbarque == "Aéreo" || tipoEmbarque == "LCL") 
+  {
+    tabla += `
+      <table border="1" cellspacing="0" style="width:600px; margin:auto;">
+        <tbody>
+          <tr>
+            <td colspan="2" style="text-align:center; padding:.25rem .5rem;"><b>Datos de la Carga</b></td>
+          </tr>
+          <tr>
+            <td style="width:50%; padding:.25rem .5rem;"><b>Peso</b></td>
+            <td style="width:50%; padding:.25rem .5rem;">${house.peso ? `${house.peso}Kg` : ""}</td>
+          </tr>
+          <tr>
+            <td style="width:50%; padding:.25rem .5rem;"><b>Volumen</b></td>
+            <td style="width:50%; padding:.25rem .5rem;">${house.volumen ? `${house.volumen}m3` : ""}</td>
+          </tr>
+          <tr>
+            <td style="width:50%; padding:.25rem .5rem;"><b>Nro. Bultos</b></td>
+            <td style="width:50%; padding:.25rem .5rem;">${(house.bultos || "")}</td>
+          </tr>
+          <tr>
+            <td style="width:50%; padding:.25rem .5rem;"><b>Origen</b></td>
+            <td style="width:50%; padding:.25rem .5rem;">${(house.namelongportbegin || "")}</td>
+          </tr>
+          <tr>
+            <td style="width:50%; padding:.25rem .5rem;"><b>Destino</b></td>
+            <td style="width:50%; padding:.25rem .5rem;">${(house.namelongportend || "")}</td>
+          </tr>
+          <tr>
+            <td style="width:50%; padding:.25rem .5rem;"><b>Proveedor</b></td>
+            <td style="width:50%; padding:.25rem .5rem;">${(house.nameagent || "")}</td>
+          </tr>
+          <tr>
+            <td style="width:50%; padding:.25rem .5rem;"><b>Nro. BL / Nro. Guía Aérea</b></td>
+            <td style="width:50%; padding:.25rem .5rem;">${(house.nro_hbl || "")}</td>
+          </tr>
+          <tr>
+            <td style="width:50%; padding:.25rem .5rem;"><b>Monto Servicio Logístico Cotizado</b></td>
+            <td style="width:50%; padding:.25rem .5rem;">USD ${(house.monto || "")}</td>
+          </tr>
+        </tbody>
+      </table>  
+    `; 
+  }
+  else if (tipoEmbarque == "FCL")
+  {
+    tabla += `
+      <table border="1" cellspacing="0" style="width:600px; margin:auto;">
+        <tbody>
+          <tr>
+            <td colspan="2" style="text-align:center; padding:.25rem .5rem;"><b>Datos de la Carga</b></td>
+          </tr>
+          <tr>
+            <td style="width:50%; padding:.25rem .5rem;"><b>Contenedores</b></td>
+            <td style="width:50%; padding:.25rem .5rem;">${(house.list_containers.map(item => `${item.namecontainer} (${item.cantidad})`).join(", ") || "")}</td>
+          </tr>
+          <tr>
+            <td style="width:50%; padding:.25rem .5rem;">Origen</td>
+            <td style="width:50%; padding:.25rem .5rem;">${(house.namelongportbegin || "")}</td>
+          </tr>
+          <tr>
+            <td style="width:50%; padding:.25rem .5rem;">Destino</td>
+            <td style="width:50%; padding:.25rem .5rem;">${(house.namelongportend || "")}</td>
+          </tr>
+          <tr>
+            <td style="width:50%; padding:.25rem .5rem;">Proveedor</td>
+            <td style="width:50%; padding:.25rem .5rem;">${(house.nameagent || "")}</td>
+          </tr>
+          <tr>
+            <td style="width:50%; padding:.25rem .5rem;">Nro. BL / Nro. Guía Aérea</td>
+            <td style="width:50%; padding:.25rem .5rem;">${(house.nro_hbl || "")}</td>
+          </tr>
+          <tr>
+            <td style="width:50%; padding:.25rem .5rem;">Monto Servicio Logístico Cotizado</td>
+            <td style="width:50%; padding:.25rem .5rem;">USD ${(house.monto || "")}</td>
+          </tr>
+        </tbody>
+      </table>  
+    `; 
+  }
+
+  let descripcionNotificacion = "";
+  if (sentido == "Import")
+  {
+    switch(indiceNotificacion) 
+    {
+      case 1: // Aviso de Salida
+        descripcionNotificacion = `te notificamos que tu carga salió el día ${moment(house.fecha_etd).format("D [de] MMMM")}.`;
+        break;
+      case 2: // Actualización de Salida
+        descripcionNotificacion = `te notificamos que por motivos operacionales, tu carga se estima salir el día ${moment(house.fecha_etd).format("D [de] MMMM")}.`;
+        break;
+      case 3: // Pre - Aviso de Llegada 
+        descripcionNotificacion = `te notificamos que tu carga va allegar el día ${moment(house.fecha_eta).format("D [de] MMMM")}.`;
+        break;
+      case 4: // Aviso de Llegada
+        descripcionNotificacion = "te notificamos que tu carga ya llegó.";
+        break;
+      case 5: // Actualización de Llegada
+        descripcionNotificacion = `te notificamos que, por motivos operacionales, tu carga se estima llegar el día ${moment(house.fecha_eta).format("D [de] MMMM")}.`;
+        break;
+    } 
+  }
+  else if (sentido == "Export") 
+  {
+    switch(indiceNotificacion) 
+    {
+      case 1: // Aviso de Salida
+        descripcionNotificacion = `te notificamos que tu carga salió el día ${moment(house.fecha_eta).format("D [de] MMMM")}.`;
+        break;
+      case 2: // Actualización de Salida
+        descripcionNotificacion = `te notificamos que por motivos operacionales, tu carga se estima salir el día ${moment(house.fecha_eta).format("D [de] MMMM")}.`;
+        break;
+      case 3: // Aviso de llegada
+        descripcionNotificacion = "te notificamos que tu carga ya llegó.";
+        break;
+    } 
+  }
+
+  const plantilla = `
+    <div style="float:left;">
+      <img src="https://i.ibb.co/ypKb7q1/chain-Solver.png" alt="LogoChain" width="404" height="112" />
+    </div>
+    <div style="float:right;">
+      <p style="text-align:right;">PERÚ, ${moment().format("DD [de] MMMM [de] YYYY")}</p>
+    </div>
+    <div style="clear:both;"></div>
+    
+    <p>Estimados sr(es): <b>${house.nameconsigner}</b></p>
+    <p>Asunto: <b>${tipoNotificacion}</b></p>
+    <p>Datos de su Carga:</p>
+
+    ${tabla}
+
+    <br/>
+    <br/>
+
+    <p>Por medio del presente, ${descripcionNotificacion}</p>
+    
+    <br/>
+
+    <p>Le recordamos que el servicio logístico que le fue cotizado es un monto de USD ${(house.monto || "")}, y lo puede pagar a través de cualquiera de las cuentas bancarias:</p> 
+    ${(cuentasBancarias.map(item => `<p>${item.label}.</p>`).join("") || "")}
+    
+    <br/>
+    <br/>
+    
+    <p>Atte.: ${house.nameoperador}</p>
+    <p>${house.nameconsigner}</p>
+  `;
+
+  let info = await transporter.sendMail({
+    from: 'CHAIN-SOLVER" <sistema1@pic-cargo.com>',
+    to: "edisonrosalescampos@gmail.com",
+    subject: `ChainSolver – ${tipoNotificacion}`,
+    html: plantilla,
+  });
+}

@@ -14,7 +14,8 @@ import {
   setHouseEdit,
   setHouseDelete,
   getTotalHouseListAll,
-  insertComentarioHouse
+  insertComentarioHouse,
+  sendNotificacionHouse
 } from "../controllers/house.controller";
 
 router.post("/setHouse", TokenValidation, setHouse);
@@ -24,6 +25,7 @@ router.post("/getHouseListId", TokenValidation, getHouseListId);
 router.post("/getHouseServices", TokenValidation, getHouseServices);
 router.post("/getHouseBitacora", TokenValidation, getHouseBitacora);
 router.post("/getHouseContainers", TokenValidation, getHouseContainers);
+router.post("/sendNotificacionHouse", TokenValidation, sendNotificacionHouse);
 router.get("/getHouseListAll", TokenValidation, getHouseListAll);
 router.get("/getTotalHouseListAll", TokenValidation, getTotalHouseListAll);
 router.put("/setHouseEdit", TokenValidation, setHouseEdit);
