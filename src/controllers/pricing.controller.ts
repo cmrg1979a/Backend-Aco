@@ -15,13 +15,10 @@ import { QuoteNote } from "interface/quoteNote";
 moment.locale("es");
 export const setQuote = async (req: Request, res: Response) => {
   const dataObj = req.body;
+  let serviciocotizacion = dataObj.serviciocotizacion;
+  let contenedores = dataObj.contenedores;
+  let opcionCostos = dataObj.opcionCostos;
 
-  const serviciocotizacion = dataObj.serviciocotizacion;
-  const costocotizacion = dataObj.costocotizacion;
-  const notacosto = dataObj.notacosto;
-  const contenedores = dataObj.contenedores;
-  const ventascasillerodetalles = dataObj.ventascasillerodetalles;
-  const impuestos = dataObj.impuestos;
   // -------------------------- SERVICIOS
   let ID_BEGEND_s = serviciocotizacion.map((item: any) => {
     return item.idBegEnd;
@@ -35,67 +32,6 @@ export const setQuote = async (req: Request, res: Response) => {
   let statusservices_s = serviciocotizacion.map((item: any) => {
     return item.status == true || item.status == 1 ? 1 : 0;
   });
-  // ----------------------- IMPUESTOS
-  let type_i = impuestos.map((item: any) => {
-    return item.type;
-  });
-  let name_i = impuestos.map((item: any) => {
-    return item.name;
-  });
-  let percentage_i = impuestos.map((item: any) => {
-    return item.percentage;
-  });
-  let valor_i = impuestos.map((item: any) => {
-    return item.valor;
-  });
-  let orden_i = impuestos.map((item: any) => {
-    return item.orden;
-  });
-
-  // --------------------- COSTOS DE LA COTIZACION
-
-  let id_proveedor_cc = costocotizacion.map((item: any) => {
-    return item.id_proveedor;
-  });
-  let id_multiplicador_cc = costocotizacion.map((item: any) => {
-    return item.id_multiplicador;
-  });
-  let concepto_cc = costocotizacion.map((item: any) => {
-    return item.concepto;
-  });
-  let costounitario_cc = costocotizacion.map((item: any) => {
-    return item.costounitario ? item.costounitario : 0;
-  });
-  let cif_cc = costocotizacion.map((item: any) => {
-    return item.cif ? item.cif : 0;
-  });
-  let seguro_cc = costocotizacion.map((item: any) => {
-    return item.seguro ? item.seguro : 0;
-  });
-  let ubptotal_cc = costocotizacion.map((item: any) => {
-    return item.subtotal;
-  });
-  let esorigenflag_cc = costocotizacion.map((item: any) => {
-    return item.esorigenflag ? item.esorigenflag : 0;
-  });
-  let esfleteflag_cc = costocotizacion.map((item: any) => {
-    return item.esfleteflag;
-  });
-  let eslocalflag_cc = costocotizacion.map((item: any) => {
-    return item.eslocalflag;
-  });
-  let sadpuanaflag_cc = costocotizacion.map((item: any) => {
-    return item.esaduanaflag;
-  });
-  let esalmacenflag_cc = costocotizacion.map((item: any) => {
-    return item.esalmacenflag;
-  });
-  let esopcionflag_cc = costocotizacion.map((item: any) => {
-    return item.esopcionflag;
-  });
-  let esventaflag_cc = costocotizacion.map((item: any) => {
-    return item.esventaflag;
-  });
 
   // ----------------------------- contenedores
   let id_containers_c = contenedores.map((item: any) => {
@@ -104,32 +40,9 @@ export const setQuote = async (req: Request, res: Response) => {
   let quantity_c = contenedores.map((item: any) => {
     return item.cantidad;
   });
-  // ----------------------------
-  let id_quoteSales_vd = ventascasillerodetalles.map((item: any) => {
-    return item.id_quoteSales;
-  });
-  let description_vd = ventascasillerodetalles.map((item: any) => {
-    return item.description;
-  });
-  let monto_vd = ventascasillerodetalles.map((item: any) => {
-    return item.monto;
-  });
-  // ------------------------------
-  let description_nc = notacosto.map((item: any) => {
-    return item.descripcion;
-  });
-  let statusPrincipal_nc = notacosto.map((item: any) => {
-    return item.esprincipalflag;
-  });
-  let statusIncluye_nc = notacosto.map((item: any) => {
-    return item.esincluyeflag ? item.esincluyeflag : 0;
-  });
-  let statusNoIncluye_nc = notacosto.map((item: any) => {
-    return item.esnoincluyeflag ? item.esnoincluyeflag : 0;
-  });
 
   await pool.query(
-    "SELECT * FROM table_quote_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53,$54,$55,$56,$57,$58,$59,$60,$61,$62,$63,$64)",
+    "SELECT * FROM table_quote_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35)",
     [
       dataObj.id_marketing ? dataObj.id_marketing : null,
       dataObj.id_entitie ? dataObj.id_entitie : null,
@@ -144,7 +57,6 @@ export const setQuote = async (req: Request, res: Response) => {
       dataObj.quote ? dataObj.quote : null,
       dataObj.monto ? dataObj.monto : null,
       dataObj.statusquote ? dataObj.statusquote : 1,
-      1,
       dataObj.idVendedor ? dataObj.idVendedor : null,
       dataObj.descripcionMercancia ? dataObj.descripcionMercancia : null,
       dataObj.idProvincia ? dataObj.idProvincia : null,
@@ -154,8 +66,7 @@ export const setQuote = async (req: Request, res: Response) => {
       dataObj.proveedor ? dataObj.proveedor : null,
       dataObj.telefonoproveedor ? dataObj.telefonoproveedor : null,
       dataObj.direccionproveedor ? dataObj.direccionproveedor : null,
-      dataObj.fecha_fin ? dataObj.fecha_fin : null,
-      dataObj.tiempo_transito ? dataObj.tiempo_transito : null,
+
       dataObj.ganancia ? dataObj.ganancia : null,
       dataObj.id_branch ? dataObj.id_branch : null,
       dataObj.idPricing ? dataObj.idPricing : null,
@@ -165,46 +76,14 @@ export const setQuote = async (req: Request, res: Response) => {
       NAMESERVICE_s,
       CODEGROUPSERVICES_s,
       statusservices_s,
-      //----------------------------------
-      type_i,
-      name_i,
-      percentage_i,
-      valor_i,
-      orden_i,
-      // --------------------------
-      costocotizacion.map((item: any) => {
-        return item.code_cost ? item.code_cost : null;
-      }),
-      id_proveedor_cc,
-      id_multiplicador_cc,
-      concepto_cc,
-      costounitario_cc,
-      cif_cc,
-      seguro_cc,
-      ubptotal_cc,
-      esfleteflag_cc,
-      esorigenflag_cc,
-      eslocalflag_cc,
-      sadpuanaflag_cc,
-      esalmacenflag_cc,
-      esopcionflag_cc,
-      esventaflag_cc,
       // -----------------------------
       id_containers_c,
       quantity_c,
-      // ----------------------------
-      id_quoteSales_vd,
-      description_vd,
-      monto_vd,
       // ------------------------------
-
-      description_nc,
-      statusPrincipal_nc,
-      statusIncluye_nc,
-      statusNoIncluye_nc,
       dataObj.fullflag,
       dataObj.tiporeporte ? dataObj.tiporeporte : null,
       dataObj.id_percepcionaduana ? dataObj.id_percepcionaduana : null,
+      JSON.stringify(opcionCostos),
     ],
     (err, response, fields) => {
       if (!err) {
@@ -1074,6 +953,7 @@ export const listadoCotizacionMercadeo = async (
 
 export const quotePreviewTotales = async (req: Request, res: Response) => {
   let {
+    index,
     TipoCostos,
     isImport,
     datosOrigen,
@@ -1201,18 +1081,21 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
 
         pdf
           .create(data, options)
-          .toFile("files/COTIZACION.pdf", function (err: any, data: any) {
-            if (err) {
-              res.send(err);
-            } else {
-              res.download("/COTIZACION.pdf");
-              res.send({
-                estadoflag: true,
-                msg: "File created successfully",
-                path: path.join("COTIZACION.pdf"),
-              });
+          .toFile(
+            `files/COTIZACION_${index + 1}.pdf`,
+            function (err: any, data: any) {
+              if (err) {
+                res.send(err);
+              } else {
+                res.download(`/COTIZACION_${index + 1}.pdf`);
+                res.send({
+                  estadoflag: true,
+                  msg: "File created successfully",
+                  path: path.join(`COTIZACION_${index + 1}.pdf`),
+                });
+              }
             }
-          });
+          );
       }
     }
   );
