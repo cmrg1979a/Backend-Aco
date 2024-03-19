@@ -39,6 +39,7 @@ import {
   setNoteQuote,
   ListarMontoFinalesQuoteMONGODB,
   InsertMontoFinalesQuoteMONGODB,
+  getCargarPersonalPricing,
 } from "../controllers/pricing.controller";
 
 router.post("/setQuote", TokenValidation, setQuote);
@@ -49,6 +50,7 @@ router.post("/delQuote", TokenValidation, delQuote);
 router.post("/putQuote/:id_quote", TokenValidation, putQuote);
 // router.post("/getReportsRangeDays", TokenValidation, getReportsRangeDays);
 router.post("/getModulesEntities", TokenValidation, getModulesEntities);
+router.get("/get_personal_pricing", TokenValidation, getCargarPersonalPricing);
 router.post("/setCalls", TokenValidation, setCalls);
 // router.post("/updateCalls/:id", TokenValidation, updateCalls);
 router.post("/getCalls", TokenValidation, getCalls);

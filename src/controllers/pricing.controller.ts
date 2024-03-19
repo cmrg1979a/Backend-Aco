@@ -1314,6 +1314,29 @@ export const InsertMontoFinalesQuoteMONGODB = async (
   }
 };
 
+export const getCargarPersonalPricing = async (req: Request, res: Response) => {
+  const { id_branch } = req.query;
+  await pool.query(
+    "SELECT * FROM function_entities_cargarpricing($1)",
+    [id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
 export const ListarMontoFinalesQuoteMONGODB = async (
   req: Request,
   res: Response
