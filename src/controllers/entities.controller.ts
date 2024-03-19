@@ -703,6 +703,7 @@ export const getEntitiesList = async (req: Request, res: Response) => {
 };
 export const getListadoCliente = async (req: Request, res: Response) => {
   let { id_branch } = req.query;
+  
   await pool.query(
     "SELECT * FROM table_entities_listar_cliente($1)",
     [id_branch],
