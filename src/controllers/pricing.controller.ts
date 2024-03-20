@@ -225,12 +225,9 @@ export const putQuote = async (req: Request, res: Response) => {
   const dataObj = req.body;
 
   const serviciocotizacion = dataObj.serviciocotizacion;
-  const costocotizacion = dataObj.costocotizacion;
-  const notacosto = dataObj.notacosto;
   const contenedores = dataObj.contenedores;
-  const ventascasillerodetalles = dataObj.ventascasillerodetalles;
-  const impuestos = dataObj.impuestos;
 
+  let opcionCostos = dataObj.opcionCostos;
   // --------------------------
   let ID_BEGEND_s = serviciocotizacion.map((item: any) => {
     return item.id_begend ? item.id_begend : null;
@@ -241,69 +238,6 @@ export const putQuote = async (req: Request, res: Response) => {
   let CODEGROUPSERVICES_s = serviciocotizacion.map((item: any) => {
     return item.codegroupservices ? item.codegroupservices : null;
   });
-  // -----------------------
-  let type_i = impuestos.map((item: any) => {
-    return item.type ? item.type : null;
-  });
-  let name_i = impuestos.map((item: any) => {
-    return item.name ? item.name : null;
-  });
-  let percentage_i = impuestos.map((item: any) => {
-    return item.percentage ? item.percentage : null;
-  });
-  let valor_i = impuestos.map((item: any) => {
-    return item.valor ? item.valor : null;
-  });
-  let orden_i = impuestos.map((item: any) => {
-    return item.orden ? item.orden : null;
-  });
-
-  // ---------------------
-  let id_proveedor_cc = costocotizacion.map((item: any) => {
-    return item.id_proveedor ? item.id_proveedor : null;
-  });
-  let id_multiplicador_cc = costocotizacion.map((item: any) => {
-    return item.id_multiplicador ? item.id_multiplicador : null;
-  });
-  let concepto_cc = costocotizacion.map((item: any) => {
-    return item.concepto ? item.concepto : null;
-  });
-  let code_cost = costocotizacion.map((item: any) => {
-    return item.code_cost ? item.code_cost : null;
-  });
-  let costounitario_cc = costocotizacion.map((item: any) => {
-    return item.costounitario ? item.costounitario : 0;
-  });
-  let cif_cc = costocotizacion.map((item: any) => {
-    return item.cif ? item.cif : 0;
-  });
-  let seguro_cc = costocotizacion.map((item: any) => {
-    return item.seguro ? item.seguro : 0;
-  });
-  let ubptotal_cc = costocotizacion.map((item: any) => {
-    return item.ubptotal ? item.ubptotal : null;
-  });
-  let esfleteflag_cc = costocotizacion.map((item: any) => {
-    return item.esfleteflag ? item.esfleteflag : null;
-  });
-  let esorigenflag_cc = costocotizacion.map((item: any) => {
-    return item.esorigenflag ? item.esorigenflag : null;
-  });
-  let eslocalflag_cc = costocotizacion.map((item: any) => {
-    return item.eslocalflag ? item.eslocalflag : null;
-  });
-  let sadpuanaflag_cc = costocotizacion.map((item: any) => {
-    return item.esaduanaflag ? item.esaduanaflag : null;
-  });
-  let esalmacenflag_cc = costocotizacion.map((item: any) => {
-    return item.esalmacenflag ? item.esalmacenflag : null;
-  });
-  let esopcionflag_cc = costocotizacion.map((item: any) => {
-    return item.esopcionflag ? item.esopcionflag : null;
-  });
-  let esventaflag_cc = costocotizacion.map((item: any) => {
-    return item.esventaflag ? item.esventaflag : null;
-  });
   // -----------------------------
   let id_containers_c = contenedores.map((item: any) => {
     return item.id_contenedor == undefined ? null : item.id_contenedor;
@@ -312,44 +246,14 @@ export const putQuote = async (req: Request, res: Response) => {
     return item.cantidad ? item.cantidad : null;
   });
   // ----------------------------
-  let id_quoteSales_vd = ventascasillerodetalles.map((item: any) => {
-    return item.id_quoteSales ? item.id_quoteSales : null;
-  });
-  let description_vd = ventascasillerodetalles.map((item: any) => {
-    return item.description ? item.description : null;
-  });
-  let monto_vd = ventascasillerodetalles.map((item: any) => {
-    return item.monto ? item.monto : null;
-  });
+
   // ------------------------------
-  let description_nc = notacosto.map((item: any) => {
-    return item.descripcion ? item.descripcion : null;
-  });
-  let statusPrincipal_nc = notacosto.map((item: any) => {
-    return item.esprincipalflag ? item.esprincipalflag : null;
-  });
-  let statusIncluye_nc = notacosto.map((item: any) => {
-    return item.esincluyeflag ? item.esincluyeflag : null;
-  });
-  let statusNoIncluye_nc = notacosto.map((item: any) => {
-    return item.esnoincluyeflag ? item.esnoincluyeflag : null;
-  });
+
   let pid_s = serviciocotizacion.map((item: any) => {
     return item.id ? item.id : 0;
   });
-  let pid_t = impuestos.map((item: any) => {
-    return item.id ? item.id : 0;
-  });
-  let pid_c = costocotizacion.map((item: any) => {
-    return item.id ? item.id : 0;
-  });
+
   let pid_cc = contenedores.map((item: any) => {
-    return item.id ? item.id : 0;
-  });
-  let pid_sd = ventascasillerodetalles.map((item: any) => {
-    return item.id ? item.id : 0;
-  });
-  let pid_nt = notacosto.map((item: any) => {
     return item.id ? item.id : 0;
   });
 
@@ -357,21 +261,13 @@ export const putQuote = async (req: Request, res: Response) => {
     return item.status == true || item.status == 1 ? 1 : 0;
   });
 
-  let pstatus_c = costocotizacion.map((item: any) => {
-    return item.status == true || item.status == 1 ? 1 : 0;
-  });
-
-  let pstatus_nt = notacosto.map((item: any) => {
-    return item.status == true ? 1 : 0;
-  });
   let pid_contenedor = contenedores.map((item: any) => {
     return item.id_contenedor ? item.id_contenedor : null;
   });
 
   let pid = dataObj.id_quote;
-  let statusquote = dataObj.statusquote;
   await pool.query(
-    "SELECT * FROM table_quote_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53,$54,$55,$56,$57,$58,$59,$60,$61,$62,$63,$64,$65,$66,$67,$68,$69,$70,$71,$72,$73,$74)",
+    "SELECT * FROM table_quote_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36)",
     [
       dataObj.id_marketing ? dataObj.id_marketing : null,
       dataObj.id_entitie ? dataObj.id_entitie : null,
@@ -383,10 +279,8 @@ export const putQuote = async (req: Request, res: Response) => {
       dataObj.numerobultos ? dataObj.numerobultos : null,
       dataObj.peso ? dataObj.peso : null,
       dataObj.volumen ? dataObj.volumen : null,
-      dataObj.quote ? dataObj.quote : null,
       dataObj.monto ? dataObj.monto : null,
-      statusquote ? statusquote : null,
-      1,
+      dataObj.statusquote ? dataObj.statusquote : null,
       dataObj.idVendedor ? dataObj.idVendedor : null,
       dataObj.descripcionMercancia ? dataObj.descripcionMercancia : null,
       dataObj.idProvincia ? dataObj.idProvincia : null,
@@ -396,64 +290,24 @@ export const putQuote = async (req: Request, res: Response) => {
       dataObj.proveedor ? dataObj.proveedor : null,
       dataObj.telefonoproveedor ? dataObj.telefonoproveedor : null,
       dataObj.direccionproveedor ? dataObj.direccionproveedor : null,
-      dataObj.fecha_fin ? dataObj.fecha_fin : null,
-      dataObj.tiempo_transito ? dataObj.tiempo_transito : null,
-      dataObj.ganancia ? dataObj.ganancia : null,
-      dataObj.id_branch ? dataObj.id_branch : null,
       dataObj.idPricing ? dataObj.idPricing : null,
-
       // --------------------
       ID_BEGEND_s,
       NAMESERVICE_s,
       CODEGROUPSERVICES_s,
-      //----------------------------------
-      type_i,
-      name_i,
-      percentage_i,
-      valor_i,
-      orden_i,
-      // --------------------------
-      id_proveedor_cc,
-      id_multiplicador_cc,
-      concepto_cc,
-      code_cost,
-      costounitario_cc,
-      cif_cc,
-      seguro_cc,
-      ubptotal_cc,
-      esfleteflag_cc,
-      esorigenflag_cc,
-      eslocalflag_cc,
-      sadpuanaflag_cc,
-      esalmacenflag_cc,
-      esopcionflag_cc,
-      esventaflag_cc,
       // -----------------------------
       id_containers_c,
       quantity_c,
-      // ----------------------------
-      id_quoteSales_vd,
-      description_vd,
-      monto_vd,
       // ------------------------------
-      description_nc,
-      statusPrincipal_nc,
-      statusIncluye_nc,
-      statusNoIncluye_nc,
       !!dataObj.fullflag ? 1 : 0,
       pid_s,
-      pid_t,
-      pid_c,
       pid_cc,
-      pid_sd,
-      pid_nt,
       pstatus_s,
-      pstatus_c,
-      pstatus_nt,
       pid_contenedor,
       pid,
       dataObj.tiporeporte ? dataObj.tiporeporte : null,
       dataObj.id_percepcionaduana ? dataObj.id_percepcionaduana : null,
+      JSON.stringify(opcionCostos),
     ],
     (err, response, fields) => {
       if (!err) {

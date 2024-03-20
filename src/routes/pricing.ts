@@ -47,7 +47,7 @@ router.post("/getQuoteStatus", TokenValidation, getQuoteStatus);
 router.get("/getQuoteList", TokenValidation, corsMiddleware, getQuoteList);
 router.get("/getQuoteId", TokenValidation, getQuoteId);
 router.post("/delQuote", TokenValidation, delQuote);
-router.post("/putQuote/:id_quote", TokenValidation, putQuote);
+router.put("/putQuote", TokenValidation, putQuote);
 // router.post("/getReportsRangeDays", TokenValidation, getReportsRangeDays);
 router.post("/getModulesEntities", TokenValidation, getModulesEntities);
 router.get("/get_personal_pricing", TokenValidation, getCargarPersonalPricing);
