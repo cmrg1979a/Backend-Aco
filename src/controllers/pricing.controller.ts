@@ -1008,6 +1008,7 @@ export const aprobarCotizacion = async (req: Request, res: Response) => {
 
 export const generarInstructivoQuote = async (req: Request, res: Response) => {
   let {
+    nro_propuesta,
     expediente,
     sentido,
     carga,
@@ -1095,15 +1096,15 @@ export const generarInstructivoQuote = async (req: Request, res: Response) => {
 
         pdf
           .create(data, options)
-          .toFile("files/InstructivoQuote.pdf", function (err: any, data: any) {
+          .toFile(`files/InstructivoQuote_${nro_propuesta}.pdf`, function (err: any, data: any) {
             if (err) {
               res.send(err);
             } else {
-              res.download("/InstructivoQuote.pdf");
+              res.download(`/InstructivoQuote_${nro_propuesta}.pdf`);
               res.send({
                 estadoflag: true,
                 msg: "File created successfully",
-                path: path.join("InstructivoQuote.pdf"),
+                path: path.join(`InstructivoQuote_${nro_propuesta}.pdf`),
               });
             }
           });
