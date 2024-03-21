@@ -18,14 +18,15 @@ export const setBitacora = async (req: Request, res: Response) => {
       dataObj.id_comentario ? dataObj.id_comentario : null,
       dataObj.comentario ? dataObj.comentario : null,
       dataObj.fecha ? dataObj.fecha : null,
-      dataObj.status ? dataObj.status : null,
+      dataObj.visible_cliente ? 1 : 0,
     ],
     (err, rows, fields) => {
       if (!err) {
         res.json({
           status: 200,
           statusBol: true,
-         data: rows,          token: renewTokenMiddleware(req),
+          data: rows,          
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -45,7 +46,31 @@ export const deleteBitacora = async (req: Request, res: Response) => {
         res.json({
           status: 200,
           statusBol: true,
-         data: rows,          token: renewTokenMiddleware(req),
+          data: rows,          
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const changeStatusBitacora = async (req: Request, res: Response) => {
+  const { id, status } = req.body;
+
+  await pool.query(
+    "SELECT * FROM house_bitacora_cambiarstatus($1,$2)",
+    [ 
+      id, 
+      status ? 1 : 0
+    ],
+    (err, rows, fields) => {
+      if (!err) {
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,          
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);

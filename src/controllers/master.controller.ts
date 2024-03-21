@@ -262,11 +262,13 @@ export const getMasterList = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            estadoflag: rows[0].estadoflag,
           });
         } else {
           res.json({
             status: 200,
             statusBol: true,
+            estadoflag: rows[0].estadoflag,
             mensaje: rows[0].mensaje,
           });
         }

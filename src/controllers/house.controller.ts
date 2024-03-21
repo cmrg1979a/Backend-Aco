@@ -100,12 +100,13 @@ export const getHouseListAll = async (req: Request, res: Response) => {
     fecha_etd,
     fecha_eta,
     pagina,
-    limite,    
+    limite,
+    orden    
   } = req.query;
   // console.log(req.query)
 
   await pool.query(
-    "SELECT * FROM Table_HouseControl_listarall($1,null,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,null);",
+    "SELECT * FROM Table_HouseControl_listarall($1,null,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12);",
     [
       id_branch,
       id_master || null,
@@ -118,6 +119,7 @@ export const getHouseListAll = async (req: Request, res: Response) => {
       fecha_eta || null,
       pagina || null,
       limite || null,
+      orden || null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -127,11 +129,13 @@ export const getHouseListAll = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             data: rows,
+            estadoflag: rows[0].estadoflag,
           });
         } else {
           res.json({
             status: 200,
             statusBol: true,
+            estadoflag: rows[0].estadoflag,
             mensaje: rows[0].mensaje,
           });
         }
@@ -421,6 +425,58 @@ export const insertComentarioHouse = async (req: Request, res: Response) => {
   );
 };
 
+export const setTrackingToken = async (req: Request, res: Response) => {
+  const dataObj = req.body;
+
+  await pool.query(
+    "SELECT * FROM function_housecontrol_tokenrastreo_insertar($1,$2,$3)",
+    [
+      dataObj.id_house ? dataObj.id_house : null,
+      dataObj.token ? dataObj.token : null,
+      dataObj.fecha ? dataObj.fecha : null,
+    ],
+    (err, response, fields) => {
+      let rows = response.rows;
+      if (!err) {
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const getTrackingData = async (req: Request, res: Response) => {
+  const { token } = req.params;
+
+  await pool.query(
+    "SELECT * FROM function_estadocarga_consultar($1)",
+    [
+      token
+    ],
+    (err, response, fields) => {
+      let rows = response.rows;
+      if (!err) {
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
 export const sendNotificacionHouse = async (req: Request, res: Response) => {
   const dataObj = req.body;
   // console.log(req.body);
@@ -511,23 +567,23 @@ async function sendCorreo(data) {
             <td style="width:50%; padding:.25rem .5rem;">${(house.list_containers.map(item => `${item.namecontainer} (${item.cantidad})`).join(", ") || "")}</td>
           </tr>
           <tr>
-            <td style="width:50%; padding:.25rem .5rem;">Origen</td>
+            <td style="width:50%; padding:.25rem .5rem;"><b>Origen</b></td>
             <td style="width:50%; padding:.25rem .5rem;">${(house.namelongportbegin || "")}</td>
           </tr>
           <tr>
-            <td style="width:50%; padding:.25rem .5rem;">Destino</td>
+            <td style="width:50%; padding:.25rem .5rem;"><b>Destino</b></td>
             <td style="width:50%; padding:.25rem .5rem;">${(house.namelongportend || "")}</td>
           </tr>
           <tr>
-            <td style="width:50%; padding:.25rem .5rem;">Proveedor</td>
+            <td style="width:50%; padding:.25rem .5rem;"><b>Proveedor</b></td>
             <td style="width:50%; padding:.25rem .5rem;">${(house.nameagent || "")}</td>
           </tr>
           <tr>
-            <td style="width:50%; padding:.25rem .5rem;">Nro. BL / Nro. Guía Aérea</td>
+            <td style="width:50%; padding:.25rem .5rem;"><b>Nro. BL / Nro. Guía Aérea</b></td>
             <td style="width:50%; padding:.25rem .5rem;">${(house.nro_hbl || "")}</td>
           </tr>
           <tr>
-            <td style="width:50%; padding:.25rem .5rem;">Monto Servicio Logístico Cotizado</td>
+            <td style="width:50%; padding:.25rem .5rem;"><b>Monto Servicio Logístico Cotizado</b></td>
             <td style="width:50%; padding:.25rem .5rem;">USD ${(house.monto || "")}</td>
           </tr>
         </tbody>
@@ -547,7 +603,7 @@ async function sendCorreo(data) {
         descripcionNotificacion = `te notificamos que por motivos operacionales, tu carga se estima salir el día ${moment(house.fecha_etd).format("D [de] MMMM")}.`;
         break;
       case 3: // Pre - Aviso de Llegada 
-        descripcionNotificacion = `te notificamos que tu carga va allegar el día ${moment(house.fecha_eta).format("D [de] MMMM")}.`;
+        descripcionNotificacion = `te notificamos que tu carga va a llegar el día ${moment(house.fecha_eta).format("D [de] MMMM")}.`;
         break;
       case 4: // Aviso de Llegada
         descripcionNotificacion = "te notificamos que tu carga ya llegó.";
@@ -598,6 +654,12 @@ async function sendCorreo(data) {
     <p>Le recordamos que el servicio logístico que le fue cotizado es un monto de USD ${(house.monto || "")}, y lo puede pagar a través de cualquiera de las cuentas bancarias:</p> 
     ${(cuentasBancarias.map(item => `<p>${item.label}.</p>`).join("") || "")}
     
+
+    <br/>
+    <br/>
+
+    <p>Si desea consultar el estado de su carga, haga clic en este <a href="https://devchainsolver.piccargo.com/tracking/${(house.token_rastreo || "")}">enlace</a></p>
+
     <br/>
     <br/>
     
@@ -607,7 +669,7 @@ async function sendCorreo(data) {
 
   let info = await transporter.sendMail({
     from: 'CHAIN-SOLVER" <sistema1@pic-cargo.com>',
-    to: "edisonrosalescampos@gmail.com",
+    to: house.emailaddress_consigner || "",
     subject: `ChainSolver – ${tipoNotificacion}`,
     html: plantilla,
   });
