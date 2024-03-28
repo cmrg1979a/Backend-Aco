@@ -235,8 +235,7 @@
         </tr>
       </tbody>
     </table>
-    <%}%> <%}%> 
-    <% if(tipo != 'AGRUPADO'){%> <% if (totalOrigen!= '$0.00') {%>
+    <%}%> <%}%> <% if(tipo != 'AGRUPADO'){%> <% if (totalOrigen!= '$0.00') {%>
     <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
       <thead>
         <tr class="subrayado">
@@ -266,9 +265,7 @@
         </tr>
       </tbody>
     </table>
-    <%}%> <%}%> 
-    
-    <% if(tipo != 'AGRUPADO'){%> <% if (totalLocales!= '$0.00') {%>
+    <%}%> <%}%> <% if(tipo != 'AGRUPADO'){%> <% if (totalLocales!= '$0.00') {%>
     <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
       <thead>
         <tr class="subrayado">
@@ -329,8 +326,7 @@
         </tr>
       </tbody>
     </table>
-    <%}%> <%}%> 
-    <% if(tipo != 'AGRUPADO'){%> <% if (totalFlete!= '$0.00' &&
+    <%}%> <%}%> <% if(tipo != 'AGRUPADO'){%> <% if (totalFlete!= '$0.00' &&
     !isImport) {%>
     <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
       <thead>
@@ -361,9 +357,7 @@
         </tr>
       </tbody>
     </table>
-    <%}%> <%}%> 
-   
-    <% if(tipo != 'AGRUPADO'){%> <% if (totalAlmacenes!= '$0.00')
+    <%}%> <%}%> <% if(tipo != 'AGRUPADO'){%> <% if (totalAlmacenes!= '$0.00')
     {%>
     <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
       <thead>
@@ -394,7 +388,39 @@
         </tr>
       </tbody>
     </table>
-    <%}%> <%}%> <% if(tipo == 'AGRUPADO'){%>
+    <%}%> <%}%> 
+    <% if(tipo != 'AGRUPADO'){%> <% if (totalGastosTercero!='$0.00'){%>
+    <table width="100%" style="padding: 0 2rem; border-collapse: collapse">
+      <thead>
+        <tr class="subrayado">
+          <th class="align-left" colspan="5">
+            <% var matchingTipoCostos = TipoCostos.filter((v) => v.codigo ==
+            "GT"); var result = matchingTipoCostos.length > 0 ?
+            matchingTipoCostos[0].name : ""; %> <%= result %>
+          </th>
+          <th class="align-right" colspan="1">MONTO</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% datosGastosTerceros.forEach(element => {%>
+        <tr>
+          <td class="align-left" colspan="5"><%=element.name%></td>
+          <td class="align-right" colspan="1"><%=element.valor%></td>
+        </tr>
+        <%});%>
+        <tr
+          style="
+            border-top: 1.5px solid black;
+            border-bottom: 1.5px solid black;
+          "
+        >
+          <td class="align-right" colspan="5">Total:</td>
+          <td class="align-right" colspan="1"><%=totalGastosTercero %></td>
+        </tr>
+      </tbody>
+    </table>
+    <%}%> <%}%>
+    <% if(tipo == 'AGRUPADO'){%>
     <table
       width="100%"
       style="padding: 0 2rem; border-collapse: collapse; margin: 1rem 0 0 0"
@@ -451,7 +477,10 @@
         <%});%>
       </tbody>
     </table>
-    <table width="100%" style="padding: 0 2rem; border-collapse: collapse;margin-top: 2px;">
+    <table
+      width="100%"
+      style="padding: 0 2rem; border-collapse: collapse; margin-top: 2px"
+    >
       <tr style="border-bottom: 1.5px solid black">
         <td class="align-left st-bg" colspan="5">
           TOTAL DE IMPUESTO <% if (iso=='9589') {%> SUNAT <%}%> <% if
@@ -464,11 +493,9 @@
         <td class="align-right" colspan="1"><%=totalImpuestosIGV %></td>
       </tr>
       <tr style="border-bottom: 1.5px solid black">
-        <td class="align-left st-bg" colspan="5">TOTAL SERVICO PIC CARGO
-        <% if (impuesto.length>0) { %>
-          + IMPUESTO DE ADUANA SUNAT 
-          <%} %>
-        
+        <td class="align-left st-ti" colspan="5">
+          TOTAL SERVICO PIC CARGO <% if (impuesto.length>0) { %> + IMPUESTO DE
+          ADUANA SUNAT <%} %>
         </td>
         <td class="align-right" colspan="1"><%=total%></td>
       </tr>
@@ -687,5 +714,10 @@
 
   .classFooter {
     font-size: 0.8rem !important;
+  }
+  .st-ti {
+    background: #2587b1 !important;
+    color: #fff !important;
+    font-weight: bold !important;
   }
 </style>

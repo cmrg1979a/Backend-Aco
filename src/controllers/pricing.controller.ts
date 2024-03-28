@@ -842,11 +842,13 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
     datosLocales,
     datosAduanas,
     datosAlmacenes,
+    datosGastosTerceros,
     totalImpuestosIGV,
     totalFlete,
     totalLocales,
     totalAduanas,
     totalAlmacenes,
+    totalGastosTercero,
     totalServicios,
     total,
     iso_pais,
@@ -910,11 +912,13 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
       datosLocales,
       datosAduanas,
       datosAlmacenes,
+      datosGastosTerceros,
       totalImpuestosIGV,
       totalFlete,
       totalLocales,
       totalAduanas,
       totalAlmacenes,
+      totalGastosTercero,
       totalServicios,
       total,
       iso_pais,
@@ -1096,18 +1100,21 @@ export const generarInstructivoQuote = async (req: Request, res: Response) => {
 
         pdf
           .create(data, options)
-          .toFile(`files/InstructivoQuote_${nro_propuesta}.pdf`, function (err: any, data: any) {
-            if (err) {
-              res.send(err);
-            } else {
-              res.download(`/InstructivoQuote_${nro_propuesta}.pdf`);
-              res.send({
-                estadoflag: true,
-                msg: "File created successfully",
-                path: path.join(`InstructivoQuote_${nro_propuesta}.pdf`),
-              });
+          .toFile(
+            `files/InstructivoQuote_${nro_propuesta}.pdf`,
+            function (err: any, data: any) {
+              if (err) {
+                res.send(err);
+              } else {
+                res.download(`/InstructivoQuote_${nro_propuesta}.pdf`);
+                res.send({
+                  estadoflag: true,
+                  msg: "File created successfully",
+                  path: path.join(`InstructivoQuote_${nro_propuesta}.pdf`),
+                });
+              }
             }
-          });
+          );
       }
     }
   );
