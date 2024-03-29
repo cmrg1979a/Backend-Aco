@@ -10,7 +10,7 @@ const pool = conexion();
 
 export const setMaster = async (req: Request, res: Response) => {
   const dataObj = req.body;
-  
+
   await pool.query(
     "SELECT * FROM table_mastercontrol_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40)",
     [
@@ -235,10 +235,15 @@ export const getMasterList = async (req: Request, res: Response) => {
   );
 };
 export const cargarMaster = async (req: Request, res: Response) => {
-  let {id_branch} = req.query;
+  let { id_branch, id_modality, id_shipment, id_incoterms } = req.query;
   await pool.query(
-    "SELECT * FROM function_cargar_masters($1);",
-    [id_branch],
+    "SELECT * FROM function_cargar_masters($1,$2,$3,$4);",
+    [
+      id_branch,
+      id_modality ? id_modality : null,
+      id_shipment ? id_shipment : null,
+      id_incoterms ? id_incoterms : null,
+    ],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
