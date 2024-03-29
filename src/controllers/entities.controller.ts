@@ -445,11 +445,13 @@ export const GuardarCliente = async (req: Request, res: Response) => {
     birthday,
     emailaddress,
     lstConvenios,
-    lstTarifas
+    lstTarifas,
+    informacionEntrega,
+    lstShippers
   } = req.body;
 
   await pool.query(
-    "SELECT * FROM function_table_entities_registrarcliente($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34)",
+    "SELECT * FROM function_table_entities_registrarcliente($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46)",
     [
       id_branch ? id_branch : null,
       names ? names : null,
@@ -511,10 +513,20 @@ export const GuardarCliente = async (req: Request, res: Response) => {
       lstTarifas.map((item) => item.codigo || null),
       lstTarifas.map((item) => item.email_soporte || null),
       lstTarifas.map((item) => item.tarifa || 0),
+      informacionEntrega.destinatario ? informacionEntrega.destinatario : null,
+      informacionEntrega.dni_destinatario ? informacionEntrega.dni_destinatario : null,
+      informacionEntrega.receptor ? informacionEntrega.receptor : null,
+      informacionEntrega.dni_receptor ? informacionEntrega.dni_receptor : null,
+      informacionEntrega.id_departamento ? informacionEntrega.id_departamento : null,
+      informacionEntrega.id_provincia ? informacionEntrega.id_provincia : null,
+      informacionEntrega.id_distrito ? informacionEntrega.id_distrito : null,
+      informacionEntrega.agencia ? informacionEntrega.agencia : null,
+      informacionEntrega.celular_agencia ? informacionEntrega.celular_agencia : null,
+      informacionEntrega.status ? 1 : 0,
+      lstShippers.map((item) => item.codigo || null),
+      lstShippers.map((item) => item.shipper || null),
     ],
     (err, response, fields) => {
-      console.log("response", response);
-      console.log("error", err);
       if (!err) {
         let rows = response.rows;
 
@@ -579,11 +591,13 @@ export const ActualizarCliente = async (req: Request, res: Response) => {
     birthday,
     emailaddress,
     lstConvenios,
-    lstTarifas
+    lstTarifas,
+    informacionEntrega,
+    lstShippers
   } = req.body;
 
   await pool.query(
-    "SELECT * FROM function_table_entities_actualizarcliente($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39)",
+    "SELECT * FROM function_table_entities_actualizarcliente($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53)",
     [
       id,
       names ? names : null,
@@ -655,7 +669,21 @@ export const ActualizarCliente = async (req: Request, res: Response) => {
       lstTarifas.map((item) => item.fecha || null),
       lstTarifas.map((item) => item.codigo || null),
       lstTarifas.map((item) => item.email_soporte || null),
-      lstTarifas.map((item) => item.tarifa || 0),
+      lstTarifas.map((item) => item.tarifa || 0), 
+      informacionEntrega.id ? informacionEntrega.id : null,
+      informacionEntrega.destinatario ? informacionEntrega.destinatario : null,
+      informacionEntrega.dni_destinatario ? informacionEntrega.dni_destinatario : null,
+      informacionEntrega.receptor ? informacionEntrega.receptor : null,
+      informacionEntrega.dni_receptor ? informacionEntrega.dni_receptor : null,
+      informacionEntrega.id_departamento ? informacionEntrega.id_departamento : null,
+      informacionEntrega.id_provincia ? informacionEntrega.id_provincia : null,
+      informacionEntrega.id_distrito ? informacionEntrega.id_distrito : null,
+      informacionEntrega.agencia ? informacionEntrega.agencia : null,
+      informacionEntrega.celular_agencia ? informacionEntrega.celular_agencia : null,
+      informacionEntrega.status ? 1 : 0,
+      lstShippers.map((item) => item.id || null),
+      lstShippers.map((item) => item.codigo || null),
+      lstShippers.map((item) => item.shipper || null),
     ],
     (err, response, fields) => {
       if (!err) {
