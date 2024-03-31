@@ -101,12 +101,13 @@ export const getHouseListAll = async (req: Request, res: Response) => {
     fecha_eta,
     pagina,
     limite,
-    orden    
+    orden,
+    busqueda    
   } = req.query;
   // console.log(req.query)
 
   await pool.query(
-    "SELECT * FROM Table_HouseControl_listarall($1,null,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12);",
+    "SELECT * FROM Table_HouseControl_listarall($1,null,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13);",
     [
       id_branch,
       id_master || null,
@@ -120,6 +121,7 @@ export const getHouseListAll = async (req: Request, res: Response) => {
       pagina || null,
       limite || null,
       orden || null,
+      busqueda || null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -157,11 +159,12 @@ export const getTotalHouseListAll = async (req: Request, res: Response) => {
     id_cliente,
     fecha_etd,
     fecha_eta,
+    busqueda
   } = req.query;
   // console.log(req.query)
 
   await pool.query(
-    "SELECT * FROM Table_HouseControl_consultar_total($1,null,$2,$3,$4,$5,$6,$7,$8,$9);",
+    "SELECT * FROM Table_HouseControl_consultar_total($1,null,$2,$3,$4,$5,$6,$7,$8,$9,$10);",
     [
       id_branch,
       id_master || null,
@@ -172,6 +175,7 @@ export const getTotalHouseListAll = async (req: Request, res: Response) => {
       id_cliente || null,
       fecha_etd || null,
       fecha_eta || null,
+      busqueda || null,
     ],
     (err, response, fields) => {
       if (!err) {

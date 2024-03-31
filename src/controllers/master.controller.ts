@@ -232,12 +232,13 @@ export const getMasterList = async (req: Request, res: Response) => {
     status_adm,
     pagina,
     limite,
-    orden
+    orden,
+    busqueda
   } = req.query;
   // console.log(req.query)
 
   await pool.query(
-    "SELECT * FROM TABLE_MASTERCONTROL_listar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14);",
+    "SELECT * FROM TABLE_MASTERCONTROL_listar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15);",
     [
       id_branch,
       id_canal || null,
@@ -253,6 +254,7 @@ export const getMasterList = async (req: Request, res: Response) => {
       pagina || null,
       limite || null,
       orden || null,
+      busqueda || null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -291,12 +293,13 @@ export const getTotalMasterList = async (req: Request, res: Response) => {
     fecha_etd,
     fecha_eta,
     status_op,
-    status_adm
+    status_adm,
+    busqueda
   } = req.query;
   // console.log(req.query)
 
   await pool.query(
-    "SELECT * FROM TABLE_MASTERCONTROL_consultar_total($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11);",
+    "SELECT * FROM TABLE_MASTERCONTROL_consultar_total($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12);",
     [
       id_branch,
       id_canal || null,
@@ -309,6 +312,7 @@ export const getTotalMasterList = async (req: Request, res: Response) => {
       fecha_eta || null,
       status_op || null,
       status_adm || null,
+      busqueda || null,
     ],
     (err, response, fields) => {
       if (!err) {
