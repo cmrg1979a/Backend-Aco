@@ -968,46 +968,6 @@ export const quoteDataHouse = async (req: Request, res: Response) => {
   );
 };
 
-export const getQuoteDataHouseByIncoterms = async (req: Request, res: Response) => {
-  const { 
-    id_modality,
-    id_shipment,
-    id_incoterms
-  } = req.query;
-
-  await pool.query(
-    "SELECT * FROM function_quote_data_house_x_incoterms($1,$2,$3)",
-    [
-      id_modality ? id_modality : null,
-      id_shipment ? id_shipment : null,
-      id_incoterms ? id_incoterms : null
-    ],
-    (err, response, fields) => {
-      if (!err) {
-        let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-            mensaje: rows[0].mensaje,
-            estado: rows[0].estadoflag,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-            estado: rows[0].estadoflag,
-          });
-        }
-      } else {
-        console.log(err);
-      }
-    }
-  );
-};
-
 export const listadoCotizacionMercadeo = async (
   req: Request,
   res: Response

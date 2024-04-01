@@ -204,7 +204,7 @@ export const getHouseListId = async (req: Request, res: Response) => {
   const { id, id_branch } = req.body;
 
   await pool.query(
-    "SELECT * FROM Table_HouseControl_listarall($1,$2,null,null,null,null,null,null,null,null,null,null,null)",
+    "SELECT * FROM Table_HouseControl_listarall($1,$2,null,null,null,null,null,null,null,null,null,null,null,null)",
     [id_branch, id],
     (err, response, fields) => {
       if (!err) {
@@ -353,7 +353,7 @@ export const setHouseEdit = async (req: Request, res: Response) => {
       dataObj.lstservices.map((item: any) => item.id || null),
       dataObj.lstservices.map((item: any) => item.id_begend || null),
       dataObj.lstservices.map((item: any) => item.nameservice || null),
-      dataObj.lstservices.map((item: any) => item.status || 0),
+      dataObj.lstservices.map((item: any) => item.status ? 1 : 0),
     ],
     (err, response, fields) => {
       if (!err) {

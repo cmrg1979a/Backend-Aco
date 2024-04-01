@@ -17,7 +17,7 @@ import {
   insertComentarioHouse,
   sendNotificacionHouse,
   setTrackingToken,
-  getTrackingData
+  getTrackingData,
 } from "../controllers/house.controller";
 
 router.post("/setHouse", TokenValidation, setHouse);
