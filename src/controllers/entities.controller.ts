@@ -24,10 +24,13 @@ export const GuardarProveedor = async (req: Request, res: Response) => {
     direccion,
     nro_documento,
     id_branch,
+    emailaddress,
+    lstConvenios,
+    lstTarifas,
   } = req.body;
 
   await pool.query(
-    "SELECT * FROM function_table_entities_registrarproveedor($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25)",
+    "SELECT * FROM function_table_entities_registrarproveedor($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33)",
     [
       id_branch ? id_branch : null,
       bussiness_name ? bussiness_name : null,
@@ -80,7 +83,15 @@ export const GuardarProveedor = async (req: Request, res: Response) => {
         return infbanc.nro_cuenta_intermediario
           ? infbanc.nro_cuenta_intermediario
           : null;
-      }),
+      }), // $25
+      emailaddress ? emailaddress : null,
+      lstConvenios.map((item) => item.fecha || null),
+      lstConvenios.map((item) => item.dias_credito || 0),
+      lstConvenios.map((item) => item.email_soporte || null),
+      lstTarifas.map((item) => item.fecha || null),
+      lstTarifas.map((item) => item.codigo || null),
+      lstTarifas.map((item) => item.email_soporte || null),
+      lstTarifas.map((item) => item.tarifa || 0),
     ],
     (err, response, fields) => {
       if (!err) {
@@ -100,6 +111,7 @@ export const GuardarProveedor = async (req: Request, res: Response) => {
     }
   );
 };
+
 export const getListProveedor = async (req: Request, res: Response) => {
   const {
     id_branch,
@@ -169,6 +181,7 @@ export const getVerProveedor = async (req: Request, res: Response) => {
     }
   );
 };
+
 export const eliminarProveedor = async (req: Request, res: Response) => {
   const { id } = req.body;
 
@@ -194,6 +207,7 @@ export const eliminarProveedor = async (req: Request, res: Response) => {
     }
   );
 };
+
 export const telContactoProveedor = async (req: Request, res: Response) => {
   const { id } = req.query;
 
@@ -277,6 +291,7 @@ export const getValidaTipoDocumentoDocument = async (
 
 export const actualizarProveedor = async (req: Request, res: Response) => {
   const {
+    id,
     dias_almacenaje,
     dias_credito,
     dias_sobreestadia,
@@ -290,12 +305,13 @@ export const actualizarProveedor = async (req: Request, res: Response) => {
     lstInformacionBancaria,
     lstTelefono,
     direccion,
-
-    id,
+    emailaddress,
+    lstConvenios,
+    lstTarifas,
   } = req.body;
 
   await pool.query(
-    "SELECT * FROM function_table_entities_actualizarproveedor($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26)",
+    "SELECT * FROM function_table_entities_actualizarproveedor($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36)",
     [
       id,
       dias_almacenaje ? dias_almacenaje : null,
@@ -329,7 +345,6 @@ export const actualizarProveedor = async (req: Request, res: Response) => {
       lstContactos.map((contacto) => {
         return contacto.telefono ? contacto.telefono : null;
       }),
-
       lstInformacionBancaria.map((infbanc) => {
         return infbanc.id ? infbanc.id : null;
       }),
@@ -355,7 +370,17 @@ export const actualizarProveedor = async (req: Request, res: Response) => {
         return infbanc.nro_cuenta_intermediario
           ? infbanc.nro_cuenta_intermediario
           : null;
-      }),
+      }),// $26
+      emailaddress ? emailaddress : null,
+      lstConvenios.map((item) => item.id || null),
+      lstConvenios.map((item) => item.fecha || null),
+      lstConvenios.map((item) => item.dias_credito || 0),
+      lstConvenios.map((item) => item.email_soporte || null),
+      lstTarifas.map((item) => item.id || null),
+      lstTarifas.map((item) => item.fecha || null),
+      lstTarifas.map((item) => item.codigo || null),
+      lstTarifas.map((item) => item.email_soporte || null),
+      lstTarifas.map((item) => item.tarifa || 0), 
     ],
     (err, response, fields) => {
       if (!err) {
