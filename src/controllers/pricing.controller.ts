@@ -875,6 +875,7 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
   ejs.renderFile(
     path.join(__dirname, "../views/", "quoteDetallado.ejs"),
     {
+      index,
       TipoCostos,
       isImport,
       datosOrigen,
@@ -932,9 +933,9 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
       } else {
         let options = {
           page_size: "A4",
-          header: {
-            height: "15mm",
-          },
+          // header: {
+          //   height: "15mm",
+          // },
         };
 
         pdf
@@ -1049,6 +1050,7 @@ export const generarInstructivoQuote = async (req: Request, res: Response) => {
   ejs.renderFile(
     path.join(__dirname, "../views/", "pdfQuoteInstructivo.ejs"),
     {
+      nro_propuesta,
       totalIngresos,
       totalCostos,
       profit,
