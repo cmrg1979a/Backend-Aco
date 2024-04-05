@@ -259,6 +259,48 @@ export const getHouseServices = async (req: Request, res: Response) => {
   );
 };
 
+export const getServicesByIncoterms = async (req: Request, res: Response) => {
+  const { 
+    id_modality, 
+    id_shipment, 
+    id_incoterms, 
+    id_branch 
+  } = req.body;
+
+  await pool.query(
+    "SELECT * FROM function_services_x_incoterms_listar($1,$2,$3,$4)",
+    [
+      id_modality, 
+      id_shipment, 
+      id_incoterms, 
+      id_branch
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+            estadoflag: rows[0].estadoflag,
+            mensaje: rows[0].mensaje,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            estadoflag: rows[0].estadoflag,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
 export const getHouseBitacora = async (req: Request, res: Response) => {
   const { id } = req.body;
 
@@ -642,7 +684,7 @@ async function sendCorreo(data) {
     </div>
     <div style="clear:both;"></div>
     
-    <p>Estimados sr(es): <b>${house.nameconsigner}</b></p>
+    <p>Estimados sr(es): <b>${house.namelongclientefinal}</b></p>
     <p>Asunto: <b>${tipoNotificacion}</b></p>
     <p>Datos de su Carga:</p>
 
@@ -668,12 +710,12 @@ async function sendCorreo(data) {
     <br/>
     
     <p>Atte.: ${house.nameoperador}</p>
-    <p>${house.nameconsigner}</p>
+    <p>${house.namelongclientefinal}</p>
   `;
 
   let info = await transporter.sendMail({
     from: 'CHAIN-SOLVER" <sistema1@pic-cargo.com>',
-    to: house.emailaddress_consigner || "",
+    to: house.emailaddress_clientefinal || "",
     subject: `ChainSolver – ${tipoNotificacion}`,
     html: plantilla,
   });
