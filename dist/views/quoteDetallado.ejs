@@ -466,7 +466,7 @@
           <td class="align-left st-bg" colspan="5">
             TOTAL SERVICIOS DE PIC CARGO
           </td>
-          <td class="align-right" colspan="1"><%= totalServicios%></td>
+          <td class="align-right st-bg" colspan="1"><%= totalServicios%></td>
         </tr>
       </tbody>
     </table>
@@ -499,7 +499,7 @@
           TOTAL DE IMPUESTO <% if (iso=='9589') {%> SUNAT <%}%> <% if
           (iso!='9589') {%> ADUANA <%}%>
         </td>
-        <td class="align-right" colspan="1"><%=totalImpuesto%></td>
+        <td class="align-right st-bg" colspan="1"><%=totalImpuesto%></td>
       </tr>
       <tr style="border-bottom: 1.5px solid black">
         <td class="align-left" colspan="5">IGV SOBRE SERVICIOS LOGISTICO</td>
@@ -510,7 +510,7 @@
           TOTAL SERVICO PIC CARGO <% if (impuesto.length>0) { %> + IMPUESTO DE
           ADUANA SUNAT <%} %>
         </td>
-        <td class="align-right" colspan="1"><%=total%></td>
+        <td class="align-right st-ti" colspan="1"><%=total%></td>
       </tr>
     </table>
 
