@@ -1224,6 +1224,7 @@ export const cargarProveedoresRolNoShipper = async (req: Request, res: Response)
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -1250,6 +1251,7 @@ export const cargarProveedoresXRol = async (req: Request, res: Response) => {
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);

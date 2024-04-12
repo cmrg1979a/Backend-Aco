@@ -55,6 +55,7 @@ export const deleteBitacora = async (req: Request, res: Response) => {
     }
   );
 };
+
 export const changeStatusBitacora = async (req: Request, res: Response) => {
   const { id, status } = req.body;
 

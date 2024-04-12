@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
 const { Pool } = pg;
@@ -49,6 +49,7 @@ export const setHouse = async (req: Request, res: Response) => {
           status: 200,
           statusBol: true,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -67,20 +68,14 @@ export const getHouseList = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-            data: [],
-          });
-        }
+
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+          mensaje: rows[0].mensaje,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -126,21 +121,15 @@ export const getHouseListAll = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-            estadoflag: rows[0].estadoflag,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            estadoflag: rows[0].estadoflag,
-            mensaje: rows[0].mensaje,
-          });
-        }
+
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -180,19 +169,14 @@ export const getTotalHouseListAll = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            total: rows[0].total,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+
+        res.json({
+          status: 200,
+          statusBol: true,
+          total: rows[0].total,
+          mensaje: rows[0].mensaje,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -209,19 +193,14 @@ export const getHouseListId = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+          mensaje: rows[0].mensaje,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -239,19 +218,15 @@ export const getHouseServices = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -278,22 +253,15 @@ export const getServicesByIncoterms = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-            estadoflag: rows[0].estadoflag,
-            mensaje: rows[0].mensaje,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            estadoflag: rows[0].estadoflag,
-            mensaje: rows[0].mensaje,
-          });
-        }
+          
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -311,21 +279,15 @@ export const getHouseBitacora = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-            estadoflag: rows[0].estadoflag,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            estadoflag: rows[0].estadoflag,
-            mensaje: rows[0].mensaje,
-          });
-        }
+
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -400,22 +362,15 @@ export const setHouseEdit = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-            estadoflag: rows[0].estadoflag,
-            mensaje: rows[0].mensaje,
-          });
-        } else {
-          res.json({
-            status: 200,
-            estadoflag: rows[0].estadoflag,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+          
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -435,6 +390,7 @@ export const setHouseDelete = async (req: Request, res: Response) => {
           status: 200,
           statusBol: true,
           data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -463,6 +419,7 @@ export const insertComentarioHouse = async (req: Request, res: Response) => {
           data: rows,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -490,6 +447,7 @@ export const setTrackingToken = async (req: Request, res: Response) => {
           data: rows,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -532,6 +490,7 @@ export const sendNotificacionHouse = async (req: Request, res: Response) => {
   res.json({
     status: 200,
     statusBol: true,
+    token: renewTokenMiddleware(req),
   });
 };
 
@@ -555,11 +514,16 @@ async function sendCorreo(data) {
     cuentasBancarias 
   } = data;
 
-  let tabla = "";
+  let tabla = ""; 
   if (tipoEmbarque == "Aéreo" || tipoEmbarque == "LCL") 
   {
     tabla += `
       <table border="1" cellspacing="0" style="width:600px; margin:auto;">
+        <thead>
+          <tr>
+            <th colspan="2" style="text-align:center; padding:.25rem .5rem;">Datos de la Carga</th>
+          </tr>
+        </thead>
         <tbody>
           <tr>
             <td colspan="2" style="text-align:center; padding:.25rem .5rem;"><b>Datos de la Carga</b></td>
@@ -597,17 +561,19 @@ async function sendCorreo(data) {
             <td style="width:50%; padding:.25rem .5rem;">USD ${(house.monto || "")}</td>
           </tr>
         </tbody>
-      </table>  
+      </table>
     `; 
   }
   else if (tipoEmbarque == "FCL")
   {
     tabla += `
       <table border="1" cellspacing="0" style="width:600px; margin:auto;">
-        <tbody>
+        <thead>
           <tr>
-            <td colspan="2" style="text-align:center; padding:.25rem .5rem;"><b>Datos de la Carga</b></td>
+            <th colspan="2" style="text-align:center; padding:.25rem .5rem;">Datos de la Carga</th>
           </tr>
+        </thead>
+        <tbody>
           <tr>
             <td style="width:50%; padding:.25rem .5rem;"><b>Contenedores</b></td>
             <td style="width:50%; padding:.25rem .5rem;">${(house.list_containers.map(item => `${item.namecontainer} (${item.cantidad})`).join(", ") || "")}</td>
@@ -633,29 +599,31 @@ async function sendCorreo(data) {
             <td style="width:50%; padding:.25rem .5rem;">USD ${(house.monto || "")}</td>
           </tr>
         </tbody>
-      </table>  
+      </table>
     `; 
   }
 
+  let fechaETD_parseada       = moment(house.fecha_etd).format("D [de] MMMM");
+  let fechaETA_parseada       = moment(house.fecha_eta).format("D [de] MMMM");
   let descripcionNotificacion = "";
   if (sentido == "Import")
   {
     switch(indiceNotificacion) 
     {
       case 1: // Aviso de Salida
-        descripcionNotificacion = `te notificamos que tu carga salió el día ${moment(house.fecha_etd).format("D [de] MMMM")}.`;
+        descripcionNotificacion = `te notificamos que tu carga salió el día ${fechaETD_parseada}.`;
         break;
       case 2: // Actualización de Salida
-        descripcionNotificacion = `te notificamos que por motivos operacionales, tu carga se estima salir el día ${moment(house.fecha_etd).format("D [de] MMMM")}.`;
+        descripcionNotificacion = `te notificamos que por motivos operacionales, tu carga se estima salir el día ${fechaETD_parseada}.`;
         break;
       case 3: // Pre - Aviso de Llegada 
-        descripcionNotificacion = `te notificamos que tu carga va a llegar el día ${moment(house.fecha_eta).format("D [de] MMMM")}.`;
+        descripcionNotificacion = `te notificamos que tu carga va a llegar el día ${fechaETA_parseada}.`;
         break;
       case 4: // Aviso de Llegada
         descripcionNotificacion = "te notificamos que tu carga ya llegó.";
         break;
       case 5: // Actualización de Llegada
-        descripcionNotificacion = `te notificamos que, por motivos operacionales, tu carga se estima llegar el día ${moment(house.fecha_eta).format("D [de] MMMM")}.`;
+        descripcionNotificacion = `te notificamos que, por motivos operacionales, tu carga se estima llegar el día ${fechaETA_parseada}.`;
         break;
     } 
   }
@@ -664,13 +632,31 @@ async function sendCorreo(data) {
     switch(indiceNotificacion) 
     {
       case 1: // Aviso de Salida
-        descripcionNotificacion = `te notificamos que tu carga salió el día ${moment(house.fecha_eta).format("D [de] MMMM")}.`;
+        descripcionNotificacion = `te notificamos que tu carga salió el día ${fechaETA_parseada}.`;
         break;
       case 2: // Actualización de Salida
-        descripcionNotificacion = `te notificamos que por motivos operacionales, tu carga se estima salir el día ${moment(house.fecha_eta).format("D [de] MMMM")}.`;
+        descripcionNotificacion = `te notificamos que por motivos operacionales, tu carga se estima salir el día ${fechaETA_parseada}.`;
         break;
-      case 3: // Aviso de llegada
+      case 3: // Aviso de Llegada
         descripcionNotificacion = "te notificamos que tu carga ya llegó.";
+        break;
+    } 
+  }
+  else
+  {
+    switch(indiceNotificacion) 
+    {
+      case 1: // Notificación de Salida
+        descripcionNotificacion = `te notificamos que tu carga salió el día ${fechaETD_parseada}.`;
+        break;
+      case 2: // Pre - Aviso de Llegada
+        descripcionNotificacion = `te notificamos que tu carga va a llegar el día ${fechaETA_parseada}.`;
+        break;
+      case 3: // Aviso de Llegada
+        descripcionNotificacion = "te notificamos que tu carga ya llegó.";
+        break;
+      case 4: // Actualización de Llegada
+        descripcionNotificacion = `te notificamos que, por motivos operacionales, tu carga se estima llegar el día ${fechaETA_parseada}.`;
         break;
     } 
   }
@@ -700,14 +686,16 @@ async function sendCorreo(data) {
     <p>Le recordamos que el servicio logístico que le fue cotizado es un monto de USD ${(house.monto || "")}, y lo puede pagar a través de cualquiera de las cuentas bancarias:</p> 
     ${(cuentasBancarias.map(item => `<p>${item.label}.</p>`).join("") || "")}
     
-
     <br/>
     <br/>
-
-    <p>Si desea consultar el estado de su carga, haga clic en este <a href="https://devchainsolver.piccargo.com/tracking/${(house.token_rastreo || "")}">enlace</a></p>
-
-    <br/>
-    <br/>
+    
+    ${
+      (house.token_rastreo) 
+        ? 
+          `<p>Si desea consultar el estado de su carga, haga clic en este <a href="https://devchainsolver.piccargo.com/tracking/${(house.token_rastreo || "")}">enlace</a></p><br/><br/>`
+        : 
+          ""
+    }      
     
     <p>Atte.: ${house.nameoperador}</p>
     <p>${house.namelongclientefinal}</p>
