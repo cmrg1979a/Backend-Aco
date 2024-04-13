@@ -135,11 +135,10 @@ export const obtenerConfigCostos = async (req: Request, res: Response) => {
   );
 };
 export const guardarCostosConfig = async (req: Request, res: Response) => {
-  const { id_branch, id_modality, id_shipment, lstCostos } = req.query;
-
+  const { id_branch, id_modality, id_shipment, lstCostos } = req.body;  
   await pool.query(
     "select * from function_config_guardar_costos($1,$2,$3,$4);",
-    [id_branch, id_modality, id_shipment, lstCostos],
+    [id_branch, id_modality, id_shipment, JSON.stringify(lstCostos)],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
