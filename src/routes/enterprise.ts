@@ -10,6 +10,7 @@ import {
   updateEnterprise,
   validateDocumentEnterpriseNuevo,
   validateDocumentEnterpriseEditar,
+  RegistroNuevaEmpresa,
 } from "../controllers/enterprise.controller";
 
 router.post("/getBranch/:id_branch", TokenValidation, getBracnh);
@@ -27,5 +28,6 @@ router.get(
   TokenValidation,
   validateDocumentEnterpriseEditar
 );
+router.post("/registro_nueva_empresa", RegistroNuevaEmpresa);
 
 export default router;

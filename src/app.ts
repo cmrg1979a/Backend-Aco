@@ -105,6 +105,7 @@ import stateQuote from "./routes/stateQuote";
 import typepayments from "./routes/typepayments";
 import users from "./routes/users";
 import position from "./routes/position";
+import configuracionInicial from "./routes/configuracionInicial";
 
 // settings
 app.set("port", 9200);
@@ -318,4 +319,5 @@ app.use(stateQuote);
 app.use(typepayments);
 app.use(users);
 app.use(position);
+app.use(configuracionInicial);
 export default app;
