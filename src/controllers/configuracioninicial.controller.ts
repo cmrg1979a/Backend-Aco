@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 import { conexion } from "../routes/databasePGOp";
+
 const pool = conexion();
 
 export const actualizarDatosEmpresaConfig = async (
@@ -135,7 +136,7 @@ export const obtenerConfigCostos = async (req: Request, res: Response) => {
   );
 };
 export const guardarCostosConfig = async (req: Request, res: Response) => {
-  const { id_branch, id_modality, id_shipment, lstCostos } = req.body;  
+  const { id_branch, id_modality, id_shipment, lstCostos } = req.body;
   await pool.query(
     "select * from function_config_guardar_costos($1,$2,$3,$4);",
     [id_branch, id_modality, id_shipment, JSON.stringify(lstCostos)],
@@ -154,4 +155,23 @@ export const guardarCostosConfig = async (req: Request, res: Response) => {
       }
     }
   );
+};
+
+export const envioMSGWhathapp = async (req: Request, res: Response) => {
+  const { email, phone } = req.query;
+  // const { Client, LocalAuth } = require("whatsapp-web.js");
+  // const qrcode = require("qrcode-terminal");
+  // const client = new Client({
+  //   authStrategy: new LocalAuth(),
+  //   puppeteer: { headless: true }, // Change to `false` if you want to see the browser
+  //   webVersionCache: {
+  //     type: "remote", // Or 'local' if you prefer a local HTML file
+  //     remotePath:
+  //       "https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2412.54.html", // Update version if needed
+  //   },
+  // });
+  // const chatId = await client.getChatById(phone);
+  // client.sendMessage(chatId, "hola");
+  // // });
+  // client.initialize();
 };

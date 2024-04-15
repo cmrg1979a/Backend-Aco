@@ -6,6 +6,7 @@ import {
   actualizarDatosCMCliente,
   actualizarDatosCMProveedor,
   actualizarDatosEmpresaConfig,
+  envioMSGWhathapp,
   guardarCostosConfig,
   obtenerConfigCostos,
 } from "../controllers/configuracioninicial.controller";
@@ -39,5 +40,9 @@ router.post(
   "/guardar_costos_config",
   TokenValidation,
   guardarCostosConfig
+);
+router.get(
+  "/enviar_codigo_validacion",
+  envioMSGWhathapp
 );
 export default router;
