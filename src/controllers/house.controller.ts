@@ -663,7 +663,7 @@ async function sendCorreo(data) {
 
   const plantilla = `
     <div style="float:left;">
-      <img src="https://i.ibb.co/ypKb7q1/chain-Solver.png" alt="LogoChain" width="404" height="112" />
+      <img src="https://api-general.qreport.site/uploads/1713276374733.jfif" alt="LogoChain" width="404" height="112" />
     </div>
     <div style="float:right;">
       <p style="text-align:right;">PERÚ, ${moment().format("DD [de] MMMM [de] YYYY")}</p>
