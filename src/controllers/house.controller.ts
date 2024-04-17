@@ -526,9 +526,6 @@ async function sendCorreo(data) {
         </thead>
         <tbody>
           <tr>
-            <td colspan="2" style="text-align:center; padding:.25rem .5rem;"><b>Datos de la Carga</b></td>
-          </tr>
-          <tr>
             <td style="width:50%; padding:.25rem .5rem;"><b>Peso</b></td>
             <td style="width:50%; padding:.25rem .5rem;">${house.peso ? `${house.peso}Kg` : ""}</td>
           </tr>
@@ -663,7 +660,7 @@ async function sendCorreo(data) {
 
   const plantilla = `
     <div style="float:left;">
-      <img src="https://api-general.qreport.site/uploads/1713276374733.jfif" alt="LogoChain" width="404" height="112" />
+      <img src="https://api-general.qreport.site/uploads/1713276374733.jfif" alt="LogoChain" width="350" height="120" />
     </div>
     <div style="float:right;">
       <p style="text-align:right;">PERÚ, ${moment().format("DD [de] MMMM [de] YYYY")}</p>
@@ -702,9 +699,9 @@ async function sendCorreo(data) {
   `;
 
   let info = await transporter.sendMail({
-    from: 'CHAIN-SOLVER" <sistema1@pic-cargo.com>',
+    from: 'ACO" <sistema1@pic-cargo.com>',
     to: house.emailaddress_clientefinal || "",
-    subject: `ChainSolver – ${tipoNotificacion}`,
+    subject: `ACO – ${tipoNotificacion}`,
     html: plantilla,
   });
 }
