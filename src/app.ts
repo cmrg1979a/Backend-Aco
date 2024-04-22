@@ -14,6 +14,7 @@ const corsOptions = {
   allowedHeaders: "Content-Type,Authorization",
 };
 
+
 const corsMiddleware = cors(corsOptions);
 
 /**PROUCCIÓN */
