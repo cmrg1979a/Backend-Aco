@@ -483,9 +483,8 @@ export const getTrackingData = async (req: Request, res: Response) => {
 
 export const sendNotificacionHouse = async (req: Request, res: Response) => {
   const dataObj = req.body;
-  // console.log(req.body);
 
-  await sendCorreo(dataObj);
+  sendCorreo(dataObj);
 
   res.json({
     status: 200,
@@ -600,8 +599,8 @@ async function sendCorreo(data) {
     `; 
   }
 
-  let fechaETD_parseada       = moment(house.fecha_etd).format("D [de] MMMM");
-  let fechaETA_parseada       = moment(house.fecha_eta).format("D [de] MMMM");
+  let fechaETD_parseada       = house.fecha_etd ? moment(house.fecha_etd).format("D [de] MMMM") : "";
+  let fechaETA_parseada       = house.fecha_eta ? moment(house.fecha_eta).format("D [de] MMMM") : "";
   let descripcionNotificacion = "";
   if (sentido == "Import")
   {
@@ -698,7 +697,7 @@ async function sendCorreo(data) {
     <p>${house.namelongclientefinal}</p>
   `;
 
-  let info = await transporter.sendMail({
+  const info = await transporter.sendMail({
     from: 'ACO" <sistema1@pic-cargo.com>',
     to: house.emailaddress_clientefinal || "",
     subject: `ACO – ${tipoNotificacion}`,
