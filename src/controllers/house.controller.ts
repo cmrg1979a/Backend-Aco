@@ -484,7 +484,12 @@ export const getTrackingData = async (req: Request, res: Response) => {
 export const sendNotificacionHouse = async (req: Request, res: Response) => {
   const dataObj = req.body;
 
-  sendCorreo(dataObj);
+  await sendCorreo(dataObj)
+    .catch((error) => {
+      console.log(error)
+
+      res.status(500);
+    });
 
   res.json({
     status: 200,
@@ -494,14 +499,14 @@ export const sendNotificacionHouse = async (req: Request, res: Response) => {
 };
 
 async function sendCorreo(data) {
-  let transporter = nodemailer.createTransport({
-    host: "mail.pic-cargo.com",
-    port: 465,
+  const transporter = nodemailer.createTransport({
+    host: "p3plzcpnl505059.prod.phx3.secureserver.net", // "mail.pic-cargo.com"
+    port: 465, // 465
     secure: true,
     auth: {
-      user: "sistema1@pic-cargo.com", // "testkaysen@gmail.com", //
-      pass: "b@+p@f21e48c", // "csyvzaysfnmntjws", //
-    },
+      user: "sistema1@piccargo.com", // "sistema1@pic-cargo.com" // "testkaysen@gmail.com"
+      pass: "b@+p@f21e48c" // "b@+p@f21e48c", // "csyvzaysfnmntjws", //
+    }
   });
 
   const { 
@@ -657,50 +662,52 @@ async function sendCorreo(data) {
     } 
   }
 
-  const plantilla = `
-    <div style="float:left;">
-      <img src="https://api-general.qreport.site/uploads/1713276374733.jfif" alt="LogoChain" width="350" height="120" />
+  const mailTemplate  = `
+    <div>
+      <div style="float:left;">
+        <img src="https://api-general.qreport.site/uploads/1713276374733.jfif" alt="LogoChain" width="350" height="120" />
+      </div>
+      <div style="float:right;">
+        <p style="text-align:right;">PERÚ, ${moment().format("DD [de] MMMM [de] YYYY")}</p>
+      </div>
+      <div style="clear:both;"></div>
+      
+      <p>Estimados sr(es): <b>${house.namelongclientefinal}</b></p>
+      <p>Asunto: <b>${tipoNotificacion}</b></p>
+      <p>Datos de su Carga:</p>
+
+      ${tabla}
+
+      <br/>
+      <br/>
+
+      <p>Por medio del presente, ${descripcionNotificacion}</p>
+      
+      <br/>
+
+      <p>Le recordamos que el servicio logístico que le fue cotizado es un monto de USD ${(house.monto || "")}, y lo puede pagar a través de cualquiera de las cuentas bancarias:</p> 
+      ${(cuentasBancarias.map(item => `<p>${item.label.trim()}.</p>`).join("") || "")}
+      
+      <br/>
+      <br/>
+      
+      ${
+        (house.token_rastreo) 
+          ? 
+            `<p>Si desea consultar el estado de su carga, haga clic en este <a href="https://devchainsolver.piccargo.com/tracking/${(house.token_rastreo || "")}">enlace</a></p><br/><br/>`
+          : 
+            ""
+      }      
+      
+      <p>Atte.: ${house.nameoperador}</p>
+      <p>${house.namelongclientefinal}</p>
     </div>
-    <div style="float:right;">
-      <p style="text-align:right;">PERÚ, ${moment().format("DD [de] MMMM [de] YYYY")}</p>
-    </div>
-    <div style="clear:both;"></div>
-    
-    <p>Estimados sr(es): <b>${house.namelongclientefinal}</b></p>
-    <p>Asunto: <b>${tipoNotificacion}</b></p>
-    <p>Datos de su Carga:</p>
-
-    ${tabla}
-
-    <br/>
-    <br/>
-
-    <p>Por medio del presente, ${descripcionNotificacion}</p>
-    
-    <br/>
-
-    <p>Le recordamos que el servicio logístico que le fue cotizado es un monto de USD ${(house.monto || "")}, y lo puede pagar a través de cualquiera de las cuentas bancarias:</p> 
-    ${(cuentasBancarias.map(item => `<p>${item.label}.</p>`).join("") || "")}
-    
-    <br/>
-    <br/>
-    
-    ${
-      (house.token_rastreo) 
-        ? 
-          `<p>Si desea consultar el estado de su carga, haga clic en este <a href="https://devchainsolver.piccargo.com/tracking/${(house.token_rastreo || "")}">enlace</a></p><br/><br/>`
-        : 
-          ""
-    }      
-    
-    <p>Atte.: ${house.nameoperador}</p>
-    <p>${house.namelongclientefinal}</p>
   `;
-
-  const info = await transporter.sendMail({
-    from: 'ACO" <sistema1@pic-cargo.com>',
+  const mailOptions   = {
+    from: '"ACO" <sistema1@piccargo.com>',
     to: house.emailaddress_clientefinal || "",
     subject: `ACO – ${tipoNotificacion}`,
-    html: plantilla,
-  });
+    html: mailTemplate,
+  };
+  const mailInfo      = await transporter.sendMail(mailOptions);
 }

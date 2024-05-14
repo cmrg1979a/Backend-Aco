@@ -6,10 +6,13 @@ import {
   setBitacora,
   deleteBitacora,
   changeStatusBitacora,
+  changeStatusVisibleBitacora,
 } from "../controllers/bitacora.controller";
 
 router.post("/setBitacora", TokenValidation, setBitacora);
 router.post("/deleteBitacora", TokenValidation, deleteBitacora);
 router.put("/changeStatusBitacora", TokenValidation, changeStatusBitacora);
+router.put("/changeStatusVisibleBitacora", TokenValidation, changeStatusVisibleBitacora);
+
 
 export default router;

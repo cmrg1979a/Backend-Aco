@@ -79,3 +79,27 @@ export const changeStatusBitacora = async (req: Request, res: Response) => {
     }
   );
 };
+
+export const changeStatusVisibleBitacora = async (req: Request, res: Response) => {
+  const { id, visible } = req.body;
+
+  await pool.query(
+    "SELECT * FROM house_bitacora_cambiarstatusvisible($1,$2)",
+    [ 
+      id, 
+      visible ? 1 : 0
+    ],
+    (err, rows, fields) => {
+      if (!err) {
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,          
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
