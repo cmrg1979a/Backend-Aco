@@ -86,7 +86,7 @@ export const generarFactura = async (req: Request, res: Response) => {
   // path.join(__dirname, "../views", "pdf-factura.ejs"),
 
   ejs.renderFile(
-    "src/views/pdf-factura.ejs",
+    path.join(__dirname, "../views", "pdf-factura.ejs"),
     {
       cliente_nombre,
       cliente_phone,
