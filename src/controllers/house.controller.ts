@@ -333,7 +333,7 @@ export const setHouseEdit = async (req: Request, res: Response) => {
     [
       dataObj.id,
       dataObj.id_cot ? dataObj.id_cot : null,
-      dataObj.id_agent ? dataObj.id_agent : null,
+      dataObj.id_proveedor ? dataObj.id_proveedor : null,
       dataObj.id_consigner ? dataObj.id_consigner : null,
       dataObj.id_notify ? dataObj.id_notify : null,
       dataObj.id_aerolinea ? dataObj.id_aerolinea : null,
@@ -551,7 +551,7 @@ async function sendCorreo(data) {
           </tr>
           <tr>
             <td style="width:50%; padding:.25rem .5rem;"><b>Proveedor</b></td>
-            <td style="width:50%; padding:.25rem .5rem;">${(house.nameagent || "")}</td>
+            <td style="width:50%; padding:.25rem .5rem;">${(house.nameproveedor || "")}</td>
           </tr>
           <tr>
             <td style="width:50%; padding:.25rem .5rem;"><b>Nro. BL / Nro. Guía Aérea</b></td>
@@ -589,7 +589,7 @@ async function sendCorreo(data) {
           </tr>
           <tr>
             <td style="width:50%; padding:.25rem .5rem;"><b>Proveedor</b></td>
-            <td style="width:50%; padding:.25rem .5rem;">${(house.nameagent || "")}</td>
+            <td style="width:50%; padding:.25rem .5rem;">${(house.nameproveedor || "")}</td>
           </tr>
           <tr>
             <td style="width:50%; padding:.25rem .5rem;"><b>Nro. BL / Nro. Guía Aérea</b></td>
