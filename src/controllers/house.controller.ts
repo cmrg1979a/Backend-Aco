@@ -515,7 +515,8 @@ async function sendCorreo(data) {
     notificacion: { title: tipoNotificacion = "", value: indiceNotificacion = 0 }, 
     sentido, 
     tipoEmbarque, 
-    cuentasBancarias 
+    cuentasBancarias,
+    razonSocial = ""
   } = data;
 
   let tabla = ""; 
@@ -700,7 +701,7 @@ async function sendCorreo(data) {
       }      
       
       <p>Atte.: ${house.nameoperador}</p>
-      <p>${house.namelongclientefinal}</p>
+      <p>${razonSocial}</p>
     </div>
   `;
   const mailOptions   = {
