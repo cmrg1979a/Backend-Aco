@@ -941,16 +941,16 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
         pdf
           .create(data, options)
           .toFile(
-            `files/COTIZACION_${index + 1}.pdf`,
+            `files/COTIZACION_${index}.pdf`,
             function (err: any, data: any) {
               if (err) {
                 res.send(err);
               } else {
-                res.download(`/COTIZACION_${index + 1}.pdf`);
+                res.download(`/COTIZACION_${index}.pdf`);
                 res.send({
                   estadoflag: true,
                   msg: "File created successfully",
-                  path: path.join(`COTIZACION_${index + 1}.pdf`),
+                  path: path.join(`COTIZACION_${index}.pdf`),
                 });
               }
             }
