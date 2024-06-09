@@ -2719,3 +2719,85 @@ export const exportarListCliente = async (req: Request, res: Response) => {
     }
   );
 };
+
+export const exportListComentariosPredefinidos = async (req: Request, res: Response) => {
+  let { id_branch } = req.body;
+
+  let wb = new xl.Workbook({
+    dateFormat: "dd/mm/yyyy",
+    author: "PIC CARGO - IMPORTADORES",
+  });
+  
+  req.setTimeout(0);
+
+  await pool.query(
+    "SELECT * FROM table_comentarios_predefinidos_listar($1,NULL,NULL,NULL);",
+    [id_branch ? id_branch : null],
+    async (err, response, fields) => {
+      if (!err) {
+        const { rows } = response;
+
+        let cabDetalle = wb.createStyle({
+          width: "auto",
+          fill: {
+            type: "pattern",
+            patternType: "solid",
+            fgColor: "#343a40",
+          },
+          alignment: {
+            vertical: "center",
+            horizontal: "center",
+          },
+          font: {
+            bold: true,
+            color: "#FFFFFF"
+          }
+        });
+        var wt = wb.addWorksheet(`LISTADO`, {
+          views: [{ state: "frozen", xSplit: 4, ySplit: 1 }],
+        });
+
+        wt.column(1).setWidth(20);
+        wt.column(2).setWidth(100);
+        wt.column(3).setWidth(25);
+        wt.column(4).setWidth(30);
+        wt.column(5).setWidth(30);
+
+        wt.cell(1, 1).string("CÓDIGO").style(cabDetalle);
+        wt.cell(1, 2).string("COMENTARIO").style(cabDetalle);
+        wt.cell(1, 3).string("ESTADO").style(cabDetalle);
+        wt.cell(1, 4).string("CREACIÓN").style(cabDetalle);
+        wt.cell(1, 5).string("ÚLTIMA ACTUALIZACIÓN").style(cabDetalle);
+        
+        let index = 2;
+        wt.row(1).filter({
+          firstColumn: 1,
+          lastColumn: 5,
+        });
+
+        rows.forEach((item) => {
+          wt.cell(index, 1).string(item.code);
+          wt.cell(index, 2).string(item.comentario);
+          wt.cell(index, 3).string(item.status == 1 ? "Activo" : "Inactivo");
+          wt.cell(index, 4).string(item.created_at);
+          wt.cell(index, 5).string(item.updated_at);
+
+          index++;
+        });
+
+        let pathexcel = path.join(
+          `${__dirname}../../../uploads`, 
+          "Reportexls.xlsx"
+        );
+
+        wb.write(pathexcel, function (err, stats) {
+          if (err) {
+            console.log(err);
+          } else {
+            res.download(pathexcel);
+          }
+        });
+      }
+    }
+  );
+};
