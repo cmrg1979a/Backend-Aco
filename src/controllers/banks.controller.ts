@@ -274,7 +274,7 @@ export const getListarPayForCustomer = async (req: Request, res: Response) => {
   // "SELECT * FROM Table_InvoiceAdminCxC_listado($1);",
 
   await pool.query(
-    "SELECT * FROM function_list_ingresos($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14);",
+    "SELECT * FROM function_list_ingresos($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15);",
     [
       req.query.id_branch ? req.query.id_branch : null,
       req.query.nro_operacion ? req.query.nro_operacion : null,
@@ -290,6 +290,7 @@ export const getListarPayForCustomer = async (req: Request, res: Response) => {
       req.query.id_tiposubingreso ? req.query.id_tiposubingreso : null,
       req.query.operativo,
       req.query.administrativo,
+      req.query.nro_exp ? req.query.nro_exp : null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -971,7 +972,7 @@ export const ExportarListadoReporteIngresos = async (
     author: "PIC CARGO - IMPORTADORES",
   });
   await pool.query(
-    "SELECT * FROM function_list_ingresos($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14);",
+    "SELECT * FROM function_list_ingresos($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15);",
     [
       req.query.id_branch ? req.query.id_branch : null,
       req.query.nro_operacion ? req.query.nro_operacion : null,
@@ -987,6 +988,7 @@ export const ExportarListadoReporteIngresos = async (
       req.query.id_tiposubingreso ? req.query.id_tiposubingreso : null,
       req.query.operativo,
       req.query.administrativo,
+      req.query.nro_exp ? req.query.nro_exp : null,
     ],
     (err, response, fields) => {
       if (!err) {
