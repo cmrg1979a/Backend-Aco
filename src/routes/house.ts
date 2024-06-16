@@ -13,17 +13,30 @@ import {
   getHouseContainers,
   setHouseEdit,
   setHouseDelete,
+  getTotalHouseListAll,
+  insertComentarioHouse,
+  sendNotificacionHouse,
+  setTrackingToken,
+  getTrackingData,
+  getServicesByIncoterms,
 } from "../controllers/house.controller";
 
 router.post("/setHouse", TokenValidation, setHouse);
+router.post("/insertComentarioHouse", TokenValidation, insertComentarioHouse);
 router.post("/getHouseList", TokenValidation, getHouseList);
-router.post("/getHouseListAll", TokenValidation, getHouseListAll);
 router.post("/getHouseListId", TokenValidation, getHouseListId);
 router.post("/getHouseServices", TokenValidation, getHouseServices);
 router.post("/getHouseBitacora", TokenValidation, getHouseBitacora);
 router.post("/getHouseContainers", TokenValidation, getHouseContainers);
+router.post("/sendNotificacionHouse", TokenValidation, sendNotificacionHouse);
+router.post("/getServicesByIncoterms", TokenValidation, getServicesByIncoterms);
+router.get("/getHouseListAll", TokenValidation, getHouseListAll);
+router.get("/getTotalHouseListAll", TokenValidation, getTotalHouseListAll);
+router.get("/getTrackingData/:token", getTrackingData);
 router.put("/setHouseEdit", TokenValidation, setHouseEdit);
 router.put("/setHouseDelete/:id", TokenValidation, setHouseDelete);
+router.put("/setTrackingToken", TokenValidation, setTrackingToken);
+
 
 export default router;
 

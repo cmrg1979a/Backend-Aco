@@ -4,6 +4,10 @@ export interface postHouse {
   nro_house: Number;
   code_house: String;
   id_cot: Number;
+  id_modality: Number;
+  id_shipment: Number;
+  id_port_begin: Number;
+  id_port_end: Number;
   id_agent: Number;
   id_consigner: Number;
   id_notify: Number;
@@ -20,8 +24,8 @@ export interface postHouse {
   id_conditions: Number;
   id_moneda: Number;
   monto: Number;
-  status: Number;
   id_branch: Number;
+  id_consigner_real: Number;
 }
 
 export interface postHouseEdit {

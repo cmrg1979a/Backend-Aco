@@ -8,11 +8,18 @@ import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 const pool = conexion();
 
 export const setMasterContainers = async (req: Request, res: Response) => {
-  const dataObj: postMasterContainers = req.body;
+  /*const dataObj: postMasterContainers = req.body;
 
   await pool.query(
-    "INSERT INTO Master_Containers SET $1",
-    [dataObj],
+    "INSERT INTO Master_Containers(id_master,id_containers,nro_containers,nro_precinto,quantity,status) VALUES($1,$2,$3,$4,$5,$6)",
+    [
+      dataObj.id_master,
+      dataObj.id_containers,
+      dataObj.nro_containers,
+      dataObj.nro_precinto,
+      dataObj.quantity,
+      dataObj.status,
+    ],
     (err, rows, fields) => {
       if (!err) {
         res.json({
@@ -25,5 +32,5 @@ export const setMasterContainers = async (req: Request, res: Response) => {
         console.log(err);
       }
     }
-  );
+  );*/
 };

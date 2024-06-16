@@ -536,6 +536,7 @@ export const getModulesEntities = async (req: Request, res: Response) => {
     }
   );
 };
+
 export const updateQuoteRecibidoEnviado = async (
   req: Request,
   res: Response
@@ -594,6 +595,7 @@ export const ActualizarFolderOneDrive = async (req: Request, res: Response) => {
     }
   );
 };
+
 export const getListCalls = async (req: Request, res: Response) => {
   let {
     id_branch,
@@ -676,6 +678,7 @@ export const quoteCargarNoAsignadosHouse = async (
     }
   );
 };
+
 export const quoteDataHouse = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM function_quote_data_house($1)",

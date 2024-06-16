@@ -83,6 +83,8 @@ export const generarFactura = async (req: Request, res: Response) => {
   let fechaRegistro = fecha.toLocaleDateString();
   // ejs.renderFile(path.join(__dirname, "../views", "pdf-factura.ejs")),
   // "C:/laragon/www/api-backend-general-v1/views/pdf-factura.ejs",
+  // path.join(__dirname, "../views", "pdf-factura.ejs"),
+
   ejs.renderFile(
     path.join(__dirname, "../views", "pdf-factura.ejs"),
     {

@@ -39,6 +39,20 @@ const pool = new Pool({
 //   database: "db_op_main_qa",
 // });
 
+/*pool
+  .connect()
+  .then(conn => {
+    conn
+      .query("SELECT * FROM table_entities ORDER BY id DESC LIMIT 10")
+      .then(res => {
+        conn.release()
+
+        console.log(res)
+      })
+      .catch(err => console.log(err))
+  })
+  .catch(err => console.log(err))*/
+
 const app: Application = express();
 
 import authRoutes from "./routes/auth";
@@ -103,6 +117,7 @@ import transport from "./routes/transport";
 import gasto from "./routes/gasto";
 import ingreso from "./routes/ingreso";
 import tipocostos from "./routes/tipocosto";
+import comentariosRoute from "./routes/comentarios";
 import stateQuote from "./routes/stateQuote";
 import typepayments from "./routes/typepayments";
 import users from "./routes/users";
@@ -317,9 +332,14 @@ app.use(transport);
 app.use(gasto);
 app.use(ingreso);
 app.use(tipocostos);
+app.use(comentariosRoute);
 app.use(stateQuote);
 app.use(typepayments);
 app.use(users);
 app.use(position);
+<<<<<<< HEAD
 app.use(configuracionInicial);
+=======
+
+>>>>>>> 5bdc33e8203ca1ea6ccbec9843eca44edff42a90
 export default app;

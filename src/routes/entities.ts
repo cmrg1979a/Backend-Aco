@@ -32,6 +32,8 @@ import {
   ListarPersonaTipoPersona,
   guardarRolProveedor,
   getListadoCliente,
+  cargarProveedoresXRol,
+  cargarProveedoresRolNoShipper,
 } from "../controllers/entities.controller";
 
 router.post("/getEntitiesList", TokenValidation, getEntitiesList);
@@ -62,6 +64,9 @@ router.get("/ver_proveedor", TokenValidation, getVerProveedor);
 router.put("/actualizar_proveedor", TokenValidation, actualizarProveedor);
 router.put("/eliminar_proveedor", TokenValidation, eliminarProveedor);
 router.get("/tel_contacto_proveedor", TokenValidation, telContactoProveedor);
+router.get("/cargar_proveedor_x_rol", TokenValidation, cargarProveedoresXRol);
+router.get("/cargar_proveedor_rol_no_shipper", TokenValidation, cargarProveedoresRolNoShipper);
+
 // CLIENTES
 router.get("/listado_clientes", TokenValidation, getListCliente);
 router.post("/registrar_cliente", TokenValidation, GuardarCliente);

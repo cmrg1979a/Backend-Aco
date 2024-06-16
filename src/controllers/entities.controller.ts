@@ -24,10 +24,13 @@ export const GuardarProveedor = async (req: Request, res: Response) => {
     direccion,
     nro_documento,
     id_branch,
+    emailaddress,
+    lstConvenios,
+    lstTarifas,
   } = req.body;
 
   await pool.query(
-    "SELECT * FROM function_table_entities_registrarproveedor($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25)",
+    "SELECT * FROM function_table_entities_registrarproveedor($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33)",
     [
       id_branch ? id_branch : null,
       bussiness_name ? bussiness_name : null,
@@ -80,7 +83,15 @@ export const GuardarProveedor = async (req: Request, res: Response) => {
         return infbanc.nro_cuenta_intermediario
           ? infbanc.nro_cuenta_intermediario
           : null;
-      }),
+      }), // $25
+      emailaddress ? emailaddress : null,
+      lstConvenios.map((item) => item.fecha || null),
+      lstConvenios.map((item) => item.dias_credito || 0),
+      lstConvenios.map((item) => item.email_soporte || null),
+      lstTarifas.map((item) => item.fecha || null),
+      lstTarifas.map((item) => item.codigo || null),
+      lstTarifas.map((item) => item.email_soporte || null),
+      lstTarifas.map((item) => item.tarifa || 0),
     ],
     (err, response, fields) => {
       if (!err) {
@@ -100,6 +111,7 @@ export const GuardarProveedor = async (req: Request, res: Response) => {
     }
   );
 };
+
 export const getListProveedor = async (req: Request, res: Response) => {
   const {
     id_branch,
@@ -169,6 +181,7 @@ export const getVerProveedor = async (req: Request, res: Response) => {
     }
   );
 };
+
 export const eliminarProveedor = async (req: Request, res: Response) => {
   const { id } = req.body;
 
@@ -194,6 +207,7 @@ export const eliminarProveedor = async (req: Request, res: Response) => {
     }
   );
 };
+
 export const telContactoProveedor = async (req: Request, res: Response) => {
   const { id } = req.query;
 
@@ -277,6 +291,7 @@ export const getValidaTipoDocumentoDocument = async (
 
 export const actualizarProveedor = async (req: Request, res: Response) => {
   const {
+    id,
     dias_almacenaje,
     dias_credito,
     dias_sobreestadia,
@@ -290,12 +305,13 @@ export const actualizarProveedor = async (req: Request, res: Response) => {
     lstInformacionBancaria,
     lstTelefono,
     direccion,
-
-    id,
+    emailaddress,
+    lstConvenios,
+    lstTarifas,
   } = req.body;
 
   await pool.query(
-    "SELECT * FROM function_table_entities_actualizarproveedor($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26)",
+    "SELECT * FROM function_table_entities_actualizarproveedor($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36)",
     [
       id,
       dias_almacenaje ? dias_almacenaje : null,
@@ -329,7 +345,6 @@ export const actualizarProveedor = async (req: Request, res: Response) => {
       lstContactos.map((contacto) => {
         return contacto.telefono ? contacto.telefono : null;
       }),
-
       lstInformacionBancaria.map((infbanc) => {
         return infbanc.id ? infbanc.id : null;
       }),
@@ -355,7 +370,17 @@ export const actualizarProveedor = async (req: Request, res: Response) => {
         return infbanc.nro_cuenta_intermediario
           ? infbanc.nro_cuenta_intermediario
           : null;
-      }),
+      }),// $26
+      emailaddress ? emailaddress : null,
+      lstConvenios.map((item) => item.id || null),
+      lstConvenios.map((item) => item.fecha || null),
+      lstConvenios.map((item) => item.dias_credito || 0),
+      lstConvenios.map((item) => item.email_soporte || null),
+      lstTarifas.map((item) => item.id || null),
+      lstTarifas.map((item) => item.fecha || null),
+      lstTarifas.map((item) => item.codigo || null),
+      lstTarifas.map((item) => item.email_soporte || null),
+      lstTarifas.map((item) => item.tarifa || 0), 
     ],
     (err, response, fields) => {
       if (!err) {
@@ -443,10 +468,15 @@ export const GuardarCliente = async (req: Request, res: Response) => {
     id_branch,
     id_sex,
     birthday,
+    emailaddress,
+    lstConvenios,
+    lstTarifas,
+    informacionEntrega,
+    lstShippers
   } = req.body;
 
   await pool.query(
-    "SELECT * FROM function_table_entities_registrarcliente($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26)",
+    "SELECT * FROM function_table_entities_registrarcliente($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46)",
     [
       id_branch ? id_branch : null,
       names ? names : null,
@@ -477,7 +507,6 @@ export const GuardarCliente = async (req: Request, res: Response) => {
       lstContactos.map((contacto) => {
         return contacto.telefono ? contacto.telefono : null;
       }),
-
       lstInformacionBancaria.map((infbanc) => {
         return infbanc.nro_cuenta ? infbanc.nro_cuenta : null;
       }),
@@ -501,6 +530,26 @@ export const GuardarCliente = async (req: Request, res: Response) => {
           ? infbanc.nro_cuenta_intermediario
           : null;
       }),
+      emailaddress ? emailaddress : null,
+      lstConvenios.map((item) => item.fecha || null),
+      lstConvenios.map((item) => item.dias_credito || 0),
+      lstConvenios.map((item) => item.email_soporte || null),
+      lstTarifas.map((item) => item.fecha || null),
+      lstTarifas.map((item) => item.codigo || null),
+      lstTarifas.map((item) => item.email_soporte || null),
+      lstTarifas.map((item) => item.tarifa || 0),
+      informacionEntrega.destinatario ? informacionEntrega.destinatario : null,
+      informacionEntrega.dni_destinatario ? informacionEntrega.dni_destinatario : null,
+      informacionEntrega.receptor ? informacionEntrega.receptor : null,
+      informacionEntrega.dni_receptor ? informacionEntrega.dni_receptor : null,
+      informacionEntrega.id_departamento ? informacionEntrega.id_departamento : null,
+      informacionEntrega.id_provincia ? informacionEntrega.id_provincia : null,
+      informacionEntrega.id_distrito ? informacionEntrega.id_distrito : null,
+      informacionEntrega.agencia ? informacionEntrega.agencia : null,
+      informacionEntrega.celular_agencia ? informacionEntrega.celular_agencia : null,
+      informacionEntrega.status ? 1 : 0,
+      lstShippers.map((item) => item.codigo || null),
+      lstShippers.map((item) => item.shipper || null),
     ],
     (err, response, fields) => {
       if (!err) {
@@ -527,7 +576,6 @@ export const getVerCliente = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM function_entities_vercliente($1)",
     [id],
-
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -566,10 +614,15 @@ export const ActualizarCliente = async (req: Request, res: Response) => {
     id,
     id_sex,
     birthday,
+    emailaddress,
+    lstConvenios,
+    lstTarifas,
+    informacionEntrega,
+    lstShippers
   } = req.body;
 
   await pool.query(
-    "SELECT * FROM function_table_entities_actualizarcliente($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29)",
+    "SELECT * FROM function_table_entities_actualizarcliente($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53)",
     [
       id,
       names ? names : null,
@@ -606,7 +659,6 @@ export const ActualizarCliente = async (req: Request, res: Response) => {
       lstContactos.map((contacto) => {
         return contacto.telefono ? contacto.telefono : null;
       }),
-
       lstInformacionBancaria.map((infbanc) => {
         return infbanc.id ? infbanc.id : null;
       }),
@@ -633,6 +685,30 @@ export const ActualizarCliente = async (req: Request, res: Response) => {
           ? infbanc.nro_cuenta_intermediario
           : null;
       }),
+      emailaddress ? emailaddress : null,
+      lstConvenios.map((item) => item.id || null),
+      lstConvenios.map((item) => item.fecha || null),
+      lstConvenios.map((item) => item.dias_credito || 0),
+      lstConvenios.map((item) => item.email_soporte || null),
+      lstTarifas.map((item) => item.id || null),
+      lstTarifas.map((item) => item.fecha || null),
+      lstTarifas.map((item) => item.codigo || null),
+      lstTarifas.map((item) => item.email_soporte || null),
+      lstTarifas.map((item) => item.tarifa || 0), 
+      informacionEntrega.id ? informacionEntrega.id : null,
+      informacionEntrega.destinatario ? informacionEntrega.destinatario : null,
+      informacionEntrega.dni_destinatario ? informacionEntrega.dni_destinatario : null,
+      informacionEntrega.receptor ? informacionEntrega.receptor : null,
+      informacionEntrega.dni_receptor ? informacionEntrega.dni_receptor : null,
+      informacionEntrega.id_departamento ? informacionEntrega.id_departamento : null,
+      informacionEntrega.id_provincia ? informacionEntrega.id_provincia : null,
+      informacionEntrega.id_distrito ? informacionEntrega.id_distrito : null,
+      informacionEntrega.agencia ? informacionEntrega.agencia : null,
+      informacionEntrega.celular_agencia ? informacionEntrega.celular_agencia : null,
+      informacionEntrega.status ? 1 : 0,
+      lstShippers.map((item) => item.id || null),
+      lstShippers.map((item) => item.codigo || null),
+      lstShippers.map((item) => item.shipper || null),
     ],
     (err, response, fields) => {
       if (!err) {
@@ -1139,7 +1215,8 @@ export const CargarClientes = async (req: Request, res: Response) => {
 };
 
 export const CargarProveedores = async (req: Request, res: Response) => {
-  let id_branch = req.query.id_branch;
+  const { id_branch } = req.query;
+
   await pool.query(
     "select * from function_cargar_proveedor($1);",
     [id_branch],
@@ -1147,6 +1224,57 @@ export const CargarProveedores = async (req: Request, res: Response) => {
       if (!err) {
         let rows = response.rows;
 
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const cargarProveedoresRolNoShipper = async (req: Request, res: Response) => {
+  const { id_branch } = req.query;
+
+  await pool.query(
+    "select * from function_cargar_proveedor_rol_no_shipper($1);",
+    [id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const cargarProveedoresXRol = async (req: Request, res: Response) => {
+  const { id_branch, rol } = req.query;
+
+  await pool.query(
+    "select * from function_cargar_proveedor_x_rol($1,$2);",
+    [
+      id_branch,
+      rol || null
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
         res.json({
           status: 200,
           statusBol: true,
