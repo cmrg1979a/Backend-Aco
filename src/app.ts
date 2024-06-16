@@ -337,9 +337,5 @@ app.use(stateQuote);
 app.use(typepayments);
 app.use(users);
 app.use(position);
-<<<<<<< HEAD
 app.use(configuracionInicial);
-=======
-
->>>>>>> 5bdc33e8203ca1ea6ccbec9843eca44edff42a90
 export default app;
