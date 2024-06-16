@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 import { postMaster } from "../interface/master";
 import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
