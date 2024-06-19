@@ -6,9 +6,11 @@ import {
   actualizarDatosCMCliente,
   actualizarDatosCMProveedor,
   actualizarDatosEmpresaConfig,
+  envioMSGEmail,
   envioMSGWhathapp,
   guardarCostosConfig,
   obtenerConfigCostos,
+  validarTokenRegistro,
 } from "../controllers/configuracioninicial.controller";
 
 router.put(
@@ -31,18 +33,9 @@ router.post(
   TokenValidation,
   actualizarDatosCMCliente
 );
-router.get(
-  "/obtener_config_costos",
-  TokenValidation,
-  obtenerConfigCostos
-);
-router.post(
-  "/guardar_costos_config",
-  TokenValidation,
-  guardarCostosConfig
-);
-router.get(
-  "/enviar_codigo_validacion",
-  envioMSGWhathapp
-);
+router.get("/obtener_config_costos", TokenValidation, obtenerConfigCostos);
+router.post("/guardar_costos_config", TokenValidation, guardarCostosConfig);
+router.get("/enviar_codigo_validacion_email", envioMSGEmail);
+router.get("/validar_token_registro", validarTokenRegistro);
+router.get("/enviar_codigo_validacion", envioMSGWhathapp);
 export default router;

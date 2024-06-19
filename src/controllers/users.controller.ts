@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { conexion } from "../routes/databasePGOp";
 import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
+import { envioCorreo } from "../middleware/EnvioCorreoMiddleware";
 import * as pg from "pg";
 const { Pool } = pg;
 const pool = conexion();
@@ -168,11 +169,30 @@ export const InsertarUsuarios = async (req: Request, res: Response) => {
         return element.id;
       }),
     ],
-    (err, response, fields) => {
+    async (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
         user.clave = clave;
-        EnvioCorreo(user);
+        let html = `
+         <p> Hola ${user.surname} ${user.second_surname}, ${user.names} </p>
+        <p> Se ha creado tu usuario  </p>
+        <p> <b>usuario: </b> ${user.users} </p>
+        <p> <b>clave: </b> ${user.clave} </p>
+        Para acceder de click <a href="https://chainsolver.piccargo.com/"> Aqui </a>  
+        <div style="float:left;">
+          <img src="https://api-general.qreport.site/uploads/1713276374733.jfif" alt="LogoChain" max-width="350" height="300" />
+        </div>
+    
+        `;
+        let data = {
+          from: '"ACO" <sistema1@piccargo.com>',
+          email: user.email,
+          subject: "ACO – Registro",
+          html: html,
+        };
+
+        await envioCorreo(data);
+
         res.json({
           status: 200,
           statusBol: true,
