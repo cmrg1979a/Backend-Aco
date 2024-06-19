@@ -39,3 +39,4 @@ router.get("/enviar_codigo_validacion_email", envioMSGEmail);
 router.get("/validar_token_registro", validarTokenRegistro);
 router.get("/enviar_codigo_validacion", envioMSGWhathapp);
 export default router;
+
