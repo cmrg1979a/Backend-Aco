@@ -337,7 +337,7 @@ async function EnvioCorreo(datos) {
   let info = await transporter.sendMail({
     from: 'CHAIN-SOLVER" <sistema1@pic-cargo.com>',
     to: datos.email,
-    subject: "ChainSolver – Registro de USUARIO",
+    subject: "ACO – Registro de USUARIO",
     text: "Recuperación de contraseña",
     html: `
     <p> Hola ${datos.surname} ${datos.second_surname}, ${datos.names} </p>
