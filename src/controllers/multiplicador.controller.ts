@@ -40,7 +40,7 @@ export const getMultiplicadorConfig = async (req: Request, res: Response) => {
   const { id_shipment,  id_branch } = req.body;
 
   await pool.query(
-    "SELECT * FROM table_multiplicador_cargar($1,$2,$3)",
+    "SELECT * FROM table_multiplicador_cargar($1,$2)",
     [
       id_branch,
       id_shipment
