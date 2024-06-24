@@ -262,7 +262,7 @@ export const RegistroNuevaEmpresa = async (req: Request, res: Response) => {
         };
         let html = `
           <p> Hola ${user.surname} ${user.second_surname}, ${user.names} </p>
-          <p> Se ha creado tu usuario  </p>
+          <p> Se ha creado tu usuario  - ADNINISTRADOR DE SISTEMA</p>
            <p> <b>usuario: </b> ${user.users} </p>
             <p> <b>clave: </b> ${user.clave} </p>
             <br/>
