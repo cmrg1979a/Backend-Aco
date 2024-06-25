@@ -175,14 +175,19 @@ export const lockMaster = async (req: Request, res: Response) => {
   const id = req.params.id;
 
   await pool.query(
-    "UPDATE Table_MasterControl SET statusLock = 1, dateLock = NOW() WHERE id = $1",
+    "SELECT * FROM function_mastercontrol_cerrar_expedienteop($1)",
     [id],
-    (err, rows, fields) => {
+    (err, response, fields) => {
       if (!err) {
+        let rows = response.rows;
+
         res.json({
           status: 200,
           statusBol: true,
           data: rows,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
@@ -196,14 +201,19 @@ export const lockMasterAdm = async (req: Request, res: Response) => {
   const id = req.params.id;
 
   await pool.query(
-    "UPDATE Table_MasterControl SET statusLockAdm = 1, dateLockAdm = NOW() WHERE id = $1",
+    "SELECT * FROM function_mastercontrol_cerrar_expedienteadm($1)",
     [id],
-    (err, rows, fields) => {
+    (err, response, fields) => {
       if (!err) {
+        let rows = response.rows;
+
         res.json({
           status: 200,
           statusBol: true,
           data: rows,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);

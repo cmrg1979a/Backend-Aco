@@ -19,16 +19,15 @@ export function conexion() {
 
 
 /** DESARROLLO */
-// export function conexion() {
-//   const pool = new Pool({
-//     host: "67.205.129.62",
-//     user: "chainsolver",
-//     password: "Fr3sc0l1t4+",
-//     port: "5432",
-//     // database: "db_op_main_dev",
-//     // database: "db_op_main_02",
-//     database: "db_op_main_qa",
-
-//   });
-//   return pool;
-// }
+/*export function conexion() {
+  const pool = new Pool({
+    host: "67.205.129.62",
+    user: "chainsolver",
+    password: "Fr3sc0l1t4+",
+    port: "5432",
+    // database: "db_op_main_dev",
+    // database: "db_op_main_02",
+    database: "db_op_main_edison", //"db_op_main_qa"
+  });
+  return pool;
+}*/
