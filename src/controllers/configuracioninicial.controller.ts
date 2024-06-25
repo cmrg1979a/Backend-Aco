@@ -202,6 +202,27 @@ export const envioMSGEmail = async (req: Request, res: Response) => {
     );
   }
 };
+export const FinalizarConfiguracion = async (req: Request, res: Response) => {
+  let { id_branch } = req.body;
+  await pool.query(
+    "select *from function_finalizar_config($1)",
+    [id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
 export const validarTokenRegistro = async (req: Request, res: Response) => {
   let { codigo, email, eliminartoken } = req.query;
   await pool.query(
@@ -209,7 +230,6 @@ export const validarTokenRegistro = async (req: Request, res: Response) => {
     [codigo, email, eliminartoken],
     (err, response, fields) => {
       if (!err) {
-        
         let rows = response.rows;
         res.json({
           status: 200,
