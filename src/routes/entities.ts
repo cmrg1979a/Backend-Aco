@@ -31,11 +31,13 @@ import {
   ActualizarCliente,
   ListarPersonaTipoPersona,
   guardarRolProveedor,
+  getListadoCliente,
   cargarProveedoresXRol,
   cargarProveedoresRolNoShipper,
 } from "../controllers/entities.controller";
 
 router.post("/getEntitiesList", TokenValidation, getEntitiesList);
+router.get("/get_listado_cliente", TokenValidation, getListadoCliente);
 router.post("/getEntitiesListId", TokenValidation, getEntitiesListId);
 router.post("/getEntitiesListIc", TokenValidation, getEntitiesListIc);
 router.post("/addEntitie", TokenValidation, addEntitie);

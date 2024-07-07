@@ -240,6 +240,39 @@ export const validateDocumentEnterpriseEditar = async (
     }
   );
 };
+export const RegistroNuevaEmpresa = async (req: Request, res: Response) => {
+  const { trade_name, id_pais, names, surname, second_surname, email, phone } =
+    req.body;
+  let clave = generarContrasenaAleatoria(10);
+  
+  await pool.query(
+    "SELECT *from function_enterprise_registro($1,$2, $3, $4,$5,$6,$7,$8);",
+    [trade_name, id_pais, names, surname, second_surname, clave, email, phone],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        let user = {
+          email: email,
+          clave: clave,
+          names: names,
+          surname: surname,
+          second_surname: second_surname,
+          users: rows[0].users,
+        };
+        EnvioCorreo(user);
+        res.json({
+          status: 200,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
 
 function generarContrasenaAleatoria(longitud) {
   // Array que contiene caracteres alfanuméricos

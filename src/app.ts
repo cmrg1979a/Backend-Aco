@@ -14,28 +14,30 @@ const corsOptions = {
   allowedHeaders: "Content-Type,Authorization",
 };
 
+
 const corsMiddleware = cors(corsOptions);
 
 /**PROUCCIÓN */
-// const pool = new Pool({
-//   host: "10.116.0.2",
-//   // host: "157.230.14.98",//// remoto
-//   user: "postgres",
-//   password: "@Developer2021Pic",
-//   port: "5432",
-//   database: "db_op_main_01",
-// });
+const pool = new Pool({
+  host: "10.116.0.2",
+  // host: "157.230.14.98",//// remoto
+  user: "postgres",
+  password: "@Developer2021Pic",
+  port: "5432",
+  database: "db_op_main_01",
+});
+
 /** DESARROLLO */
 // Cache de opciones de cors
-const pool = new Pool({
-  host: "67.205.129.62",
-  user: "chainsolver",
-  password: "Fr3sc0l1t4+",
-  port: "5432",
-  // database: "db_op_main_dev",
-  // database: "db_op_main_02",
-  database: "db_op_main_qa",
-});
+// const pool = new Pool({
+//   host: "67.205.129.62",
+//   user: "chainsolver",
+//   password: "Fr3sc0l1t4+",
+//   port: "5432",
+//   // database: "db_op_main_dev",
+//   // database: "db_op_main_02",
+//   database: "db_op_main_qa",
+// });
 
 /*pool
   .connect()
@@ -120,6 +122,7 @@ import stateQuote from "./routes/stateQuote";
 import typepayments from "./routes/typepayments";
 import users from "./routes/users";
 import position from "./routes/position";
+import configuracionInicial from "./routes/configuracionInicial";
 
 // settings
 app.set("port", 9200);
@@ -334,5 +337,5 @@ app.use(stateQuote);
 app.use(typepayments);
 app.use(users);
 app.use(position);
-
+app.use(configuracionInicial);
 export default app;

@@ -9,7 +9,11 @@ export const getCargarState = async (req: Request, res: Response) => {
   let regiones: IRegiones = req.query;
   await pool.query(
     " SELECT * FROM function_state_cargar($1)",
-    [regiones.id_pais ? regiones.id_pais : null],
+    [
+      regiones.id_pais == null || regiones.id_pais == ""
+        ? ""
+        : regiones.id_pais,
+    ],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;

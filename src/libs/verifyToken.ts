@@ -25,7 +25,7 @@ export const TokenValidation = (
 
 export class AuthService {
   static generateToken(userId: any): string {
-    return jwt.sign({ userId }, secretKey, { expiresIn: "2h" });
+    return jwt.sign({ userId }, secretKey, { expiresIn: "8h" });
   }
 
   static verifyToken(token: string): number | null {

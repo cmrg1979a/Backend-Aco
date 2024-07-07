@@ -1,16 +1,16 @@
 import { Request, Response } from "express";
-import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 import { postMaster } from "../interface/master";
 import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
-import { civicinfo } from "googleapis/build/src/apis/civicinfo";
+// import { civicinfo } from "googleapis/build/src/apis/civicinfo";
+import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 const { Pool } = pg;
 
 const pool = conexion();
 
 export const setMaster = async (req: Request, res: Response) => {
   const dataObj = req.body;
-  
+
   await pool.query(
     "SELECT * FROM table_mastercontrol_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44)",
     [
@@ -323,26 +323,38 @@ export const getTotalMasterList = async (req: Request, res: Response) => {
 };
 
 export const cargarMaster = async (req: Request, res: Response) => {
-  let {id_branch} = req.query;
+  let {
+    id_branch,
+    id_modality,
+    id_shipment,
+    id_incoterms,
+    id_port_begin,
+    id_port_end,
+  } = req.query;
   await pool.query(
-    "SELECT * FROM function_cargar_masters($1);",
-    [id_branch],
+    "SELECT * FROM function_cargar_masters($1,$2,$3,$4,$5,$6);",
+    [
+      id_branch,
+      id_modality ? id_modality : null,
+      id_shipment ? id_shipment : null,
+      id_incoterms ? id_incoterms : null,
+      id_port_begin ? id_port_begin : null,
+      id_port_end ? id_port_end : null,
+    ],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          estadoflag: rows[0].estadoflag,
+          status: 200,
+          statusBol: true,
+          data: rows,
+          token: renewTokenMiddleware(req),
+          mensaje: rows[0].mensaje,
+          insertId: rows[0].insertid,
+          nro_quote: rows[0].nro_quote,
+          msg: "Cotización ingresada con el número " + rows[0].nro_quote,
+        });
       } else {
         console.log(err);
       }

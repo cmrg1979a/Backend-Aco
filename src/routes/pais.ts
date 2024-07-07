@@ -4,6 +4,6 @@ import { TokenValidation } from "../libs/verifyToken";
 
 import { getPais } from "../controllers/pais.controller";
 
-router.post("/getPais", TokenValidation, getPais);
+router.post("/getPais",  getPais);
 
 export default router;

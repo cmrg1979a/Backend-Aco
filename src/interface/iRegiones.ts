@@ -4,5 +4,5 @@ export interface IRegiones {
   name?: String;
   description?: String;
   status?: any;
-  id_pais?: number;
+  id_pais?: any;
 }
