@@ -19,6 +19,7 @@ import {
   cargarPercepcionAduana,
   cargarTipoTelefonoPersona,
   cargarTipoTransaccion,
+  cargarTipoPersona,
 } from "../controllers/masterusuario.controller";
 const corsOptions = {
   origin: "*",
@@ -107,6 +108,12 @@ router.post(
   "/insertar_master_detalle_notas_cotizacion",
   TokenValidation,
   InsertarMasterDetalleNotasCotizacion
+);
+
+router.get(
+  "/cargar_master_detalle_tipo_persona",
+  TokenValidation,
+  cargarTipoPersona
 );
 
 export default router;

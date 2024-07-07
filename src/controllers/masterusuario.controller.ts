@@ -3,6 +3,7 @@ import { conexion } from "../routes/databasePGOp";
 import { IMasterDetalle } from "interface/iMasterDetalle";
 const pool = conexion();
 import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
+
 export const cargarMasterDetalleRecibido = async (
   req: Request,
   res: Response
@@ -186,7 +187,6 @@ export const cargarTipoTelefonoPersona = async (
     }
   );
 };
-
 export const cargarMasterDetalleImpuestos = async (
   req: Request,
   res: Response
@@ -211,7 +211,6 @@ export const cargarMasterDetalleImpuestos = async (
     }
   );
 };
-
 export const ListarMasterDetalleImpuestos = async (
   req: Request,
   res: Response
@@ -243,7 +242,6 @@ export const ListarMasterDetalleImpuestos = async (
     }
   );
 };
-
 export const InsertarMasterDetalleImpuestos = async (
   req: Request,
   res: Response
@@ -315,7 +313,6 @@ export const ActualizarMasterDetalle = async (req: Request, res: Response) => {
     }
   );
 };
-
 export const ListarMasterDetalleTipoTelefonos = async (
   req: Request,
   res: Response
@@ -347,7 +344,6 @@ export const ListarMasterDetalleTipoTelefonos = async (
     }
   );
 };
-
 export const InsertarMasterDetalleTipoTelefono = async (
   req: Request,
   res: Response
@@ -385,7 +381,6 @@ export const InsertarMasterDetalleTipoTelefono = async (
     }
   );
 };
-
 export const ListarMasterDetalleTNotasCotizacion = async (
   req: Request,
   res: Response
@@ -417,7 +412,6 @@ export const ListarMasterDetalleTNotasCotizacion = async (
     }
   );
 };
-
 export const InsertarMasterDetalleNotasCotizacion = async (
   req: Request,
   res: Response
@@ -438,6 +432,27 @@ export const InsertarMasterDetalleNotasCotizacion = async (
         ? true
         : false,
     ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const cargarTipoPersona = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM function_masterdetalle_cargar($1,'TIPOPERSONA')",
+    [req.query.id_branch],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
