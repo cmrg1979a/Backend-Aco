@@ -48,6 +48,9 @@ export const getItemsServicesDetails = async (req: Request, res: Response) => {
     services,
     containers,
   } = req.body;
+  let id_containers = containers.map((item) => {
+    return item.id_containers;
+  });
 
   await pool.query(
     " SELECT * FROM table_itemsservices_listardetails($1,$2,$3,$4,$5,$6)",
@@ -59,10 +62,7 @@ export const getItemsServicesDetails = async (req: Request, res: Response) => {
       services.map((item) => {
         return item.id_groupservices;
       }),
-
-      containers.map((item) => {
-        return item.id_containers;
-      }),
+      id_containers.length > 0 ? id_containers : null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -71,8 +71,8 @@ export const getItemsServicesDetails = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -100,8 +100,8 @@ export const getItemsServicesList = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
