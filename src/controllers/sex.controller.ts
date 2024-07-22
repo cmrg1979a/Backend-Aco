@@ -7,8 +7,10 @@ const pool = conexion();
 import { postSex } from "../interface/sex";
 import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 export const getSex = async (req: Request, res: Response) => {
+  let { id_branch } = req.query;
   await pool.query(
-    "SELECT * FROM TABLE_SEX_list();",
+    "SELECT * FROM TABLE_SEX_list($1);",
+    [id_branch],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -17,7 +19,7 @@ export const getSex = async (req: Request, res: Response) => {
           status: 200,
           statusBol: true,
           mensaje: rows[0].mensaje,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -47,7 +49,7 @@ export const getListSex = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -76,7 +78,7 @@ export const insertSex = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -99,7 +101,7 @@ export const readSex = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -128,7 +130,7 @@ export const updateSex = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -154,7 +156,7 @@ export const validateAcronymInTableSexNuevo = async (
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -180,7 +182,7 @@ export const validateAcronymInTableSexEditar = async (
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
