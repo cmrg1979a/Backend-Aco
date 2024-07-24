@@ -424,7 +424,7 @@ export const getDebsClient = async (req: Request, res: Response) => {
 };
 
 export const getDebsClientList = async (req: Request, res: Response) => {
-  const { id_branch, id_house } = req.params;
+  const { id_branch, id_house } = req.body;
   await pool.query(
     " SELECT * FROM  TABLE_DEBSCLIENT_list($1,null)",
     [id_branch],
