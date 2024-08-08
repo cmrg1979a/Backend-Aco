@@ -11,7 +11,7 @@ export const getCargarState = async (req: Request, res: Response) => {
     " SELECT * FROM function_state_cargar($1)",
     [
       regiones.id_pais == null || regiones.id_pais == ""
-        ? ""
+        ? 0
         : regiones.id_pais,
     ],
     (err, response, fields) => {
