@@ -1724,7 +1724,6 @@ function getReporteCXCAdmin(data) {
     );
   });
 }
-
 function resumenCXC(rows, rows2) {
   let res = {
     vencido: 0,
@@ -1764,34 +1763,79 @@ function resumenCXC(rows, rows2) {
 }
 
 export const exportarPDFCXP = async (req: Request, res: Response) => {
-  let title = "REPORTE DE CUENTAS POR PAGAR";
+  const { tipo_reporte: formato } = req.query;
+
   let ejs = require("ejs");
   let pdf = require("html-pdf");
-  moment.locale("ES");
-  let data = [];
+
+  let title = "REPORTE DE CUENTAS POR PAGAR";
+  let fechaEmision = moment().format("DD-MM-YYYY");
+  let dataset = [];
   let rowsOp = await getReporteCXP(req.query);
   let rowsAdmin = await getDebsToPayAdmin(req.query);
+
+  let totalvencidoObj_default = { "+60": null, "+45": null, "+30": null, "+15": null, "+7": null, "+0": null };
+  let totalxvencerObj_default = { "+60": null, "-60": null, "-45": null, "-30": null, "-15": null, "-7": null };
+
+  let totalvencidoObj = { ...totalvencidoObj_default };
+  let totalxvencerObj = { ...totalxvencerObj_default };
+
   if (Array.isArray(rowsOp)) {
     if (rowsOp.length > 0) {
       rowsOp.forEach((element) => {
         let detalles = element.details;
         if (detalles.length > 0) {
           detalles.forEach((detalle) => {
-            data.push({
+            dataset.push({
+              id_proveedor: element.id,
               proveedor: element.nameproveedor,
               nameconsigner: detalle.nameconsigner,
-              code_correlativo: detalle.code_correlativo,
+              correlativo: detalle.code_correlativo,
               nro_master: detalle.nro_master,
-              expedientes: detalle.expedientes,
-              fecha_disponibilidad: moment(detalle.fecha_disponibilidad).format(
-                "DD-MMM-YYYY"
-              ),
+              expediente: detalle.expedientes,
+              fecha_disponibilidad: detalle.fecha_disponibilidad ? moment(detalle.fecha_disponibilidad).format("DD/MM/YYYY") : '',
               symbol: detalle.symbol,
               total_pagar: detalle.total_pagar,
               llegada: detalle.llegada == 1 ? "SI" : "NO",
               pagado: detalle.pagado == 1 ? "SI" : "NO",
               esoperativo: true,
               esadministrativo: false,
+              fechavencimiento: detalle.fecha_vencimiento ? moment(detalle.fecha_vencimiento).format("DD/MM/YYYY") : '',
+              diasatraso: detalle.dias_atraso ? detalle.dias_atraso : 0,
+              estatus: detalle.estatus ? detalle.estatus : '',
+              dias_credito: detalle.dias_credito ? detalle.dias_credito : 0,
+              dias_vencidos: detalle.dias_vencidos ? detalle.dias_vencidos : 0
+            });
+          });
+        }
+      });
+    }
+  }
+  if (Array.isArray(rowsAdmin)) {
+    if (rowsAdmin.length > 0) {
+      rowsAdmin.forEach((element) => {
+        let detalles = element.details;
+        if (detalles.length > 0) {
+          detalles.forEach((detalle) => {
+            dataset.push({
+              id_proveedor: element.id,
+              proveedor: element.nameconsigner,
+              nameconsigner: detalle.nameconsigner,
+              correlativo: "",
+              nro_master: "",
+              expedientes: detalle.nro_factura,
+              fecha_disponibilidad: detalle.created_at ? moment(detalle.created_at).format("DD/MM/YYYY") : '',
+              symbol: detalle.symbol,
+              total_pagar: detalle.monto,
+              llegada: "SI",
+              pagado: "NO",
+              esoperativo: false,
+              esadministrativo: true,
+              fechavencimiento: detalle.fecha_vencimiento ? moment(detalle.fecha_vencimiento).format("DD/MM/YYYY") : '',
+              diasatraso: detalle.dias_atraso ? detalle.dias_atraso : 0,
+              estatus: detalle.estatus ? detalle.estatus : '',
+              dias_credito: detalle.dias_credito ? detalle.dias_credito : 0,
+              dias_vencidos: detalle.dias_vencidos ? detalle.dias_vencidos : 0
             });
           });
         }
@@ -1799,60 +1843,225 @@ export const exportarPDFCXP = async (req: Request, res: Response) => {
     }
   }
 
-  if (Array.isArray(rowsAdmin)) {
-    if (rowsAdmin.length > 0) {
-      rowsAdmin.forEach((element) => {
-        let detalles = element.details;
-        if (detalles.length > 0) {
-          detalles.forEach((detalle) => {
-            data.push({
-              proveedor: element.nameconsigner,
-              nameconsigner: detalle.nameconsigner,
-              code_correlativo: "",
-              nro_master: "",
-              expedientes: detalle.nro_factura,
-              fecha_disponibilidad: moment(detalle.created_at).format(
-                "DD-MM-YYYY"
-              ),
-              symbol: detalle.symbol,
-              total_pagar: detalle.monto,
-              llegada: "SI",
-              pagado: "NO",
-              esoperativo: false,
-              esadministrativo: true,
-            });
-          });
-        }
-      });
+  dataset.filter((v) => {
+    const { dias_vencidos, total_pagar: monto, estatus } = v;
+
+    if (estatus.toUpperCase() == "VENCIDO") {
+      switch (true) {
+        case (dias_vencidos > 60):
+          totalvencidoObj["+60"] = (parseFloat(totalvencidoObj["+60"]) || 0);
+          totalvencidoObj["+60"] += monto;
+          break;
+        case (dias_vencidos <= 60 && dias_vencidos > 45):
+          totalvencidoObj["+45"] = (parseFloat(totalvencidoObj["+45"]) || 0);
+          totalvencidoObj["+45"] += monto;
+          break;
+        case (dias_vencidos <= 45 && dias_vencidos > 30):
+          totalvencidoObj["+30"] = (parseFloat(totalvencidoObj["+30"]) || 0);
+          totalvencidoObj["+30"] += monto;
+          break;
+        case (dias_vencidos <= 30 && dias_vencidos > 15):
+          totalvencidoObj["+15"] = (parseFloat(totalvencidoObj["+15"]) || 0);
+          totalvencidoObj["+15"] += monto;
+          break;
+        case (dias_vencidos <= 15 && dias_vencidos > 7):
+          totalvencidoObj["+7"] = (parseFloat(totalvencidoObj["+7"]) || 0);
+          totalvencidoObj["+7"] += monto;
+          break;
+        case (dias_vencidos <= 7 && dias_vencidos > 0):
+          totalvencidoObj["+0"] = (parseFloat(totalvencidoObj["+0"]) || 0);
+          totalvencidoObj["+0"] += monto;
+          break;
+      }
     }
+    else if (estatus.toUpperCase() == "POR VENCER") {
+      switch (true) {
+        case (dias_vencidos <= -60):
+          totalxvencerObj["+60"] = (parseFloat(totalxvencerObj["+60"]) || 0);
+          totalxvencerObj["+60"] += monto;
+          break;
+        case (dias_vencidos > -60 && dias_vencidos <= -45):
+          totalxvencerObj["-60"] = (parseFloat(totalxvencerObj["-60"]) || 0);
+          totalxvencerObj["-60"] += monto;
+          break;
+        case (dias_vencidos > -45 && dias_vencidos <= -30):
+          totalxvencerObj["-45"] = (parseFloat(totalxvencerObj["-45"]) || 0);
+          totalxvencerObj["-45"] += monto;
+          break;
+        case (dias_vencidos > -30 && dias_vencidos <= -15):
+          totalxvencerObj["-30"] = (parseFloat(totalxvencerObj["-30"]) || 0);
+          totalxvencerObj["-30"] += monto;
+          break;
+        case (dias_vencidos > -15 && dias_vencidos <= -7):
+          totalxvencerObj["-15"] = (parseFloat(totalxvencerObj["-15"]) || 0);
+          totalxvencerObj["-15"] += monto;
+          break;
+        case (dias_vencidos > -7):
+          totalxvencerObj["-7"] = (parseFloat(totalxvencerObj["-7"]) || 0);
+          totalxvencerObj["-7"] += monto;
+          break;
+      }
+    }
+  });
+
+  let totalvencido_array = Object.entries(totalvencidoObj);
+  let totalxvencer_array = Object.entries(totalxvencerObj);
+  let totalvencido = totalvencido_array.reduce((suma, v) => suma + (v[1] || 0), 0);
+  let totalxvencer = totalxvencer_array.reduce((suma, v) => suma + (v[1] || 0), 0);
+
+  totalvencido_array = totalvencido_array.map(([k, v]) => [k, v ? v.toFixed(2) : null]);
+  totalxvencer_array = totalxvencer_array.map(([k, v]) => [k, v ? v.toFixed(2) : null]);
+  totalvencido = totalvencido ? parseFloat(totalvencido).toFixed(2) : null;
+  totalxvencer = totalxvencer ? parseFloat(totalxvencer).toFixed(2) : null;
+
+  let data = [];
+  if (formato == "1") { // Generar PDF por Fecha de Vencimiento
+    title += " - Por Fecha de vencimiento";
+
+    dataset.sort((a, b) => {
+      return b.diasatraso - a.diasatraso
+    });
+
+    data = dataset;
   }
-  let totalOpDolar = data
-    .filter((v) => !!v.esoperativo && v.symbol == "USD")
-    .reduce((monto, d) => {
-      return monto + d.total_pagar;
-    }, 0);
-  let totalOpSol = data
-    .filter((v) => !!v.esoperativo && v.symbol == "S/.")
-    .reduce((monto, d) => {
-      return monto + d.total_pagar;
-    }, 0);
-  let totalAdminDolar = data
-    .filter((v) => !!v.esadministrativo && v.symbol == "USD")
-    .reduce((monto, d) => {
-      return monto + d.total_pagar;
-    }, 0);
-  let totalAdminSol = data
-    .filter((v) => !!v.esadministrativo && v.symbol == "S/.")
-    .reduce((monto, d) => {
-      return monto + d.total_pagar;
-    }, 0);
-  totalOpDolar = parseFloat(totalOpDolar).toFixed(2);
-  totalOpSol = parseFloat(totalOpSol).toFixed(2);
-  totalAdminDolar = parseFloat(totalAdminDolar).toFixed(2);
-  totalAdminSol = parseFloat(totalAdminSol).toFixed(2);
+  else if (formato == "2") { // Generar PDF por Proveedor
+    title += " - Por Proveedores";
+
+    let expedientesxproveedorObj = {};
+    dataset.map((v) => {
+      if (expedientesxproveedorObj[v.id_proveedor] === undefined) {
+        expedientesxproveedorObj[v.id_proveedor] = {
+          proveedor: v.proveedor.trim(),
+          dias_credito: v.dias_credito,
+          totalvencido: null,
+          totalxvencer: null,
+          expedientes: [{
+            expediente: v.expediente,
+            factura: v.factura,
+            monto: v.total_pagar,
+            estatus: v.estatus,
+            dias_vencidos: v.dias_vencidos,
+            vencido: { ...totalvencidoObj_default },
+            xvencer: { ...totalxvencerObj_default }
+          }]
+        };
+      }
+      else {
+        expedientesxproveedorObj[v.id_proveedor]["expedientes"].push({
+          expediente: v.expediente,
+          factura: v.factura,
+          monto: v.total_pagar,
+          estatus: v.estatus,
+          dias_vencidos: v.dias_vencidos,
+          vencido: { ...totalvencidoObj_default },
+          xvencer: { ...totalxvencerObj_default }
+        });
+      }
+    });
+
+    Object.entries(expedientesxproveedorObj).map(([key, item]) => {
+      item["expedientes"].map((v) => {
+        let total = 0;
+
+        let { dias_vencidos, monto, estatus } = v;
+        if (estatus.toUpperCase() == "VENCIDO") {
+          switch (true) {
+            case (dias_vencidos > 60):
+              v["vencido"]["+60"] = (parseFloat(v["vencido"]["+60"]) || 0);
+              v["vencido"]["+60"] += monto;
+              total += monto;
+              break;
+            case (dias_vencidos <= 60 && dias_vencidos > 45):
+              v["vencido"]["+45"] = (parseFloat(v["vencido"]["+45"]) || 0);
+              v["vencido"]["+45"] += monto;
+              total += monto;
+              break;
+            case (dias_vencidos <= 45 && dias_vencidos > 30):
+              v["vencido"]["+30"] = (parseFloat(v["vencido"]["+30"]) || 0);
+              v["vencido"]["+30"] += monto;
+              total += monto;
+              break;
+            case (dias_vencidos <= 30 && dias_vencidos > 15):
+              v["vencido"]["+15"] = (parseFloat(v["vencido"]["+15"]) || 0);
+              v["vencido"]["+15"] += monto;
+              total += monto;
+              break;
+            case (dias_vencidos <= 15 && dias_vencidos > 7):
+              v["vencido"]["+7"] = (parseFloat(v["vencido"]["+7"]) || 0);
+              v["vencido"]["+7"] += monto;
+              total += monto;
+              break;
+            case (dias_vencidos <= 7 && dias_vencidos > 0):
+              v["vencido"]["+0"] = (parseFloat(v["vencido"]["+0"]) || 0);
+              v["vencido"]["+0"] += monto;
+              total += monto;
+              break;
+          }
+
+          if (total) {
+            item["totalvencido"] = (parseFloat(item["totalvencido"]) || 0) + total;
+          } 
+        }
+        else if (estatus.toUpperCase() == "POR VENCER") {
+          switch (true) {
+            case (dias_vencidos <= -60):
+              v["xvencer"]["+60"] = (parseFloat(v["xvencer"]["+60"]) || 0);
+              v["xvencer"]["+60"] += monto;
+              total += monto;
+              break;
+            case (dias_vencidos > -60 && dias_vencidos <= -45):
+              v["xvencer"]["-60"] = (parseFloat(v["xvencer"]["-60"]) || 0);
+              v["xvencer"]["-60"] += monto;
+              total += monto;
+              break;
+            case (dias_vencidos > -45 && dias_vencidos <= -30):
+              v["xvencer"]["-45"] = (parseFloat(v["xvencer"]["-45"]) || 0);
+              v["xvencer"]["-45"] += monto;
+              total += monto;
+              break;
+            case (dias_vencidos > -30 && dias_vencidos <= -15):
+              v["xvencer"]["-30"] = (parseFloat(v["xvencer"]["-30"]) || 0);
+              v["xvencer"]["-30"] += monto;
+              total += monto;
+              break;
+            case (dias_vencidos > -15 && dias_vencidos <= -7):
+              v["xvencer"]["-15"] = (parseFloat(v["xvencer"]["-15"]) || 0);
+              v["xvencer"]["-15"] += monto;
+              total += monto;
+              break;
+            case (dias_vencidos > -7):
+              v["xvencer"]["-7"] = (parseFloat(v["xvencer"]["-7"]) || 0);
+              v["xvencer"]["-7"] += monto;
+              total += monto;
+              break;
+          }
+
+          if (total) {
+            item["totalxvencer"] = (parseFloat(item["totalxvencer"]) || 0) + total;
+          }          
+        }
+
+        return v;
+      });
+
+      data.push(item);
+    });
+
+    data.map((item) => {
+      item["totalvencido"] = item.totalvencido ? item.totalvencido.toFixed(2) : null;
+      item["totalxvencer"] = item.totalxvencer ? item.totalxvencer.toFixed(2) : null;
+
+      return item;
+    });
+
+    data.sort((a, b) => {
+      return a.proveedor.localeCompare(b.proveedor);
+    });
+  }
+
   ejs.renderFile(
     path.join(__dirname, "../views/", "reporteCXP.ejs"),
-    { title, data, totalOpDolar, totalOpSol, totalAdminDolar, totalAdminSol },
+    { title, formato, fechaEmision, data, totalvencido_array, totalxvencer_array, totalvencido, totalxvencer },
     (err, html) => {
       if (err) {
         res.send(err);
@@ -1911,7 +2120,6 @@ function getReporteCXP(data) {
     );
   });
 }
-
 function getDebsToPayAdmin(data) {
   return new Promise((resolve, reject) => {
     pool.query(
@@ -1943,13 +2151,22 @@ function getDebsToPayAdmin(data) {
 }
 
 export const exportarPDFCXC = async (req: Request, res: Response) => {
-  let title = "REPORTE DE CUENTAS POR COBRAR";
+  const { tipo_reporte: formato } = req.query;
+
   let ejs = require("ejs");
   let pdf = require("html-pdf");
-  moment.locale("ES");
-  let data = [];
+
+  let title = "REPORTE DE CUENTAS POR COBRAR";
+  let fechaEmision = moment().format("DD-MM-YYYY");
+  let dataset = [];
   let rowsOp = await getReporteCXC(req.query);
   let rowsAdmin = await getReporteCXCAdmin(req.query);
+
+  let totalvencidoObj_default = { "+60": null, "+45": null, "+30": null, "+15": null, "+7": null, "+0": null };
+  let totalxvencerObj_default = { "+60": null, "-60": null, "-45": null, "-30": null, "-15": null, "-7": null };
+
+  let totalvencidoObj = { ...totalvencidoObj_default };
+  let totalxvencerObj = { ...totalxvencerObj_default };
 
   if (Array.isArray(rowsOp)) {
     if (rowsOp.length > 0) {
@@ -1957,21 +2174,22 @@ export const exportarPDFCXC = async (req: Request, res: Response) => {
         let detalles = element.details;
         if (detalles.length > 0) {
           detalles.forEach((detalle) => {
-            data.push({
-              fechavencimiento: element.fechavencimiento,
+            dataset.push({
+              fechavencimiento: detalle.fechadevencimiento ? moment(detalle.fechadevencimiento).format("DD/MM/YYYY") : "",
               esoperativo: true,
               esadministrativo: false,
               proveedor: detalle.nameconsigner,
-              expedientes: detalle.nro_master,
+              expediente: detalle.nro_master,
+              id_consigner: detalle.id_consigner ? detalle.id_consigner : 0,
               nameconsigner: detalle.nameconsigner,
               llegada: detalle.llegada == 1 ? "LLEGADA" : "NO LLEGADA",
-              fecha_disponibilidad: moment(detalle.fecha_disponibilidad).format(
-                "DD-MMM-YYYY"
-              ),
+              fecha_disponibilidad: detalle.fecha_disponibilidad ? moment(detalle.fecha_disponibilidad).format("DD/MM/YYYY") : "",
               factura: detalle.nro_factura ? detalle.nro_factura : "N/F",
               symbol: detalle.symbol,
               total_pagar: detalle.total_pagar,
               diasatraso: detalle.diasatraso ? detalle.diasatraso : 0,
+              dias_credito: detalle.dias_credito ? detalle.dias_credito : 0,
+              dias_vencidos: detalle.dias_vencidos ? detalle.dias_vencidos : 0,
               estatus: detalle.estatus ? detalle.estatus : "",
             });
           });
@@ -1979,28 +2197,28 @@ export const exportarPDFCXC = async (req: Request, res: Response) => {
       });
     }
   }
-
   if (Array.isArray(rowsAdmin)) {
     if (rowsAdmin.length > 0) {
       rowsAdmin.forEach((element) => {
         let detalles = element.details;
         if (detalles.length > 0) {
           detalles.forEach((detalle) => {
-            data.push({
-              fechavencimiento: element.fechavencimiento,
+            dataset.push({
+              fechavencimiento: detalle.fechavencimiento ? moment(detalle.fechavencimiento).format("DD/MM/YYYY") : "",
               esoperativo: false,
               esadministrativo: true,
               proveedor: detalle.nameconsigner,
-              expedientes: "",
+              expediente: "",
+              id_consigner: detalle.id_consigner ? detalle.id_consigner : 0,
               nameconsigner: detalle.nameconsigner,
               llegada: detalle.llegada == 1 ? "LLEGADA" : "NO LLEGADA",
-              fecha_disponibilidad: detalle.fecha
-                ? moment(detalle.fecha).format("DD-MMM-YYYY")
-                : "",
+              fecha_disponibilidad: detalle.fecha ? moment(detalle.fecha).format("DD/MM/YYYY") : "",
               factura: detalle.concepto ? detalle.concepto : "N/F",
               symbol: detalle.symbol,
               total_pagar: detalle.monto,
-              diasatrazo: detalle.diasatraso ? detalle.diasatraso : 0,
+              diasatraso: detalle.diasatraso ? detalle.diasatraso : 0,
+              dias_credito: detalle.dias_credito ? detalle.dias_credito : 0,
+              dias_vencidos: detalle.dias_vencidos ? detalle.dias_vencidos : 0,
               estatus: detalle.estatus ? detalle.estatus : "",
             });
           });
@@ -2009,33 +2227,225 @@ export const exportarPDFCXC = async (req: Request, res: Response) => {
     }
   }
 
-  let totalOpDolar = data
-    .filter((v) => !!v.esoperativo && v.symbol == "USD")
-    .reduce((monto, d) => {
-      return monto + d.total_pagar;
-    }, 0);
-  let totalOpSol = data
-    .filter((v) => !!v.esoperativo && v.symbol == "S/.")
-    .reduce((monto, d) => {
-      return monto + d.total_pagar;
-    }, 0);
-  let totalAdminDolar = data
-    .filter((v) => !!v.esadministrativo && v.symbol == "USD")
-    .reduce((monto, d) => {
-      return monto + d.total_pagar;
-    }, 0);
-  let totalAdminSol = data
-    .filter((v) => !!v.esadministrativo && v.symbol == "S/.")
-    .reduce((monto, d) => {
-      return monto + d.total_pagar;
-    }, 0);
-  totalOpDolar = parseFloat(totalOpDolar).toFixed(2);
-  totalOpSol = parseFloat(totalOpSol).toFixed(2);
-  totalAdminDolar = parseFloat(totalAdminDolar).toFixed(2);
-  totalAdminSol = parseFloat(totalAdminSol).toFixed(2);
+  dataset.filter((v) => {
+    const { dias_vencidos, total_pagar: monto, estatus } = v;
+
+    if (estatus.toUpperCase() == "VENCIDO") {
+      switch (true) {
+        case (dias_vencidos > 60):
+          totalvencidoObj["+60"] = (parseFloat(totalvencidoObj["+60"]) || 0);
+          totalvencidoObj["+60"] += monto;
+          break;
+        case (dias_vencidos <= 60 && dias_vencidos > 45):
+          totalvencidoObj["+45"] = (parseFloat(totalvencidoObj["+45"]) || 0);
+          totalvencidoObj["+45"] += monto;
+          break;
+        case (dias_vencidos <= 45 && dias_vencidos > 30):
+          totalvencidoObj["+30"] = (parseFloat(totalvencidoObj["+30"]) || 0);
+          totalvencidoObj["+30"] += monto;
+          break;
+        case (dias_vencidos <= 30 && dias_vencidos > 15):
+          totalvencidoObj["+15"] = (parseFloat(totalvencidoObj["+15"]) || 0);
+          totalvencidoObj["+15"] += monto;
+          break;
+        case (dias_vencidos <= 15 && dias_vencidos > 7):
+          totalvencidoObj["+7"] = (parseFloat(totalvencidoObj["+7"]) || 0);
+          totalvencidoObj["+7"] += monto;
+          break;
+        case (dias_vencidos <= 7 && dias_vencidos > 0):
+          totalvencidoObj["+0"] = (parseFloat(totalvencidoObj["+0"]) || 0);
+          totalvencidoObj["+0"] += monto;
+          break;
+      }
+    }
+    else if (estatus.toUpperCase() == "POR VENCER") {
+      switch (true) {
+        case (dias_vencidos <= -60):
+          totalxvencerObj["+60"] = (parseFloat(totalxvencerObj["+60"]) || 0);
+          totalxvencerObj["+60"] += monto;
+          break;
+        case (dias_vencidos > -60 && dias_vencidos <= -45):
+          totalxvencerObj["-60"] = (parseFloat(totalxvencerObj["-60"]) || 0);
+          totalxvencerObj["-60"] += monto;
+          break;
+        case (dias_vencidos > -45 && dias_vencidos <= -30):
+          totalxvencerObj["-45"] = (parseFloat(totalxvencerObj["-45"]) || 0);
+          totalxvencerObj["-45"] += monto;
+          break;
+        case (dias_vencidos > -30 && dias_vencidos <= -15):
+          totalxvencerObj["-30"] = (parseFloat(totalxvencerObj["-30"]) || 0);
+          totalxvencerObj["-30"] += monto;
+          break;
+        case (dias_vencidos > -15 && dias_vencidos <= -7):
+          totalxvencerObj["-15"] = (parseFloat(totalxvencerObj["-15"]) || 0);
+          totalxvencerObj["-15"] += monto;
+          break;
+        case (dias_vencidos > -7):
+          totalxvencerObj["-7"] = (parseFloat(totalxvencerObj["-7"]) || 0);
+          totalxvencerObj["-7"] += monto;
+          break;
+      }
+    }
+  });
+
+  let totalvencido_array = Object.entries(totalvencidoObj);
+  let totalxvencer_array = Object.entries(totalxvencerObj);
+  let totalvencido = totalvencido_array.reduce((suma, v) => suma + (v[1] || 0), 0);
+  let totalxvencer = totalxvencer_array.reduce((suma, v) => suma + (v[1] || 0), 0);
+
+  totalvencido_array = totalvencido_array.map(([k, v]) => [k, v ? v.toFixed(2) : null]);
+  totalxvencer_array = totalxvencer_array.map(([k, v]) => [k, v ? v.toFixed(2) : null]);
+  totalvencido = totalvencido ? parseFloat(totalvencido).toFixed(2) : null;
+  totalxvencer = totalxvencer ? parseFloat(totalxvencer).toFixed(2) : null;
+
+  let data = [];
+  if (formato == "1") { // Generar PDF por Fecha de Vencimiento
+    title += " - Por Fecha de vencimiento";
+
+    dataset.sort((a, b) => {
+      return b.dias_vencidos - a.dias_vencidos
+    });
+
+    data = dataset;
+  }
+  else if (formato == "2") { // Generar PDF por Cliente
+    title += " - Por Clientes";
+
+    let expedientesxclienteObj = {};
+    dataset.map((v) => {
+      if (expedientesxclienteObj[v.id_consigner] === undefined) {
+        expedientesxclienteObj[v.id_consigner] = {
+          cliente: v.nameconsigner.trim(),
+          dias_credito: v.dias_credito,
+          totalvencido: null,
+          totalxvencer: null,
+          expedientes: [{
+            expediente: v.expediente,
+            factura: v.factura,
+            monto: v.total_pagar,
+            estatus: v.estatus,
+            dias_vencidos: v.dias_vencidos,
+            vencido: { ...totalvencidoObj_default },
+            xvencer: { ...totalxvencerObj_default }
+          }]
+        };
+      }
+      else {
+        expedientesxclienteObj[v.id_consigner]["expedientes"].push({
+          expediente: v.expediente,
+          factura: v.factura,
+          monto: v.total_pagar,
+          estatus: v.estatus,
+          dias_vencidos: v.dias_vencidos,
+          vencido: { ...totalvencidoObj_default },
+          xvencer: { ...totalxvencerObj_default }
+        });
+      }
+    });
+
+    Object.entries(expedientesxclienteObj).map(([key, item]) => {
+      item["expedientes"].map((v) => {
+        let total = 0;
+
+        let { dias_vencidos, monto, estatus } = v;
+        if (estatus.toUpperCase() == "VENCIDO") {
+          switch (true) {
+            case (dias_vencidos > 60):
+              v["vencido"]["+60"] = (parseFloat(v["vencido"]["+60"]) || 0);
+              v["vencido"]["+60"] += monto;
+              total += monto;
+              break;
+            case (dias_vencidos <= 60 && dias_vencidos > 45):
+              v["vencido"]["+45"] = (parseFloat(v["vencido"]["+45"]) || 0);
+              v["vencido"]["+45"] += monto;
+              total += monto;
+              break;
+            case (dias_vencidos <= 45 && dias_vencidos > 30):
+              v["vencido"]["+30"] = (parseFloat(v["vencido"]["+30"]) || 0);
+              v["vencido"]["+30"] += monto;
+              total += monto;
+              break;
+            case (dias_vencidos <= 30 && dias_vencidos > 15):
+              v["vencido"]["+15"] = (parseFloat(v["vencido"]["+15"]) || 0);
+              v["vencido"]["+15"] += monto;
+              total += monto;
+              break;
+            case (dias_vencidos <= 15 && dias_vencidos > 7):
+              v["vencido"]["+7"] = (parseFloat(v["vencido"]["+7"]) || 0);
+              v["vencido"]["+7"] += monto;
+              total += monto;
+              break;
+            case (dias_vencidos <= 7 && dias_vencidos > 0):
+              v["vencido"]["+0"] = (parseFloat(v["vencido"]["+0"]) || 0);
+              v["vencido"]["+0"] += monto;
+              total += monto;
+              break;
+          }
+
+          if (total) {
+            item["totalvencido"] = (parseFloat(item["totalvencido"]) || 0) + total;
+          } 
+        }
+        else if (estatus.toUpperCase() == "POR VENCER") {
+          switch (true) {
+            case (dias_vencidos <= -60):
+              v["xvencer"]["+60"] = (parseFloat(v["xvencer"]["+60"]) || 0);
+              v["xvencer"]["+60"] += monto;
+              total += monto;
+              break;
+            case (dias_vencidos > -60 && dias_vencidos <= -45):
+              v["xvencer"]["-60"] = (parseFloat(v["xvencer"]["-60"]) || 0);
+              v["xvencer"]["-60"] += monto;
+              total += monto;
+              break;
+            case (dias_vencidos > -45 && dias_vencidos <= -30):
+              v["xvencer"]["-45"] = (parseFloat(v["xvencer"]["-45"]) || 0);
+              v["xvencer"]["-45"] += monto;
+              total += monto;
+              break;
+            case (dias_vencidos > -30 && dias_vencidos <= -15):
+              v["xvencer"]["-30"] = (parseFloat(v["xvencer"]["-30"]) || 0);
+              v["xvencer"]["-30"] += monto;
+              total += monto;
+              break;
+            case (dias_vencidos > -15 && dias_vencidos <= -7):
+              v["xvencer"]["-15"] = (parseFloat(v["xvencer"]["-15"]) || 0);
+              v["xvencer"]["-15"] += monto;
+              total += monto;
+              break;
+            case (dias_vencidos > -7):
+              v["xvencer"]["-7"] = (parseFloat(v["xvencer"]["-7"]) || 0);
+              v["xvencer"]["-7"] += monto;
+              total += monto;
+              break;
+          }
+
+          if (total) {
+            item["totalxvencer"] = (parseFloat(item["totalxvencer"]) || 0) + total;
+          }          
+        }
+
+        return v;
+      });
+
+      data.push(item);
+    });
+
+    data.map((item) => {
+      item["totalvencido"] = item.totalvencido ? item.totalvencido.toFixed(2) : null;
+      item["totalxvencer"] = item.totalxvencer ? item.totalxvencer.toFixed(2) : null;
+
+      return item;
+    });
+
+    data.sort((a, b) => {
+      return a.cliente.localeCompare(b.cliente);
+    });
+  }
+
   ejs.renderFile(
     path.join(__dirname, "../views/", "reporteCXC.ejs"),
-    { title, data, totalOpDolar, totalOpSol, totalAdminDolar, totalAdminSol },
+    { title, formato, fechaEmision, data, totalvencido_array, totalxvencer_array, totalvencido, totalxvencer },
     (err, html) => {
       if (err) {
         res.send(err);

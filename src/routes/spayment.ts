@@ -37,6 +37,10 @@ import {
   updateDebsClient,
   
   eliminarSpaymentpro,
+  insertComentarioCXC,
+  getComentariosCXC,
+  insertComentarioCXP,
+  getComentariosCXP,  
 } from "../controllers/spayment.controller";
 
 router.post("/setSPaymentPro", TokenValidation, setSPaymentPro);
@@ -84,4 +88,13 @@ router.get(
 );
 
 router.put("/actualizar_debs_client", updateDebsClient);
+
+router.post("/insertarComentarioCXC", TokenValidation, insertComentarioCXC);
+router.get("/listarComentariosCXC", TokenValidation, getComentariosCXC);
+
+router.post("/insertarComentarioCXP", TokenValidation, insertComentarioCXP);
+router.get("/listarComentariosCXP", TokenValidation, getComentariosCXP);
+
+
+
 export default router;
