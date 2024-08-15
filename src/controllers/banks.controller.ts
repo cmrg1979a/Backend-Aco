@@ -1333,3 +1333,32 @@ export const updateBank = async (req: Request, res: Response) => {
     }
   );
 };
+export const InsertarCuentaDetalles = async (req: Request, res: Response) => {
+  const dataObj = req.body;
+
+  await pool.query(
+    "SELECT *from function_cuenta_details($1,$2, $3, $4, $5,$6);",
+    [
+      dataObj.id ? dataObj.id : null,
+      dataObj.id_bank,
+      dataObj.id_coin,
+      dataObj.nrocuenta,
+      dataObj.nrocci ? dataObj.nrocci : null,
+      dataObj.status,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          data: rows,
+          token: renewTokenMiddleware(req),
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
