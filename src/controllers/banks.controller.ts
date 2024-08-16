@@ -1362,3 +1362,25 @@ export const InsertarCuentaDetalles = async (req: Request, res: Response) => {
     }
   );
 };
+export const EliminarCuenta = async (req: Request, res: Response) => {
+  const dataObj = req.body;
+
+  await pool.query(
+    "SELECT *from function_cuenta_cambiarestado($1,$2);",
+    [dataObj.id, dataObj.status],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          data: rows,
+          token: renewTokenMiddleware(req),
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
