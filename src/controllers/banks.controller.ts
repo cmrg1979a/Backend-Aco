@@ -1344,7 +1344,7 @@ export const InsertarCuentaDetalles = async (req: Request, res: Response) => {
       dataObj.id_coin,
       dataObj.nrocuenta,
       dataObj.nrocci ? dataObj.nrocci : null,
-      Number(dataObj.status) ? dataObj.status : null,
+      dataObj.status !== "" && !isNaN(dataObj.status) ? dataObj.status : null,
     ],
     (err, response, fields) => {
       if (!err) {
