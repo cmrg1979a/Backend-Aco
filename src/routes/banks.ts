@@ -34,6 +34,7 @@ import {
   readBank,
   updateBank,
   InsertarCuentaDetalles,
+  EliminarCuenta,
 } from "../controllers/banks.controller";
 
 router.post("/getBanksList", TokenValidation, getBanksList);
@@ -126,5 +127,6 @@ router.post("/insertar_bank/", TokenValidation, insertBank);
 router.get("/ver_bank/", TokenValidation, readBank);
 router.put("/actualizar_bank/", TokenValidation, updateBank);
 router.post("/insertar_cuenta", TokenValidation, InsertarCuentaDetalles);
+router.put("/eliminar_cuenta", TokenValidation, EliminarCuenta);
 
 export default router;
