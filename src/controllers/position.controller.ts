@@ -32,8 +32,9 @@ export const CargarPosicion = async (req: Request, res: Response) => {
 export const ListarPosicion = async (req: Request, res: Response) => {
   const position: IPosition = req.query;
   await pool.query(
-    "SELECT * FROM function_position_listar($1,$2,$3,$4)",
+    "SELECT * FROM function_position_listar($1,$2,$3,$4,$5)",
     [
+      position.id_branch,
       position.code ? position.code : null,
       position.name ? position.name : null,
       position.description ? position.description : null,

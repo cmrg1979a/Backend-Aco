@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 import { conexion } from "../routes/databasePGOp";
+import { envioCorreo } from "../middleware/EnvioCorreoMiddleware";
 
 const pool = conexion();
 
@@ -157,6 +158,92 @@ export const guardarCostosConfig = async (req: Request, res: Response) => {
   );
 };
 
+export const envioMSGEmail = async (req: Request, res: Response) => {
+  let query = req.query;
+  let codigo = Math.floor(1000 + Math.random() * 9000);
+  let html = `
+  <h1>Bienvenido al SISTEMA ACO</h1>
+  <p>Para continuar con su registro, por favor ingrese en la plataforma el c&oacute;digo proporcionado a continuaci&oacute;n</p>
+  <p>Tu c&oacute;digo de un solo uso es:</p>
+  <div style="align-content: center !important; text-align: center; padding: auto;">
+    <div style="border: 1px solid; border-radius: 5px; padding: 10px; width: 50px; text-align: center;">${codigo}</div>    
+  </div>
+  <div>
+  Duración del código: 1h
+  </div>
+  <div style="float:left;">
+          <img src="https://api-general.qreport.site/uploads/1713276374733.jfif" alt="LogoChain" max-width="350" height="300" />
+  </div>
+  `;
+  let data = {
+    from: '"ACO" <sistema1@piccargo.com>',
+    email: query.email,
+    subject: "ACO – Registro",
+    html: html,
+  };
+  let respuest = await envioCorreo(data);
+  if (respuest.estado) {
+    await pool.query(
+      "SELECT * FROM function_token_registro($1,$2)",
+      [codigo, query.email],
+      (err, response, fields) => {
+        if (!err) {
+          let rows = response.rows;
+
+          res.json({
+            status: 200,
+            mensaje: rows[0].mensaje,
+            estadoflag: rows[0].estadoflag,
+          });
+        } else {
+          console.log(err);
+        }
+      }
+    );
+  }
+};
+export const FinalizarConfiguracion = async (req: Request, res: Response) => {
+  let { id_branch } = req.body;
+  await pool.query(
+    "select *from function_finalizar_config($1)",
+    [id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const validarTokenRegistro = async (req: Request, res: Response) => {
+  let { codigo, email, eliminartoken } = req.query;
+  await pool.query(
+    "SELECT * FROM function_token_registro_validar($1,$2,$3)",
+    [codigo, email, eliminartoken],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
 export const envioMSGWhathapp = async (req: Request, res: Response) => {
   const { email, phone } = req.query;
   // const { Client, LocalAuth } = require("whatsapp-web.js");

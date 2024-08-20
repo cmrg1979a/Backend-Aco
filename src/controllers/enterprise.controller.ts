@@ -5,6 +5,7 @@ import * as pg from "pg";
 const { Pool } = pg;
 import { postEnterprise } from "../interface/enterprises";
 import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
+import { envioCorreo } from "../middleware/EnvioCorreoMiddleware";
 const nodemailer = require("nodemailer");
 const pool = conexion();
 export const getBracnh = async (req: Request, res: Response) => {
@@ -244,11 +245,11 @@ export const RegistroNuevaEmpresa = async (req: Request, res: Response) => {
   const { trade_name, id_pais, names, surname, second_surname, email, phone } =
     req.body;
   let clave = generarContrasenaAleatoria(10);
-  
+
   await pool.query(
     "SELECT *from function_enterprise_registro($1,$2, $3, $4,$5,$6,$7,$8);",
     [trade_name, id_pais, names, surname, second_surname, clave, email, phone],
-    (err, response, fields) => {
+    async (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
         let user = {
@@ -259,7 +260,25 @@ export const RegistroNuevaEmpresa = async (req: Request, res: Response) => {
           second_surname: second_surname,
           users: rows[0].users,
         };
-        EnvioCorreo(user);
+        let html = `
+          <p> Hola ${user.surname} ${user.second_surname}, ${user.names} </p>
+          <p> Se ha creado tu usuario  - ADMINISTRADOR DE SISTEMA</p>
+           <p> <b>usuario: </b> ${user.users} </p>
+            <p> <b>clave: </b> ${user.clave} </p>
+            <br/>
+           Para acceder de click <a href="https://chainsolver.piccargo.com/"> Aqui </a>  
+          <br/>
+          <p><img src="https://i.ibb.co/ypKb7q1/chain-Solver.png" alt="LogoChain" width="404" height="112" /></p>  
+        `;
+
+        let data = {
+          from: '"ACO" <sistema1@piccargo.com>',
+          email: user.email,
+          subject: "ACO – Registro",
+          html: html,
+        };
+        await envioCorreo(data);
+        // EnvioCorreo(user);
         res.json({
           status: 200,
           estadoflag: rows[0].estadoflag,
@@ -330,11 +349,11 @@ async function EnvioCorreo(datos) {
   let info = await transporter.sendMail({
     from: 'CHAIN-SOLVER" <sistema1@pic-cargo.com>',
     to: datos.email,
-    subject: "ChainSolver – Registro de USUARIO",
+    subject: "ACO – Registro de USUARIO",
     text: "Recuperación de contraseña",
     html: `
     <p> Hola ${datos.surname} ${datos.second_surname}, ${datos.names} </p>
-    <p> Se ha creado tu usuario  </p>
+    <p> Se ha creado tu usuario como <b> Administrador del sistema</b> </p>
     <p> <b>usuario: </b> ${datos.users} </p>
     <p> <b>clave: </b> ${datos.clave} </p>
     <br/>

@@ -70,6 +70,7 @@ export const setProgrammedPayment = async (req: Request, res: Response) => {
       dataObj.details.map((element) => {
         return element.controlgastoegreso;
       }), // bigint[]
+      dataObj.id_branch,
     ],
     (err, response, fields) => {
       if (!err) {

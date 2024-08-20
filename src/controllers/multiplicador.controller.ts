@@ -36,6 +36,32 @@ export const getMultiplicador = async (req: Request, res: Response) => {
     }
   );
 };
+export const getMultiplicadorConfig = async (req: Request, res: Response) => {
+  const { id_shipment,  id_branch } = req.query;
+
+  await pool.query(
+    "SELECT * FROM table_multiplicador_cargar_config($1,$2)",
+    [
+      id_branch,
+      id_shipment
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          estadoflag: rows[0].estadoflag,
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+         data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
 
 export const getListMultiplicador = async (req: Request, res: Response) => {
   const data = req.query;

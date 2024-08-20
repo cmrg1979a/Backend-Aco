@@ -8,8 +8,10 @@ var xl = require("excel4node");
 import path from "path";
 import { postBank } from "../interface/bank";
 export const getBanksList = async (req: Request, res: Response) => {
+  let { id_branch } = req.body;
   await pool.query(
-    "SELECT * FROM table_banks_listar()",
+    "SELECT * FROM table_banks_listar($1)",
+    [id_branch],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -104,8 +106,10 @@ export const getListBanksDetailsCargar = async (
   req: Request,
   res: Response
 ) => {
+  let { id_branch } = req.query;
   await pool.query(
-    `SELECT * FROM bank_details_cargar();`,
+    `SELECT * FROM bank_details_cargar($1);`,
+    [id_branch],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;

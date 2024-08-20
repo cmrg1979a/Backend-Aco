@@ -8,8 +8,10 @@ import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 import { postYear } from "../interface/year";
 
 export const getChargeYear = async (req: Request, res: Response) => {
+  let { id_branch } = req.query;
   await pool.query(
-    "SELECT * FROM TABLE_YEAR_listar();",
+    "SELECT * FROM TABLE_YEAR_listar($1);",
+    [id_branch],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
