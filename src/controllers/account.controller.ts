@@ -37,22 +37,28 @@ export const setAccount = async (req: Request, res: Response) => {
   const dataObj = req.body;
 
   await pool.query(
-    "INSERT INTO Entities_Accounts (id_entities, id_account, id_banks, id_coins, accountNumber, status,id_branch) values ($1,$2,$3,$4,$5,$6,$7)",
+    "SELECT * FROM entities_accounts_insert($1,$2,$3,$4,$5,$6,$7,$8)",
     [
-      dataObj.id_entities,
-      dataObj.id_account,
-      dataObj.id_banks,
-      dataObj.id_coins,
-      dataObj.accountNumber,
-      dataObj.status,
-      dataObj.id_branch,
+      dataObj.id_entities ? dataObj.id_entities : null,
+      dataObj.nro_cuenta ? dataObj.nro_cuenta : null,
+      dataObj.cci ? dataObj.cci : null, 
+      dataObj.id_banco ? dataObj.id_banco : null,
+      dataObj.id_coins ? dataObj.id_coins : null,
+      dataObj.nro_swift ? dataObj.nro_swift : null,
+      dataObj.id_intermediario ? dataObj.id_intermediario : null,
+      dataObj.nro_cuenta_intermediario ? dataObj.nro_cuenta_intermediario : null,
     ],
-    (err, rows, fields) => {
+    (err, response, fields) => {
       if (!err) {
+        const rows = response.rows;
+
         res.json({
           status: 200,
           statusBol: true,
-          data: rows.rows,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);

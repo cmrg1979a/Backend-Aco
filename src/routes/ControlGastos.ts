@@ -24,6 +24,9 @@ import {
   cargaMasivaControlDeGasto,
   obtenerNombreCamapania,
   cuotasMasterTipoProveedorInsertarActualizar,
+  setProformaFiscal,
+  getFacturasFiscales,
+  delProformaFiscal
 } from "../controllers/controlGastos.controller";
 
 router.post("/setControl", TokenValidation, setControl);
@@ -66,5 +69,8 @@ router.post(
   TokenValidation,
   cuotasMasterTipoProveedorInsertarActualizar
 );
+router.post("/setProformaFiscal", TokenValidation, setProformaFiscal);
+router.get("/getFacturasFiscales", TokenValidation, getFacturasFiscales);
+router.post("/delProformaFiscal/:id", TokenValidation, delProformaFiscal);
 
 export default router;

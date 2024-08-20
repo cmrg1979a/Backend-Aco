@@ -178,7 +178,7 @@ export const delInvoice = async (req: Request, res: Response) => {
         res.json({
           status: 200,
           statusBol: true,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -557,35 +557,33 @@ export const setInvoice = async (req: Request, res: Response) => {
   const dataObj = req.body;
 
   pool.query(
-    "INSERT INTO Table_Invoice (id_house, id_proveedor, id_path, type_pago, number, date, status,id_correlativo,id_master) values ($1,$2,$3,$4,$5,$6,$7,$8,$9)",
+    "SELECT * FROM table_invoice_insert($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)", 
     [
-      dataObj.id_house,
-      dataObj.id_proveedor,
-      dataObj.id_path,
-      dataObj.type_pago,
-      dataObj.number,
-      dataObj.date,
-      dataObj.status,
-      dataObj.id_correlativo,
-      dataObj.id_master,
+      dataObj.id_house ? dataObj.id_house : null,
+      dataObj.id_proveedor ? dataObj.id_proveedor : null,
+      dataObj.id_path ? dataObj.id_path : null,
+      dataObj.type_pago ? dataObj.type_pago : null,
+      dataObj.number ? dataObj.number : null,
+      dataObj.date ? dataObj.date : null,
+      dataObj.status ? dataObj.status : null,
+      dataObj.id_correlativo ? dataObj.id_correlativo : null,
+      dataObj.id_master ? dataObj.id_master : null,
+      dataObj.monto ? dataObj.monto : null,
     ],
-    (err, rows, fields) => {
+    (err, response, fields) => {
       if (!err) {
+        let rows = response.rows;
+
         res.json({
           status: 200,
           statusBol: true,
-          data: {
-            msg: "Registro completo",
-          },
+          data: rows,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          token: renewTokenMiddleware(req),
         });
       } else {
-        res.json({
-          status: 400,
-          statusBol: false,
-          data: {
-            msg: err,
-          },
-        });
+        console.log(err)
       }
     }
   );
@@ -1140,8 +1138,8 @@ export const listPagoControlGastoXProveedor = async (
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -1204,7 +1202,6 @@ export const eliminarSpaymentpro = async (req: Request, res: Response) => {
   pool.query(
     "select * from function_eliminar_spaymentpro($1)",
     [req.body.id ? req.body.id : null],
-
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -1212,8 +1209,8 @@ export const eliminarSpaymentpro = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
             estadoflag: rows[0].estadoflag,
           });
         } else {

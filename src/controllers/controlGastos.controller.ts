@@ -686,3 +686,85 @@ export const cuotasMasterTipoProveedorInsertarActualizar = async (
     }
   );
 };
+
+export const setProformaFiscal = async (req: Request, res: Response) => {
+  const dataObj = req.body;
+
+  pool.query(
+    "SELECT * FROM table_facturasfiscales_insertar($1,$2,$3,$4,$5,$6)", 
+    [
+      dataObj.id_house ? dataObj.id_house : null,
+      dataObj.id_path ? dataObj.id_path : null,
+      dataObj.tipo_pago ? dataObj.tipo_pago : null,
+      dataObj.nro_factura ? dataObj.nro_factura : null,
+      dataObj.fecha ? dataObj.fecha : null,
+      dataObj.status ? dataObj.status : null,      
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err)
+      }
+    }
+  );
+};
+
+export const getFacturasFiscales = async (req: Request, res: Response) => {
+  const dataObj = req.query;
+
+  await pool.query(
+    "SELECT * FROM table_facturasfiscales_listar($1)",
+    [dataObj.id_house ? dataObj.id_house : null],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }    
+  );
+};
+
+export const delProformaFiscal = async (req: Request, res: Response) => {
+  const id = req.params.id;
+
+  await pool.query(
+    "select * from table_facturasfiscales_eliminar($1)",
+    [id],
+    (err, response, fields) => {
+      if (!err) {        
+        let rows = response.rows;
+
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};

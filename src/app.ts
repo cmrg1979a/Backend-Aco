@@ -14,7 +14,6 @@ const corsOptions = {
   allowedHeaders: "Content-Type,Authorization",
 };
 
-
 const corsMiddleware = cors(corsOptions);
 
 /**PROUCCIÓN */
@@ -24,20 +23,21 @@ const pool = new Pool({
   user: "postgres",
   password: "@Developer2021Pic",
   port: "5432",
-  database: "db_op_main_01",
+  // database: "db_op_main_edison",
+  database: "db_op_main_01",  
 });
 
 /** DESARROLLO */
 // Cache de opciones de cors
-// const pool = new Pool({
-//   host: "67.205.129.62",
-//   user: "chainsolver",
-//   password: "Fr3sc0l1t4+",
-//   port: "5432",
-//   // database: "db_op_main_dev",
-//   // database: "db_op_main_02",
-//   database: "db_op_main_qa",
-// });
+/*const pool = new Pool({
+  host: "67.205.129.62",
+  user: "chainsolver",
+  password: "Fr3sc0l1t4+",
+  port: "5432",
+  // database: "db_op_main_dev",
+  // database: "db_op_main_02",
+  database: "db_op_main_edison",
+});*/
 
 /*pool
   .connect()
@@ -209,8 +209,9 @@ app.post("/uploadAllPath", function (req, res) {
     if (err) {
       return res.end("Error uploading file.");
     }
+
     pool.query(
-      "select * from Table_AllPath_insertar($1,$2,$3,$4,$5,$6 )",
+      "select * from Table_AllPath_insertar($1,$2,$3,$4,$5,$6)",
       [newName, type, size, process.env.RUTA_FILE + ruta, fileName[0], 1],
       (err, response, fields) => {
         if (!err) {
@@ -219,7 +220,6 @@ app.post("/uploadAllPath", function (req, res) {
             res.json({
               status: 200,
               statusBol: true,
-
               data: rows,
             });
           } else {
