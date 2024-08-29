@@ -17,7 +17,7 @@ const corsOptions = {
 const corsMiddleware = cors(corsOptions);
 
 /**PROUCCIÓN */
-const pool = new Pool({
+/*const pool = new Pool({
   host: "10.116.0.2",
   // host: "157.230.14.98",//// remoto
   user: "postgres",
@@ -25,11 +25,11 @@ const pool = new Pool({
   port: "5432",
   // database: "db_op_main_edison",
   database: "db_op_main_01",  
-});
+});*/
 
 /** DESARROLLO */
 // Cache de opciones de cors
-/*const pool = new Pool({
+const pool = new Pool({
   host: "67.205.129.62",
   user: "chainsolver",
   password: "Fr3sc0l1t4+",
@@ -37,7 +37,7 @@ const pool = new Pool({
   // database: "db_op_main_dev",
   // database: "db_op_main_02",
   database: "db_op_main_edison",
-});*/
+});
 
 /*pool
   .connect()
