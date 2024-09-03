@@ -1818,12 +1818,12 @@ export const exportarPDFCXP = async (req: Request, res: Response) => {
         if (detalles.length > 0) {
           detalles.forEach((detalle) => {
             dataset.push({
-              id_proveedor: element.id,
+              id_proveedor: element.id_proveedor,
               proveedor: element.nameconsigner,
               nameconsigner: detalle.nameconsigner,
               correlativo: "",
               nro_master: "",
-              expedientes: detalle.nro_factura,
+              expediente: detalle.nro_factura,
               fecha_disponibilidad: detalle.created_at ? moment(detalle.created_at).format("DD/MM/YYYY") : '',
               symbol: detalle.symbol,
               total_pagar: detalle.monto,
@@ -2215,7 +2215,8 @@ export const exportarPDFCXC = async (req: Request, res: Response) => {
               fecha_disponibilidad: detalle.fecha ? moment(detalle.fecha).format("DD/MM/YYYY") : "",
               factura: detalle.concepto ? detalle.concepto : "N/F",
               symbol: detalle.symbol,
-              total_pagar: detalle.monto,
+              // total_pagar: detalle.monto,
+              total_pagar: detalle.total_pagar,
               diasatraso: detalle.diasatraso ? detalle.diasatraso : 0,
               dias_credito: detalle.dias_credito ? detalle.dias_credito : 0,
               dias_vencidos: detalle.dias_vencidos ? detalle.dias_vencidos : 0,

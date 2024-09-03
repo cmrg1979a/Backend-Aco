@@ -35,7 +35,9 @@ import {
   cargarProveedoresXRol,
   cargarProveedoresRolNoShipper,
   validarNombreCliente,
-  validarNombreProveedor
+  validarNombreProveedor,
+  validarDocumentoCliente,
+  validarDocumentoProveedor
 } from "../controllers/entities.controller";
 
 router.post("/getEntitiesList", TokenValidation, getEntitiesList);
@@ -69,6 +71,7 @@ router.get("/tel_contacto_proveedor", TokenValidation, telContactoProveedor);
 router.get("/cargar_proveedor_x_rol", TokenValidation, cargarProveedoresXRol);
 router.get("/cargar_proveedor_rol_no_shipper", TokenValidation, cargarProveedoresRolNoShipper);
 router.get("/validar_nombre_proveedor", TokenValidation, validarNombreProveedor);
+router.get("/validar_documento_proveedor", TokenValidation, validarDocumentoProveedor);
 
 // CLIENTES
 router.get("/listado_clientes", TokenValidation, getListCliente);
@@ -78,6 +81,7 @@ router.put("/actualizar_cliente", TokenValidation, ActualizarCliente);
 router.get("/listar_persona_tipo_persona", TokenValidation, ListarPersonaTipoPersona);
 router.put("/actualizar_rol_proveedor", TokenValidation, guardarRolProveedor);
 router.get("/validar_nombre_cliente", TokenValidation, validarNombreCliente);
+router.get("/validar_documento_cliente", TokenValidation, validarDocumentoCliente);
 
 
 export default router;

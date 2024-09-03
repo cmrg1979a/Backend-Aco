@@ -27,10 +27,11 @@ export const GuardarProveedor = async (req: Request, res: Response) => {
     lstConvenios,
     lstTarifas, 
     lstInformacionBancaria,
+    convenioActual = {}
   } = req.body;
 
   await pool.query(
-    "SELECT * FROM function_table_entities_registrarproveedor($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33)",
+    "SELECT * FROM function_table_entities_registrarproveedor($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36)",
     [
       id_branch ? id_branch : null,      
       nombrecompleto ? nombrecompleto : null,
@@ -54,17 +55,20 @@ export const GuardarProveedor = async (req: Request, res: Response) => {
       lstConvenios.map((item) => item.fecha ? item.fecha : null),
       lstConvenios.map((item) => item.dias_credito ? item.dias_credito : 0),
       lstConvenios.map((item) => item.email_soporte ? item.email_soporte : null),
+      lstConvenios.map((item) => item.id_path ? item.id_path : null),
       lstTarifas.map((item) => item.fecha ? item.fecha : null),
       lstTarifas.map((item) => item.codigo ? item.codigo : null),
       lstTarifas.map((item) => item.email_soporte ? item.email_soporte : null),
       lstTarifas.map((item) => item.tarifa ? item.tarifa : 0),
+      lstTarifas.map((item) => item.id_path ? item.id_path : null),
       lstInformacionBancaria.map((item) => item.nro_cuenta ? item.nro_cuenta : null),
       lstInformacionBancaria.map((item) => item.cci ? item.cci : null),
       lstInformacionBancaria.map((item) => item.id_banco ? item.id_banco : null),
       lstInformacionBancaria.map((item) => item.id_coins ? item.id_coins : null),
       lstInformacionBancaria.map((item) => item.nro_swift ? item.nro_swift : null),
       lstInformacionBancaria.map((item) => item.id_intermediario ? item.id_intermediario : null),
-      lstInformacionBancaria.map((item) => item.nro_cuenta_intermediario ? item.nro_cuenta_intermediario : null),
+      lstInformacionBancaria.map((item) => item.nro_cuenta_intermediario ? item.nro_cuenta_intermediario : null), // 33
+      convenioActual.dias_credito ? convenioActual.dias_credito : 0,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -236,16 +240,12 @@ export const getValidaRazonSocial = async (req: Request, res: Response) => {
   );
 };
 
-export const getValidaTipoDocumentoDocument = async (
-  req: Request,
-  res: Response
-) => {
+export const getValidaTipoDocumentoDocument = async (req: Request, res: Response) => {
   const { id_branch, id_tipodocumento, documento } = req.query;
 
   await pool.query(
     "SELECT * FROM function_entidad_val_tipodocument_documet($1,$2,$3)",
     [id_branch, id_tipodocumento, documento],
-
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -287,10 +287,11 @@ export const actualizarProveedor = async (req: Request, res: Response) => {
     lstConvenios,
     lstTarifas, 
     lstInformacionBancaria,
+    convenioActual = {}
   } = req.body;
 
   await pool.query(
-    "SELECT * FROM function_table_entities_actualizarproveedor($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39)",
+    "SELECT * FROM function_table_entities_actualizarproveedor($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42)",
     [
       id ? id : null,
       id_branch ? id_branch : null,      
@@ -318,11 +319,13 @@ export const actualizarProveedor = async (req: Request, res: Response) => {
       lstConvenios.map((item) => item.fecha ? item.fecha : null),
       lstConvenios.map((item) => item.dias_credito ? item.dias_credito : 0),
       lstConvenios.map((item) => item.email_soporte ? item.email_soporte : null),
+      lstConvenios.map((item) => item.id_path ? item.id_path : null),
       lstTarifas.map((item) => item.id ? item.id : null),
       lstTarifas.map((item) => item.fecha ? item.fecha : null),
       lstTarifas.map((item) => item.codigo ? item.codigo : null),
       lstTarifas.map((item) => item.email_soporte ? item.email_soporte : null),
       lstTarifas.map((item) => item.tarifa ? item.tarifa : 0),
+      lstTarifas.map((item) => item.id_path ? item.id_path : null),
       lstInformacionBancaria.map((item) => item.id ? item.id : null),
       lstInformacionBancaria.map((item) => item.nro_cuenta ? item.nro_cuenta : null),
       lstInformacionBancaria.map((item) => item.cci ? item.cci : null),
@@ -330,7 +333,8 @@ export const actualizarProveedor = async (req: Request, res: Response) => {
       lstInformacionBancaria.map((item) => item.id_coins ? item.id_coins : null),
       lstInformacionBancaria.map((item) => item.nro_swift ? item.nro_swift : null),
       lstInformacionBancaria.map((item) => item.id_intermediario ? item.id_intermediario : null),
-      lstInformacionBancaria.map((item) => item.nro_cuenta_intermediario ? item.nro_cuenta_intermediario : null),
+      lstInformacionBancaria.map((item) => item.nro_cuenta_intermediario ? item.nro_cuenta_intermediario : null), //39
+      convenioActual.dias_credito ? convenioActual.dias_credito : 0
     ],
     (err, response, fields) => {
       if (!err) {
@@ -362,6 +366,34 @@ export const validarNombreProveedor = async (req: Request, res: Response) => {
     [
       id_branch, 
       nombre ? nombre : null
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const validarDocumentoProveedor = async (req: Request, res: Response) => {
+  const dataObj = req.query;
+
+  await pool.query(
+    "SELECT * FROM function_validar_documento_proveedor($1,$2,$3)",
+    [
+      dataObj.id_branch, 
+      dataObj.id_tipodocumento ? dataObj.id_tipodocumento : null,
+      dataObj.nro_documento ? dataObj.nro_documento : null
     ],
     (err, response, fields) => {
       if (!err) {
@@ -445,11 +477,12 @@ export const GuardarCliente = async (req: Request, res: Response) => {
     lstTarifas, 
     lstInformacionBancaria,
     lstShippers,
-    informacionEntrega
+    informacionEntrega,
+    convenioActual = {}
   } = req.body;
 
   await pool.query(
-    "SELECT * FROM function_table_entities_registrarcliente($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41)",
+    "SELECT * FROM function_table_entities_registrarcliente($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44)",
     [
       id_branch ? id_branch : null,
       id_tipopersona ? id_tipopersona : null,
@@ -470,10 +503,12 @@ export const GuardarCliente = async (req: Request, res: Response) => {
       lstConvenios.map((item) => item.fecha ? item.fecha : null),
       lstConvenios.map((item) => item.dias_credito ? item.dias_credito : 0),
       lstConvenios.map((item) => item.email_soporte ? item.email_soporte : null),
+      lstConvenios.map((item) => item.id_path ? item.id_path : null),
       lstTarifas.map((item) => item.fecha ? item.fecha : null),
       lstTarifas.map((item) => item.codigo ? item.codigo : null),
       lstTarifas.map((item) => item.email_soporte ? item.email_soporte : null),
       lstTarifas.map((item) => item.tarifa ? item.tarifa : 0),
+      lstTarifas.map((item) => item.id_path ? item.id_path : null),
       lstInformacionBancaria.map((item) => item.nro_cuenta ? item.nro_cuenta : null),
       lstInformacionBancaria.map((item) => item.cci ? item.cci : null),
       lstInformacionBancaria.map((item) => item.id_banco ? item.id_banco : null),
@@ -491,7 +526,8 @@ export const GuardarCliente = async (req: Request, res: Response) => {
       informacionEntrega.id_distrito ? informacionEntrega.id_distrito : null,
       informacionEntrega.agencia ? informacionEntrega.agencia : null,
       informacionEntrega.celular_agencia ? informacionEntrega.celular_agencia : null,
-      informacionEntrega.status ? 1 : 0,
+      informacionEntrega.status ? 1 : 0, // 41
+      convenioActual.dias_credito ? convenioActual.dias_credito : 0
     ],
     (err, response, fields) => {
       if (!err) {
@@ -555,11 +591,12 @@ export const ActualizarCliente = async (req: Request, res: Response) => {
     lstTarifas, 
     lstInformacionBancaria,
     lstShippers,
-    informacionEntrega
+    informacionEntrega,
+    convenioActual = {}
   } = req.body;
 
   await pool.query(
-    "SELECT * FROM function_table_entities_actualizarcliente($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49)",
+    "SELECT * FROM function_table_entities_actualizarcliente($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52)",
     [
       id ? id : null,
       id_branch ? id_branch : null,
@@ -584,11 +621,13 @@ export const ActualizarCliente = async (req: Request, res: Response) => {
       lstConvenios.map((item) => item.fecha ? item.fecha : null),
       lstConvenios.map((item) => item.dias_credito ? item.dias_credito : 0),
       lstConvenios.map((item) => item.email_soporte ? item.email_soporte : null),
+      lstConvenios.map((item) => item.id_path ? item.id_path : null),
       lstTarifas.map((item) => item.id ? item.id : null),
       lstTarifas.map((item) => item.fecha ? item.fecha : null),
       lstTarifas.map((item) => item.codigo ? item.codigo : null),
       lstTarifas.map((item) => item.email_soporte ? item.email_soporte : null),
       lstTarifas.map((item) => item.tarifa ? item.tarifa : 0), // 28
+      lstTarifas.map((item) => item.id_path ? item.id_path : null),
       lstInformacionBancaria.map((item) => item.id ? item.id : null),
       lstInformacionBancaria.map((item) => item.nro_cuenta ? item.nro_cuenta : null),
       lstInformacionBancaria.map((item) => item.cci ? item.cci : null),
@@ -609,7 +648,8 @@ export const ActualizarCliente = async (req: Request, res: Response) => {
       informacionEntrega.id_distrito ? informacionEntrega.id_distrito : null,
       informacionEntrega.agencia ? informacionEntrega.agencia : null,
       informacionEntrega.celular_agencia ? informacionEntrega.celular_agencia : null,
-      informacionEntrega.status ? 1 : 0,
+      informacionEntrega.status ? 1 : 0, // 49
+      convenioActual.dias_credito ? convenioActual.dias_credito : 0
     ],
     (err, response, fields) => {
       if (!err) {
@@ -630,16 +670,41 @@ export const ActualizarCliente = async (req: Request, res: Response) => {
   );
 };
 export const validarNombreCliente = async (req: Request, res: Response) => {
-  const { 
-    id_branch, 
-    nombre 
-  } = req.query;
+  const dataObj = req.query;
 
   await pool.query(
     "SELECT * FROM function_validar_nombre_cliente($1,$2)",
     [
-      id_branch, 
-      nombre ? nombre : null
+      dataObj.id_branch, 
+      dataObj.nombre ? dataObj.nombre : null
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const validarDocumentoCliente = async (req: Request, res: Response) => {
+  const dataObj = req.query;
+
+  await pool.query(
+    "SELECT * FROM function_validar_documento_cliente($1,$2,$3)",
+    [
+      dataObj.id_branch, 
+      dataObj.id_tipodocumento ? dataObj.id_tipodocumento : null,
+      dataObj.nro_documento ? dataObj.nro_documento : null
     ],
     (err, response, fields) => {
       if (!err) {
