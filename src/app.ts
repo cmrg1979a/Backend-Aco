@@ -14,7 +14,6 @@ const corsOptions = {
   allowedHeaders: "Content-Type,Authorization",
 };
 
-
 const corsMiddleware = cors(corsOptions);
 
 /**PROUCCIÓN */
@@ -24,6 +23,7 @@ const corsMiddleware = cors(corsOptions);
 //   user: "postgres",
 //   password: "@Developer2021Pic",
 //   port: "5432",
+//   // database: "db_op_main_edison",
 //   database: "db_op_main_01",
 // });
 
@@ -36,7 +36,7 @@ const pool = new Pool({
   port: "5432",
   // database: "db_op_main_dev",
   database: "db_op_main_02",
-  // database: "db_op_main_qa",
+  // database: "db_op_main_edison",
 });
 
 /*pool
@@ -123,6 +123,7 @@ import typepayments from "./routes/typepayments";
 import users from "./routes/users";
 import position from "./routes/position";
 import configuracionInicial from "./routes/configuracionInicial";
+import seguridad from "./routes/seguridad";
 
 // settings
 app.set("port", 9200);
@@ -338,4 +339,5 @@ app.use(typepayments);
 app.use(users);
 app.use(position);
 app.use(configuracionInicial);
+app.use(seguridad);
 export default app;

@@ -35,6 +35,12 @@ import {
   updateBank,
   InsertarCuentaDetalles,
   EliminarCuenta,
+  VerPagoRealizado,
+  AnularPagoRealizado,
+  ActualizarPagoRealizado,
+  VerCobroRealizado,
+  AnularCobroRealizado,
+  ActualizarCobroRealizado,
 } from "../controllers/banks.controller";
 
 router.post("/getBanksList", TokenValidation, getBanksList);
@@ -128,5 +134,11 @@ router.get("/ver_bank/", TokenValidation, readBank);
 router.put("/actualizar_bank/", TokenValidation, updateBank);
 router.post("/insertar_cuenta", TokenValidation, InsertarCuentaDetalles);
 router.put("/eliminar_cuenta", TokenValidation, EliminarCuenta);
+router.get("/ver_pago", TokenValidation, VerPagoRealizado);
+router.put("/anular_pago", TokenValidation, AnularPagoRealizado);
+router.put("/actualizar_pago", TokenValidation, ActualizarPagoRealizado);
+router.get("/ver_cobro", TokenValidation, VerCobroRealizado);
+router.put("/anular_cobro", TokenValidation, AnularCobroRealizado);
+router.put("/actualizar_cobro", TokenValidation, ActualizarCobroRealizado);
 
 export default router;
