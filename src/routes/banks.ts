@@ -41,6 +41,7 @@ import {
   VerCobroRealizado,
   AnularCobroRealizado,
   ActualizarCobroRealizado,
+  validateNroOperacionCobro,
 } from "../controllers/banks.controller";
 
 router.post("/getBanksList", TokenValidation, getBanksList);
@@ -140,5 +141,10 @@ router.put("/actualizar_pago", TokenValidation, ActualizarPagoRealizado);
 router.get("/ver_cobro", TokenValidation, VerCobroRealizado);
 router.put("/anular_cobro", TokenValidation, AnularCobroRealizado);
 router.put("/actualizar_cobro", TokenValidation, ActualizarCobroRealizado);
+router.get(
+  "/validate_nro_operacion_cobro",
+  TokenValidation,
+  validateNroOperacionCobro
+);
 
 export default router;
