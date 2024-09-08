@@ -240,7 +240,7 @@ export const RegistrarPagosProgramados = async (
   let details = req.body.details;
 
   await pool.query(
-    "SELECT * FROM function_registrar_pagoprogramado($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
+    "SELECT * FROM function_registrar_pagoprogramado($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)",
     [
       dataObj.id_path, // int,
       dataObj.id_cuentas, // int,
@@ -260,6 +260,7 @@ export const RegistrarPagosProgramados = async (
         return element.monto_mon_ext;
       }), // numeric[]
       dataObj.comentarios,
+      dataObj.id_proveedor,
     ],
     (err, response, fields) => {
       if (!err) {

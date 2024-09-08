@@ -30,6 +30,7 @@ export const getBanksList = async (req: Request, res: Response) => {
   );
 };
 
+
 export const getListaPagosXProveedorCxP = async (
   req: Request,
   res: Response
@@ -62,7 +63,7 @@ export const setPayForProveedor = async (req: Request, res: Response) => {
   const details = req.body.details;
 
   await pool.query(
-    "SELECT * FROM detailsPaysInvoiceAdmin_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9)",
+    "SELECT * FROM detailsPaysInvoiceAdmin_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
     [
       details.map((element) => {
         return element.id;
@@ -77,6 +78,7 @@ export const setPayForProveedor = async (req: Request, res: Response) => {
       dabaObj.nro_operacion, //nro_operacion varchar,
       dabaObj.id_coins, //id_coins int,
       dabaObj.comentarios, //--pcomentarios varchar
+      dabaObj.id_proveedor,
     ],
     (err, response, fields) => {
       if (!err) {
