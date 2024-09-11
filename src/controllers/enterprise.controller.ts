@@ -8,6 +8,12 @@ import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 import { envioCorreo } from "../middleware/EnvioCorreoMiddleware";
 const nodemailer = require("nodemailer");
 const pool = conexion();
+import jwt, {
+  JwtPayload,
+  TokenExpiredError,
+  JsonWebTokenError,
+} from "jsonwebtoken";
+
 export const getBracnh = async (req: Request, res: Response) => {
   const { id_branch } = req.params;
   await pool.query(
@@ -241,6 +247,7 @@ export const validateDocumentEnterpriseEditar = async (
     }
   );
 };
+
 export const RegistroNuevaEmpresa = async (req: Request, res: Response) => {
   const { trade_name, id_pais, names, surname, second_surname, email, phone } =
     req.body;
@@ -279,12 +286,19 @@ export const RegistroNuevaEmpresa = async (req: Request, res: Response) => {
         };
         await envioCorreo(data);
         // EnvioCorreo(user);
+        const token: string = jwt.sign(
+          { user },
+          process.env.TOKEN_SECRET || "tokentest",
+          {
+            expiresIn: 60 * 60 * 8,
+          }
+        );
         res.json({
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
           data: rows,
-          token: renewTokenMiddleware(req),
+          token: token,
         });
       } else {
         console.log(err);
