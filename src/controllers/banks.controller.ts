@@ -30,7 +30,6 @@ export const getBanksList = async (req: Request, res: Response) => {
   );
 };
 
-
 export const getListaPagosXProveedorCxP = async (
   req: Request,
   res: Response
@@ -111,6 +110,41 @@ export const getListBanksDetailsCargar = async (
   let { id_branch } = req.query;
   await pool.query(
     `SELECT * FROM bank_details_cargar($1);`,
+    [id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!err) {
+          if (!!rows[0].estadoflag) {
+            res.json({
+              status: 200,
+              statusBol: true,
+              data: rows,
+              token: renewTokenMiddleware(req),
+            });
+          } else {
+            res.json({
+              status: 200,
+              statusBol: true,
+              mensaje: rows[0].mensaje,
+            });
+          }
+        } else {
+          console.log(err);
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const getListBanksDetailsCargarPorSucursal = async (
+  req: Request,
+  res: Response
+) => {
+  let { id_branch } = req.query;
+  await pool.query(
+    `SELECT * FROM bank_details_cargar_por_sucursal($1);`,
     [id_branch],
     (err, response, fields) => {
       if (!err) {
@@ -1529,6 +1563,28 @@ export const validateNroOperacionCobro = async (
   await pool.query(
     "SELECT * FROM function_validar_nro_operacion_cobro($1,$2)",
     [nro_operacion, id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const verFacturas = async (req: Request, res: Response) => {
+  let { id } = req.query;
+  await pool.query(
+    "SELECT * FROM function_obtener_facturas_pagos($1)",
+    [id],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
