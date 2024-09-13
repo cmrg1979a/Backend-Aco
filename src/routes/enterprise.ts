@@ -11,13 +11,17 @@ import {
   validateDocumentEnterpriseNuevo,
   validateDocumentEnterpriseEditar,
   RegistroNuevaEmpresa,
+  validarCorreoRegistro,
+  ReEstablecerContrasenia,
 } from "../controllers/enterprise.controller";
 
 router.post("/getBranch/:id_branch", TokenValidation, getBracnh);
 router.get("/listar_enterprise/", TokenValidation, getListEnterprise);
 router.post("/insertar_enterprise/", TokenValidation, insertEnterprise);
 router.get("/ver_enterprise/", TokenValidation, readEnterprise);
+router.get("/validar_correo_registro", validarCorreoRegistro);
 router.put("/actualizar_enterprise/", TokenValidation, updateEnterprise);
+router.put("/re_establecer_contrasenia", ReEstablecerContrasenia);
 router.get(
   "/validar__nuevo_documento_enterprise/",
   TokenValidation,
