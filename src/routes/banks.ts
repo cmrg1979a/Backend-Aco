@@ -33,6 +33,17 @@ import {
   insertBank,
   readBank,
   updateBank,
+  InsertarCuentaDetalles,
+  EliminarCuenta,
+  VerPagoRealizado,
+  AnularPagoRealizado,
+  ActualizarPagoRealizado,
+  VerCobroRealizado,
+  AnularCobroRealizado,
+  ActualizarCobroRealizado,
+  validateNroOperacionCobro,
+  getListBanksDetailsCargarPorSucursal,
+  verFacturas,
 } from "../controllers/banks.controller";
 
 router.post("/getBanksList", TokenValidation, getBanksList);
@@ -46,6 +57,11 @@ router.get(
   "/getListBanksDetailsCargar",
   TokenValidation,
   getListBanksDetailsCargar
+);
+router.get(
+  "/getListBanksDetailsCargarPorSucursal",
+  TokenValidation,
+  getListBanksDetailsCargarPorSucursal
 );
 router.get("/getListBanksDetailsCxP", TokenValidation, getListarBancosgastos);
 router.get(
@@ -113,12 +129,35 @@ router.get(
 );
 router.put("/reversar_debscliente", TokenValidation, reversarCxC);
 router.put("/reversar_debsproveedor", TokenValidation, reversarCxP);
-router.get("/ver_pagoscontrol_egresos", TokenValidation, verPagosControlEgresos);
+router.get(
+  "/ver_pagoscontrol_egresos",
+  TokenValidation,
+  verPagosControlEgresos
+);
 router.get("/validar_nro_operacion", TokenValidation, validarNroOperacion);
 
 router.get("/listar_bank/", TokenValidation, getListBank);
 router.post("/insertar_bank/", TokenValidation, insertBank);
 router.get("/ver_bank/", TokenValidation, readBank);
 router.put("/actualizar_bank/", TokenValidation, updateBank);
+router.post("/insertar_cuenta", TokenValidation, InsertarCuentaDetalles);
+router.put("/eliminar_cuenta", TokenValidation, EliminarCuenta);
+router.get("/ver_pago", TokenValidation, VerPagoRealizado);
+router.put("/anular_pago", TokenValidation, AnularPagoRealizado);
+router.put("/actualizar_pago", TokenValidation, ActualizarPagoRealizado);
+router.get("/ver_cobro", TokenValidation, VerCobroRealizado);
+router.put("/anular_cobro", TokenValidation, AnularCobroRealizado);
+router.put("/actualizar_cobro", TokenValidation, ActualizarCobroRealizado);
+router.get(
+  "/validate_nro_operacion_cobro",
+  TokenValidation,
+  validateNroOperacionCobro
+);
+router.get(
+  "/ver_facturas",
+  TokenValidation,
+  verFacturas
+
+);
 
 export default router;

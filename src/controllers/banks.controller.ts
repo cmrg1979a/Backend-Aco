@@ -62,7 +62,7 @@ export const setPayForProveedor = async (req: Request, res: Response) => {
   const details = req.body.details;
 
   await pool.query(
-    "SELECT * FROM detailsPaysInvoiceAdmin_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9)",
+    "SELECT * FROM detailsPaysInvoiceAdmin_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
     [
       details.map((element) => {
         return element.id;
@@ -77,6 +77,7 @@ export const setPayForProveedor = async (req: Request, res: Response) => {
       dabaObj.nro_operacion, //nro_operacion varchar,
       dabaObj.id_coins, //id_coins int,
       dabaObj.comentarios, //--pcomentarios varchar
+      dabaObj.id_proveedor,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -109,6 +110,41 @@ export const getListBanksDetailsCargar = async (
   let { id_branch } = req.query;
   await pool.query(
     `SELECT * FROM bank_details_cargar($1);`,
+    [id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!err) {
+          if (!!rows[0].estadoflag) {
+            res.json({
+              status: 200,
+              statusBol: true,
+              data: rows,
+              token: renewTokenMiddleware(req),
+            });
+          } else {
+            res.json({
+              status: 200,
+              statusBol: true,
+              mensaje: rows[0].mensaje,
+            });
+          }
+        } else {
+          console.log(err);
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const getListBanksDetailsCargarPorSucursal = async (
+  req: Request,
+  res: Response
+) => {
+  let { id_branch } = req.query;
+  await pool.query(
+    `SELECT * FROM bank_details_cargar_por_sucursal($1);`,
     [id_branch],
     (err, response, fields) => {
       if (!err) {
@@ -836,8 +872,9 @@ export const ExportarListadoReporteEgresos = async (
     dateFormat: "dd/mm/yyyy",
     author: "PIC CARGO - IMPORTADORES",
   });
+
   await pool.query(
-    "SELECT * FROM function_list_egresos($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)",
+    "SELECT * FROM function_exportar_pago($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)",
     [
       req.query.id_branch ? req.query.id_branch : null,
       req.query.desde ? req.query.desde : null,
@@ -1326,6 +1363,238 @@ export const updateBank = async (req: Request, res: Response) => {
           token: renewTokenMiddleware(req),
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const InsertarCuentaDetalles = async (req: Request, res: Response) => {
+  const dataObj = req.body;
+
+  await pool.query(
+    "SELECT *from function_cuenta_details($1,$2, $3, $4, $5,$6);",
+    [
+      dataObj.id ? dataObj.id : null,
+      dataObj.id_bank,
+      dataObj.id_coin,
+      dataObj.nrocuenta,
+      dataObj.nrocci ? dataObj.nrocci : null,
+      dataObj.status !== "" && !isNaN(dataObj.status) ? dataObj.status : null,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          data: rows,
+          token: renewTokenMiddleware(req),
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const EliminarCuenta = async (req: Request, res: Response) => {
+  const dataObj = req.body;
+
+  await pool.query(
+    "SELECT *from function_cuenta_cambiarestado($1,$2);",
+    [dataObj.id, dataObj.status],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          data: rows,
+          token: renewTokenMiddleware(req),
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const VerPagoRealizado = async (req: Request, res: Response) => {
+  const { nro_operacion, id_branch } = req.query;
+
+  await pool.query(
+    "SELECT *from function_pagoscontrolegresos_ver($1,$2)",
+    [id_branch, nro_operacion],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          data: rows,
+          token: renewTokenMiddleware(req),
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const AnularPagoRealizado = async (req: Request, res: Response) => {
+  const { id } = req.body;
+
+  await pool.query(
+    "SELECT *from function_pagoscontrolegresos_anular($1)",
+    [id],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          data: rows,
+          token: renewTokenMiddleware(req),
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const ActualizarPagoRealizado = async (req: Request, res: Response) => {
+  const { lstPago } = req.body;
+
+  await pool.query(
+    "SELECT *from function_pagoscontrolegresos_actualizar($1)",
+    [JSON.stringify(lstPago)],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          data: rows,
+          token: renewTokenMiddleware(req),
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const VerCobroRealizado = async (req: Request, res: Response) => {
+  const { nro_operacion, id_branch } = req.query;
+
+  await pool.query(
+    "SELECT *from function_ingresos_ver($1,$2)",
+    [id_branch, nro_operacion],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          data: rows,
+          token: renewTokenMiddleware(req),
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const AnularCobroRealizado = async (req: Request, res: Response) => {
+  const { id, ubicacion } = req.body;
+  await pool.query(
+    "SELECT *from function_anularcobro($1,$2)",
+    [id, ubicacion],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          data: rows,
+          token: renewTokenMiddleware(req),
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const ActualizarCobroRealizado = async (req: Request, res: Response) => {
+  const { lstPago } = req.body;
+
+  await pool.query(
+    "SELECT *from function_actualizarcobro($1)",
+    [JSON.stringify(lstPago)],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          data: rows,
+          token: renewTokenMiddleware(req),
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const validateNroOperacionCobro = async (
+  req: Request,
+  res: Response
+) => {
+  let { id_branch, nro_operacion } = req.query;
+  await pool.query(
+    "SELECT * FROM function_validar_nro_operacion_cobro($1,$2)",
+    [nro_operacion, id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const verFacturas = async (req: Request, res: Response) => {
+  let { id } = req.query;
+  await pool.query(
+    "SELECT * FROM function_obtener_facturas_pagos($1)",
+    [id],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);

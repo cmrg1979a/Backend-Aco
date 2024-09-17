@@ -123,6 +123,7 @@ import typepayments from "./routes/typepayments";
 import users from "./routes/users";
 import position from "./routes/position";
 import configuracionInicial from "./routes/configuracionInicial";
+import seguridad from "./routes/seguridad";
 
 // settings
 app.set("port", 9200);
@@ -338,4 +339,5 @@ app.use(typepayments);
 app.use(users);
 app.use(position);
 app.use(configuracionInicial);
+app.use(seguridad);
 export default app;

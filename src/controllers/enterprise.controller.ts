@@ -8,6 +8,12 @@ import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 import { envioCorreo } from "../middleware/EnvioCorreoMiddleware";
 const nodemailer = require("nodemailer");
 const pool = conexion();
+import jwt, {
+  JwtPayload,
+  TokenExpiredError,
+  JsonWebTokenError,
+} from "jsonwebtoken";
+
 export const getBracnh = async (req: Request, res: Response) => {
   const { id_branch } = req.params;
   await pool.query(
@@ -241,6 +247,29 @@ export const validateDocumentEnterpriseEditar = async (
     }
   );
 };
+
+export const validarCorreoRegistro = async (req: Request, res: Response) => {
+  let { email } = req.query;
+  await pool.query(
+    "SELECT *from function_validarEmailRegistro($1);",
+    [email],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+
+        res.json({
+          status: 200,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          data: rows,
+          token: null,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
 export const RegistroNuevaEmpresa = async (req: Request, res: Response) => {
   const { trade_name, id_pais, names, surname, second_surname, email, phone } =
     req.body;
@@ -260,31 +289,103 @@ export const RegistroNuevaEmpresa = async (req: Request, res: Response) => {
           second_surname: second_surname,
           users: rows[0].users,
         };
-        let html = `
-          <p> Hola ${user.surname} ${user.second_surname}, ${user.names} </p>
-          <p> Se ha creado tu usuario  - ADMINISTRADOR DE SISTEMA</p>
-           <p> <b>usuario: </b> ${user.users} </p>
-            <p> <b>clave: </b> ${user.clave} </p>
-            <br/>
-           Para acceder de click <a href="https://chainsolver.piccargo.com/"> Aqui </a>  
-          <br/>
-          <p><img src="https://i.ibb.co/ypKb7q1/chain-Solver.png" alt="LogoChain" width="404" height="112" /></p>  
-        `;
+        let html = `<!DOCTYPE html>
+        <html>
+          <head>
+            <meta charset="utf-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title></title>
+          </head>
+          <body style="font-family: Arial, sans-serif; margin: 0; padding: 0;">
+            <div
+              style="
+                width: 550px;
+                margin: 0 auto;
+                padding: 0;
+                background-color: #ffffff;
+              "
+            >
+              <div style="text-align: center">
+                <img
+                  src="https://api-general.qreport.site/uploads/imgLogin.png"
+                  alt="Imagen de Bienvenida"
+                  style="width: 100%; max-width: 550px; height: auto;"
+                />
+              </div>
+              <div
+                style="
+                  text-align: center;
+                  color: #011936;
+                  font-size: 1.5rem;
+                  padding: 1rem;
+                  font-family: 'Source Sans Pro', sans-serif;
+                  font-weight: bold;
+                "
+              >
+                ¡Bienvenido a SISTEMA ACO!
+              </div>
+              <div style="text-align: center; font-size: 1rem; padding: 0 1rem;">
+                Hemos creado tu acceso al sistema ACO
+              </div>
+              <div
+                style="
+                  text-align: center;
+                  font-size: 2.2rem;
+                  padding: 1.5rem;
+                "
+              >
+                  <p> <b>usuario: </b> ${user.users} </p>
+                  <p> <b>clave: </b> ${user.clave} </p>
+              </div>
+              
+              <div style="text-align: center; font-size: 1rem; padding: 0 1rem;">
+                Gracias por confiar en nosotros.
+                <span style="color: #011936; font-weight: bold">
+                  ¡Estamos aquí para ayudarte a crecer!</span
+                >
+              </div>
+              <div style="text-align: center; padding: 10px;">
+                <img
+                  src="https://api-general.qreport.site/uploads/logo-aco.png"
+                  alt="Logo ACO"
+                  style="width: 100%; max-width: 300px; height: auto;"
+                />
+              </div>
+            </div>
+          </body>
+        </html>`;
+        // let html = `
+        //   <p> Hola ${user.surname} ${user.second_surname}, ${user.names} </p>
+        //   <p> Se ha creado tu usuario  - ADMINISTRADOR DE SISTEMA</p>
+        //    <p> <b>usuario: </b> ${user.users} </p>
+        //     <p> <b>clave: </b> ${user.clave} </p>
+        //     <br/>
+        //    Para acceder de click <a href="https://chainsolver.piccargo.com/"> Aqui </a>
+        //   <br/>
+        //   <p><img src="https://i.ibb.co/ypKb7q1/chain-Solver.png" alt="LogoChain" width="404" height="112" /></p>
+        // `;
 
         let data = {
           from: '"ACO" <sistema1@piccargo.com>',
           email: user.email,
-          subject: "ACO – Registro",
+          subject: "ACO – DATOS DE ACCESO",
           html: html,
         };
         await envioCorreo(data);
         // EnvioCorreo(user);
+        const token: string = jwt.sign(
+          { user },
+          process.env.TOKEN_SECRET || "tokentest",
+          {
+            expiresIn: 60 * 60 * 8,
+          }
+        );
         res.json({
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
           data: rows,
-          token: renewTokenMiddleware(req),
+          token: token,
         });
       } else {
         console.log(err);
@@ -363,3 +464,106 @@ async function EnvioCorreo(datos) {
     `,
   });
 }
+
+export const ReEstablecerContrasenia = async (req: Request, res: Response) => {
+  let { user } = req.body;
+  let clave = generarContrasenaAleatoria(10);
+
+  await pool.query(
+    "SELECT *from reestablecer_correo($1,$2);",
+    [user, clave],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (rows[0].estadoflag) {
+          let users = {
+            email: rows[0].email,
+            clave: clave,
+            users: user,
+          };
+          let html = `<!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="utf-8" />
+              <meta name="viewport" content="width=device-width, initial-scale=1" />
+              <title></title>
+            </head>
+            <body style="font-family: Arial, sans-serif; margin: 0; padding: 0;">
+              <div
+                style="
+                  width: 550px;
+                  margin: 0 auto;
+                  padding: 0;
+                  background-color: #ffffff;
+                "
+              >
+                <div style="text-align: center">
+                  <img
+                    src="https://api-general.qreport.site/uploads/imgLogin.png"
+                    alt="Imagen de Bienvenida"
+                    style="width: 100%; max-width: 550px; height: auto;"
+                  />
+                </div>
+                <div
+                  style="
+                    text-align: center;
+                    color: #011936;
+                    font-size: 1.5rem;
+                    padding: 1rem;
+                    font-family: 'Source Sans Pro', sans-serif;
+                    font-weight: bold;
+                  "
+                >
+                  ¡Bienvenido a SISTEMA ACO!
+                </div>
+                <div style="text-align: center; font-size: 1rem; padding: 0 1rem;">
+                  Hemos creado tu acceso al sistema ACO
+                </div>
+                <div
+                  style="
+                    text-align: center;
+                    font-size: 2.2rem;
+                    padding: 1.5rem;
+                  "
+                >
+                    <p> <b>usuario: </b> ${users.users} </p>
+                    <p> <b>clave: </b> ${users.clave} </p>
+                </div>
+              
+                <div style="text-align: center; font-size: 1rem; padding: 0 1rem;">
+                  Gracias por confiar en nosotros.
+                  <span style="color: #011936; font-weight: bold">
+                    ¡Estamos aquí para ayudarte a crecer!</span
+                  >
+                </div>
+                <div style="text-align: center; padding: 10px;">
+                  <img
+                    src="https://api-general.qreport.site/uploads/logo-aco.png"
+                    alt="Logo ACO"
+                    style="width: 100%; max-width: 300px; height: auto;"
+                  />
+                </div>
+              </div>
+            </body>
+          </html>`;
+          let data = {
+            from: '"ACO" <sistema1@piccargo.com>',
+            email: users.email,
+            subject: "ACO – DATOS DE ACCESO",
+            html: html,
+          };
+          envioCorreo(data);
+        }
+        res.json({
+          status: 200,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          data: rows,
+          token: null,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
