@@ -36,7 +36,8 @@ const pool = new Pool({
   port: "5432",
   // database: "db_op_main_dev",
   // database: "db_op_main_02",
-  database: "db_op_main_edison",
+  database: "db_op_main_qa",
+  // database: "db_op_main_edison",
 });
 
 /*pool
