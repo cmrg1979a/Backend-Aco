@@ -38,7 +38,7 @@ export const getListaPagosXProveedorCxP = async (
 
   await pool.query(
     `SELECT * FROM pagosXProveedorCxP_listar($1,$2)`,
-    [id_proveedor, 1],
+    [id_proveedor, id_branch],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
