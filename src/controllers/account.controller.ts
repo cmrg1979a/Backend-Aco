@@ -37,7 +37,7 @@ export const setAccount = async (req: Request, res: Response) => {
   const dataObj = req.body;
 
   await pool.query(
-    "SELECT * FROM entities_accounts_insert($1,$2,$3,$4,$5,$6,$7,$8)",
+    "SELECT * FROM entities_accounts_insert($1,$2,$3,$4,$5,$6,$7,$8,$9)",
     [
       dataObj.id_entities ? dataObj.id_entities : null,
       dataObj.nro_cuenta ? dataObj.nro_cuenta : null,
