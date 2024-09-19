@@ -41,12 +41,15 @@ export const setAccount = async (req: Request, res: Response) => {
     [
       dataObj.id_entities ? dataObj.id_entities : null,
       dataObj.nro_cuenta ? dataObj.nro_cuenta : null,
-      dataObj.cci ? dataObj.cci : null, 
+      dataObj.cci ? dataObj.cci : null,
       dataObj.id_banco ? dataObj.id_banco : null,
       dataObj.id_coins ? dataObj.id_coins : null,
       dataObj.nro_swift ? dataObj.nro_swift : null,
       dataObj.id_intermediario ? dataObj.id_intermediario : null,
-      dataObj.nro_cuenta_intermediario ? dataObj.nro_cuenta_intermediario : null,
+      dataObj.nro_cuenta_intermediario
+        ? dataObj.nro_cuenta_intermediario
+        : null,
+      dataObj.id_branch,
     ],
     (err, response, fields) => {
       if (!err) {
