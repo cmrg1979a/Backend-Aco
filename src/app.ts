@@ -211,7 +211,9 @@ app.post("/uploadAllPath", function (req, res) {
     if (err) {
       return res.end("Error uploading file.");
     }
-    let url = `${window.location.origin}/uploads/`;
+    let protocol = req.protocol; // 'http' o 'https'
+    let host = req.get("host"); // El host (dominio o IP con puerto)
+    let url = `${protocol}://${host}/uploads/`;
     pool.query(
       "select * from Table_AllPath_insertar($1,$2,$3,$4,$5,$6)",
       [newName, type, size, url + ruta, fileName[0], 1],
