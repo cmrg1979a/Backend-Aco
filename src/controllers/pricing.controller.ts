@@ -859,6 +859,7 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
     peso,
     volumen,
     pais,
+    url_logo,
   } = req.body;
   let fecha = moment().format("DD-MM-YYYY");
 
@@ -874,7 +875,11 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
   });
   let lengthServ = servicios.length;
   console.log(iso);
-
+  let protocol = req.protocol; // 'http' o 'https'
+  let host = req.get("host"); // El host (dominio o IP con puerto)
+  let url = `${protocol}://${host}/uploads/`;
+  // let url_logo = `http://localhost:9200/uploads/1726792533981.png`;
+  console.log(url);
   ejs.renderFile(
     path.join(__dirname, "../views/", "quoteDetallado.ejs"),
     {
@@ -927,6 +932,7 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
       total,
       iso_pais,
       pais,
+      url_logo,
     },
 
     (err: any, data: any) => {
@@ -1047,6 +1053,7 @@ export const generarInstructivoQuote = async (req: Request, res: Response) => {
     profit,
     listImpuestosInstructivo,
     tipoimportacionaduana,
+    url_logo,
   } = req.body;
   let fecha = moment().format("ll");
 
@@ -1085,6 +1092,7 @@ export const generarInstructivoQuote = async (req: Request, res: Response) => {
       listCostosInstructivo,
       listImpuestosInstructivo,
       tipoimportacionaduana,
+      url_logo,
     },
 
     (err: any, data: any) => {

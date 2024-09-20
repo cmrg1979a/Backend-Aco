@@ -77,13 +77,11 @@ export const generarFactura = async (req: Request, res: Response) => {
     cuenta_tienecci,
     tipo_imp,
     coins,
+    url_logo,
   } = req.body;
 
   let fechaActual = `${fecha.getUTCDay()}_${fecha.getMonth()}_${fecha.getFullYear()}_${fecha.getTime()}`;
   let fechaRegistro = fecha.toLocaleDateString();
-  // ejs.renderFile(path.join(__dirname, "../views", "pdf-factura.ejs")),
-  // "C:/laragon/www/api-backend-general-v1/views/pdf-factura.ejs",
-  // path.join(__dirname, "../views", "pdf-factura.ejs"),
 
   ejs.renderFile(
     path.join(__dirname, "../views", "pdf-factura.ejs"),
@@ -120,6 +118,7 @@ export const generarFactura = async (req: Request, res: Response) => {
       cuenta_tienecci,
       tipo_imp,
       coins,
+      url_logo,
     },
     (err: any, data: any) => {
       if (err) {
