@@ -362,6 +362,7 @@ export const pdfSolicitud = async (req: Request, res: Response) => {
     selected,
     totalSelected,
     number,
+    url_logo,
   } = req.body;
 
   ejs.renderFile(
@@ -382,6 +383,7 @@ export const pdfSolicitud = async (req: Request, res: Response) => {
       selected,
       totalSelected,
       number,
+      url_logo,
     },
     (err: any, data: any) => {
       if (err) {
@@ -1774,8 +1776,22 @@ export const exportarPDFCXP = async (req: Request, res: Response) => {
   let rowsOp = await getReporteCXP(req.query);
   let rowsAdmin = await getDebsToPayAdmin(req.query);
 
-  let totalvencidoObj_default = { "+60": null, "+45": null, "+30": null, "+15": null, "+7": null, "+0": null };
-  let totalxvencerObj_default = { "+60": null, "-60": null, "-45": null, "-30": null, "-15": null, "-7": null };
+  let totalvencidoObj_default = {
+    "+60": null,
+    "+45": null,
+    "+30": null,
+    "+15": null,
+    "+7": null,
+    "+0": null,
+  };
+  let totalxvencerObj_default = {
+    "+60": null,
+    "-60": null,
+    "-45": null,
+    "-30": null,
+    "-15": null,
+    "-7": null,
+  };
 
   let totalvencidoObj = { ...totalvencidoObj_default };
   let totalxvencerObj = { ...totalxvencerObj_default };
@@ -1793,18 +1809,22 @@ export const exportarPDFCXP = async (req: Request, res: Response) => {
               correlativo: detalle.code_correlativo,
               nro_master: detalle.nro_master,
               expediente: detalle.expedientes,
-              fecha_disponibilidad: detalle.fecha_disponibilidad ? moment(detalle.fecha_disponibilidad).format("DD/MM/YYYY") : '',
+              fecha_disponibilidad: detalle.fecha_disponibilidad
+                ? moment(detalle.fecha_disponibilidad).format("DD/MM/YYYY")
+                : "",
               symbol: detalle.symbol,
               total_pagar: detalle.total_pagar,
               llegada: detalle.llegada == 1 ? "SI" : "NO",
               pagado: detalle.pagado == 1 ? "SI" : "NO",
               esoperativo: true,
               esadministrativo: false,
-              fechavencimiento: detalle.fecha_vencimiento ? moment(detalle.fecha_vencimiento).format("DD/MM/YYYY") : '',
+              fechavencimiento: detalle.fecha_vencimiento
+                ? moment(detalle.fecha_vencimiento).format("DD/MM/YYYY")
+                : "",
               diasatraso: detalle.dias_atraso ? detalle.dias_atraso : 0,
-              estatus: detalle.estatus ? detalle.estatus : '',
+              estatus: detalle.estatus ? detalle.estatus : "",
               dias_credito: detalle.dias_credito ? detalle.dias_credito : 0,
-              dias_vencidos: detalle.dias_vencidos ? detalle.dias_vencidos : 0
+              dias_vencidos: detalle.dias_vencidos ? detalle.dias_vencidos : 0,
             });
           });
         }
@@ -1824,18 +1844,22 @@ export const exportarPDFCXP = async (req: Request, res: Response) => {
               correlativo: "",
               nro_master: "",
               expediente: detalle.nro_factura,
-              fecha_disponibilidad: detalle.created_at ? moment(detalle.created_at).format("DD/MM/YYYY") : '',
+              fecha_disponibilidad: detalle.created_at
+                ? moment(detalle.created_at).format("DD/MM/YYYY")
+                : "",
               symbol: detalle.symbol,
               total_pagar: detalle.monto,
               llegada: "SI",
               pagado: "NO",
               esoperativo: false,
               esadministrativo: true,
-              fechavencimiento: detalle.fecha_vencimiento ? moment(detalle.fecha_vencimiento).format("DD/MM/YYYY") : '',
+              fechavencimiento: detalle.fecha_vencimiento
+                ? moment(detalle.fecha_vencimiento).format("DD/MM/YYYY")
+                : "",
               diasatraso: detalle.dias_atraso ? detalle.dias_atraso : 0,
-              estatus: detalle.estatus ? detalle.estatus : '',
+              estatus: detalle.estatus ? detalle.estatus : "",
               dias_credito: detalle.dias_credito ? detalle.dias_credito : 0,
-              dias_vencidos: detalle.dias_vencidos ? detalle.dias_vencidos : 0
+              dias_vencidos: detalle.dias_vencidos ? detalle.dias_vencidos : 0,
             });
           });
         }
@@ -1848,56 +1872,55 @@ export const exportarPDFCXP = async (req: Request, res: Response) => {
 
     if (estatus.toUpperCase() == "VENCIDO") {
       switch (true) {
-        case (dias_vencidos > 60):
-          totalvencidoObj["+60"] = (parseFloat(totalvencidoObj["+60"]) || 0);
+        case dias_vencidos > 60:
+          totalvencidoObj["+60"] = parseFloat(totalvencidoObj["+60"]) || 0;
           totalvencidoObj["+60"] += monto;
           break;
-        case (dias_vencidos <= 60 && dias_vencidos > 45):
-          totalvencidoObj["+45"] = (parseFloat(totalvencidoObj["+45"]) || 0);
+        case dias_vencidos <= 60 && dias_vencidos > 45:
+          totalvencidoObj["+45"] = parseFloat(totalvencidoObj["+45"]) || 0;
           totalvencidoObj["+45"] += monto;
           break;
-        case (dias_vencidos <= 45 && dias_vencidos > 30):
-          totalvencidoObj["+30"] = (parseFloat(totalvencidoObj["+30"]) || 0);
+        case dias_vencidos <= 45 && dias_vencidos > 30:
+          totalvencidoObj["+30"] = parseFloat(totalvencidoObj["+30"]) || 0;
           totalvencidoObj["+30"] += monto;
           break;
-        case (dias_vencidos <= 30 && dias_vencidos > 15):
-          totalvencidoObj["+15"] = (parseFloat(totalvencidoObj["+15"]) || 0);
+        case dias_vencidos <= 30 && dias_vencidos > 15:
+          totalvencidoObj["+15"] = parseFloat(totalvencidoObj["+15"]) || 0;
           totalvencidoObj["+15"] += monto;
           break;
-        case (dias_vencidos <= 15 && dias_vencidos > 7):
-          totalvencidoObj["+7"] = (parseFloat(totalvencidoObj["+7"]) || 0);
+        case dias_vencidos <= 15 && dias_vencidos > 7:
+          totalvencidoObj["+7"] = parseFloat(totalvencidoObj["+7"]) || 0;
           totalvencidoObj["+7"] += monto;
           break;
-        case (dias_vencidos <= 7 && dias_vencidos > 0):
-          totalvencidoObj["+0"] = (parseFloat(totalvencidoObj["+0"]) || 0);
+        case dias_vencidos <= 7 && dias_vencidos > 0:
+          totalvencidoObj["+0"] = parseFloat(totalvencidoObj["+0"]) || 0;
           totalvencidoObj["+0"] += monto;
           break;
       }
-    }
-    else if (estatus.toUpperCase() == "POR VENCER") {
+    } else if (estatus.toUpperCase() == "POR VENCER") {
       switch (true) {
-        case (dias_vencidos <= -60):
-          totalxvencerObj["+60"] = (parseFloat(totalxvencerObj["+60"]) || 0);
+        case dias_vencidos <= -60:
+          totalxvencerObj["+60"] = parseFloat(totalxvencerObj["+60"]) || 0;
           totalxvencerObj["+60"] += monto;
           break;
-        case (dias_vencidos > -60 && dias_vencidos <= -45):
-          totalxvencerObj["-60"] = (parseFloat(totalxvencerObj["-60"]) || 0);
+        case dias_vencidos > -60 && dias_vencidos <= -45:
+          totalxvencerObj["-60"] = parseFloat(totalxvencerObj["-60"]) || 0;
           totalxvencerObj["-60"] += monto;
           break;
-        case (dias_vencidos > -45 && dias_vencidos <= -30):
-          totalxvencerObj["-45"] = (parseFloat(totalxvencerObj["-45"]) || 0);
+        case dias_vencidos > -45 && dias_vencidos <= -30:
+          totalxvencerObj["-45"] = parseFloat(totalxvencerObj["-45"]) || 0;
           totalxvencerObj["-45"] += monto;
           break;
-        case (dias_vencidos > -30 && dias_vencidos <= -15):
-          totalxvencerObj["-30"] = (parseFloat(totalxvencerObj["-30"]) || 0);
+        case dias_vencidos > -30 && dias_vencidos <= -15:
+          totalxvencerObj["-30"] = parseFloat(totalxvencerObj["-30"]) || 0;
           totalxvencerObj["-30"] += monto;
           break;
-        case (dias_vencidos > -15 && dias_vencidos <= -7):
-          totalxvencerObj["-15"] = (parseFloat(totalxvencerObj["-15"]) || 0);
+        case dias_vencidos > -15 && dias_vencidos <= -7:
+          totalxvencerObj["-15"] = parseFloat(totalxvencerObj["-15"]) || 0;
           totalxvencerObj["-15"] += monto;
           break;
-        case (dias_vencidos > -7):
-          totalxvencerObj["-7"] = (parseFloat(totalxvencerObj["-7"]) || 0);
+        case dias_vencidos > -7:
+          totalxvencerObj["-7"] = parseFloat(totalxvencerObj["-7"]) || 0;
           totalxvencerObj["-7"] += monto;
           break;
       }
@@ -1906,25 +1929,38 @@ export const exportarPDFCXP = async (req: Request, res: Response) => {
 
   let totalvencido_array = Object.entries(totalvencidoObj);
   let totalxvencer_array = Object.entries(totalxvencerObj);
-  let totalvencido = totalvencido_array.reduce((suma, v) => suma + (v[1] || 0), 0);
-  let totalxvencer = totalxvencer_array.reduce((suma, v) => suma + (v[1] || 0), 0);
+  let totalvencido = totalvencido_array.reduce(
+    (suma, v) => suma + (v[1] || 0),
+    0
+  );
+  let totalxvencer = totalxvencer_array.reduce(
+    (suma, v) => suma + (v[1] || 0),
+    0
+  );
 
-  totalvencido_array = totalvencido_array.map(([k, v]) => [k, v ? v.toFixed(2) : null]);
-  totalxvencer_array = totalxvencer_array.map(([k, v]) => [k, v ? v.toFixed(2) : null]);
+  totalvencido_array = totalvencido_array.map(([k, v]) => [
+    k,
+    v ? v.toFixed(2) : null,
+  ]);
+  totalxvencer_array = totalxvencer_array.map(([k, v]) => [
+    k,
+    v ? v.toFixed(2) : null,
+  ]);
   totalvencido = totalvencido ? parseFloat(totalvencido).toFixed(2) : null;
   totalxvencer = totalxvencer ? parseFloat(totalxvencer).toFixed(2) : null;
 
   let data = [];
-  if (formato == "1") { // Generar PDF por Fecha de Vencimiento
+  if (formato == "1") {
+    // Generar PDF por Fecha de Vencimiento
     title += " - Por Fecha de vencimiento";
 
     dataset.sort((a, b) => {
-      return b.diasatraso - a.diasatraso
+      return b.diasatraso - a.diasatraso;
     });
 
     data = dataset;
-  }
-  else if (formato == "2") { // Generar PDF por Proveedor
+  } else if (formato == "2") {
+    // Generar PDF por Proveedor
     title += " - Por Proveedores";
 
     let expedientesxproveedorObj = {};
@@ -1935,18 +1971,19 @@ export const exportarPDFCXP = async (req: Request, res: Response) => {
           dias_credito: v.dias_credito,
           totalvencido: null,
           totalxvencer: null,
-          expedientes: [{
-            expediente: v.expediente,
-            factura: v.factura,
-            monto: v.total_pagar,
-            estatus: v.estatus,
-            dias_vencidos: v.dias_vencidos,
-            vencido: { ...totalvencidoObj_default },
-            xvencer: { ...totalxvencerObj_default }
-          }]
+          expedientes: [
+            {
+              expediente: v.expediente,
+              factura: v.factura,
+              monto: v.total_pagar,
+              estatus: v.estatus,
+              dias_vencidos: v.dias_vencidos,
+              vencido: { ...totalvencidoObj_default },
+              xvencer: { ...totalxvencerObj_default },
+            },
+          ],
         };
-      }
-      else {
+      } else {
         expedientesxproveedorObj[v.id_proveedor]["expedientes"].push({
           expediente: v.expediente,
           factura: v.factura,
@@ -1954,7 +1991,7 @@ export const exportarPDFCXP = async (req: Request, res: Response) => {
           estatus: v.estatus,
           dias_vencidos: v.dias_vencidos,
           vencido: { ...totalvencidoObj_default },
-          xvencer: { ...totalxvencerObj_default }
+          xvencer: { ...totalxvencerObj_default },
         });
       }
     });
@@ -1966,79 +2003,80 @@ export const exportarPDFCXP = async (req: Request, res: Response) => {
         let { dias_vencidos, monto, estatus } = v;
         if (estatus.toUpperCase() == "VENCIDO") {
           switch (true) {
-            case (dias_vencidos > 60):
-              v["vencido"]["+60"] = (parseFloat(v["vencido"]["+60"]) || 0);
+            case dias_vencidos > 60:
+              v["vencido"]["+60"] = parseFloat(v["vencido"]["+60"]) || 0;
               v["vencido"]["+60"] += monto;
               total += monto;
               break;
-            case (dias_vencidos <= 60 && dias_vencidos > 45):
-              v["vencido"]["+45"] = (parseFloat(v["vencido"]["+45"]) || 0);
+            case dias_vencidos <= 60 && dias_vencidos > 45:
+              v["vencido"]["+45"] = parseFloat(v["vencido"]["+45"]) || 0;
               v["vencido"]["+45"] += monto;
               total += monto;
               break;
-            case (dias_vencidos <= 45 && dias_vencidos > 30):
-              v["vencido"]["+30"] = (parseFloat(v["vencido"]["+30"]) || 0);
+            case dias_vencidos <= 45 && dias_vencidos > 30:
+              v["vencido"]["+30"] = parseFloat(v["vencido"]["+30"]) || 0;
               v["vencido"]["+30"] += monto;
               total += monto;
               break;
-            case (dias_vencidos <= 30 && dias_vencidos > 15):
-              v["vencido"]["+15"] = (parseFloat(v["vencido"]["+15"]) || 0);
+            case dias_vencidos <= 30 && dias_vencidos > 15:
+              v["vencido"]["+15"] = parseFloat(v["vencido"]["+15"]) || 0;
               v["vencido"]["+15"] += monto;
               total += monto;
               break;
-            case (dias_vencidos <= 15 && dias_vencidos > 7):
-              v["vencido"]["+7"] = (parseFloat(v["vencido"]["+7"]) || 0);
+            case dias_vencidos <= 15 && dias_vencidos > 7:
+              v["vencido"]["+7"] = parseFloat(v["vencido"]["+7"]) || 0;
               v["vencido"]["+7"] += monto;
               total += monto;
               break;
-            case (dias_vencidos <= 7 && dias_vencidos > 0):
-              v["vencido"]["+0"] = (parseFloat(v["vencido"]["+0"]) || 0);
+            case dias_vencidos <= 7 && dias_vencidos > 0:
+              v["vencido"]["+0"] = parseFloat(v["vencido"]["+0"]) || 0;
               v["vencido"]["+0"] += monto;
               total += monto;
               break;
           }
 
           if (total) {
-            item["totalvencido"] = (parseFloat(item["totalvencido"]) || 0) + total;
-          } 
-        }
-        else if (estatus.toUpperCase() == "POR VENCER") {
+            item["totalvencido"] =
+              (parseFloat(item["totalvencido"]) || 0) + total;
+          }
+        } else if (estatus.toUpperCase() == "POR VENCER") {
           switch (true) {
-            case (dias_vencidos <= -60):
-              v["xvencer"]["+60"] = (parseFloat(v["xvencer"]["+60"]) || 0);
+            case dias_vencidos <= -60:
+              v["xvencer"]["+60"] = parseFloat(v["xvencer"]["+60"]) || 0;
               v["xvencer"]["+60"] += monto;
               total += monto;
               break;
-            case (dias_vencidos > -60 && dias_vencidos <= -45):
-              v["xvencer"]["-60"] = (parseFloat(v["xvencer"]["-60"]) || 0);
+            case dias_vencidos > -60 && dias_vencidos <= -45:
+              v["xvencer"]["-60"] = parseFloat(v["xvencer"]["-60"]) || 0;
               v["xvencer"]["-60"] += monto;
               total += monto;
               break;
-            case (dias_vencidos > -45 && dias_vencidos <= -30):
-              v["xvencer"]["-45"] = (parseFloat(v["xvencer"]["-45"]) || 0);
+            case dias_vencidos > -45 && dias_vencidos <= -30:
+              v["xvencer"]["-45"] = parseFloat(v["xvencer"]["-45"]) || 0;
               v["xvencer"]["-45"] += monto;
               total += monto;
               break;
-            case (dias_vencidos > -30 && dias_vencidos <= -15):
-              v["xvencer"]["-30"] = (parseFloat(v["xvencer"]["-30"]) || 0);
+            case dias_vencidos > -30 && dias_vencidos <= -15:
+              v["xvencer"]["-30"] = parseFloat(v["xvencer"]["-30"]) || 0;
               v["xvencer"]["-30"] += monto;
               total += monto;
               break;
-            case (dias_vencidos > -15 && dias_vencidos <= -7):
-              v["xvencer"]["-15"] = (parseFloat(v["xvencer"]["-15"]) || 0);
+            case dias_vencidos > -15 && dias_vencidos <= -7:
+              v["xvencer"]["-15"] = parseFloat(v["xvencer"]["-15"]) || 0;
               v["xvencer"]["-15"] += monto;
               total += monto;
               break;
-            case (dias_vencidos > -7):
-              v["xvencer"]["-7"] = (parseFloat(v["xvencer"]["-7"]) || 0);
+            case dias_vencidos > -7:
+              v["xvencer"]["-7"] = parseFloat(v["xvencer"]["-7"]) || 0;
               v["xvencer"]["-7"] += monto;
               total += monto;
               break;
           }
 
           if (total) {
-            item["totalxvencer"] = (parseFloat(item["totalxvencer"]) || 0) + total;
-          }          
+            item["totalxvencer"] =
+              (parseFloat(item["totalxvencer"]) || 0) + total;
+          }
         }
 
         return v;
@@ -2048,8 +2086,12 @@ export const exportarPDFCXP = async (req: Request, res: Response) => {
     });
 
     data.map((item) => {
-      item["totalvencido"] = item.totalvencido ? item.totalvencido.toFixed(2) : null;
-      item["totalxvencer"] = item.totalxvencer ? item.totalxvencer.toFixed(2) : null;
+      item["totalvencido"] = item.totalvencido
+        ? item.totalvencido.toFixed(2)
+        : null;
+      item["totalxvencer"] = item.totalxvencer
+        ? item.totalxvencer.toFixed(2)
+        : null;
 
       return item;
     });
@@ -2061,7 +2103,16 @@ export const exportarPDFCXP = async (req: Request, res: Response) => {
 
   ejs.renderFile(
     path.join(__dirname, "../views/", "reporteCXP.ejs"),
-    { title, formato, fechaEmision, data, totalvencido_array, totalxvencer_array, totalvencido, totalxvencer },
+    {
+      title,
+      formato,
+      fechaEmision,
+      data,
+      totalvencido_array,
+      totalxvencer_array,
+      totalvencido,
+      totalxvencer,
+    },
     (err, html) => {
       if (err) {
         res.send(err);
@@ -2162,8 +2213,22 @@ export const exportarPDFCXC = async (req: Request, res: Response) => {
   let rowsOp = await getReporteCXC(req.query);
   let rowsAdmin = await getReporteCXCAdmin(req.query);
 
-  let totalvencidoObj_default = { "+60": null, "+45": null, "+30": null, "+15": null, "+7": null, "+0": null };
-  let totalxvencerObj_default = { "+60": null, "-60": null, "-45": null, "-30": null, "-15": null, "-7": null };
+  let totalvencidoObj_default = {
+    "+60": null,
+    "+45": null,
+    "+30": null,
+    "+15": null,
+    "+7": null,
+    "+0": null,
+  };
+  let totalxvencerObj_default = {
+    "+60": null,
+    "-60": null,
+    "-45": null,
+    "-30": null,
+    "-15": null,
+    "-7": null,
+  };
 
   let totalvencidoObj = { ...totalvencidoObj_default };
   let totalxvencerObj = { ...totalxvencerObj_default };
@@ -2175,7 +2240,9 @@ export const exportarPDFCXC = async (req: Request, res: Response) => {
         if (detalles.length > 0) {
           detalles.forEach((detalle) => {
             dataset.push({
-              fechavencimiento: detalle.fechadevencimiento ? moment(detalle.fechadevencimiento).format("DD/MM/YYYY") : "",
+              fechavencimiento: detalle.fechadevencimiento
+                ? moment(detalle.fechadevencimiento).format("DD/MM/YYYY")
+                : "",
               esoperativo: true,
               esadministrativo: false,
               proveedor: detalle.nameconsigner,
@@ -2183,7 +2250,9 @@ export const exportarPDFCXC = async (req: Request, res: Response) => {
               id_consigner: detalle.id_consigner ? detalle.id_consigner : 0,
               nameconsigner: detalle.nameconsigner,
               llegada: detalle.llegada == 1 ? "LLEGADA" : "NO LLEGADA",
-              fecha_disponibilidad: detalle.fecha_disponibilidad ? moment(detalle.fecha_disponibilidad).format("DD/MM/YYYY") : "",
+              fecha_disponibilidad: detalle.fecha_disponibilidad
+                ? moment(detalle.fecha_disponibilidad).format("DD/MM/YYYY")
+                : "",
               factura: detalle.nro_factura ? detalle.nro_factura : "N/F",
               symbol: detalle.symbol,
               total_pagar: detalle.total_pagar,
@@ -2204,7 +2273,9 @@ export const exportarPDFCXC = async (req: Request, res: Response) => {
         if (detalles.length > 0) {
           detalles.forEach((detalle) => {
             dataset.push({
-              fechavencimiento: detalle.fechavencimiento ? moment(detalle.fechavencimiento).format("DD/MM/YYYY") : "",
+              fechavencimiento: detalle.fechavencimiento
+                ? moment(detalle.fechavencimiento).format("DD/MM/YYYY")
+                : "",
               esoperativo: false,
               esadministrativo: true,
               proveedor: detalle.nameconsigner,
@@ -2212,7 +2283,9 @@ export const exportarPDFCXC = async (req: Request, res: Response) => {
               id_consigner: detalle.id_consigner ? detalle.id_consigner : 0,
               nameconsigner: detalle.nameconsigner,
               llegada: detalle.llegada == 1 ? "LLEGADA" : "NO LLEGADA",
-              fecha_disponibilidad: detalle.fecha ? moment(detalle.fecha).format("DD/MM/YYYY") : "",
+              fecha_disponibilidad: detalle.fecha
+                ? moment(detalle.fecha).format("DD/MM/YYYY")
+                : "",
               factura: detalle.concepto ? detalle.concepto : "N/F",
               symbol: detalle.symbol,
               // total_pagar: detalle.monto,
@@ -2233,56 +2306,55 @@ export const exportarPDFCXC = async (req: Request, res: Response) => {
 
     if (estatus.toUpperCase() == "VENCIDO") {
       switch (true) {
-        case (dias_vencidos > 60):
-          totalvencidoObj["+60"] = (parseFloat(totalvencidoObj["+60"]) || 0);
+        case dias_vencidos > 60:
+          totalvencidoObj["+60"] = parseFloat(totalvencidoObj["+60"]) || 0;
           totalvencidoObj["+60"] += monto;
           break;
-        case (dias_vencidos <= 60 && dias_vencidos > 45):
-          totalvencidoObj["+45"] = (parseFloat(totalvencidoObj["+45"]) || 0);
+        case dias_vencidos <= 60 && dias_vencidos > 45:
+          totalvencidoObj["+45"] = parseFloat(totalvencidoObj["+45"]) || 0;
           totalvencidoObj["+45"] += monto;
           break;
-        case (dias_vencidos <= 45 && dias_vencidos > 30):
-          totalvencidoObj["+30"] = (parseFloat(totalvencidoObj["+30"]) || 0);
+        case dias_vencidos <= 45 && dias_vencidos > 30:
+          totalvencidoObj["+30"] = parseFloat(totalvencidoObj["+30"]) || 0;
           totalvencidoObj["+30"] += monto;
           break;
-        case (dias_vencidos <= 30 && dias_vencidos > 15):
-          totalvencidoObj["+15"] = (parseFloat(totalvencidoObj["+15"]) || 0);
+        case dias_vencidos <= 30 && dias_vencidos > 15:
+          totalvencidoObj["+15"] = parseFloat(totalvencidoObj["+15"]) || 0;
           totalvencidoObj["+15"] += monto;
           break;
-        case (dias_vencidos <= 15 && dias_vencidos > 7):
-          totalvencidoObj["+7"] = (parseFloat(totalvencidoObj["+7"]) || 0);
+        case dias_vencidos <= 15 && dias_vencidos > 7:
+          totalvencidoObj["+7"] = parseFloat(totalvencidoObj["+7"]) || 0;
           totalvencidoObj["+7"] += monto;
           break;
-        case (dias_vencidos <= 7 && dias_vencidos > 0):
-          totalvencidoObj["+0"] = (parseFloat(totalvencidoObj["+0"]) || 0);
+        case dias_vencidos <= 7 && dias_vencidos > 0:
+          totalvencidoObj["+0"] = parseFloat(totalvencidoObj["+0"]) || 0;
           totalvencidoObj["+0"] += monto;
           break;
       }
-    }
-    else if (estatus.toUpperCase() == "POR VENCER") {
+    } else if (estatus.toUpperCase() == "POR VENCER") {
       switch (true) {
-        case (dias_vencidos <= -60):
-          totalxvencerObj["+60"] = (parseFloat(totalxvencerObj["+60"]) || 0);
+        case dias_vencidos <= -60:
+          totalxvencerObj["+60"] = parseFloat(totalxvencerObj["+60"]) || 0;
           totalxvencerObj["+60"] += monto;
           break;
-        case (dias_vencidos > -60 && dias_vencidos <= -45):
-          totalxvencerObj["-60"] = (parseFloat(totalxvencerObj["-60"]) || 0);
+        case dias_vencidos > -60 && dias_vencidos <= -45:
+          totalxvencerObj["-60"] = parseFloat(totalxvencerObj["-60"]) || 0;
           totalxvencerObj["-60"] += monto;
           break;
-        case (dias_vencidos > -45 && dias_vencidos <= -30):
-          totalxvencerObj["-45"] = (parseFloat(totalxvencerObj["-45"]) || 0);
+        case dias_vencidos > -45 && dias_vencidos <= -30:
+          totalxvencerObj["-45"] = parseFloat(totalxvencerObj["-45"]) || 0;
           totalxvencerObj["-45"] += monto;
           break;
-        case (dias_vencidos > -30 && dias_vencidos <= -15):
-          totalxvencerObj["-30"] = (parseFloat(totalxvencerObj["-30"]) || 0);
+        case dias_vencidos > -30 && dias_vencidos <= -15:
+          totalxvencerObj["-30"] = parseFloat(totalxvencerObj["-30"]) || 0;
           totalxvencerObj["-30"] += monto;
           break;
-        case (dias_vencidos > -15 && dias_vencidos <= -7):
-          totalxvencerObj["-15"] = (parseFloat(totalxvencerObj["-15"]) || 0);
+        case dias_vencidos > -15 && dias_vencidos <= -7:
+          totalxvencerObj["-15"] = parseFloat(totalxvencerObj["-15"]) || 0;
           totalxvencerObj["-15"] += monto;
           break;
-        case (dias_vencidos > -7):
-          totalxvencerObj["-7"] = (parseFloat(totalxvencerObj["-7"]) || 0);
+        case dias_vencidos > -7:
+          totalxvencerObj["-7"] = parseFloat(totalxvencerObj["-7"]) || 0;
           totalxvencerObj["-7"] += monto;
           break;
       }
@@ -2291,25 +2363,38 @@ export const exportarPDFCXC = async (req: Request, res: Response) => {
 
   let totalvencido_array = Object.entries(totalvencidoObj);
   let totalxvencer_array = Object.entries(totalxvencerObj);
-  let totalvencido = totalvencido_array.reduce((suma, v) => suma + (v[1] || 0), 0);
-  let totalxvencer = totalxvencer_array.reduce((suma, v) => suma + (v[1] || 0), 0);
+  let totalvencido = totalvencido_array.reduce(
+    (suma, v) => suma + (v[1] || 0),
+    0
+  );
+  let totalxvencer = totalxvencer_array.reduce(
+    (suma, v) => suma + (v[1] || 0),
+    0
+  );
 
-  totalvencido_array = totalvencido_array.map(([k, v]) => [k, v ? v.toFixed(2) : null]);
-  totalxvencer_array = totalxvencer_array.map(([k, v]) => [k, v ? v.toFixed(2) : null]);
+  totalvencido_array = totalvencido_array.map(([k, v]) => [
+    k,
+    v ? v.toFixed(2) : null,
+  ]);
+  totalxvencer_array = totalxvencer_array.map(([k, v]) => [
+    k,
+    v ? v.toFixed(2) : null,
+  ]);
   totalvencido = totalvencido ? parseFloat(totalvencido).toFixed(2) : null;
   totalxvencer = totalxvencer ? parseFloat(totalxvencer).toFixed(2) : null;
 
   let data = [];
-  if (formato == "1") { // Generar PDF por Fecha de Vencimiento
+  if (formato == "1") {
+    // Generar PDF por Fecha de Vencimiento
     title += " - Por Fecha de vencimiento";
 
     dataset.sort((a, b) => {
-      return b.dias_vencidos - a.dias_vencidos
+      return b.dias_vencidos - a.dias_vencidos;
     });
 
     data = dataset;
-  }
-  else if (formato == "2") { // Generar PDF por Cliente
+  } else if (formato == "2") {
+    // Generar PDF por Cliente
     title += " - Por Clientes";
 
     let expedientesxclienteObj = {};
@@ -2320,18 +2405,19 @@ export const exportarPDFCXC = async (req: Request, res: Response) => {
           dias_credito: v.dias_credito,
           totalvencido: null,
           totalxvencer: null,
-          expedientes: [{
-            expediente: v.expediente,
-            factura: v.factura,
-            monto: v.total_pagar,
-            estatus: v.estatus,
-            dias_vencidos: v.dias_vencidos,
-            vencido: { ...totalvencidoObj_default },
-            xvencer: { ...totalxvencerObj_default }
-          }]
+          expedientes: [
+            {
+              expediente: v.expediente,
+              factura: v.factura,
+              monto: v.total_pagar,
+              estatus: v.estatus,
+              dias_vencidos: v.dias_vencidos,
+              vencido: { ...totalvencidoObj_default },
+              xvencer: { ...totalxvencerObj_default },
+            },
+          ],
         };
-      }
-      else {
+      } else {
         expedientesxclienteObj[v.id_consigner]["expedientes"].push({
           expediente: v.expediente,
           factura: v.factura,
@@ -2339,7 +2425,7 @@ export const exportarPDFCXC = async (req: Request, res: Response) => {
           estatus: v.estatus,
           dias_vencidos: v.dias_vencidos,
           vencido: { ...totalvencidoObj_default },
-          xvencer: { ...totalxvencerObj_default }
+          xvencer: { ...totalxvencerObj_default },
         });
       }
     });
@@ -2351,79 +2437,80 @@ export const exportarPDFCXC = async (req: Request, res: Response) => {
         let { dias_vencidos, monto, estatus } = v;
         if (estatus.toUpperCase() == "VENCIDO") {
           switch (true) {
-            case (dias_vencidos > 60):
-              v["vencido"]["+60"] = (parseFloat(v["vencido"]["+60"]) || 0);
+            case dias_vencidos > 60:
+              v["vencido"]["+60"] = parseFloat(v["vencido"]["+60"]) || 0;
               v["vencido"]["+60"] += monto;
               total += monto;
               break;
-            case (dias_vencidos <= 60 && dias_vencidos > 45):
-              v["vencido"]["+45"] = (parseFloat(v["vencido"]["+45"]) || 0);
+            case dias_vencidos <= 60 && dias_vencidos > 45:
+              v["vencido"]["+45"] = parseFloat(v["vencido"]["+45"]) || 0;
               v["vencido"]["+45"] += monto;
               total += monto;
               break;
-            case (dias_vencidos <= 45 && dias_vencidos > 30):
-              v["vencido"]["+30"] = (parseFloat(v["vencido"]["+30"]) || 0);
+            case dias_vencidos <= 45 && dias_vencidos > 30:
+              v["vencido"]["+30"] = parseFloat(v["vencido"]["+30"]) || 0;
               v["vencido"]["+30"] += monto;
               total += monto;
               break;
-            case (dias_vencidos <= 30 && dias_vencidos > 15):
-              v["vencido"]["+15"] = (parseFloat(v["vencido"]["+15"]) || 0);
+            case dias_vencidos <= 30 && dias_vencidos > 15:
+              v["vencido"]["+15"] = parseFloat(v["vencido"]["+15"]) || 0;
               v["vencido"]["+15"] += monto;
               total += monto;
               break;
-            case (dias_vencidos <= 15 && dias_vencidos > 7):
-              v["vencido"]["+7"] = (parseFloat(v["vencido"]["+7"]) || 0);
+            case dias_vencidos <= 15 && dias_vencidos > 7:
+              v["vencido"]["+7"] = parseFloat(v["vencido"]["+7"]) || 0;
               v["vencido"]["+7"] += monto;
               total += monto;
               break;
-            case (dias_vencidos <= 7 && dias_vencidos > 0):
-              v["vencido"]["+0"] = (parseFloat(v["vencido"]["+0"]) || 0);
+            case dias_vencidos <= 7 && dias_vencidos > 0:
+              v["vencido"]["+0"] = parseFloat(v["vencido"]["+0"]) || 0;
               v["vencido"]["+0"] += monto;
               total += monto;
               break;
           }
 
           if (total) {
-            item["totalvencido"] = (parseFloat(item["totalvencido"]) || 0) + total;
-          } 
-        }
-        else if (estatus.toUpperCase() == "POR VENCER") {
+            item["totalvencido"] =
+              (parseFloat(item["totalvencido"]) || 0) + total;
+          }
+        } else if (estatus.toUpperCase() == "POR VENCER") {
           switch (true) {
-            case (dias_vencidos <= -60):
-              v["xvencer"]["+60"] = (parseFloat(v["xvencer"]["+60"]) || 0);
+            case dias_vencidos <= -60:
+              v["xvencer"]["+60"] = parseFloat(v["xvencer"]["+60"]) || 0;
               v["xvencer"]["+60"] += monto;
               total += monto;
               break;
-            case (dias_vencidos > -60 && dias_vencidos <= -45):
-              v["xvencer"]["-60"] = (parseFloat(v["xvencer"]["-60"]) || 0);
+            case dias_vencidos > -60 && dias_vencidos <= -45:
+              v["xvencer"]["-60"] = parseFloat(v["xvencer"]["-60"]) || 0;
               v["xvencer"]["-60"] += monto;
               total += monto;
               break;
-            case (dias_vencidos > -45 && dias_vencidos <= -30):
-              v["xvencer"]["-45"] = (parseFloat(v["xvencer"]["-45"]) || 0);
+            case dias_vencidos > -45 && dias_vencidos <= -30:
+              v["xvencer"]["-45"] = parseFloat(v["xvencer"]["-45"]) || 0;
               v["xvencer"]["-45"] += monto;
               total += monto;
               break;
-            case (dias_vencidos > -30 && dias_vencidos <= -15):
-              v["xvencer"]["-30"] = (parseFloat(v["xvencer"]["-30"]) || 0);
+            case dias_vencidos > -30 && dias_vencidos <= -15:
+              v["xvencer"]["-30"] = parseFloat(v["xvencer"]["-30"]) || 0;
               v["xvencer"]["-30"] += monto;
               total += monto;
               break;
-            case (dias_vencidos > -15 && dias_vencidos <= -7):
-              v["xvencer"]["-15"] = (parseFloat(v["xvencer"]["-15"]) || 0);
+            case dias_vencidos > -15 && dias_vencidos <= -7:
+              v["xvencer"]["-15"] = parseFloat(v["xvencer"]["-15"]) || 0;
               v["xvencer"]["-15"] += monto;
               total += monto;
               break;
-            case (dias_vencidos > -7):
-              v["xvencer"]["-7"] = (parseFloat(v["xvencer"]["-7"]) || 0);
+            case dias_vencidos > -7:
+              v["xvencer"]["-7"] = parseFloat(v["xvencer"]["-7"]) || 0;
               v["xvencer"]["-7"] += monto;
               total += monto;
               break;
           }
 
           if (total) {
-            item["totalxvencer"] = (parseFloat(item["totalxvencer"]) || 0) + total;
-          }          
+            item["totalxvencer"] =
+              (parseFloat(item["totalxvencer"]) || 0) + total;
+          }
         }
 
         return v;
@@ -2433,8 +2520,12 @@ export const exportarPDFCXC = async (req: Request, res: Response) => {
     });
 
     data.map((item) => {
-      item["totalvencido"] = item.totalvencido ? item.totalvencido.toFixed(2) : null;
-      item["totalxvencer"] = item.totalxvencer ? item.totalxvencer.toFixed(2) : null;
+      item["totalvencido"] = item.totalvencido
+        ? item.totalvencido.toFixed(2)
+        : null;
+      item["totalxvencer"] = item.totalxvencer
+        ? item.totalxvencer.toFixed(2)
+        : null;
 
       return item;
     });
@@ -2446,7 +2537,16 @@ export const exportarPDFCXC = async (req: Request, res: Response) => {
 
   ejs.renderFile(
     path.join(__dirname, "../views/", "reporteCXC.ejs"),
-    { title, formato, fechaEmision, data, totalvencido_array, totalxvencer_array, totalvencido, totalxvencer },
+    {
+      title,
+      formato,
+      fechaEmision,
+      data,
+      totalvencido_array,
+      totalxvencer_array,
+      totalvencido,
+      totalxvencer,
+    },
     (err, html) => {
       if (err) {
         res.send(err);
@@ -3131,14 +3231,17 @@ export const exportarListCliente = async (req: Request, res: Response) => {
   );
 };
 
-export const exportListComentariosPredefinidos = async (req: Request, res: Response) => {
+export const exportListComentariosPredefinidos = async (
+  req: Request,
+  res: Response
+) => {
   let { id_branch } = req.body;
 
   let wb = new xl.Workbook({
     dateFormat: "dd/mm/yyyy",
     author: "PIC CARGO - IMPORTADORES",
   });
-  
+
   req.setTimeout(0);
 
   await pool.query(
@@ -3161,8 +3264,8 @@ export const exportListComentariosPredefinidos = async (req: Request, res: Respo
           },
           font: {
             bold: true,
-            color: "#FFFFFF"
-          }
+            color: "#FFFFFF",
+          },
         });
         var wt = wb.addWorksheet(`LISTADO`, {
           views: [{ state: "frozen", xSplit: 4, ySplit: 1 }],
@@ -3179,7 +3282,7 @@ export const exportListComentariosPredefinidos = async (req: Request, res: Respo
         wt.cell(1, 3).string("ESTADO").style(cabDetalle);
         wt.cell(1, 4).string("CREACIÓN").style(cabDetalle);
         wt.cell(1, 5).string("ÚLTIMA ACTUALIZACIÓN").style(cabDetalle);
-        
+
         let index = 2;
         wt.row(1).filter({
           firstColumn: 1,
@@ -3197,7 +3300,7 @@ export const exportListComentariosPredefinidos = async (req: Request, res: Respo
         });
 
         let pathexcel = path.join(
-          `${__dirname}../../../uploads`, 
+          `${__dirname}../../../uploads`,
           "Reportexls.xlsx"
         );
 
