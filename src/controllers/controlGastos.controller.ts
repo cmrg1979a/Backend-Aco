@@ -13,26 +13,18 @@ export const setControl = async (req: Request, res: Response) => {
   await pool.query(
     "select * from Table_ControlGastos_Insertar($1,$2,$3)",
     [dataObj.id_house, dataObj.id_user, dataObj.status],
+
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-
-        (err, response, fields) => {
-          if (!err) {
-            
-            let rows = response.rows;
-            res.json({
-              status: 200,
-              statusBol: true,
-              mensaje: rows[0].mensaje,
-              estadoflag: rows[0].estadoflag,
-              data: rows,
-              token: renewTokenMiddleware(req),
-            });
-          } else {
-            console.log(err);
-          }
-        };
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
       } else {
         console.log(err);
       }
@@ -105,7 +97,6 @@ export const setEgresos = async (req: Request, res: Response) => {
       dataObj.tipocambio,
     ],
     (err, rows, fields) => {
-      
       if (!err) {
         res.json({
           status: 200,
@@ -131,7 +122,6 @@ export const getIngresosList = async (req: Request, res: Response) => {
         let rows = response.rows;
         (err, response, fields) => {
           if (!err) {
-            
             let rows = response.rows;
             res.json({
               status: 200,
@@ -163,7 +153,6 @@ export const getEgresosList = async (req: Request, res: Response) => {
         let rows = response.rows;
         (err, response, fields) => {
           if (!err) {
-            
             let rows = response.rows;
             res.json({
               status: 200,
@@ -195,7 +184,6 @@ export const getEgresosExpediente = async (req: Request, res: Response) => {
         let rows = response.rows;
         (err, response, fields) => {
           if (!err) {
-            
             let rows = response.rows;
             res.json({
               status: 200,
@@ -228,7 +216,6 @@ export const getEgresosProveedorList = async (req: Request, res: Response) => {
         let rows = response.rows;
         (err, response, fields) => {
           if (!err) {
-            
             let rows = response.rows;
             res.json({
               status: 200,
@@ -260,7 +247,6 @@ export const getTotalesProveedor = async (req: Request, res: Response) => {
         let rows = response.rows;
         (err, response, fields) => {
           if (!err) {
-            
             let rows = response.rows;
             res.json({
               status: 200,
@@ -288,7 +274,6 @@ export const delEgresos = async (req: Request, res: Response) => {
     "delete from ControlGastos_Egresos where id = $1",
     [id],
     (err, rows, fields) => {
-      
       if (!err) {
         res.json({
           status: 200,
@@ -311,7 +296,6 @@ export const delIngresos = async (req: Request, res: Response) => {
     [id],
     (err, response, fields) => {
       if (!err) {
-        
         let rows = response.rows;
         res.json({
           status: 200,
@@ -365,7 +349,6 @@ export const getControlList = async (req: Request, res: Response) => {
     [req.body.id_branch],
     (err, response, fields) => {
       if (!err) {
-        
         let rows = response.rows;
         res.json({
           status: 200,
@@ -404,7 +387,6 @@ export const editIngreso = async (req: Request, res: Response) => {
     ],
     (err, response, fields) => {
       if (!err) {
-        
         let rows = response.rows;
         res.json({
           status: 200,
@@ -450,7 +432,6 @@ export const editEgreso = async (req: Request, res: Response) => {
     ],
     (err, response, fields) => {
       if (!err) {
-        
         let rows = response.rows;
         res.json({
           status: 200,
@@ -474,7 +455,6 @@ export const ControlGastosList = async (req: Request, res: Response) => {
     [code_master],
     (err, response, fields) => {
       if (!err) {
-        
         let rows = response.rows;
         res.json({
           status: 200,
@@ -498,7 +478,6 @@ export const cargarCorrelativo = async (req: Request, res: Response) => {
     [id_branch ? id_branch : null],
     (err, response, fields) => {
       if (!err) {
-        
         let rows = response.rows;
         res.json({
           status: 200,
@@ -522,7 +501,6 @@ export const listarCGECcorralativo = async (req: Request, res: Response) => {
     [id_proveedor ? id_proveedor : null],
     (err, response, fields) => {
       if (!err) {
-        
         let rows = response.rows;
         res.json({
           status: 200,
@@ -559,7 +537,6 @@ export const registrarCGECcorralativo = async (req: Request, res: Response) => {
     ],
     (err, response, fields) => {
       if (!err) {
-        
         let rows = response.rows;
         res.json({
           status: 200,
@@ -617,7 +594,6 @@ export const cargaMasivaControlDeGasto = async (
     ],
     (err, response, fields) => {
       if (!err) {
-        
         let rows = response.rows;
         res.json({
           status: 200,
@@ -639,7 +615,6 @@ export const obtenerNombreCamapania = async (req: Request, res: Response) => {
     [req.query.id_master],
     (err, response, fields) => {
       if (!err) {
-        
         let rows = response.rows;
         res.json({
           status: 200,
@@ -670,7 +645,6 @@ export const cuotasMasterTipoProveedorInsertarActualizar = async (
     ],
     (err, response, fields) => {
       if (!err) {
-        
         let rows = response.rows;
         res.json({
           status: 200,
