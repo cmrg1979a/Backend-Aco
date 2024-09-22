@@ -2120,6 +2120,12 @@ export const exportarPDFCXP = async (req: Request, res: Response) => {
         let options = {
           page_size: "A4",
           orientation: "landscape",
+          border: {
+            top: "10mm",
+            right: "10mm",
+            bottom: "10mm",
+            left: "10mm",
+          },
           header: {
             height: "1mm",
           },
