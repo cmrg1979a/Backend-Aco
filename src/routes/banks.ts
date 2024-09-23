@@ -48,7 +48,7 @@ import {
 
 router.post("/getBanksList", TokenValidation, getBanksList);
 router.get(
-  "/getListaPagosXProveedorCxP/:id_proveedor",
+  "/getListaPagosXProveedorCxP",
   TokenValidation,
   getListaPagosXProveedorCxP
 );

@@ -211,7 +211,7 @@ export const envioMSGEmail = async (req: Request, res: Response) => {
       >
         ${codigo}
       </div>
-      <div style="text-align: center; font-size: 1rem; padding: 0 1rem;">
+      <div style="text-align: center; font-size: 1rem; padding: 0 1rem; background:yellow">
         Este código es válido por 1 hora.
       </div>
       <div style="text-align: center; font-size: 1rem; padding: 0 1rem;">

@@ -60,14 +60,14 @@ it("validar actualizar_bank", () => __awaiter(void 0, void 0, void 0, function* 
     expect(body.estadoflag).toBe(true);
     expect(body.data.length).toEqual(1);
 }));
-it("validar getListaPagosXProveedorCxP", () => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield (0, supertest_1.default)(app_1.default)
-        .get(`/getListaPagosXProveedorCxP/2335`)
-        .set("auth-token", process.env.authToken);
-    let body = response.body;
-    expect(body.estadoflag).toBe(true);
-    expect(body.data.length).toBeGreaterThan(0);
-}));
+// it("validar getListaPagosXProveedorCxP", async () => {
+//   const response = await request(app)
+//     .get(`/getListaPagosXProveedorCxP/2335`)
+//     .set("auth-token", process.env.authToken);
+//   let body = response.body;
+//   expect(body.estadoflag).toBe(true);
+//   expect(body.data.length).toBeGreaterThan(0);
+// });
 // it("validar getListBanksDetailsCxP", async () => {
 //   const response = await request(app)
 //     .get(

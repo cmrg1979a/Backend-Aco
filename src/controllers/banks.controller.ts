@@ -30,12 +30,13 @@ export const getBanksList = async (req: Request, res: Response) => {
   );
 };
 
+
 export const getListaPagosXProveedorCxP = async (
   req: Request,
   res: Response
 ) => {
-  let { id_proveedor, id_branch } = req.params;
-
+  let { id_proveedor, id_branch } = req.query;
+  // console.log(req.params);
   await pool.query(
     `SELECT * FROM pagosXProveedorCxP_listar($1,$2)`,
     [id_proveedor, id_branch],

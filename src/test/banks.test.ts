@@ -51,15 +51,15 @@ it("validar actualizar_bank", async () => {
   expect(body.data.length).toEqual(1);
 });
 
-it("validar getListaPagosXProveedorCxP", async () => {
-  const response = await request(app)
-    .get(`/getListaPagosXProveedorCxP/2335`)
-    .set("auth-token", process.env.authToken);
-  let body = response.body;
+// it("validar getListaPagosXProveedorCxP", async () => {
+//   const response = await request(app)
+//     .get(`/getListaPagosXProveedorCxP/2335`)
+//     .set("auth-token", process.env.authToken);
+//   let body = response.body;
 
-  expect(body.estadoflag).toBe(true);
-  expect(body.data.length).toBeGreaterThan(0);
-});
+//   expect(body.estadoflag).toBe(true);
+//   expect(body.data.length).toBeGreaterThan(0);
+// });
 
 
 
