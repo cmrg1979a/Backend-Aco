@@ -271,9 +271,9 @@ export const validarCorreoRegistro = async (req: Request, res: Response) => {
   );
 };
 export const RegistroNuevaEmpresa = async (req: Request, res: Response) => {
-  const { trade_name, id_pais, names, surname, second_surname, email, phone } =
+  const { trade_name, id_pais, names, surname, second_surname, email, phone,clave} =
     req.body;
-  let clave = generarContrasenaAleatoria(10);
+  // let clave = generarContrasenaAleatoria(10);
 
   await pool.query(
     "SELECT *from function_enterprise_registro($1,$2, $3, $4,$5,$6,$7,$8);",
