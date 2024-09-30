@@ -31,6 +31,7 @@ export const CargarPosicion = async (req: Request, res: Response) => {
 
 export const ListarPosicion = async (req: Request, res: Response) => {
   const position: IPosition = req.query;
+  console.log("resss");
   await pool.query(
     "SELECT * FROM function_position_listar($1,$2,$3,$4,$5)",
     [
