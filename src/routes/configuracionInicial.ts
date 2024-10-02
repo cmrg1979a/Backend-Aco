@@ -3,6 +3,7 @@ const router: Router = Router();
 import { TokenValidation } from "../libs/verifyToken";
 import {
   FinalizarConfiguracion,
+  OmitirConfiguracionCostos,
   actualizarDatosAdministradorConfig,
   actualizarDatosCMCliente,
   actualizarDatosCMProveedor,
@@ -39,5 +40,6 @@ router.post("/guardar_costos_config", TokenValidation, guardarCostosConfig);
 router.get("/enviar_codigo_validacion_email", envioMSGEmail);
 router.get("/validar_token_registro", validarTokenRegistro);
 router.get("/enviar_codigo_validacion", envioMSGWhathapp);
+router.put("/omitir_config_cost", OmitirConfiguracionCostos);
 router.put("/finalizar_config", FinalizarConfiguracion);
 export default router;
