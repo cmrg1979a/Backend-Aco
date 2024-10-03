@@ -59,6 +59,7 @@ const app: Application = express();
 import authRoutes from "./routes/auth";
 import paisRoutes from "./routes/pais";
 import PlanesRoutes from "./routes/planes";
+import paymentRoutes from "./routes/payment";
 import modulesRoutes from "./routes/modules";
 import entitiesRoutes from "./routes/entities";
 import documentsRoute from "./routes/documents";
@@ -279,6 +280,7 @@ app.use(
 app.use(authRoutes);
 app.use(paisRoutes);
 app.use(PlanesRoutes);
+app.use(paymentRoutes);
 app.use(modulesRoutes);
 app.use(entitiesRoutes);
 app.use(documentsRoute);
