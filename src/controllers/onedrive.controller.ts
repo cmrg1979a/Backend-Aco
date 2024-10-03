@@ -130,9 +130,8 @@ export const crearCarpetaEnOneDriveMaster = async (
   try {
     const userPrincipalName = "desarrollo@piccargope.onmicrosoft.com";
 
-   
     let id_carpeta = "01OH4EJAUKUWS4QCVCJJGJZMETZ6O2PSOY";
-   
+
     const carpeta = await client
       // .api(`/users/${userPrincipalName}/drive/items/root:/`)
       .api(`/users/${userPrincipalName}/drive/items/${id_carpeta}/children`)
@@ -156,7 +155,6 @@ export const crearCarpetaEnOneDriveMaster = async (
     if (error.innerError) {
       console.error("Detalles adicionales del error:", error.innerError);
     }
-   
   }
 };
 // export const crearCarpetaEnOneDriveMaster = async (

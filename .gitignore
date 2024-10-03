@@ -2,4 +2,6 @@
 dist
 /uploads
 /files
-
+src/routes/databasePGOp.ts
+src/routes/databasePg.ts
+src/controllers/onedrive.controller.ts
