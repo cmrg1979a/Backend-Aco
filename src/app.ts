@@ -36,29 +36,18 @@ const pool = new Pool({
   password: "Fr3sc0l1t4+",
   port: "5432",
   // database: "db_op_main_dev",
-  // database: "db_op_main_02",
+  // database: "db_op_main_2",
   database: "db_op_main_qa",
   // database: "db_op_main_edison",
 });
 
-/*pool
-  .connect()
-  .then(conn => {
-    conn
-      .query("SELECT * FROM table_entities ORDER BY id DESC LIMIT 10")
-      .then(res => {
-        conn.release()
-
-        console.log(res)
-      })
-      .catch(err => console.log(err))
-  })
-  .catch(err => console.log(err))*/
 
 const app: Application = express();
 
 import authRoutes from "./routes/auth";
 import paisRoutes from "./routes/pais";
+import PlanesRoutes from "./routes/planes";
+import paymentRoutes from "./routes/payment";
 import modulesRoutes from "./routes/modules";
 import entitiesRoutes from "./routes/entities";
 import documentsRoute from "./routes/documents";
@@ -278,6 +267,8 @@ app.use(
 );
 app.use(authRoutes);
 app.use(paisRoutes);
+app.use(PlanesRoutes);
+app.use(paymentRoutes);
 app.use(modulesRoutes);
 app.use(entitiesRoutes);
 app.use(documentsRoute);

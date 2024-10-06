@@ -26,7 +26,7 @@ export function conexion() {
     password: "Fr3sc0l1t4+",
     port: "5432",
     // database: "db_op_main_dev",
-    // database: "db_op_main_02",
+    // database: "db_op_main_2",
     database: "db_op_main_qa",
     // database: "db_op_main_edison",
   });
