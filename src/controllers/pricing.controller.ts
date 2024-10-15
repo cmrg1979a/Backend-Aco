@@ -860,6 +860,7 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
     volumen,
     pais,
     url_logo,
+    nameEmpresa,
   } = req.body;
   let fecha = moment().format("DD-MM-YYYY");
 
@@ -933,6 +934,7 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
       iso_pais,
       pais,
       url_logo,
+      nameEmpresa,
     },
 
     (err: any, data: any) => {

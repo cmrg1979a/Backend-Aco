@@ -167,7 +167,7 @@
         </tr>
         <tr>
           <td class="center" colspan="6">
-            <%=cliente %> - <%=sentido %> - <%= embarque %> - <%=icoterm %>
+            <%=sentido %> - <%= embarque %> - <%=icoterm %>
           </td>
         </tr>
         <tr
@@ -466,7 +466,7 @@
           "
         >
           <td class="align-left st-bg" colspan="5">
-            TOTAL SERVICIOS DE PIC CARGO
+            TOTAL SERVICIOS DE <%= nameEmpresa %>
           </td>
           <td class="align-right st-bg" colspan="1"><%= totalServicios%></td>
         </tr>
@@ -509,8 +509,10 @@
       </tr>
       <tr style="border-bottom: 1.5px solid black">
         <td class="align-left st-ti" colspan="5">
-          TOTAL SERVICO PIC CARGO <% if (impuesto.length>0) { %> + IMPUESTO DE
-          ADUANA SUNAT <%} %>
+          TOTAL SERVICIOS DE <%= nameEmpresa %> <% if (impuesto.length>0) { %> + IMPUESTO DE
+          ADUANA 
+          <%if (iso=='9589')  {%> SUNAT <%}%>
+          <%} %>
         </td>
         <td class="align-right st-ti" colspan="1"><%=total%></td>
       </tr>
