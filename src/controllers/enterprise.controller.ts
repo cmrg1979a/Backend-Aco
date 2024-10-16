@@ -271,8 +271,16 @@ export const validarCorreoRegistro = async (req: Request, res: Response) => {
   );
 };
 export const RegistroNuevaEmpresa = async (req: Request, res: Response) => {
-  const { trade_name, id_pais, names, surname, second_surname, email, phone,clave} =
-    req.body;
+  const {
+    trade_name,
+    id_pais,
+    names,
+    surname,
+    second_surname,
+    email,
+    phone,
+    clave,
+  } = req.body;
   // let clave = generarContrasenaAleatoria(10);
 
   await pool.query(
@@ -560,6 +568,30 @@ export const ReEstablecerContrasenia = async (req: Request, res: Response) => {
           mensaje: rows[0].mensaje,
           data: rows,
           token: null,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+
+export const obtenerImpuestosXBranch = async (req: Request, res: Response) => {
+  const { id_branch } = req.query;
+  await pool.query(
+    "select * from function_obtener_tipoimpuesto($1);",
+    [id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+
+        res.json({
+          status: 200,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          data: rows,
+          token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);

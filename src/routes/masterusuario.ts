@@ -20,6 +20,7 @@ import {
   cargarTipoTelefonoPersona,
   cargarTipoTransaccion,
   cargarTipoPersona,
+  cargarImpuestosRenta,
 } from "../controllers/masterusuario.controller";
 const corsOptions = {
   origin: "*",
@@ -114,6 +115,11 @@ router.get(
   "/cargar_master_detalle_tipo_persona",
   TokenValidation,
   cargarTipoPersona
+);
+router.get(
+  "/cargar_master_detalle_impuesto_renta",
+  TokenValidation,
+  cargarImpuestosRenta
 );
 
 export default router;

@@ -13,6 +13,7 @@ import {
   RegistroNuevaEmpresa,
   validarCorreoRegistro,
   ReEstablecerContrasenia,
+  obtenerImpuestosXBranch,
 } from "../controllers/enterprise.controller";
 
 router.post("/getBranch/:id_branch", TokenValidation, getBracnh);
@@ -33,5 +34,6 @@ router.get(
   validateDocumentEnterpriseEditar
 );
 router.post("/registro_nueva_empresa", RegistroNuevaEmpresa);
+router.get("/obtener_impuestos_branch", obtenerImpuestosXBranch);
 
 export default router;

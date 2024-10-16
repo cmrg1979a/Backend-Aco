@@ -18,10 +18,23 @@ export const actualizarDatosEmpresaConfig = async (
     id_pais,
     id_logo,
     address,
+    TipoImp,
+    impuesto,
   } = req.body;
   await pool.query(
-    "select * from function_config_actualizardatosempresa($1,$2,$3,$4,$5,$6,$7,$8);",
-    [id, id_document, document, trade_name, logo, id_pais, id_logo, address],
+    "select * from function_config_actualizardatosempresa($1,$2,$3,$4,$5,$6,$7,$8,$9,$10);",
+    [
+      id,
+      id_document,
+      document,
+      trade_name,
+      logo,
+      id_pais,
+      id_logo,
+      address,
+      TipoImp,
+      impuesto,
+    ],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -273,7 +286,10 @@ export const envioMSGEmail = async (req: Request, res: Response) => {
     );
   }
 };
-export const OmitirConfiguracionCostos = async (req: Request, res: Response) => {
+export const OmitirConfiguracionCostos = async (
+  req: Request,
+  res: Response
+) => {
   let { id_branch } = req.body;
   await pool.query(
     "select *from function_omitir_config_costos($1)",

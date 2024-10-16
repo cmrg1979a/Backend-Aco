@@ -470,3 +470,24 @@ export const cargarTipoPersona = async (req: Request, res: Response) => {
     }
   );
 };
+export const cargarImpuestosRenta = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM function_masterdetalle_cargar_impuestos_venta($1,'IMPRNT')",
+    [req.query.id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
