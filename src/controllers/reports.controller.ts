@@ -988,7 +988,9 @@ export const constRexportCXPExcel = async (req: Request, res: Response) => {
                 wa.cell(filaA, 4).string("Moneda").style(cabDetalle);
                 wa.cell(filaA, 5).string("Monto").style(cabDetalle);
                 wa.cell(filaA, 6).string("Moneda").style(cabDetalle);
-                wa.cell(filaA, 7).string("IGV").style(cabDetalle);
+                wa.cell(filaA, 7)
+                  .string(req.query.nombre_impuesto)
+                  .style(cabDetalle);
                 wa.cell(filaA, 8).string("Moneda").style(cabDetalle);
                 wa.cell(filaA, 9).string("Total").style(cabDetalle);
                 filaA++;
@@ -1027,7 +1029,9 @@ export const constRexportCXPExcel = async (req: Request, res: Response) => {
                 wt.cell(3, 4).string("Total").style(cabNoLlegada);
                 wt.cell(3, 6).string("Administrativo").style(cabNoLlegada);
                 wt.cell(3, 7).string("Monto").style(cabNoLlegada);
-                wt.cell(3, 8).string("IGV").style(cabNoLlegada);
+                wt.cell(3, 8)
+                  .string(req.query.nombre_impuesto)
+                  .style(cabNoLlegada);
                 wt.cell(3, 9).string("Total").style(cabNoLlegada);
                 wt.cell(4, 1).string(totalOp[0].moneda);
                 wt.cell(4, 2).string(parseFloat(totalOp[0].llegada).toFixed(2));
@@ -1179,7 +1183,7 @@ export const constReporteCXCExcel = async (req: Request, res: Response) => {
     firstColumn: 1,
     lastColumn: 11,
   });
-
+  let nombre_impuesto = req.query.nombre_impuesto;
   let rows = await getReporteCXC(req.query);
   let rows2 = await getReporteCXCAdmin(req.query);
 
@@ -1335,7 +1339,7 @@ export const constReporteCXCExcel = async (req: Request, res: Response) => {
   wt.cell(3, 4).string("Total").style(cabNoLlegada);
   wt.cell(3, 6).string("Administrativo").style(cabNoLlegada);
   wt.cell(3, 7).string("Monto").style(cabNoLlegada);
-  wt.cell(3, 8).string("IGV").style(cabNoLlegada);
+  wt.cell(3, 8).string(req.query.nombre_impuesto).style(cabNoLlegada);
   wt.cell(3, 9).string("Total").style(cabNoLlegada);
   wt.cell(4, 1).string(totalOp[0].moneda);
   wt.cell(4, 2).string(parseFloat(totalOp[0].llegada).toFixed(2));

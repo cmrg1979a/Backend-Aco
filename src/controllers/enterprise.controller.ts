@@ -159,7 +159,7 @@ export const updateEnterprise = async (req: Request, res: Response) => {
   const dataObj: postEnterprise = req.body;
 
   await pool.query(
-    "SELECT *from function_enterprise_actualizar($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);",
+    "SELECT *from function_enterprise_actualizar($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14,$15,$16);",
     [
       dataObj.id,
       dataObj.id_logo ? dataObj.id_logo : null,
@@ -175,6 +175,8 @@ export const updateEnterprise = async (req: Request, res: Response) => {
       dataObj.id_town,
       dataObj.id_document,
       dataObj.ic,
+      dataObj.tipoimpuesto,
+      dataObj.impuesto,
     ],
     (err, response, fields) => {
       if (!err) {
