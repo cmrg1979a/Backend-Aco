@@ -1242,7 +1242,27 @@ export const ListarMontoFinalesQuoteMONGODB = async (
     res.status(500).send("Error en la consulta");
   }
 };
-
+export const CopiarCotizacion = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM function_quote_copy($1);",
+    [req.body.id],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
 function getServicios({
   flete = [],
   almacen = [],
