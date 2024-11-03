@@ -578,7 +578,6 @@ export const ReEstablecerContrasenia = async (req: Request, res: Response) => {
   );
 };
 
-
 export const obtenerImpuestosXBranch = async (req: Request, res: Response) => {
   const { id_branch } = req.query;
   await pool.query(
