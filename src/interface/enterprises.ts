@@ -14,4 +14,6 @@ export interface postEnterprise {
   id_document: number;
   id_logo: number;
   status: number;
+  tipoimpuesto?: number;
+  impuesto?: number;
 }

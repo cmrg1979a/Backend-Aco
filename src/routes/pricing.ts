@@ -40,6 +40,7 @@ import {
   ListarMontoFinalesQuoteMONGODB,
   InsertMontoFinalesQuoteMONGODB,
   getCargarPersonalPricing,
+  CopiarCotizacion,
 } from "../controllers/pricing.controller";
 
 router.post("/setQuote", TokenValidation, setQuote);
@@ -111,5 +112,9 @@ router.post(
   // TokenValidation,
   ListarMontoFinalesQuoteMONGODB
 );
-
+router.post(
+  "/copiar_cotizacion",
+  // TokenValidation,
+  CopiarCotizacion
+);
 export default router;

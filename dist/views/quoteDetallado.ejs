@@ -147,7 +147,9 @@
              
           </td>
           <td width="50%" class="align-right" colspan="2">
-            <h1 class="titleOpcion">OPCIÓN <%=index%></h1>
+            <h1 class="titleOpcion"> <% if (!esunica) { %>
+              OPCIÓN <%= index %>
+            <% } %></h1>
           </td>
         </tr>
       </tbody>
@@ -504,7 +506,7 @@
         <td class="align-right st-bg" colspan="1"><%=totalImpuesto%></td>
       </tr>
       <tr style="border-bottom: 1.5px solid black">
-        <td class="align-left" colspan="5">IGV SOBRE SERVICIOS LOGISTICO</td>
+        <td class="align-left" colspan="5"><%= nombre_impuesto %> SOBRE SERVICIOS LOGISTICO</td>
         <td class="align-right" colspan="1"><%=totalImpuestosIGV %></td>
       </tr>
       <tr style="border-bottom: 1.5px solid black">

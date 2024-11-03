@@ -861,6 +861,8 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
     pais,
     url_logo,
     nameEmpresa,
+    esunica,
+    nombre_impuesto,
   } = req.body;
   let fecha = moment().format("DD-MM-YYYY");
 
@@ -880,7 +882,6 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
   let host = req.get("host"); // El host (dominio o IP con puerto)
   let url = `${protocol}://${host}/uploads/`;
   // let url_logo = `http://localhost:9200/uploads/1726792533981.png`;
-  console.log(url);
   ejs.renderFile(
     path.join(__dirname, "../views/", "quoteDetallado.ejs"),
     {
@@ -935,6 +936,8 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
       pais,
       url_logo,
       nameEmpresa,
+      esunica,
+      nombre_impuesto,
     },
 
     (err: any, data: any) => {
@@ -952,16 +955,16 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
         pdf
           .create(data, options)
           .toFile(
-            `files/COTIZACION_${index}.pdf`,
+            `files/COTIZACION_${id_branch}_${index}.pdf`,
             function (err: any, data: any) {
               if (err) {
                 res.send(err);
               } else {
-                res.download(`/COTIZACION_${index}.pdf`);
+                res.download(`/COTIZACION_${id_branch}_${index}.pdf`);
                 res.send({
                   estadoflag: true,
                   msg: "File created successfully",
-                  path: path.join(`COTIZACION_${index}.pdf`),
+                  path: path.join(`COTIZACION_${id_branch}_${index}.pdf`),
                 });
               }
             }
@@ -1239,7 +1242,27 @@ export const ListarMontoFinalesQuoteMONGODB = async (
     res.status(500).send("Error en la consulta");
   }
 };
-
+export const CopiarCotizacion = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM function_quote_copy($1);",
+    [req.body.id],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
 function getServicios({
   flete = [],
   almacen = [],
