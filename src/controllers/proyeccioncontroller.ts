@@ -377,7 +377,7 @@ export const exportarProyeccion = async (req: Request, res: Response) => {
           wr.cell(3, 1).string("Mes").style(cabsubTitle);
           wr.cell(4, 1).string("Año").style(cabsubTitle);
           wr.cell(5, 1).string("Tipo Cambio").style(cabsubTitle);
-          wr.cell(6, 1).string("Total Proyecto(S/.)").style(cabsubTitle);
+          wr.cell(6, 1).string("Total Proyecto)").style(cabsubTitle);
           wr.cell(7, 1).string("Conversión a Dolares").style(cabsubTitle);
           wr.cell(8, 1).string("Gastos(USD)").style(cabsubTitle);
           wr.cell(9, 1).string("Total Proyectado (USD)").style(cabsubTitle);

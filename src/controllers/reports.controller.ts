@@ -1011,8 +1011,8 @@ export const constRexportCXPExcel = async (req: Request, res: Response) => {
                   });
                 }
                 /** ------- REPORTE TOTAL ---------- */
-                let totalOp = calcularTotalesOp(rows);
-                let totalAdmin = calcularTotalesAdm(rows2);
+                let totalOp = calcularTotalesOp(rows, req.query.moneda);
+                let totalAdmin = calcularTotalesAdm(rows2, req.query.moneda);
 
                 wt.cell(1, 1, 1, 9, true)
                   .string("REPORTE TOTALES")
@@ -1328,8 +1328,8 @@ export const constReporteCXCExcel = async (req: Request, res: Response) => {
   }
 
   /** ------- REPORTE TOTAL ---------- */
-  let totalOp = calcularTotalesOpCxC(rows);
-  let totalAdmin = calcularTotalesAdmCxC(rows2);
+  let totalOp = calcularTotalesOpCxC(rows, req.query.moneda);
+  let totalAdmin = calcularTotalesAdmCxC(rows2, req.query.moneda);
   wt.cell(1, 1, 1, 9, true).string("RESUMEN").style(cabTitle);
   wt.cell(2, 1, 2, 4, true).string("RESUMEN OPERATIVO").style(cabLlegada);
   wt.cell(2, 6, 2, 9, true).string("RESUMEN ADMINISTRATIVO").style(cabLlegada);
@@ -1464,7 +1464,7 @@ export const getPdfInstructivoDetallado = async (
 };
 
 // ----------------------------------------
-function calcularTotalesOp(data) {
+function calcularTotalesOp(data, monExt) {
   let totalOperativo = [];
   let totalNoLlegadaDolares = 0;
   let totalLlegadaDolares = 0;
@@ -1475,30 +1475,24 @@ function calcularTotalesOp(data) {
   let totalSoles = 0;
   data.forEach((element) => {
     element.details.forEach((element2) => {
-      switch (element2.symbol) {
-        case "USD":
-          if (element2.llegada == 0) {
-            totalNoLlegadaDolares += parseFloat(element2.total_pagar);
-            totalDolares += parseFloat(element2.total_pagar);
-          }
-          if (element2.llegada == 1) {
-            totalLlegadaDolares += parseFloat(element2.total_pagar);
-            totalDolares += parseFloat(element2.total_pagar);
-          }
-          break;
-        case "S/.":
-          if (element2.llegada == 0) {
-            totalNoLlegadaSoles += parseFloat(element2.total_pagar);
-            totalSoles += parseFloat(element2.total_pagar);
-          }
-          if (element2.llegada == 1) {
-            totalLlegadaSoles += parseFloat(element2.total_pagar);
-            totalSoles += parseFloat(element2.total_pagar);
-          }
-          break;
-
-        default:
-          break;
+      if (element2.symbol == "USD") {
+        if (element2.llegada == 0) {
+          totalNoLlegadaDolares += parseFloat(element2.total_pagar);
+          totalDolares += parseFloat(element2.total_pagar);
+        }
+        if (element2.llegada == 1) {
+          totalLlegadaDolares += parseFloat(element2.total_pagar);
+          totalDolares += parseFloat(element2.total_pagar);
+        }
+      } else {
+        if (element2.llegada == 0) {
+          totalNoLlegadaSoles += parseFloat(element2.total_pagar);
+          totalSoles += parseFloat(element2.total_pagar);
+        }
+        if (element2.llegada == 1) {
+          totalLlegadaSoles += parseFloat(element2.total_pagar);
+          totalSoles += parseFloat(element2.total_pagar);
+        }
       }
     });
   });
@@ -1510,7 +1504,7 @@ function calcularTotalesOp(data) {
       total: totalDolares,
     },
     {
-      moneda: "SOL",
+      moneda: monExt,
       llegada: totalLlegadaSoles,
       no_llegada: totalNoLlegadaSoles,
       total: totalSoles,
@@ -1519,7 +1513,7 @@ function calcularTotalesOp(data) {
   return totalOperativo;
 }
 
-function calcularTotalesAdm(data) {
+function calcularTotalesAdm(data, monExt) {
   let totalAdministrativo = [];
   let totalMontoDolares = 0;
   let IgvDolares = 0;
@@ -1531,22 +1525,14 @@ function calcularTotalesAdm(data) {
   if (data[0].estadoflag == true) {
     data.forEach((element) => {
       element.details.forEach((element2) => {
-        switch (element2.symbol) {
-          case "USD":
-            totalMontoDolares += parseFloat(element2.monto);
-            IgvDolares += parseFloat(element2.igv);
-            totalDolares += parseFloat(element2.total);
-
-            break;
-          case "S/.":
-            totalMontoSoles += parseFloat(element2.monto);
-            IgvSoles += parseFloat(element2.igv);
-            totalSoles += parseFloat(element2.total);
-
-            break;
-
-          default:
-            break;
+        if (element2.symbol == "USD") {
+          totalMontoDolares += parseFloat(element2.monto);
+          IgvDolares += parseFloat(element2.igv);
+          totalDolares += parseFloat(element2.total);
+        } else {
+          totalMontoSoles += parseFloat(element2.monto);
+          IgvSoles += parseFloat(element2.igv);
+          totalSoles += parseFloat(element2.total);
         }
       });
     });
@@ -1559,7 +1545,7 @@ function calcularTotalesAdm(data) {
       total: totalDolares,
     },
     {
-      moneda: "SOL",
+      moneda: monExt,
       monto: totalMontoSoles,
       igv: IgvSoles,
       total: totalSoles,
@@ -1567,7 +1553,7 @@ function calcularTotalesAdm(data) {
   );
   return totalAdministrativo;
 }
-function calcularTotalesOpCxC(data) {
+function calcularTotalesOpCxC(data, monExt) {
   let totalOperativo = [];
   let totalNoLlegadaDolares = 0;
   let totalLlegadaDolares = 0;
@@ -1578,30 +1564,24 @@ function calcularTotalesOpCxC(data) {
   let totalSoles = 0;
   data.forEach((element) => {
     element.details.forEach((element2) => {
-      switch (element2.symbol) {
-        case "USD":
-          if (element2.llegada == 0) {
-            totalNoLlegadaDolares += parseFloat(element2.total_pagar);
-            totalDolares += parseFloat(element2.total_pagar);
-          }
-          if (element2.llegada == 1) {
-            totalLlegadaDolares += parseFloat(element2.total_pagar);
-            totalDolares += parseFloat(element2.total_pagar);
-          }
-          break;
-        case "S/.":
-          if (element2.llegada == 0) {
-            totalNoLlegadaSoles += parseFloat(element2.total_pagar);
-            totalSoles += parseFloat(element2.total_pagar);
-          }
-          if (element2.llegada == 1) {
-            totalLlegadaSoles += parseFloat(element2.total_pagar);
-            totalSoles += parseFloat(element2.total_pagar);
-          }
-          break;
-
-        default:
-          break;
+      if (element2.symbol == "USD") {
+        if (element2.llegada == 0) {
+          totalNoLlegadaDolares += parseFloat(element2.total_pagar);
+          totalDolares += parseFloat(element2.total_pagar);
+        }
+        if (element2.llegada == 1) {
+          totalLlegadaDolares += parseFloat(element2.total_pagar);
+          totalDolares += parseFloat(element2.total_pagar);
+        }
+      } else {
+        if (element2.llegada == 0) {
+          totalNoLlegadaSoles += parseFloat(element2.total_pagar);
+          totalSoles += parseFloat(element2.total_pagar);
+        }
+        if (element2.llegada == 1) {
+          totalLlegadaSoles += parseFloat(element2.total_pagar);
+          totalSoles += parseFloat(element2.total_pagar);
+        }
       }
     });
   });
@@ -1613,7 +1593,7 @@ function calcularTotalesOpCxC(data) {
       total: totalDolares,
     },
     {
-      moneda: "SOL",
+      moneda: monExt,
       llegada: totalLlegadaSoles,
       no_llegada: totalNoLlegadaSoles,
       total: totalSoles,
@@ -1622,7 +1602,7 @@ function calcularTotalesOpCxC(data) {
 
   return totalOperativo;
 }
-function calcularTotalesAdmCxC(data) {
+function calcularTotalesAdmCxC(data, monExt) {
   let totalAdministrativo = [];
   let totalMontoDolares = 0;
   let IgvDolares = 0;
@@ -1633,24 +1613,16 @@ function calcularTotalesAdmCxC(data) {
   let totalSoles = 0;
   data.forEach((element) => {
     element.details.forEach((element2) => {
-      switch (element2.symbol) {
-        case "USD":
-          totalMontoDolares += parseFloat(element2.total_pagar);
-          IgvDolares += parseFloat(element2.igv);
-          totalDolares +=
-            parseFloat(element2.total_pagar) + parseFloat(element2.igv);
-
-          break;
-        case "S/.":
-          totalMontoSoles += parseFloat(element2.total_pagar);
-          IgvSoles += parseFloat(element2.igv);
-          totalSoles +=
-            parseFloat(element2.total_pagar) + parseFloat(element2.igv);
-
-          break;
-
-        default:
-          break;
+      if (element2.symbol == "USD") {
+        totalMontoDolares += parseFloat(element2.total_pagar);
+        IgvDolares += parseFloat(element2.igv);
+        totalDolares +=
+          parseFloat(element2.total_pagar) + parseFloat(element2.igv);
+      } else {
+        totalMontoSoles += parseFloat(element2.total_pagar);
+        IgvSoles += parseFloat(element2.igv);
+        totalSoles +=
+          parseFloat(element2.total_pagar) + parseFloat(element2.igv);
       }
     });
   });
@@ -1662,7 +1634,7 @@ function calcularTotalesAdmCxC(data) {
       total: totalDolares,
     },
     {
-      moneda: "SOL",
+      moneda: monExt,
       monto: totalMontoSoles,
       igv: IgvSoles,
       total: totalSoles,
