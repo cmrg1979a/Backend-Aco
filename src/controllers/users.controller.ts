@@ -147,7 +147,7 @@ export const InsertarUsuarios = async (req: Request, res: Response) => {
       user.birthday,
       user.address,
       user.document,
-      user.status,
+      user.status ? 1 : 0,
       user.id_pais,
       user.id_city ? user.id_city : null,
       user.id_state ? user.id_state : null,
