@@ -449,10 +449,11 @@ export const editEgreso = async (req: Request, res: Response) => {
 };
 
 export const ControlGastosList = async (req: Request, res: Response) => {
-  const code_master = req.query.code_master;
+  const { code_master, id_branch } = req.query;
+  // const id_branch = req.query.id_branch;
   await pool.query(
-    "select * from function_controlgastos($1)",
-    [code_master],
+    "select * from function_controlgastos($1,$2)",
+    [code_master, id_branch],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -665,14 +666,14 @@ export const setProformaFiscal = async (req: Request, res: Response) => {
   const dataObj = req.body;
 
   pool.query(
-    "SELECT * FROM table_facturasfiscales_insertar($1,$2,$3,$4,$5,$6)", 
+    "SELECT * FROM table_facturasfiscales_insertar($1,$2,$3,$4,$5,$6)",
     [
       dataObj.id_house ? dataObj.id_house : null,
       dataObj.id_path ? dataObj.id_path : null,
       dataObj.tipo_pago ? dataObj.tipo_pago : null,
       dataObj.nro_factura ? dataObj.nro_factura : null,
       dataObj.fecha ? dataObj.fecha : null,
-      dataObj.status ? dataObj.status : null,      
+      dataObj.status ? dataObj.status : null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -687,7 +688,7 @@ export const setProformaFiscal = async (req: Request, res: Response) => {
           token: renewTokenMiddleware(req),
         });
       } else {
-        console.log(err)
+        console.log(err);
       }
     }
   );
@@ -714,7 +715,7 @@ export const getFacturasFiscales = async (req: Request, res: Response) => {
       } else {
         console.log(err);
       }
-    }    
+    }
   );
 };
 
@@ -725,7 +726,7 @@ export const delProformaFiscal = async (req: Request, res: Response) => {
     "select * from table_facturasfiscales_eliminar($1)",
     [id],
     (err, response, fields) => {
-      if (!err) {        
+      if (!err) {
         let rows = response.rows;
 
         res.json({
