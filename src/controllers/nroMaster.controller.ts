@@ -7,8 +7,10 @@ const { Pool } = pg;
 const pool = conexion();
 
 export const getNroMaster = async (req: Request, res: Response) => {
+  let { id_branch } = req.body;
   await pool.query(
-    " SELECT * FROM Table_MasterControl_obtenernromaster();",
+    " SELECT * FROM Table_MasterControl_obtenernromaster($1);",
+    [id_branch],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
