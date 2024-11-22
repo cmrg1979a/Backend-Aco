@@ -6,6 +6,7 @@ const { Pool } = pg;
 
 const pool = conexion();
 
+
 export const getNroMaster = async (req: Request, res: Response) => {
   let { id_branch } = req.body;
   await pool.query(

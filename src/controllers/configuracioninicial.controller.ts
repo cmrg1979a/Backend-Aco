@@ -20,9 +20,11 @@ export const actualizarDatosEmpresaConfig = async (
     address,
     TipoImp,
     impuesto,
+    usarclientes,
+    usaropadmin,
   } = req.body;
   await pool.query(
-    "select * from function_config_actualizardatosempresa($1,$2,$3,$4,$5,$6,$7,$8,$9,$10);",
+    "select * from function_config_actualizardatosempresa($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12);",
     [
       id,
       id_document,
@@ -34,6 +36,8 @@ export const actualizarDatosEmpresaConfig = async (
       address,
       TipoImp,
       impuesto,
+      usarclientes,
+      usaropadmin,
     ],
     (err, response, fields) => {
       if (!err) {
