@@ -1,34 +1,31 @@
-const nodemailer = require("nodemailer");
+// const nodemailer = require("nodemailer");
+const sgMail = require("@sendgrid/mail");
+let SENDGRID_API_KEY =
+  "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";
+sgMail.setApiKey(SENDGRID_API_KEY);
 
+// console.log(sgMail);
 export async function envioCorreo(data: any) {
-  try {
-    const transporter = nodemailer.createTransport({
-      host: "p3plzcpnl505059.prod.phx3.secureserver.net", // "mail.pic-cargo.com"
-      port: 465, // 465
-      secure: true,
-      auth: {
-        user: "sistema1@piccargo.com", // "sistema1@pic-cargo.com" // "testkaysen@gmail.com"
-        pass: "b@+p@f21e48c", // "b@+p@f21e48c", // "csyvzaysfnmntjws", //
-      },
-    });
+  console.log(data.html);
+  const mailOptions = {
+    from: "aco@agentedecargaonline.com",
+    to: data.email,
+    subject: data.subject,
+    text: data.text || "Texto alternativo del correo", // Texto alternativo predeterminado
+    html: data.html || "<p>Contenido HTML de prueba</p>", // HTML predeterminado si falta
+  };
 
-    const mailOptions = {
-      from: data.from,
-      to: data.email,
-      subject: data.subject,
-      html: data.html,
-    };
-    const mailInfo = await transporter.sendMail(mailOptions);
-    let res = {
+  try {
+    await sgMail.send(mailOptions); // Espera a que el correo se envíe
+    return {
       estado: true,
-      mensaje: "",
+      mensaje: "Correo enviado correctamente",
     };
-    return res;
   } catch (error) {
-    let res = {
+    console.error("Error al enviar el correo:", error);
+    return {
       estado: false,
-      mensaje: error,
+      mensaje: "Ocurrió un error al enviar el correo",
     };
-    return res;
   }
 }

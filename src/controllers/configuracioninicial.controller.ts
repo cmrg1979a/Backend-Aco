@@ -264,7 +264,7 @@ export const envioMSGEmail = async (req: Request, res: Response) => {
   // </div>
   // `;
   let data = {
-    from: '"ACO" <sistema1@piccargo.com>',
+    from: '"ACO" <aco@agentedecargaonline.com>',
     email: query.email,
     subject: "ACO – Registro",
     html: html,
