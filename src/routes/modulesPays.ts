@@ -33,7 +33,7 @@ router.post(
 router.get("/getVerInvoiceAdmin/:id", TokenValidation, getVerInvoiceAdmin);
 router.put("/setUpdateInvoiceAdmin", TokenValidation, setUpdateInvoiceAdmin);
 router.post("/getInvoiceAdminCxC", TokenValidation, getInvoiceAdminCxC);
-// router.post("/setInvoiceAdminCxC", TokenValidation, setInvoiceAdminCxC);
+router.post("/setInvoiceAdminCxC", TokenValidation, setInvoiceAdminCxC);
 router.get(
   "/getVerInvoiceAdminCxC/:id",
   TokenValidation,
