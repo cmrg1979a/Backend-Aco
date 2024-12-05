@@ -16,7 +16,6 @@ const corsOptions = {
 
 const corsMiddleware = cors(corsOptions);
 
-
 /**PROUCCIÓN */
 // const pool = new Pool({
 //   host: "10.116.0.2",
@@ -25,7 +24,7 @@ const corsMiddleware = cors(corsOptions);
 //   password: "@Developer2021Pic",
 //   port: "5432",
 //   // database: "db_op_main_edison",
-//   database: "db_op_main_01",  
+//   database: "db_op_main_01",
 // });
 
 /** DESARROLLO */
@@ -113,6 +112,7 @@ import users from "./routes/users";
 import position from "./routes/position";
 import configuracionInicial from "./routes/configuracionInicial";
 import seguridad from "./routes/seguridad";
+import config from "./routes/configEmpresa";
 
 // settings
 app.set("port", 9200);
@@ -333,4 +333,5 @@ app.use(users);
 app.use(position);
 app.use(configuracionInicial);
 app.use(seguridad);
+app.use(config);
 export default app;

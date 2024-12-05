@@ -26,7 +26,7 @@ export const setInvoiceAdmin = async (req: Request, res: Response) => {
   });
 
   await pool.query(
-    "select * from Table_InvoiceAdmin_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26)",
+    "select * from table_invoiceadmin_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26)",
     [
       dataObj.type_payment,
       dataObj.id_expediente,
