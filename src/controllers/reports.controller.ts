@@ -807,284 +807,297 @@ export const constRexportCXPExcel = async (req: Request, res: Response) => {
     dateFormat: "dd/mm/yyyy",
     author: "PIC CARGO - IMPORTADORES",
   });
-  await pool.query(
-    "SELECT * FROM controlgastos_egresos_reportecxp($1,$2,$3,$4,$5,$6)",
-    [
-      req.query.id_branch ? req.query.id_branch : null,
-      req.query.id_proveedor ? req.query.id_proveedor : null,
-      req.query.llegada ? req.query.llegada : null,
-      req.query.desde ? req.query.desde : null,
-      req.query.hasta ? req.query.hasta : null,
-      req.query.nro_expediente ? req.query.nro_expediente : null,
-    ],
-    (err, response, fields) => {
-      if (!err) {
-        let rows = response.rows;
-        new Promise<void>((resolver, rechazar) => {
-          pool.query(
-            "select * from Table_InvoiceAdmin_reporte_cxp($1,$2,$3,$4,$5,$6)",
-            [
-              req.query.id_branch ? req.query.id_branch : null,
-              req.query.id_proveedor ? req.query.id_proveedor : null,
-              req.query.llegada ? req.query.llegada : null,
-              req.query.desde ? req.query.desde : null,
-              req.query.hasta ? req.query.hasta : null,
-              req.query.nro_expediente ? req.query.nro_expediente : null,
-            ],
-            (err, response, fields) => {
-              if (!err) {
-                let rows2 = response.rows;
-
-                /**
-                 * ESTILOS
-                 */
-                let cabTitle = wb.createStyle({
-                  font: {
-                    color: "#ffffff",
-                    bold: true,
-                  },
-                  fill: {
-                    type: "pattern",
-                    patternType: "solid",
-                    fgColor: "#A43542",
-                  },
-                  alignment: {
-                    vertical: "center",
-                    horizontal: "center",
-                  },
-                });
-                let cabProveedor = wb.createStyle({
-                  fill: {
-                    type: "pattern",
-                    patternType: "solid",
-                    fgColor: "#a8aee5",
-                  },
-                  alignment: {
-                    vertical: "center",
-                  },
-                });
-                let cabLlegada = wb.createStyle({
-                  fill: {
-                    type: "pattern",
-                    patternType: "solid",
-                    fgColor: "#fbc3c3",
-                  },
-                });
-                let cabNoLlegada = wb.createStyle({
-                  fill: {
-                    type: "pattern",
-                    patternType: "solid",
-                    fgColor: "#c3fbef",
-                  },
-                });
-                let cabGeneral = wb.createStyle({
-                  fill: {
-                    type: "pattern",
-                    patternType: "solid",
-                    fgColor: "#e9e9e9",
-                  },
-                });
-                let cabDetalle = wb.createStyle({
-                  width: "auto",
-                  fill: {
-                    type: "pattern",
-                    patternType: "solid",
-                    fgColor: "#fff1cf",
-                  },
-                });
-                let cabProveedorDetalle = wb.createStyle({
-                  fill: {
-                    type: "pattern",
-                    patternType: "solid",
-                    fgColor: "#ffccab",
-                  },
-                });
-                /** AGREGANDO HOJAS */
-                var wt = wb.addWorksheet("TOTALES");
-                var ws = wb.addWorksheet("Operativa");
-                var wa = wb.addWorksheet("Administrativa");
-                /** ANCHO COLUMNAS */
-                ws.column(1).setWidth(30);
-                ws.column(4).setWidth(55);
-                ws.column(5).setWidth(20);
-                ws.column(6).setWidth(20);
-                ws.column(7).setWidth(10);
-                ws.column(8).setWidth(20);
-                ws.row(2).filter();
-                // -------------------------
-                wa.column(1).setWidth(60);
-                wa.row(2).filter();
-                /** ------- REPORTE OPERATIVO ---------- */
-                /** ELIMINAR REPETIDOS */
-
-                /** LLEANDO DE DATOS */
-
-                ws.cell(1, 1, 1, 10, true)
-                  .string("REPORTE DE CUENTAS POR PAGAR")
-                  .style(cabTitle);
-                let fila = 2;
-                ws.cell(fila, 1).string("Proveedor").style(cabDetalle);
-                ws.cell(fila, 2).string("Correlativo").style(cabDetalle);
-                ws.cell(fila, 3).string("Expediente").style(cabDetalle);
-                ws.cell(fila, 4).string("Cliente").style(cabDetalle);
-                ws.cell(fila, 5).string("Factura").style(cabDetalle);
-                ws.cell(fila, 6)
-                  .string("Fecha Disponibilidad")
-                  .style(cabDetalle);
-                ws.cell(fila, 7).string("Moneda").style(cabDetalle);
-                ws.cell(fila, 8).string("Total Pagar").style(cabDetalle);
-                ws.cell(fila, 9).string("Estatus").style(cabDetalle);
-                ws.cell(fila, 10).string("Pagado Cliente").style(cabDetalle);
-                fila++;
-
-                rows.forEach((element) => {
-                  element.details.forEach((element2) => {
-                    ws.cell(fila, 1).string(
-                      element.nameproveedor ? element.nameproveedor : ""
-                    );
-                    ws.cell(fila, 2).string(
-                      element2.code_correlativo
-                        ? element2.code_correlativo + ""
-                        : ""
-                    );
-                    ws.cell(fila, 3).string(
-                      element2.nro_master ? element2.nro_master + "" : ""
-                    );
-                    ws.cell(fila, 4).string(
-                      element2.nameconsigner ? element2.nameconsigner : ""
-                    );
-                    ws.cell(fila, 5).string(
-                      element2.expedientes ? element2.expedientes : ""
-                    );
-                    ws.cell(fila, 6).date(
-                      element2.fecha_disponibilidad
-                        ? element2.fecha_disponibilidad
-                        : ""
-                    );
-                    ws.cell(fila, 7).string(
-                      element2.symbol ? element2.symbol : ""
-                    );
-                    ws.cell(fila, 8).number(
-                      element2.total_pagar ? element2.total_pagar : ""
-                    );
-                    ws.cell(fila, 9).string(
-                      element2.llegada == 1 ? "LLEGADA" : "NO LLEGADA"
-                    );
-                    ws.cell(fila, 10).string(
-                      element2.pagado == 1 ? "SI" : "NO"
-                    );
-                    fila++;
+  try {
+    await pool.query(
+      "SELECT * FROM controlgastos_egresos_reportecxp($1,$2,$3,$4,$5,$6)",
+      [
+        req.query.id_branch ? req.query.id_branch : null,
+        req.query.id_proveedor ? req.query.id_proveedor : null,
+        req.query.llegada ? req.query.llegada : null,
+        req.query.desde ? req.query.desde : null,
+        req.query.hasta ? req.query.hasta : null,
+        req.query.nro_expediente ? req.query.nro_expediente : null,
+      ],
+      (err, response, fields) => {
+        if (!err) {
+          let rows = response.rows;
+          new Promise<void>((resolver, rechazar) => {
+            pool.query(
+              "select * from Table_InvoiceAdmin_reporte_cxp($1,$2,$3,$4,$5,$6,$7,$8)",
+              [
+                req.query.id_branch ? req.query.id_branch : null,
+                req.query.id_proveedor ? req.query.id_proveedor : null,
+                req.query.llegada ? req.query.llegada : null,
+                req.query.desde ? req.query.desde : null,
+                req.query.hasta ? req.query.hasta : null,
+                req.query.nro_expediente ? req.query.nro_expediente : null,
+                req.query.id_gasto ? req.query.id_gasto : null,
+                req.query.id_subgasto ? req.query.id_subgasto : null,
+              ],
+              (err, response, fields) => {
+                if (!err) {
+                  let rows2 = response.rows;
+                  /**
+                   * ESTILOS
+                   */
+                  let cabTitle = wb.createStyle({
+                    font: {
+                      color: "#ffffff",
+                      bold: true,
+                    },
+                    fill: {
+                      type: "pattern",
+                      patternType: "solid",
+                      fgColor: "#A43542",
+                    },
+                    alignment: {
+                      vertical: "center",
+                      horizontal: "center",
+                    },
                   });
-                });
-                /** ------- REPORTE ADMINISTRATIVO ---------- */
-                wa.cell(1, 1, 1, 9, true)
-                  .string("REPORTE DE CUENTAS POR PAGAR ADMINISTRATIVAS")
-                  .style(cabTitle);
-                let filaA = 2;
+                  let cabProveedor = wb.createStyle({
+                    fill: {
+                      type: "pattern",
+                      patternType: "solid",
+                      fgColor: "#a8aee5",
+                    },
+                    alignment: {
+                      vertical: "center",
+                    },
+                  });
+                  let cabLlegada = wb.createStyle({
+                    fill: {
+                      type: "pattern",
+                      patternType: "solid",
+                      fgColor: "#fbc3c3",
+                    },
+                  });
+                  let cabNoLlegada = wb.createStyle({
+                    fill: {
+                      type: "pattern",
+                      patternType: "solid",
+                      fgColor: "#c3fbef",
+                    },
+                  });
+                  let cabGeneral = wb.createStyle({
+                    fill: {
+                      type: "pattern",
+                      patternType: "solid",
+                      fgColor: "#e9e9e9",
+                    },
+                  });
+                  let cabDetalle = wb.createStyle({
+                    width: "auto",
+                    fill: {
+                      type: "pattern",
+                      patternType: "solid",
+                      fgColor: "#fff1cf",
+                    },
+                  });
+                  let cabProveedorDetalle = wb.createStyle({
+                    fill: {
+                      type: "pattern",
+                      patternType: "solid",
+                      fgColor: "#ffccab",
+                    },
+                  });
+                  /** AGREGANDO HOJAS */
+                  var wt = wb.addWorksheet("TOTALES");
+                  var ws = wb.addWorksheet("Operativa");
+                  var wa = wb.addWorksheet("Administrativa");
+                  /** ANCHO COLUMNAS */
+                  ws.column(1).setWidth(30);
+                  ws.column(4).setWidth(55);
+                  ws.column(5).setWidth(20);
+                  ws.column(6).setWidth(20);
+                  ws.column(7).setWidth(10);
+                  ws.column(8).setWidth(20);
+                  ws.row(2).filter();
+                  // -------------------------
+                  wa.column(1).setWidth(60);
+                  wa.row(2).filter();
+                  /** ------- REPORTE OPERATIVO ---------- */
+                  /** ELIMINAR REPETIDOS */
 
-                wa.cell(filaA, 1).string("Proveedor").style(cabDetalle);
-                wa.cell(filaA, 2).string("N° Factura").style(cabDetalle);
-                wa.cell(filaA, 3).string("Fecha").style(cabDetalle);
-                wa.cell(filaA, 4).string("Moneda").style(cabDetalle);
-                wa.cell(filaA, 5).string("Monto").style(cabDetalle);
-                wa.cell(filaA, 6).string("Moneda").style(cabDetalle);
-                wa.cell(filaA, 7)
-                  .string(req.query.nombre_impuesto)
-                  .style(cabDetalle);
-                wa.cell(filaA, 8).string("Moneda").style(cabDetalle);
-                wa.cell(filaA, 9).string("Total").style(cabDetalle);
-                filaA++;
-                if (rows2[0].estadoflag == true) {
-                  rows2.forEach((element) => {
+                  /** LLEANDO DE DATOS */
+
+                  ws.cell(1, 1, 1, 10, true)
+                    .string("REPORTE DE CUENTAS POR PAGAR")
+                    .style(cabTitle);
+                  let fila = 2;
+                  ws.cell(fila, 1).string("Proveedor").style(cabDetalle);
+                  ws.cell(fila, 2).string("Correlativo").style(cabDetalle);
+                  ws.cell(fila, 3).string("Expediente").style(cabDetalle);
+                  ws.cell(fila, 4).string("Cliente").style(cabDetalle);
+                  ws.cell(fila, 5).string("Factura").style(cabDetalle);
+                  ws.cell(fila, 6)
+                    .string("Fecha Disponibilidad")
+                    .style(cabDetalle);
+                  ws.cell(fila, 7).string("Moneda").style(cabDetalle);
+                  ws.cell(fila, 8).string("Total Pagar").style(cabDetalle);
+                  ws.cell(fila, 9).string("Estatus").style(cabDetalle);
+                  ws.cell(fila, 10).string("Pagado Cliente").style(cabDetalle);
+                  fila++;
+
+                  rows.forEach((element) => {
                     element.details.forEach((element2) => {
-                      wa.cell(filaA, 1).string(element.nameconsigner);
-                      wa.cell(filaA, 2).string(element2.nro_factura);
-                      wa.cell(filaA, 3).date(element2.fecha);
-                      wa.cell(filaA, 4).string(element2.namecoins);
-                      wa.cell(filaA, 5).number(element2.monto);
-                      wa.cell(filaA, 6).string(element2.namecoins);
-                      wa.cell(filaA, 7).number(element2.igv);
-                      wa.cell(filaA, 8).string(element2.namecoins);
-                      wa.cell(filaA, 9).number(element2.total);
-                      filaA++;
+                      ws.cell(fila, 1).string(
+                        element.nameproveedor ? element.nameproveedor : ""
+                      );
+                      ws.cell(fila, 2).string(
+                        element2.code_correlativo
+                          ? element2.code_correlativo + ""
+                          : ""
+                      );
+                      ws.cell(fila, 3).string(
+                        element2.nro_master ? element2.nro_master + "" : ""
+                      );
+                      ws.cell(fila, 4).string(
+                        element2.nameconsigner ? element2.nameconsigner : ""
+                      );
+                      ws.cell(fila, 5).string(
+                        element2.expedientes ? element2.expedientes : ""
+                      );
+                      ws.cell(fila, 6).date(
+                        element2.fecha_disponibilidad
+                          ? element2.fecha_disponibilidad
+                          : ""
+                      );
+                      ws.cell(fila, 7).string(
+                        element2.symbol ? element2.symbol : ""
+                      );
+                      ws.cell(fila, 8).number(
+                        element2.total_pagar ? element2.total_pagar : ""
+                      );
+                      ws.cell(fila, 9).string(
+                        element2.llegada == 1 ? "LLEGADA" : "NO LLEGADA"
+                      );
+                      ws.cell(fila, 10).string(
+                        element2.pagado == 1 ? "SI" : "NO"
+                      );
+                      fila++;
                     });
                   });
-                }
-                /** ------- REPORTE TOTAL ---------- */
-                let totalOp = calcularTotalesOp(rows, req.query.moneda);
-                let totalAdmin = calcularTotalesAdm(rows2, req.query.moneda);
+                  /** ------- REPORTE ADMINISTRATIVO ---------- */
+                  wa.cell(1, 1, 1, 9, true)
+                    .string("REPORTE DE CUENTAS POR PAGAR ADMINISTRATIVAS")
+                    .style(cabTitle);
+                  let filaA = 2;
 
-                wt.cell(1, 1, 1, 9, true)
-                  .string("REPORTE TOTALES")
-                  .style(cabTitle);
-                wt.cell(2, 1, 2, 4, true)
-                  .string("TOTAL OPERATIVO")
-                  .style(cabLlegada);
-                wt.cell(2, 6, 2, 9, true)
-                  .string("TOTAL ADMINISTRATIVO")
-                  .style(cabLlegada);
-                wt.cell(3, 1).string("Operativo").style(cabNoLlegada);
-                wt.cell(3, 2).string("Llegadas").style(cabNoLlegada);
-                wt.cell(3, 3).string("No llegadas").style(cabNoLlegada);
-                wt.cell(3, 4).string("Total").style(cabNoLlegada);
-                wt.cell(3, 6).string("Administrativo").style(cabNoLlegada);
-                wt.cell(3, 7).string("Monto").style(cabNoLlegada);
-                wt.cell(3, 8)
-                  .string(req.query.nombre_impuesto)
-                  .style(cabNoLlegada);
-                wt.cell(3, 9).string("Total").style(cabNoLlegada);
-                wt.cell(4, 1).string(totalOp[0].moneda);
-                wt.cell(4, 2).string(parseFloat(totalOp[0].llegada).toFixed(2));
-                wt.cell(4, 3).string(
-                  parseFloat(totalOp[0].no_llegada).toFixed(2)
-                );
-                wt.cell(4, 4).string(parseFloat(totalOp[0].total).toFixed(2));
-                wt.cell(5, 1).string(totalOp[1].moneda);
-                wt.cell(5, 2).string(parseFloat(totalOp[1].llegada).toFixed(2));
-                wt.cell(5, 3).string(
-                  parseFloat(totalOp[1].no_llegada).toFixed(2)
-                );
-                wt.cell(5, 4).string(parseFloat(totalOp[1].total).toFixed(2));
-                wt.cell(4, 6).string(totalAdmin[0].moneda);
-                wt.cell(4, 7).string(
-                  parseFloat(totalAdmin[0].monto).toFixed(2)
-                );
-                wt.cell(4, 8).string(parseFloat(totalAdmin[0].igv).toFixed(2));
-                wt.cell(4, 9).string(
-                  parseFloat(totalAdmin[0].total).toFixed(2)
-                );
-                wt.cell(5, 6).string(totalAdmin[1].moneda);
-                wt.cell(5, 7).string(
-                  parseFloat(totalAdmin[1].monto).toFixed(2)
-                );
-                wt.cell(5, 8).string(parseFloat(totalAdmin[1].igv).toFixed(2));
-                wt.cell(5, 9).string(
-                  parseFloat(totalAdmin[1].total).toFixed(2)
-                );
-                /* CREACION DE EXCEL*/
-                let pathexcel = path.join(
-                  // "C:\\laragon\\www\\api-backend-general-v1\\uploads",
-                  // `${process.env.RUTA_FILE}/uploads`,
-                  `${__dirname}../../../uploads`,
-                  "Reportexls.xlsx"
-                );
-
-                wb.write(pathexcel, function (err, stats) {
-                  if (err) {
-                    console.log(err);
-                  } else {
-                    res.download(pathexcel);
+                  wa.cell(filaA, 1).string("Proveedor").style(cabDetalle);
+                  wa.cell(filaA, 2).string("N° Factura").style(cabDetalle);
+                  wa.cell(filaA, 3).string("Fecha").style(cabDetalle);
+                  wa.cell(filaA, 4).string("Moneda").style(cabDetalle);
+                  wa.cell(filaA, 5).string("Monto").style(cabDetalle);
+                  wa.cell(filaA, 6).string("Moneda").style(cabDetalle);
+                  wa.cell(filaA, 7)
+                    .string(req.query.nombre_impuesto)
+                    .style(cabDetalle);
+                  wa.cell(filaA, 8).string("Moneda").style(cabDetalle);
+                  wa.cell(filaA, 9).string("Total").style(cabDetalle);
+                  filaA++;
+                  if (rows2[0].estadoflag == true) {
+                    rows2.forEach((element) => {
+                      element.details.forEach((element2) => {
+                        wa.cell(filaA, 1).string(element.nameconsigner);
+                        wa.cell(filaA, 2).string(element2.nro_factura);
+                        wa.cell(filaA, 3).date(element2.fecha);
+                        wa.cell(filaA, 4).string(element2.namecoins);
+                        wa.cell(filaA, 5).number(element2.monto);
+                        wa.cell(filaA, 6).string(element2.namecoins);
+                        wa.cell(filaA, 7).number(element2.igv);
+                        wa.cell(filaA, 8).string(element2.namecoins);
+                        wa.cell(filaA, 9).number(element2.total);
+                        filaA++;
+                      });
+                    });
                   }
-                });
+                  /** ------- REPORTE TOTAL ---------- */
+                  let totalOp = calcularTotalesOp(rows, req.query.moneda);
+                  let totalAdmin = calcularTotalesAdm(rows2, req.query.moneda);
+
+                  wt.cell(1, 1, 1, 9, true)
+                    .string("REPORTE TOTALES")
+                    .style(cabTitle);
+                  wt.cell(2, 1, 2, 4, true)
+                    .string("TOTAL OPERATIVO")
+                    .style(cabLlegada);
+                  wt.cell(2, 6, 2, 9, true)
+                    .string("TOTAL ADMINISTRATIVO")
+                    .style(cabLlegada);
+                  wt.cell(3, 1).string("Operativo").style(cabNoLlegada);
+                  wt.cell(3, 2).string("Llegadas").style(cabNoLlegada);
+                  wt.cell(3, 3).string("No llegadas").style(cabNoLlegada);
+                  wt.cell(3, 4).string("Total").style(cabNoLlegada);
+                  wt.cell(3, 6).string("Administrativo").style(cabNoLlegada);
+                  wt.cell(3, 7).string("Monto").style(cabNoLlegada);
+                  wt.cell(3, 8)
+                    .string(req.query.nombre_impuesto)
+                    .style(cabNoLlegada);
+                  wt.cell(3, 9).string("Total").style(cabNoLlegada);
+                  wt.cell(4, 1).string(totalOp[0].moneda);
+                  wt.cell(4, 2).string(
+                    parseFloat(totalOp[0].llegada).toFixed(2)
+                  );
+                  wt.cell(4, 3).string(
+                    parseFloat(totalOp[0].no_llegada).toFixed(2)
+                  );
+                  wt.cell(4, 4).string(parseFloat(totalOp[0].total).toFixed(2));
+                  wt.cell(5, 1).string(totalOp[1].moneda);
+                  wt.cell(5, 2).string(
+                    parseFloat(totalOp[1].llegada).toFixed(2)
+                  );
+                  wt.cell(5, 3).string(
+                    parseFloat(totalOp[1].no_llegada).toFixed(2)
+                  );
+                  wt.cell(5, 4).string(parseFloat(totalOp[1].total).toFixed(2));
+                  wt.cell(4, 6).string(totalAdmin[0].moneda);
+                  wt.cell(4, 7).string(
+                    parseFloat(totalAdmin[0].monto).toFixed(2)
+                  );
+                  wt.cell(4, 8).string(
+                    parseFloat(totalAdmin[0].igv).toFixed(2)
+                  );
+                  wt.cell(4, 9).string(
+                    parseFloat(totalAdmin[0].total).toFixed(2)
+                  );
+                  wt.cell(5, 6).string(totalAdmin[1].moneda);
+                  wt.cell(5, 7).string(
+                    parseFloat(totalAdmin[1].monto).toFixed(2)
+                  );
+                  wt.cell(5, 8).string(
+                    parseFloat(totalAdmin[1].igv).toFixed(2)
+                  );
+                  wt.cell(5, 9).string(
+                    parseFloat(totalAdmin[1].total).toFixed(2)
+                  );
+                  /* CREACION DE EXCEL*/
+                  let pathexcel = path.join(
+                    // "C:\\laragon\\www\\api-backend-general-v1\\uploads",
+                    // `${process.env.RUTA_FILE}/uploads`,
+                    `${__dirname}../../../uploads`,
+                    "Reportexls.xlsx"
+                  );
+
+                  wb.write(pathexcel, function (err, stats) {
+                    if (err) {
+                      console.log(err);
+                    } else {
+                      res.download(pathexcel);
+                    }
+                  });
+                }
               }
-            }
-          );
-        });
-      } else {
-        console.log(err);
+            );
+          });
+        } else {
+          console.log(err);
+        }
       }
-    }
-  );
+    );
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const constReporteCXCExcel = async (req: Request, res: Response) => {
@@ -1676,7 +1689,7 @@ function getReporteCXC(data) {
 function getReporteCXCAdmin(data) {
   return new Promise((resolve, reject) => {
     pool.query(
-      "SELECT * FROM TABLE_INVOICEADMINCXC_reporteadmincxc($1,$2,$3,$4,$5,$6)",
+      "SELECT * FROM TABLE_INVOICEADMINCXC_reporteadmincxc($1,$2,$3,$4,$5,$6,$7,$8)",
       [
         data.id_branch ? data.id_branch : null,
         data.id_cliente ? data.id_cliente : null,
@@ -1684,6 +1697,8 @@ function getReporteCXCAdmin(data) {
         data.hasta ? data.hasta : null,
         data.llegada ? data.llegada : null,
         data.nro_expediente ? data.nro_expediente : null,
+        data.id_ingreso ? data.id_ingreso : null,
+        data.id_subingreso ? data.id_subingreso : null,
       ],
       (err, response) => {
         let rows = response.rows;
@@ -2156,7 +2171,7 @@ function getReporteCXP(data) {
 function getDebsToPayAdmin(data) {
   return new Promise((resolve, reject) => {
     pool.query(
-      "select * from Table_InvoiceAdmin_reporte_cxp($1,$2,$3,$4,$5,$6)",
+      "select * from Table_InvoiceAdmin_reporte_cxp($1,$2,$3,$4,$5,$6,$7,$8)",
       [
         data.id_branch ? data.id_branch : null,
         data.id_proveedor ? data.id_proveedor : null,
@@ -2164,6 +2179,8 @@ function getDebsToPayAdmin(data) {
         data.desde ? data.desde : null,
         data.hasta ? data.hasta : null,
         data.nro_expediente ? data.nro_expediente : null,
+        data.id_gasto ? data.id_gasto : null,
+        data.id_subgasto ? data.id_subgasto : null,
       ],
       (err, response) => {
         let rows = response.rows;

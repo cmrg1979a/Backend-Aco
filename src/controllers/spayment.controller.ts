@@ -1,4 +1,4 @@
-import { Request, response, Response } from "express";
+import { query, Request, response, Response } from "express";
 import { convertToObject } from "typescript";
 // import { connect } from "../routes/database";
 import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
@@ -31,8 +31,8 @@ export const setSPaymentPro = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
             number: rows[0].number,
           });
         } else {
@@ -66,7 +66,7 @@ export const putSPaymentPro = async (req: Request, res: Response) => {
         res.json({
           status: 200,
           statusBol: true,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -93,8 +93,8 @@ export const getSPaymentPro = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -122,8 +122,8 @@ export const getListInvoice = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -151,8 +151,8 @@ export const getListInvoiceExp = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -198,7 +198,7 @@ export const delDebsClient = async (req: Request, res: Response) => {
         res.json({
           status: 200,
           statusBol: true,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -220,8 +220,8 @@ export const getRequestPayment = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -253,8 +253,8 @@ export const getRequestPaymentConceptos = async (
             status: 200,
             statusBol: true,
             estadoflag: rows[0].estadoflag,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -272,15 +272,28 @@ export const getRequestPaymentConceptos = async (
 };
 
 export const getDebsToPayAdmin = async (req: Request, res: Response) => {
+  let {
+    id_branch,
+    id_proveedor,
+    llegada,
+    desde,
+    hasta,
+    nro_expediente,
+    id_gasto,
+    id_subgasto,
+  } = req.query;
+
   pool.query(
-    "select * from Table_InvoiceAdmin_reporte_cxp($1,$2,$3,$4,$5,$6)",
+    "select * from table_invoiceadmin_reporte_cxp($1,$2,$3,$4,$5,$6,$7,$8)",
     [
-      req.query.id_branch ? req.query.id_branch : null,
-      req.query.id_proveedor ? req.query.id_proveedor : null,
-      req.query.llegada ? req.query.llegada : null,
-      req.query.desde ? req.query.desde : null,
-      req.query.hasta ? req.query.hasta : null,
-      req.query.nro_expediente ? req.query.nro_expediente : null,
+      id_branch ? id_branch : null,
+      id_proveedor ? id_proveedor : null,
+      llegada ? llegada : null,
+      desde ? desde : null,
+      hasta ? hasta : null,
+      nro_expediente ? nro_expediente : null,
+      id_gasto ? id_gasto : null,
+      id_subgasto ? id_subgasto : null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -290,8 +303,8 @@ export const getDebsToPayAdmin = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             estadoflag: rows[0].estadoflag,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -319,8 +332,8 @@ export const getDebsToPay = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -347,8 +360,8 @@ export const getReportAccounts = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -375,8 +388,8 @@ export const getReportAccountsFilter = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -406,8 +419,8 @@ export const getDebsClient = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -435,8 +448,8 @@ export const getDebsClientList = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -512,8 +525,6 @@ export const setSPaymentFile = async (req: Request, res: Response) => {
             "UPDATE ControlGastos_Egresos set pagado = $1, fecha_pago = $2, id_comprobante = $3 where id = $4",
             [1, dataObj.fecha_operacion, datar.insertId, item.id_egreso],
             (err, rowss, fields) => {
-              
-
               if (!err) {
               } else {
                 console.log(err);
@@ -557,7 +568,7 @@ export const setInvoice = async (req: Request, res: Response) => {
   const dataObj = req.body;
 
   pool.query(
-    "SELECT * FROM table_invoice_insert($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)", 
+    "SELECT * FROM table_invoice_insert($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
     [
       dataObj.id_house ? dataObj.id_house : null,
       dataObj.id_proveedor ? dataObj.id_proveedor : null,
@@ -583,7 +594,7 @@ export const setInvoice = async (req: Request, res: Response) => {
           token: renewTokenMiddleware(req),
         });
       } else {
-        console.log(err)
+        console.log(err);
       }
     }
   );
@@ -616,8 +627,8 @@ export const setDebsClient = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -653,8 +664,8 @@ export const setCheckDebsClient = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -1017,8 +1028,8 @@ export const getReporteCXP = async (req: Request, res: Response) => {
             status: 200,
             statusBol: true,
             estadoflag: rows[0].estadoflag,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -1052,8 +1063,8 @@ export const getReporteCXC = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -1070,15 +1081,27 @@ export const getReporteCXC = async (req: Request, res: Response) => {
 };
 
 export const getReporteCXCAdmin = async (req: Request, res: Response) => {
+  let {
+    id_branch,
+    id_cliente,
+    desde,
+    hasta,
+    llegada,
+    nro_expediente,
+    id_ingreso,
+    id_subingreso,
+  } = req.query;
   pool.query(
-    "SELECT * FROM TABLE_INVOICEADMINCXC_reporteadmincxc($1,$2,$3,$4,$5,$6)",
+    "SELECT * FROM TABLE_INVOICEADMINCXC_reporteadmincxc($1,$2,$3,$4,$5,$6,$7,$8)",
     [
-      req.query.id_branch ? req.query.id_branch : null,
-      req.query.id_cliente ? req.query.id_cliente : null,
-      req.query.desde ? req.query.desde : null,
-      req.query.hasta ? req.query.hasta : null,
-      req.query.llegada ? req.query.llegada : null,
-      req.query.nro_expediente ? req.query.nro_expediente : null,
+      id_branch ? id_branch : null,
+      id_cliente ? id_cliente : null,
+      desde ? desde : null,
+      hasta ? hasta : null,
+      llegada ? llegada : null,
+      nro_expediente ? nro_expediente : null,
+      id_ingreso ? id_ingreso : null,
+      id_subingreso ? id_subingreso : null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -1087,8 +1110,8 @@ export const getReporteCXCAdmin = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -1113,7 +1136,7 @@ export const getReporteCXCAdmin = async (req: Request, res: Response) => {
 //           status: 200,
 //           statusBol: true,
 //          data: rows,
-          // token: renewTokenMiddleware(req),
+// token: renewTokenMiddleware(req),
 //         });
 //       } else {
 //         console.log(err);
@@ -1182,8 +1205,8 @@ export const updateDebsClient = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
