@@ -807,297 +807,281 @@ export const constRexportCXPExcel = async (req: Request, res: Response) => {
     dateFormat: "dd/mm/yyyy",
     author: "PIC CARGO - IMPORTADORES",
   });
-  try {
-    await pool.query(
-      "SELECT * FROM controlgastos_egresos_reportecxp($1,$2,$3,$4,$5,$6)",
-      [
-        req.query.id_branch ? req.query.id_branch : null,
-        req.query.id_proveedor ? req.query.id_proveedor : null,
-        req.query.llegada ? req.query.llegada : null,
-        req.query.desde ? req.query.desde : null,
-        req.query.hasta ? req.query.hasta : null,
-        req.query.nro_expediente ? req.query.nro_expediente : null,
-      ],
-      (err, response, fields) => {
-        if (!err) {
-          let rows = response.rows;
-          new Promise<void>((resolver, rechazar) => {
-            pool.query(
-              "select * from Table_InvoiceAdmin_reporte_cxp($1,$2,$3,$4,$5,$6,$7,$8)",
-              [
-                req.query.id_branch ? req.query.id_branch : null,
-                req.query.id_proveedor ? req.query.id_proveedor : null,
-                req.query.llegada ? req.query.llegada : null,
-                req.query.desde ? req.query.desde : null,
-                req.query.hasta ? req.query.hasta : null,
-                req.query.nro_expediente ? req.query.nro_expediente : null,
-                req.query.id_gasto ? req.query.id_gasto : null,
-                req.query.id_subgasto ? req.query.id_subgasto : null,
-              ],
-              (err, response, fields) => {
-                if (!err) {
-                  let rows2 = response.rows;
-                  /**
-                   * ESTILOS
-                   */
-                  let cabTitle = wb.createStyle({
-                    font: {
-                      color: "#ffffff",
-                      bold: true,
-                    },
-                    fill: {
-                      type: "pattern",
-                      patternType: "solid",
-                      fgColor: "#A43542",
-                    },
-                    alignment: {
-                      vertical: "center",
-                      horizontal: "center",
-                    },
-                  });
-                  let cabProveedor = wb.createStyle({
-                    fill: {
-                      type: "pattern",
-                      patternType: "solid",
-                      fgColor: "#a8aee5",
-                    },
-                    alignment: {
-                      vertical: "center",
-                    },
-                  });
-                  let cabLlegada = wb.createStyle({
-                    fill: {
-                      type: "pattern",
-                      patternType: "solid",
-                      fgColor: "#fbc3c3",
-                    },
-                  });
-                  let cabNoLlegada = wb.createStyle({
-                    fill: {
-                      type: "pattern",
-                      patternType: "solid",
-                      fgColor: "#c3fbef",
-                    },
-                  });
-                  let cabGeneral = wb.createStyle({
-                    fill: {
-                      type: "pattern",
-                      patternType: "solid",
-                      fgColor: "#e9e9e9",
-                    },
-                  });
-                  let cabDetalle = wb.createStyle({
-                    width: "auto",
-                    fill: {
-                      type: "pattern",
-                      patternType: "solid",
-                      fgColor: "#fff1cf",
-                    },
-                  });
-                  let cabProveedorDetalle = wb.createStyle({
-                    fill: {
-                      type: "pattern",
-                      patternType: "solid",
-                      fgColor: "#ffccab",
-                    },
-                  });
-                  /** AGREGANDO HOJAS */
-                  var wt = wb.addWorksheet("TOTALES");
-                  var ws = wb.addWorksheet("Operativa");
-                  var wa = wb.addWorksheet("Administrativa");
-                  /** ANCHO COLUMNAS */
-                  ws.column(1).setWidth(30);
-                  ws.column(4).setWidth(55);
-                  ws.column(5).setWidth(20);
-                  ws.column(6).setWidth(20);
-                  ws.column(7).setWidth(10);
-                  ws.column(8).setWidth(20);
-                  ws.row(2).filter();
-                  // -------------------------
-                  wa.column(1).setWidth(60);
-                  wa.row(2).filter();
-                  /** ------- REPORTE OPERATIVO ---------- */
-                  /** ELIMINAR REPETIDOS */
 
-                  /** LLEANDO DE DATOS */
+  let cabTitle = wb.createStyle({
+    font: {
+      color: "#ffffff",
+      bold: true,
+    },
+    fill: {
+      type: "pattern",
+      patternType: "solid",
+      fgColor: "#A43542",
+    },
+    alignment: {
+      vertical: "center",
+      horizontal: "center",
+    },
+  });
+  let cabProveedor = wb.createStyle({
+    fill: {
+      type: "pattern",
+      patternType: "solid",
+      fgColor: "#a8aee5",
+    },
+    alignment: {
+      vertical: "center",
+    },
+  });
+  let cabLlegada = wb.createStyle({
+    fill: {
+      type: "pattern",
+      patternType: "solid",
+      fgColor: "#fbc3c3",
+    },
+  });
+  let cabNoLlegada = wb.createStyle({
+    fill: {
+      type: "pattern",
+      patternType: "solid",
+      fgColor: "#c3fbef",
+    },
+  });
+  let cabGeneral = wb.createStyle({
+    fill: {
+      type: "pattern",
+      patternType: "solid",
+      fgColor: "#e9e9e9",
+    },
+  });
+  let cabDetalle = wb.createStyle({
+    width: "auto",
+    fill: {
+      type: "pattern",
+      patternType: "solid",
+      fgColor: "#fff1cf",
+    },
+  });
+  let cabProveedorDetalle = wb.createStyle({
+    fill: {
+      type: "pattern",
+      patternType: "solid",
+      fgColor: "#ffccab",
+    },
+  });
+  var wt = wb.addWorksheet("Totales");
+  var wo = wb.addWorksheet("Operativa");
+  var wa = wb.addWorksheet("Administrativa");
+  wo.cell(1, 1, 1, 11, true)
+    .string("REPORTE DE CUENTAS POR COBRAR")
+    .style(cabTitle);
+  let fila = 2;
 
-                  ws.cell(1, 1, 1, 10, true)
-                    .string("REPORTE DE CUENTAS POR PAGAR")
-                    .style(cabTitle);
-                  let fila = 2;
-                  ws.cell(fila, 1).string("Proveedor").style(cabDetalle);
-                  ws.cell(fila, 2).string("Correlativo").style(cabDetalle);
-                  ws.cell(fila, 3).string("Expediente").style(cabDetalle);
-                  ws.cell(fila, 4).string("Cliente").style(cabDetalle);
-                  ws.cell(fila, 5).string("Factura").style(cabDetalle);
-                  ws.cell(fila, 6)
-                    .string("Fecha Disponibilidad")
-                    .style(cabDetalle);
-                  ws.cell(fila, 7).string("Moneda").style(cabDetalle);
-                  ws.cell(fila, 8).string("Total Pagar").style(cabDetalle);
-                  ws.cell(fila, 9).string("Estatus").style(cabDetalle);
-                  ws.cell(fila, 10).string("Pagado Cliente").style(cabDetalle);
-                  fila++;
+  let header = await obtenerHeaderCXP(req.query);
+  let rows = await getReporteCXP(req.query);
+  let rows2 = await getDebsToPayAdmin(req.query);
 
-                  rows.forEach((element) => {
-                    element.details.forEach((element2) => {
-                      ws.cell(fila, 1).string(
-                        element.nameproveedor ? element.nameproveedor : ""
-                      );
-                      ws.cell(fila, 2).string(
-                        element2.code_correlativo
-                          ? element2.code_correlativo + ""
-                          : ""
-                      );
-                      ws.cell(fila, 3).string(
-                        element2.nro_master ? element2.nro_master + "" : ""
-                      );
-                      ws.cell(fila, 4).string(
-                        element2.nameconsigner ? element2.nameconsigner : ""
-                      );
-                      ws.cell(fila, 5).string(
-                        element2.expedientes ? element2.expedientes : ""
-                      );
-                      ws.cell(fila, 6).date(
-                        element2.fecha_disponibilidad
-                          ? element2.fecha_disponibilidad
-                          : ""
-                      );
-                      ws.cell(fila, 7).string(
-                        element2.symbol ? element2.symbol : ""
-                      );
-                      ws.cell(fila, 8).number(
-                        element2.total_pagar ? element2.total_pagar : ""
-                      );
-                      ws.cell(fila, 9).string(
-                        element2.llegada == 1 ? "LLEGADA" : "NO LLEGADA"
-                      );
-                      ws.cell(fila, 10).string(
-                        element2.pagado == 1 ? "SI" : "NO"
-                      );
-                      fila++;
-                    });
-                  });
-                  /** ------- REPORTE ADMINISTRATIVO ---------- */
-                  wa.cell(1, 1, 1, 9, true)
-                    .string("REPORTE DE CUENTAS POR PAGAR ADMINISTRATIVAS")
-                    .style(cabTitle);
-                  let filaA = 2;
+  wo.cell(fila, 1).string("Filtro").style(cabDetalle);
 
-                  wa.cell(filaA, 1).string("Proveedor").style(cabDetalle);
-                  wa.cell(filaA, 2).string("N° Factura").style(cabDetalle);
-                  wa.cell(filaA, 3).string("Fecha").style(cabDetalle);
-                  wa.cell(filaA, 4).string("Moneda").style(cabDetalle);
-                  wa.cell(filaA, 5).string("Monto").style(cabDetalle);
-                  wa.cell(filaA, 6).string("Moneda").style(cabDetalle);
-                  wa.cell(filaA, 7)
-                    .string(req.query.nombre_impuesto)
-                    .style(cabDetalle);
-                  wa.cell(filaA, 8).string("Moneda").style(cabDetalle);
-                  wa.cell(filaA, 9).string("Total").style(cabDetalle);
-                  filaA++;
-                  if (rows2[0].estadoflag == true) {
-                    rows2.forEach((element) => {
-                      element.details.forEach((element2) => {
-                        wa.cell(filaA, 1).string(element.nameconsigner);
-                        wa.cell(filaA, 2).string(element2.nro_factura);
-                        wa.cell(filaA, 3).date(element2.fecha);
-                        wa.cell(filaA, 4).string(element2.namecoins);
-                        wa.cell(filaA, 5).number(element2.monto);
-                        wa.cell(filaA, 6).string(element2.namecoins);
-                        wa.cell(filaA, 7).number(element2.igv);
-                        wa.cell(filaA, 8).string(element2.namecoins);
-                        wa.cell(filaA, 9).number(element2.total);
-                        filaA++;
-                      });
-                    });
-                  }
-                  /** ------- REPORTE TOTAL ---------- */
-                  let totalOp = calcularTotalesOp(rows, req.query.moneda);
-                  let totalAdmin = calcularTotalesAdm(rows2, req.query.moneda);
-
-                  wt.cell(1, 1, 1, 9, true)
-                    .string("REPORTE TOTALES")
-                    .style(cabTitle);
-                  wt.cell(2, 1, 2, 4, true)
-                    .string("TOTAL OPERATIVO")
-                    .style(cabLlegada);
-                  wt.cell(2, 6, 2, 9, true)
-                    .string("TOTAL ADMINISTRATIVO")
-                    .style(cabLlegada);
-                  wt.cell(3, 1).string("Operativo").style(cabNoLlegada);
-                  wt.cell(3, 2).string("Llegadas").style(cabNoLlegada);
-                  wt.cell(3, 3).string("No llegadas").style(cabNoLlegada);
-                  wt.cell(3, 4).string("Total").style(cabNoLlegada);
-                  wt.cell(3, 6).string("Administrativo").style(cabNoLlegada);
-                  wt.cell(3, 7).string("Monto").style(cabNoLlegada);
-                  wt.cell(3, 8)
-                    .string(req.query.nombre_impuesto)
-                    .style(cabNoLlegada);
-                  wt.cell(3, 9).string("Total").style(cabNoLlegada);
-                  wt.cell(4, 1).string(totalOp[0].moneda);
-                  wt.cell(4, 2).string(
-                    parseFloat(totalOp[0].llegada).toFixed(2)
-                  );
-                  wt.cell(4, 3).string(
-                    parseFloat(totalOp[0].no_llegada).toFixed(2)
-                  );
-                  wt.cell(4, 4).string(parseFloat(totalOp[0].total).toFixed(2));
-                  wt.cell(5, 1).string(totalOp[1].moneda);
-                  wt.cell(5, 2).string(
-                    parseFloat(totalOp[1].llegada).toFixed(2)
-                  );
-                  wt.cell(5, 3).string(
-                    parseFloat(totalOp[1].no_llegada).toFixed(2)
-                  );
-                  wt.cell(5, 4).string(parseFloat(totalOp[1].total).toFixed(2));
-                  wt.cell(4, 6).string(totalAdmin[0].moneda);
-                  wt.cell(4, 7).string(
-                    parseFloat(totalAdmin[0].monto).toFixed(2)
-                  );
-                  wt.cell(4, 8).string(
-                    parseFloat(totalAdmin[0].igv).toFixed(2)
-                  );
-                  wt.cell(4, 9).string(
-                    parseFloat(totalAdmin[0].total).toFixed(2)
-                  );
-                  wt.cell(5, 6).string(totalAdmin[1].moneda);
-                  wt.cell(5, 7).string(
-                    parseFloat(totalAdmin[1].monto).toFixed(2)
-                  );
-                  wt.cell(5, 8).string(
-                    parseFloat(totalAdmin[1].igv).toFixed(2)
-                  );
-                  wt.cell(5, 9).string(
-                    parseFloat(totalAdmin[1].total).toFixed(2)
-                  );
-                  /* CREACION DE EXCEL*/
-                  let pathexcel = path.join(
-                    // "C:\\laragon\\www\\api-backend-general-v1\\uploads",
-                    // `${process.env.RUTA_FILE}/uploads`,
-                    `${__dirname}../../../uploads`,
-                    "Reportexls.xlsx"
-                  );
-
-                  wb.write(pathexcel, function (err, stats) {
-                    if (err) {
-                      console.log(err);
-                    } else {
-                      res.download(pathexcel);
-                    }
-                  });
-                }
-              }
-            );
-          });
-        } else {
-          console.log(err);
-        }
-      }
-    );
-  } catch (error) {
-    console.log(error);
+  fila++;
+  if (header[0].proveedor) {
+    wo.cell(fila, 1).string("Proveedor");
+    wo.cell(fila, 2).string(header[0].proveedor);
+    fila++;
   }
+  if (header[0].desde) {
+    wo.cell(fila, 1).string("Desde");
+    wo.cell(fila, 2).string(header[0].desde);
+    fila++;
+  }
+  if (header[0].hasta) {
+    wo.cell(fila, 1).string("Hasta");
+    wo.cell(fila, 2).string(header[0].hasta);
+    fila++;
+  }
+  if (header[0].llegada) {
+    wo.cell(fila, 1).string("Llegada");
+    wo.cell(fila, 2).string(header[0].llegada);
+    fila++;
+  }
+  if (header[0].nro_expediente) {
+    wo.cell(fila, 1).string("Nro Expediente");
+    wo.cell(fila, 2).string(header[0].nro_expediente);
+    fila++;
+  }
+  if (header[0].ingreso) {
+    wo.cell(fila, 1).string("Gasto");
+    wo.cell(fila, 2).string(header[0].ingreso);
+    fila++;
+  }
+  if (header[0].gasto) {
+    wo.cell(fila, 1).string("Sub Gasto");
+    wo.cell(fila, 2).string(header[0].subgasto);
+    fila++;
+  }
+  // console.log(header);
+  wo.row(fila).filter({
+    firstColumn: 1,
+    lastColumn: 11,
+  });
+
+  wo.cell(fila, 1).string("Proveedor").style(cabDetalle);
+  wo.cell(fila, 2).string("Correlativo").style(cabDetalle);
+  wo.cell(fila, 3).string("Expediente").style(cabDetalle);
+  wo.cell(fila, 4).string("Cliente").style(cabDetalle);
+  wo.cell(fila, 5).string("Factura").style(cabDetalle);
+  wo.cell(fila, 6).string("Fecha Disponibilidad").style(cabDetalle);
+  wo.cell(fila, 7).string("Moneda").style(cabDetalle);
+  wo.cell(fila, 8).string("Total Pagar").style(cabDetalle);
+  wo.cell(fila, 9).string("Estatus").style(cabDetalle);
+  wo.cell(fila, 10).string("Pagado Cliente").style(cabDetalle);
+  fila++;
+
+  if (Array.isArray(rows)) {
+    rows.forEach((element) => {
+      element.details.forEach((element2) => {
+        wo.cell(fila, 1).string(
+          element.nameproveedor ? element.nameproveedor : ""
+        );
+        wo.cell(fila, 2).string(
+          element2.code_correlativo ? element2.code_correlativo + "" : ""
+        );
+        wo.cell(fila, 3).string(
+          element2.nro_master ? element2.nro_master + "" : ""
+        );
+        wo.cell(fila, 4).string(
+          element2.nameconsigner ? element2.nameconsigner : ""
+        );
+        wo.cell(fila, 5).string(
+          element2.expedientes ? element2.expedientes : ""
+        );
+        wo.cell(fila, 6).date(
+          element2.fecha_disponibilidad ? element2.fecha_disponibilidad : ""
+        );
+        wo.cell(fila, 7).string(element2.symbol ? element2.symbol : "");
+        wo.cell(fila, 8).number(
+          element2.total_pagar ? element2.total_pagar : ""
+        );
+        wo.cell(fila, 9).string(
+          element2.llegada == 1 ? "LLEGADA" : "NO LLEGADA"
+        );
+        wo.cell(fila, 10).string(element2.pagado == 1 ? "SI" : "NO");
+        fila++;
+      });
+    });
+  }
+
+  wa.cell(1, 1, 1, 9, true)
+    .string("REPORTE DE CUENTAS POR PAGAR ADMINISTRATIVAS")
+    .style(cabTitle);
+  let filaA = 2;
+  wa.cell(filaA, 1).string("Filtro").style(cabDetalle);
+  filaA++;
+
+  if (header[0].proveedor) {
+    wa.cell(filaA, 1).string("Proveedor");
+    wa.cell(filaA, 2).string(header[0].proveedor);
+    filaA++;
+  }
+  if (header[0].desde) {
+    wa.cell(filaA, 1).string("Desde");
+    wa.cell(filaA, 2).string(header[0].desde);
+    filaA++;
+  }
+  if (header[0].hasta) {
+    wa.cell(filaA, 1).string("Hasta");
+    wa.cell(filaA, 2).string(header[0].hasta);
+    filaA++;
+  }
+  if (header[0].llegada) {
+    wa.cell(filaA, 1).string("Llegada");
+    wa.cell(filaA, 2).string(header[0].llegada);
+    filaA++;
+  }
+  if (header[0].nro_expediente) {
+    wa.cell(filaA, 1).string("Nro Expediente");
+    wa.cell(filaA, 2).string(header[0].nro_expediente);
+    filaA++;
+  }
+  if (header[0].ingreso) {
+    wa.cell(filaA, 1).string("Gasto");
+    wa.cell(filaA, 2).string(header[0].ingreso);
+    filaA++;
+  }
+  if (header[0].gasto) {
+    wa.cell(filaA, 1).string("Sub Gasto");
+    wa.cell(filaA, 2).string(header[0].subgasto);
+    filaA++;
+  }
+
+  wa.cell(filaA, 1).string("Proveedor").style(cabDetalle);
+  wa.cell(filaA, 2).string("N° Factura").style(cabDetalle);
+  wa.cell(filaA, 3).string("Fecha").style(cabDetalle);
+  wa.cell(filaA, 4).string("Moneda").style(cabDetalle);
+  wa.cell(filaA, 5).string("Monto").style(cabDetalle);
+  wa.cell(filaA, 6).string("Moneda").style(cabDetalle);
+  wa.cell(filaA, 7)
+    .string(req.query.nombre_impuesto ? req.query.nombre_impuesto : "IGV")
+    .style(cabDetalle);
+  wa.cell(filaA, 8).string("Moneda").style(cabDetalle);
+  wa.cell(filaA, 9).string("Total").style(cabDetalle);
+  filaA++;
+  if (Array.isArray(rows2)) {
+    rows2.forEach((element) => {
+      element.details.forEach((element2) => {
+        wa.cell(filaA, 1).string(element.nameconsigner);
+        wa.cell(filaA, 2).string(element2.nro_factura);
+        wa.cell(filaA, 3).date(element2.fecha);
+        wa.cell(filaA, 4).string(element2.namecoins);
+        wa.cell(filaA, 5).number(element2.monto);
+        wa.cell(filaA, 6).string(element2.namecoins);
+        wa.cell(filaA, 7).number(element2.igv);
+        wa.cell(filaA, 8).string(element2.namecoins);
+        wa.cell(filaA, 9).number(element2.total);
+        filaA++;
+      });
+    });
+  }
+
+  let totalOp = calcularTotalesOp(rows, req.query.moneda);
+  let totalAdmin = calcularTotalesAdm(rows2, req.query.moneda);
+
+  wt.cell(1, 1, 1, 9, true).string("REPORTE TOTALES").style(cabTitle);
+  wt.cell(2, 1, 2, 4, true).string("TOTAL OPERATIVO").style(cabLlegada);
+  wt.cell(2, 6, 2, 9, true).string("TOTAL ADMINISTRATIVO").style(cabLlegada);
+  wt.cell(3, 1).string("Operativo").style(cabNoLlegada);
+  wt.cell(3, 2).string("Llegadas").style(cabNoLlegada);
+  wt.cell(3, 3).string("No llegadas").style(cabNoLlegada);
+  wt.cell(3, 4).string("Total").style(cabNoLlegada);
+  wt.cell(3, 6).string("Administrativo").style(cabNoLlegada);
+  wt.cell(3, 7).string("Monto").style(cabNoLlegada);
+  wt.cell(3, 8).string(req.query.nombre_impuesto).style(cabNoLlegada);
+  wt.cell(3, 9).string("Total").style(cabNoLlegada);
+  wt.cell(4, 1).string(totalOp[0].moneda);
+  wt.cell(4, 2).string(parseFloat(totalOp[0].llegada).toFixed(2));
+  wt.cell(4, 3).string(parseFloat(totalOp[0].no_llegada).toFixed(2));
+  wt.cell(4, 4).string(parseFloat(totalOp[0].total).toFixed(2));
+  wt.cell(5, 1).string(totalOp[1].moneda);
+  wt.cell(5, 2).string(parseFloat(totalOp[1].llegada).toFixed(2));
+  wt.cell(5, 3).string(parseFloat(totalOp[1].no_llegada).toFixed(2));
+  wt.cell(5, 4).string(parseFloat(totalOp[1].total).toFixed(2));
+  wt.cell(4, 6).string(totalAdmin[0].moneda);
+  wt.cell(4, 7).string(parseFloat(totalAdmin[0].monto).toFixed(2));
+  wt.cell(4, 8).string(parseFloat(totalAdmin[0].igv).toFixed(2));
+  wt.cell(4, 9).string(parseFloat(totalAdmin[0].total).toFixed(2));
+  wt.cell(5, 6).string(totalAdmin[1].moneda);
+  wt.cell(5, 7).string(parseFloat(totalAdmin[1].monto).toFixed(2));
+  wt.cell(5, 8).string(parseFloat(totalAdmin[1].igv).toFixed(2));
+  wt.cell(5, 9).string(parseFloat(totalAdmin[1].total).toFixed(2));
+
+  let pathexcel = path.join(`${__dirname}../../../uploads`, "Reportexls.xlsx");
+  wb.write(pathexcel, function (err, stats) {
+    if (err) {
+      console.log(err);
+    } else {
+      res.download(pathexcel);
+    }
+  });
 };
 
 export const constReporteCXCExcel = async (req: Request, res: Response) => {
@@ -1192,13 +1176,53 @@ export const constReporteCXCExcel = async (req: Request, res: Response) => {
     .style(cabTitle);
   let fila = 2;
 
-  wo.row(2).filter({
+  let nombre_impuesto = req.query.nombre_impuesto;
+  let header = await obtenerHeaderCXC(req.query);
+  let rows = await getReporteCXC(req.query);
+  let rows2 = await getReporteCXCAdmin(req.query);
+
+  wo.cell(fila, 1).string("Filtro").style(cabDetalle);
+  fila++;
+  if (header[0].cliente) {
+    wo.cell(fila, 1).string("Cliente");
+    wo.cell(fila, 2).string(header[0].cliente);
+    fila++;
+  }
+  if (header[0].desde) {
+    wo.cell(fila, 1).string("Desde");
+    wo.cell(fila, 2).string(header[0].desde);
+    fila++;
+  }
+  if (header[0].hasta) {
+    wo.cell(fila, 1).string("Hasta");
+    wo.cell(fila, 2).string(header[0].hasta);
+    fila++;
+  }
+  if (header[0].llegada) {
+    wo.cell(fila, 1).string("Llegada");
+    wo.cell(fila, 2).string(header[0].llegada);
+    fila++;
+  }
+  if (header[0].nro_expediente) {
+    wo.cell(fila, 1).string("Nro Expediente");
+    wo.cell(fila, 2).string(header[0].nro_expediente);
+    fila++;
+  }
+  if (header[0].ingreso) {
+    wo.cell(fila, 1).string("Ingreso");
+    wo.cell(fila, 2).string(header[0].ingreso);
+    fila++;
+  }
+  if (header[0].subingreso) {
+    wo.cell(fila, 1).string("Sub Ingreso");
+    wo.cell(fila, 2).string(header[0].subingreso);
+    fila++;
+  }
+  // console.log(header);
+  wo.row(fila).filter({
     firstColumn: 1,
     lastColumn: 11,
   });
-  let nombre_impuesto = req.query.nombre_impuesto;
-  let rows = await getReporteCXC(req.query);
-  let rows2 = await getReporteCXCAdmin(req.query);
 
   wo.cell(fila, 1).string("Tipo").style(cabDetalle);
   wo.cell(fila, 2).string("Expediente").style(cabDetalle);
@@ -1535,7 +1559,9 @@ function calcularTotalesAdm(data, monExt) {
   let totalMontoSoles = 0;
   let IgvSoles = 0;
   let totalSoles = 0;
-  if (data[0].estadoflag == true) {
+  console.log(data);
+  if (Array.isArray(data) && data.length > 0) {
+    // if (data[0].estadoflag == true) {
     data.forEach((element) => {
       element.details.forEach((element2) => {
         if (element2.symbol == "USD") {
@@ -1575,29 +1601,31 @@ function calcularTotalesOpCxC(data, monExt) {
   let totalLlegadaSoles = 0;
   let totalNoLlegadaSoles = 0;
   let totalSoles = 0;
-  data.forEach((element) => {
-    element.details.forEach((element2) => {
-      if (element2.symbol == "USD") {
-        if (element2.llegada == 0) {
-          totalNoLlegadaDolares += parseFloat(element2.total_pagar);
-          totalDolares += parseFloat(element2.total_pagar);
+  if (Array.isArray(data) && data.length > 0) {
+    data.forEach((element) => {
+      element.details.forEach((element2) => {
+        if (element2.symbol == "USD") {
+          if (element2.llegada == 0) {
+            totalNoLlegadaDolares += parseFloat(element2.total_pagar);
+            totalDolares += parseFloat(element2.total_pagar);
+          }
+          if (element2.llegada == 1) {
+            totalLlegadaDolares += parseFloat(element2.total_pagar);
+            totalDolares += parseFloat(element2.total_pagar);
+          }
+        } else {
+          if (element2.llegada == 0) {
+            totalNoLlegadaSoles += parseFloat(element2.total_pagar);
+            totalSoles += parseFloat(element2.total_pagar);
+          }
+          if (element2.llegada == 1) {
+            totalLlegadaSoles += parseFloat(element2.total_pagar);
+            totalSoles += parseFloat(element2.total_pagar);
+          }
         }
-        if (element2.llegada == 1) {
-          totalLlegadaDolares += parseFloat(element2.total_pagar);
-          totalDolares += parseFloat(element2.total_pagar);
-        }
-      } else {
-        if (element2.llegada == 0) {
-          totalNoLlegadaSoles += parseFloat(element2.total_pagar);
-          totalSoles += parseFloat(element2.total_pagar);
-        }
-        if (element2.llegada == 1) {
-          totalLlegadaSoles += parseFloat(element2.total_pagar);
-          totalSoles += parseFloat(element2.total_pagar);
-        }
-      }
+      });
     });
-  });
+  }
   totalOperativo.push(
     {
       moneda: "USD",
@@ -1766,6 +1794,34 @@ export const exportarPDFCXP = async (req: Request, res: Response) => {
   let dataset = [];
   let rowsOp = await getReporteCXP(req.query);
   let rowsAdmin = await getDebsToPayAdmin(req.query);
+  let header = await obtenerHeaderCXP(req.query);
+
+  let filtro = [];
+  console.log(header);
+  if (header[0].proveedor) {
+    filtro.push({ nombre: "Cliente", descripcion: header[0].proveedor });
+  }
+  if (header[0].desde) {
+    filtro.push({ nombre: "Desde", descripcion: header[0].desde });
+  }
+  if (header[0].hasta) {
+    filtro.push({ nombre: "Hasta", descripcion: header[0].hasta });
+  }
+  if (header[0].llegada) {
+    filtro.push({ nombre: "Llegada", descripcion: header[0].llegada });
+  }
+  if (header[0].nro_expediente) {
+    filtro.push({
+      nombre: "Nro Expediente",
+      descripcion: header[0].nro_expediente,
+    });
+  }
+  if (header[0].gasto) {
+    filtro.push({ nombre: "Ingreso", descripcion: header[0].gasto });
+  }
+  if (header[0].subgasto) {
+    filtro.push({ nombre: "Sub Ingreso", descripcion: header[0].subgasto });
+  }
 
   let totalvencidoObj_default = {
     "+60": null,
@@ -2103,6 +2159,7 @@ export const exportarPDFCXP = async (req: Request, res: Response) => {
       totalxvencer_array,
       totalvencido,
       totalxvencer,
+      filtro,
     },
     (err, html) => {
       if (err) {
@@ -2209,8 +2266,36 @@ export const exportarPDFCXC = async (req: Request, res: Response) => {
   let title = "REPORTE DE CUENTAS POR COBRAR";
   let fechaEmision = moment().format("DD-MM-YYYY");
   let dataset = [];
+  let header = await obtenerHeaderCXC(req.query);
   let rowsOp = await getReporteCXC(req.query);
   let rowsAdmin = await getReporteCXCAdmin(req.query);
+
+  let filtro = [];
+  console.log(header);
+  if (header[0].cliente) {
+    filtro.push({ nombre: "Cliente", descripcion: header[0].cliente });
+  }
+  if (header[0].desde) {
+    filtro.push({ nombre: "Desde", descripcion: header[0].desde });
+  }
+  if (header[0].hasta) {
+    filtro.push({ nombre: "Hasta", descripcion: header[0].hasta });
+  }
+  if (header[0].llegada) {
+    filtro.push({ nombre: "Llegada", descripcion: header[0].llegada });
+  }
+  if (header[0].nro_expediente) {
+    filtro.push({
+      nombre: "Nro Expediente",
+      descripcion: header[0].nro_expediente,
+    });
+  }
+  if (header[0].ingreso) {
+    filtro.push({ nombre: "Ingreso", descripcion: header[0].ingreso });
+  }
+  if (header[0].subingreso) {
+    filtro.push({ nombre: "Sub Ingreso", descripcion: header[0].subingreso });
+  }
 
   let totalvencidoObj_default = {
     "+60": null,
@@ -2537,6 +2622,7 @@ export const exportarPDFCXC = async (req: Request, res: Response) => {
   ejs.renderFile(
     path.join(__dirname, "../views/", "reporteCXC.ejs"),
     {
+      filtro,
       title,
       formato,
       fechaEmision,
@@ -3314,3 +3400,62 @@ export const exportListComentariosPredefinidos = async (
     }
   );
 };
+
+async function obtenerHeaderCXC(data) {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      "SELECT * FROM filtro_invoiceadmincxc_reporteadmincxc($1,$2,$3,$4,$5,$6,$7);",
+      [
+        data.id_cliente ? data.id_cliente : null,
+        data.fechadesde ? data.fechadesde : null,
+        data.fechahasta ? data.fechahasta : null,
+        data.llegadaflag ? data.llegadaflag : null,
+        data.nro_expediente ? data.nro_expediente : null,
+        data.id_ingreso ? data.id_ingreso : null,
+        data.id_subingreso ? data.id_subingreso : null,
+      ],
+      (err, response) => {
+        if (!err) {
+          let rowsHeader = response.rows;
+          if (!err) {
+            resolve(rowsHeader);
+          } else {
+            rowsHeader = [];
+            resolve(rowsHeader);
+          }
+        } else {
+          console.log(err);
+        }
+      }
+    );
+  });
+}
+async function obtenerHeaderCXP(data) {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      "SELECT * FROM filtro_invoiceadmin_reporte_cxp($1,$2,$3,$4,$5,$6,$7);",
+      [
+        data.id_proveedor ? data.id_proveedor : null,
+        data.desde ? data.desde : null,
+        data.hasta ? data.hasta : null,
+        data.llegada ? data.llegada : null,
+        data.nro_expediente ? data.nro_expediente : null,
+        data.id_gasto ? data.id_gasto : null,
+        data.id_subgasto ? data.id_subgasto : null,
+      ],
+      (err, response) => {
+        if (!err) {
+          let rowsHeader = response.rows;
+          if (!err) {
+            resolve(rowsHeader);
+          } else {
+            rowsHeader = [];
+            resolve(rowsHeader);
+          }
+        } else {
+          console.log(err);
+        }
+      }
+    );
+  });
+}

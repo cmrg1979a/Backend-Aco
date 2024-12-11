@@ -47,7 +47,23 @@
     <h5 class="titulo_principal" style="text-align: center;">
       <%= title %>
     </h5>
-
+    <% if (filtro.length>0) { %>
+    <table style="width: 200px; margin-left: auto;" border="1">
+      <thead>
+        <tr>
+          <th colspan="2"> Filtros</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for(let i=0;i<filtro.length;i++){ %>
+          <tr>
+            <td> <%= filtro[i].nombre %> </td>
+            <td> <%= filtro[i].descripcion %> </td>
+          </tr>
+          <% } %>
+      </tbody>
+    </table>
+    <% } %>
     <!--ENCABEZADO-->
     <table width="100%">
       <tr>
