@@ -30,7 +30,6 @@ export const getBanksList = async (req: Request, res: Response) => {
   );
 };
 
-
 export const getListaPagosXProveedorCxP = async (
   req: Request,
   res: Response
@@ -515,10 +514,9 @@ export const ExportarListadoReportePagos = async (
   );
 };
 
+
 export const RegistroPagoDetalles = async (req: Request, res: Response) => {
   let data = req.body;
-  
-
   await pool.query(
     "select * from function_bancos_pago($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)",
     [
@@ -528,7 +526,7 @@ export const RegistroPagoDetalles = async (req: Request, res: Response) => {
       data.id,
       data.monto,
       data.id_concepto,
-      data.id_path,
+      data.id_path == 0 ? null : data.id_path,
       data.id_cuenta,
       data.fecha,
       data.nro_operacion,
@@ -537,7 +535,7 @@ export const RegistroPagoDetalles = async (req: Request, res: Response) => {
       data.tipocambio,
       data.id_coins,
       data.comentarios,
-      data.id_correlativo
+      data.id_correlativo,
     ],
 
     (err, response, fields) => {

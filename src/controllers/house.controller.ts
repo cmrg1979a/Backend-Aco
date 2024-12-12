@@ -7,7 +7,7 @@ const nodemailer = require("nodemailer");
 const pool = conexion();
 import { postHouse } from "../interface/house";
 import { postHouseEdit } from "../interface/house";
-
+import { envioCorreo } from "../middleware/EnvioCorreoMiddleware";
 import moment from "moment";
 
 export const setHouse = async (req: Request, res: Response) => {
@@ -711,7 +711,7 @@ async function sendCorreo(data) {
       }, y lo puede pagar a través de cualquiera de las cuentas bancarias:</p> 
       ${
         cuentasBancarias
-          .map((item) => `<p>${item.label.trim()}.</p>`)
+          .map((item) => `<p>${item.label.trim()} - CCI: ${item.cci.trim()}.</p>`)
           .join("") || ""
       }
       
@@ -738,10 +738,11 @@ async function sendCorreo(data) {
               </div>
   `;
   const mailOptions = {
-    from: '"ACO" <sistema1@piccargo.com>',
-    to: house.emailaddress_clientefinal || "",
+    from: '"ACO" <aco@agentedecargaonline.com>',
+    email: house.emailaddress_clientefinal || "",
     subject: `ACO – ${tipoNotificacion}`,
     html: mailTemplate,
   };
-  const mailInfo = await transporter.sendMail(mailOptions);
+  let respuest = await envioCorreo(mailOptions);
+  console.log(respuest);
 }

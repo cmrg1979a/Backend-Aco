@@ -1,6 +1,7 @@
 import * as pg from "pg";
 const { Pool } = pg;
 
+console.log("env", process.env.ENV);
 // /**PROUCCIÓN */
 // export function conexion() {
 //   const pool = new Pool({
@@ -16,7 +17,6 @@ const { Pool } = pg;
 //   });
 //   return pool;
 // }
-
 
 /** DESARROLLO */
 export function conexion() {
