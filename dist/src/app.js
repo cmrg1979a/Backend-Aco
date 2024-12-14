@@ -42,28 +42,31 @@ const corsOptions = {
 };
 const corsMiddleware = (0, cors_1.default)(corsOptions);
 /**PROUCCIÓN */
-// const pool = new Pool({
-//   host: "10.116.0.2",
-//   // host: "157.230.14.98",//// remoto
-//   user: "postgres",
-//   password: "@Developer2021Pic",
-//   port: "5432",
-//   database: "db_op_main_01",
-// });
-/** DESARROLLO */
-// Cache de opciones de cors
 const pool = new Pool({
-    host: "67.205.129.62",
-    user: "chainsolver",
-    password: "Fr3sc0l1t4+",
+    host: "10.116.0.2",
+    // host: "157.230.14.98",//// remoto
+    user: "postgres",
+    password: "@Developer2021Pic",
     port: "5432",
-    // database: "db_op_main_dev",
-    database: "db_op_main_02",
-    // database: "db_op_main_qa",
+    // database: "db_op_main_edison",
+    database: "db_op_main_01",
 });
+/** DESARROLLO */
+// const pool = new Pool({
+//   host: "67.205.129.62",
+//   user: "chainsolver",
+//   password: "Fr3sc0l1t4+",
+//   port: "5432",
+//   // database: "db_op_main_dev",
+//   // database: "db_op_main_2",
+//   database: "db_op_main_qa",
+//   // database: "db_op_main_edison",
+// });
 const app = (0, express_1.default)();
 const auth_1 = __importDefault(require("./routes/auth"));
 const pais_1 = __importDefault(require("./routes/pais"));
+const planes_1 = __importDefault(require("./routes/planes"));
+const payment_1 = __importDefault(require("./routes/payment"));
 const modules_1 = __importDefault(require("./routes/modules"));
 const entities_1 = __importDefault(require("./routes/entities"));
 const documents_1 = __importDefault(require("./routes/documents"));
@@ -121,6 +124,16 @@ const type_phone_1 = __importDefault(require("./routes/type_phone"));
 const groupservices_1 = __importDefault(require("./routes/groupservices"));
 const transport_1 = __importDefault(require("./routes/transport"));
 const gasto_1 = __importDefault(require("./routes/gasto"));
+const ingreso_1 = __importDefault(require("./routes/ingreso"));
+const tipocosto_1 = __importDefault(require("./routes/tipocosto"));
+const comentarios_1 = __importDefault(require("./routes/comentarios"));
+const stateQuote_1 = __importDefault(require("./routes/stateQuote"));
+const typepayments_1 = __importDefault(require("./routes/typepayments"));
+const users_1 = __importDefault(require("./routes/users"));
+const position_1 = __importDefault(require("./routes/position"));
+const configuracionInicial_1 = __importDefault(require("./routes/configuracionInicial"));
+const seguridad_1 = __importDefault(require("./routes/seguridad"));
+const configEmpresa_1 = __importDefault(require("./routes/configEmpresa"));
 // settings
 app.set("port", 9200);
 // middlewares
@@ -195,7 +208,10 @@ app.post("/uploadAllPath", function (req, res) {
         if (err) {
             return res.end("Error uploading file.");
         }
-        pool.query("select * from Table_AllPath_insertar($1,$2,$3,$4,$5,$6 )", [newName, type, size, process.env.RUTA_FILE + ruta, fileName[0], 1], (err, response, fields) => {
+        let protocol = req.protocol; // 'http' o 'https'
+        let host = req.get("host"); // El host (dominio o IP con puerto)
+        let url = `${protocol}://${host}/uploads/`;
+        pool.query("select * from Table_AllPath_insertar($1,$2,$3,$4,$5,$6)", [newName, type, size, url + ruta, fileName[0], 1], (err, response, fields) => {
             if (!err) {
                 let rows = response.rows;
                 if (!!rows[0].estadoflag) {
@@ -248,6 +264,8 @@ app.use("/graphql", graphqlHTTP({
 }));
 app.use(auth_1.default);
 app.use(pais_1.default);
+app.use(planes_1.default);
+app.use(payment_1.default);
 app.use(modules_1.default);
 app.use(entities_1.default);
 app.use(documents_1.default);
@@ -305,5 +323,15 @@ app.use(type_phone_1.default);
 app.use(groupservices_1.default);
 app.use(transport_1.default);
 app.use(gasto_1.default);
+app.use(ingreso_1.default);
+app.use(tipocosto_1.default);
+app.use(comentarios_1.default);
+app.use(stateQuote_1.default);
+app.use(typepayments_1.default);
+app.use(users_1.default);
+app.use(position_1.default);
+app.use(configuracionInicial_1.default);
+app.use(seguridad_1.default);
+app.use(configEmpresa_1.default);
 exports.default = app;
 //# sourceMappingURL=app.js.map

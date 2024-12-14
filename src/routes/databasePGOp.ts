@@ -1,7 +1,8 @@
 import * as pg from "pg";
+import { esProduccion } from "../../config";
 const { Pool } = pg;
 
-console.log("env", process.env.ENV);
+console.log("esProduccion", esProduccion);
 // /**PROUCCIÓN */
 // export function conexion() {
 //   const pool = new Pool({
@@ -13,7 +14,6 @@ console.log("env", process.env.ENV);
 //     // database: "db_op_main_dev",
 //     database: "db_op_main_01",
 //     // database: "db_op_main_qa",
-
 //   });
 //   return pool;
 // }

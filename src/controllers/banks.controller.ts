@@ -278,7 +278,7 @@ export const setPayForCustomer = async (req: Request, res: Response) => {
       details.map((item) => {
         return item.tipocambio;
       }), //ptipocambio numeric[],
-      dabaObj.id_path, //pid_path integer,
+      dabaObj.id_path ? dabaObj.id_path : null, //pid_path integer,
       dabaObj.fecha, //pfecha date,
       dabaObj.nro_operacion, //pnro_operacion character varying,
       dabaObj.id_banco_origen, //pid_bank integer
@@ -513,7 +513,6 @@ export const ExportarListadoReportePagos = async (
     }
   );
 };
-
 
 export const RegistroPagoDetalles = async (req: Request, res: Response) => {
   let data = req.body;

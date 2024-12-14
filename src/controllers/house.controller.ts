@@ -711,7 +711,9 @@ async function sendCorreo(data) {
       }, y lo puede pagar a través de cualquiera de las cuentas bancarias:</p> 
       ${
         cuentasBancarias
-          .map((item) => `<p>${item.label.trim()} - CCI: ${item.cci.trim()}.</p>`)
+          .map(
+            (item) => `<p>${item.label.trim()} - CCI: ${item.cci.trim()}.</p>`
+          )
           .join("") || ""
       }
       
@@ -746,3 +748,70 @@ async function sendCorreo(data) {
   let respuest = await envioCorreo(mailOptions);
   console.log(respuest);
 }
+
+export const getListarHouses = async (req: Request, res: Response) => {
+  const {
+    id_branch,
+    id_master,
+    id_modality,
+    id_shipment,
+    id_origin,
+    id_destino,
+    id_cliente,
+    fechaetd,
+    dechaeta,
+  } = req.query;
+
+  await pool.query(
+    "SELECT * FROM function_house_listar($1,$2,$3,$4,$5,$6,$7,$8,$9)",
+    [
+      id_branch ? id_branch : null,
+      id_master ? id_master : null,
+      id_modality ? id_modality : null,
+      id_shipment ? id_shipment : null,
+      id_origin ? id_origin : null,
+      id_destino ? id_destino : null,
+      id_cliente ? id_cliente : null,
+      fechaetd ? fechaetd : null,
+      dechaeta ? dechaeta : null,
+    ],
+    (err, response, fields) => {
+      let rows = response.rows;
+      if (!err) {
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const getVerHouse = async (req: Request, res: Response) => {
+  const { id_branch, id } = req.query;
+  await pool.query(
+    "SELECT * FROM function_house_ver($1)",
+    [id],
+    (err, response, fields) => {
+      let rows = response.rows;
+      if (!err) {
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
