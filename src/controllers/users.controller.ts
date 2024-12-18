@@ -176,7 +176,7 @@ export const InsertarUsuarios = async (req: Request, res: Response) => {
         let html = `
          <p> Hola ${user.surname} ${user.second_surname}, ${user.names} </p>
         <p> Se ha creado tu usuario  </p>
-        <p> <b>usuario: </b> ${user.users} </p>
+        <p> <b>usuario: </b> ${user.email} </p>
         <p> <b>clave: </b> ${user.clave} </p>
         Para acceder de click <a href="https://chainsolver.piccargo.com/"> Aqui </a>  
         <div style="float:left;">
@@ -342,7 +342,7 @@ async function EnvioCorreo(datos) {
     html: `
     <p> Hola ${datos.surname} ${datos.second_surname}, ${datos.names} </p>
     <p> Se ha creado tu usuario  </p>
-    <p> <b>usuario: </b> ${datos.users} </p>
+    <p> <b>usuario: </b> ${datos.email} </p>
     <p> <b>clave: </b> ${datos.clave} </p>
     Para acceder de click <a href="https://chainsolver.piccargo.com/"> Aqui </a>  
     <p><img src="https://i.ibb.co/ypKb7q1/chain-Solver.png" alt="LogoChain" width="404" height="112" /></p>  

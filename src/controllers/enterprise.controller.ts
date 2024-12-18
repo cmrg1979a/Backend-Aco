@@ -465,7 +465,7 @@ async function EnvioCorreo(datos) {
     html: `
     <p> Hola ${datos.surname} ${datos.second_surname}, ${datos.names} </p>
     <p> Se ha creado tu usuario como <b> Administrador del sistema</b> </p>
-    <p> <b>usuario: </b> ${datos.users} </p>
+    <p> <b>usuario: </b> ${datos.email} </p>
     <p> <b>clave: </b> ${datos.clave} </p>
     <br/>
     Para acceder de click <a href="https://chainsolver.piccargo.com/"> Aqui </a>  
