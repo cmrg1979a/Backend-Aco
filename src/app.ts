@@ -128,6 +128,7 @@ import position from "./routes/position";
 import configuracionInicial from "./routes/configuracionInicial";
 import seguridad from "./routes/seguridad";
 import config from "./routes/configEmpresa";
+import StatusHouse from "./routes/StatusHouse";
 
 // settings
 app.set("port", 9200);
@@ -349,4 +350,5 @@ app.use(position);
 app.use(configuracionInicial);
 app.use(seguridad);
 app.use(config);
+app.use(StatusHouse);
 export default app;
