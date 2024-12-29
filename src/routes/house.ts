@@ -29,7 +29,7 @@ router.post("/getHouseList", TokenValidation, getHouseList);
 router.post("/getHouseListId", TokenValidation, getHouseListId);
 router.post("/getHouseServices", TokenValidation, getHouseServices);
 router.post("/getHouseBitacora", TokenValidation, getHouseBitacora);
-router.post("/getHouseContainers", TokenValidation, getHouseContainers);
+router.get("/getHouseContainers", TokenValidation, getHouseContainers);
 router.post("/sendNotificacionHouse", TokenValidation, sendNotificacionHouse);
 router.post("/getServicesByIncoterms", TokenValidation, getServicesByIncoterms);
 router.get("/getHouseListAll", TokenValidation, getHouseListAll);

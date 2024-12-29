@@ -35,8 +35,10 @@ export const getBitacoraList = async (req: Request, res: Response) => {
 };
 
 export const getBitacoraLineal = async (req: Request, res: Response) => {
+  let { id_modalidad, id_shipment, id_incoterms } = req.query;
   await pool.query(
-    " SELECT * FROM TABLE_BITACORA_LISTAR(NULL);",
+    " SELECT * FROM function_obtenerbitacora($1,$2,$3);",
+    [id_modalidad, id_shipment, id_incoterms],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;

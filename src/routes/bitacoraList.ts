@@ -8,6 +8,7 @@ import {
 } from "../controllers/bitacoraList.controller";
 
 router.post("/getBitacoraList", TokenValidation, getBitacoraList);
-router.post("/getBitacoraLineal", TokenValidation, getBitacoraLineal);
+router.get("/getBitacoraLineal", TokenValidation, getBitacoraLineal);
+
 
 export default router;

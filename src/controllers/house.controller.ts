@@ -261,9 +261,9 @@ export const getServicesByIncoterms = async (req: Request, res: Response) => {
 
 export const getHouseBitacora = async (req: Request, res: Response) => {
   const { id } = req.body;
-
+  console.log("getHouseBitacora", id);
   await pool.query(
-    "SELECT * FROM HOUSE_BITACORA_listarxhouse($1);",
+    "SELECT * FROM house_bitacora_listarxhouse($1);",
     [id],
     // [req.body.id_branch],
     (err, response, fields) => {
@@ -286,7 +286,7 @@ export const getHouseBitacora = async (req: Request, res: Response) => {
 };
 
 export const getHouseContainers = async (req: Request, res: Response) => {
-  const { id } = req.body;
+  const { id } = req.query;
   await pool.query(
     " select * from HOUSE_CONTAINERS_listarxhouse($1)",
     [id],
@@ -445,6 +445,7 @@ export const setTrackingToken = async (req: Request, res: Response) => {
     }
   );
 };
+
 
 export const getTrackingData = async (req: Request, res: Response) => {
   const { token } = req.params;
@@ -720,9 +721,10 @@ async function sendCorreo(data) {
       <br/>
       <br/>
       
+
       ${
         house.token_rastreo
-          ? `<p>Si desea consultar el estado de su carga, haga clic en este <a href="https://https://aco.agentedecargaonline.com/tracking/${
+          ? `<p>Si desea consultar el estado de su carga, haga clic en este <a href="https://aco.agentedecargaonline.com/tracking/${
               house.token_rastreo || ""
             }">enlace</a></p><br/><br/>`
           : ""
