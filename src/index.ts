@@ -1,3 +1,4 @@
+/* 
 import http from "http";
 import { Server } from "socket.io";
 import dotenv from "dotenv";
@@ -30,3 +31,19 @@ const PORT = app.get("port");
 server.listen(PORT, () => {
   console.log(`Servidor escuchando en PUERTO:${PORT}`);
 });
+*/
+
+import { versionMajorMinor } from 'typescript';
+import dotenv from 'dotenv';
+dotenv.config();
+
+import app from './app';
+
+function main(){
+    app.listen(app.get('port'));
+    
+    console.log('Server on port', app.get('port'));
+}
+
+main();
+
