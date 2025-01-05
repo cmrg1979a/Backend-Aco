@@ -37,7 +37,7 @@ export const getListaPagosXProveedorCxP = async (
   let { id_proveedor, id_branch } = req.query;
   // console.log(req.params);
   await pool.query(
-    `SELECT * FROM pagosXProveedorCxP_listar($1,$2)`,
+    `SELECT * FROM pagosxproveedorcxp_listar($1,$2)`,
     [id_proveedor, id_branch],
     (err, response, fields) => {
       if (!err) {

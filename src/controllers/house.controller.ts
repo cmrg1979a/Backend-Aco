@@ -261,7 +261,6 @@ export const getServicesByIncoterms = async (req: Request, res: Response) => {
 
 export const getHouseBitacora = async (req: Request, res: Response) => {
   const { id } = req.body;
-  console.log("getHouseBitacora", id);
   await pool.query(
     "SELECT * FROM house_bitacora_listarxhouse($1);",
     [id],
@@ -445,7 +444,6 @@ export const setTrackingToken = async (req: Request, res: Response) => {
     }
   );
 };
-
 
 export const getTrackingData = async (req: Request, res: Response) => {
   const { token } = req.params;

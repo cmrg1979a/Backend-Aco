@@ -22,11 +22,11 @@ let cado = {};
 if (global.esProduccion) {
   cado = {
     host: "10.116.0.2",
-    // host: "157.230.14.98",//// remoto
+   
     user: "postgres",
     password: "@Developer2021Pic",
     port: "5432",
-    // database: "db_op_main_edison",
+    
     database: "db_op_main_01",
   };
 } else {
@@ -35,24 +35,13 @@ if (global.esProduccion) {
     user: "chainsolver",
     password: "Fr3sc0l1t4+",
     port: "5432",
-    // database: "db_op_main_dev",
-    // database: "db_op_main_2",
+    
     database: "db_op_main_qa",
-    // database: "db_op_main_edison",
+   
   };
 }
 const pool = new Pool(cado);
-/** DESARROLLO */
-// const pool = new Pool({
-//   host: "67.205.129.62",
-//   user: "chainsolver",
-//   password: "Fr3sc0l1t4+",
-//   port: "5432",
-//   // database: "db_op_main_dev",
-//   // database: "db_op_main_2",
-//   database: "db_op_main_qa",
-//   // database: "db_op_main_edison",
-// });
+
 
 const app: Application = express();
 
@@ -168,45 +157,6 @@ var storage = multer.diskStorage({
     callback(null, `${fecha}.${type}`);
   },
 });
-
-var upload = multer({ storage: storage }).single("file");
-
-// app.post("/uploadFilesSingle", function (req, res) {
-//   upload(req, res, function (err) {
-//     if (err) {
-//       return res.end("Error uploading file.");
-//     }
-
-//     pool.query(
-//       "select * from Table_Path_insertar_q($1,$2,$3,null,$4)",
-//       [req.body.id_quote, req.body.name, type, ruta],
-//       (err, response, fields) => {
-//         if (!err) {
-//           let rows = response.rows;
-//           if (!!rows[0].estadoflag) {
-//             res.json({
-//               status: 200,
-//               statusBol: true,
-
-//               data: {
-//                 ruta: "https://api-general.qreport.site/uploads/" + ruta,
-//                 name: ruta,
-//               },
-//             });
-//           } else {
-//             res.json({
-//               status: 200,
-//               statusBol: true,
-//               mensaje: rows[0].mensaje,
-//             });
-//           }
-//         } else {
-//           console.log(err);
-//         }
-//       }
-//     );
-//   });
-// });
 
 var uploads = multer({ storage: storage }).single("file");
 
