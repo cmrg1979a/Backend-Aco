@@ -70,7 +70,7 @@ export const getMenuModules = async (req: Request, res: Response) => {
   const { id_entitie, id_branch } = req.body;
 
   await pool.query(
-    "SELECT * FROM ENTITIE_MENU_cargar($1,$2);",
+    "SELECT * FROM entitie_menu_cargar($1,$2);",
     [id_entitie, id_branch],
     (err, response, fields) => {
       if (!err) {

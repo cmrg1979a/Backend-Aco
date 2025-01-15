@@ -158,7 +158,7 @@ export const InsertarUsuarios = async (req: Request, res: Response) => {
       user.socialprincipal ? user.socialprincipal : null,
       user.socialsecundary ? user.socialsecundary : null,
       user.users,
-      clave,
+      user.clave,
       user.departamento,
       user.email,
       user.phone,
