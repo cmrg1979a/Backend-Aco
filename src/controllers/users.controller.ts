@@ -135,7 +135,7 @@ export const validarEmailtUsuarios = async (req: Request, res: Response) => {
 };
 export const InsertarUsuarios = async (req: Request, res: Response) => {
   const user: IUser = req.body;
-  let clave = generarContrasenaAleatoria(10);
+  // let clave = generarContrasenaAleatoria(10);
 
   await pool.query(
     "SELECT * FROM function_users_insert($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24)",
@@ -172,7 +172,7 @@ export const InsertarUsuarios = async (req: Request, res: Response) => {
     async (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        user.clave = clave;
+        // user.clave = user.clave;
         let html = `
          <p> Hola ${user.surname} ${user.second_surname}, ${user.names} </p>
         <p> Se ha creado tu usuario  </p>
