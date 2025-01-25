@@ -77,8 +77,9 @@ export const setGuardarStatusHouse = async (req: Request, res: Response) => {
   let statusHouseInterface: statusHouseInterface = req.body;
   let { lstComentatios } = req.body;
   await pool.query(
-    "SELECT * FROM fuction_statushouse_insert($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)",
+    "SELECT * FROM fuction_statushouse_insert($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)",
     [
+      statusHouseInterface.id ? statusHouseInterface.id : null,
       statusHouseInterface.id_branch,
       statusHouseInterface.id_modality,
       statusHouseInterface.id_shipment,
