@@ -1372,9 +1372,9 @@ export const updateBank = async (req: Request, res: Response) => {
 };
 export const InsertarCuentaDetalles = async (req: Request, res: Response) => {
   const dataObj = req.body;
-
+  console.log(dataObj);
   await pool.query(
-    "SELECT *from function_cuenta_details($1,$2, $3, $4, $5,$6);",
+    "SELECT *from function_cuenta_details($1,$2, $3, $4, $5,$6,$7);",
     [
       dataObj.id ? dataObj.id : null,
       dataObj.id_bank,
@@ -1382,6 +1382,7 @@ export const InsertarCuentaDetalles = async (req: Request, res: Response) => {
       dataObj.nrocuenta,
       dataObj.nrocci ? dataObj.nrocci : null,
       dataObj.status !== "" && !isNaN(dataObj.status) ? dataObj.status : null,
+      dataObj.esprincipalflag,
     ],
     (err, response, fields) => {
       if (!err) {
