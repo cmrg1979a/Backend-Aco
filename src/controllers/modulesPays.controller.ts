@@ -22,7 +22,7 @@ export const setInvoiceAdmin = async (req: Request, res: Response) => {
     return `${parseFloat(item.total)}`;
   });
   let afecto = dataDetails.map((item: any) => {
-    return item.afecto == true ? 1 : 0;
+    return item.afecto == true || item.afecto == "true" ? 1 : 0;
   });
 
   await pool.query(
@@ -172,8 +172,8 @@ export const getInvoiceAdmin = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -202,8 +202,8 @@ export const delPro = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -230,8 +230,8 @@ export const getRegularizar = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -259,8 +259,8 @@ export const getVerInvoiceAdmin = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -298,16 +298,36 @@ export const setUpdateInvoiceAdmin = async (req: Request, res: Response) => {
       dataObj.id_expediente,
       dataObj.id_path,
       dataObj.tipocambio,
-      dataDetails.map((item: any) => {return item.concepto;}),
-      dataDetails.map((item: any) => {return item.monto;}),
-      dataDetails.map((item: any) => {return item.igv;}),
-      dataDetails.map((item: any) => {return item.total;}),
-      dataDetails.map((item: any) => {return item.montodolar;}),
-      dataDetails.map((item: any) => {return item.igvdolar;}),
-      dataDetails.map((item: any) => {return item.totaldolar;}),
-      dataDetails.map((item: any) => {return item.afecto == true || item.afecto == 1 ? 1 : 0;}),
-      dataDetails.map((item: any) => {return item.status == true || item.status == 1 ? 1 : 0;}),
-      dataDetails.map((item: any) => {return item.id ? item.id : null;}),
+      dataDetails.map((item: any) => {
+        return item.concepto;
+      }),
+      dataDetails.map((item: any) => {
+        return item.monto;
+      }),
+      dataDetails.map((item: any) => {
+        return item.igv;
+      }),
+      dataDetails.map((item: any) => {
+        return item.total;
+      }),
+      dataDetails.map((item: any) => {
+        return item.montodolar;
+      }),
+      dataDetails.map((item: any) => {
+        return item.igvdolar;
+      }),
+      dataDetails.map((item: any) => {
+        return item.totaldolar;
+      }),
+      dataDetails.map((item: any) => {
+        return item.afecto == true || item.afecto == 1 ? 1 : 0;
+      }),
+      dataDetails.map((item: any) => {
+        return item.status == true || item.status == 1 ? 1 : 0;
+      }),
+      dataDetails.map((item: any) => {
+        return item.id ? item.id : null;
+      }),
       dataObj.id_gastos,
     ],
     (err, response, fields) => {
@@ -317,8 +337,8 @@ export const setUpdateInvoiceAdmin = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -347,8 +367,8 @@ export const getInvoiceAdminCxC = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -424,8 +444,8 @@ export const setInvoiceAdminCxC = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -453,8 +473,8 @@ export const getVerInvoiceAdminCxC = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({
@@ -534,8 +554,8 @@ export const setUpdateInvoiceAdminCxC = async (req: Request, res: Response) => {
           res.json({
             status: 200,
             statusBol: true,
-           data: rows,
-          token: renewTokenMiddleware(req),
+            data: rows,
+            token: renewTokenMiddleware(req),
           });
         } else {
           res.json({

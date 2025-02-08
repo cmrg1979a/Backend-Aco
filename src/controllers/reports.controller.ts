@@ -873,7 +873,7 @@ export const constRexportCXPExcel = async (req: Request, res: Response) => {
   var wo = wb.addWorksheet("Operativa");
   var wa = wb.addWorksheet("Administrativa");
   wo.cell(1, 1, 1, 11, true)
-    .string("REPORTE DE CUENTAS POR COBRAR")
+    .string("REPORTE DE CUENTAS POR PAGAR")
     .style(cabTitle);
   let fila = 2;
 
