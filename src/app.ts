@@ -20,28 +20,28 @@ const corsMiddleware = cors(corsOptions);
 /**PROUCCIÓN */
 let cado = {};
 if (global.esProduccion) {
+  global.path_url = "https://aco.agentedecargaonline.com/";
   cado = {
     host: "10.116.0.2",
-   
+
     user: "postgres",
     password: "@Developer2021Pic",
     port: "5432",
-    
+
     database: "db_op_main_01",
   };
 } else {
+  global.path_url = "https://devapigeneral.piccargo.com/";
   cado = {
     host: "67.205.129.62",
     user: "chainsolver",
     password: "Fr3sc0l1t4+",
     port: "5432",
-    
+
     database: "db_op_main_qa",
-   
   };
 }
 const pool = new Pool(cado);
-
 
 const app: Application = express();
 

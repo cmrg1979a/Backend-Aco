@@ -40,10 +40,18 @@ export const getContainers = async (req: Request, res: Response) => {
 
 export const setHouseContainers = async (req: Request, res: Response) => {
   const dataObj: postContainers = req.body;
+  console.log(dataObj);
   await pool.query(
-    "INSERT INTO House_Containers SET $1",
-    [dataObj],
-    (err, rows, fields) => {
+    "select * from function_housecontainer_insertar($1,$2,$3,$4,$5);",
+    [
+      dataObj.id_house,
+      dataObj.id_containers,
+      dataObj.nro_containers,
+      dataObj.nro_precinto,
+      dataObj.quantity,
+    ],
+    (err, response, fields) => {
+      let rows = response.rows;
       if (!err) {
         res.json({
           status: 200,

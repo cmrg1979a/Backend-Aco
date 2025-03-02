@@ -25,4 +25,5 @@ export interface IUser {
   sucursales?: any;
   clave?: any;
   id_entitie?: number;
+  cambiarClave?: Boolean;
 }

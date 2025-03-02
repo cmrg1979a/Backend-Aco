@@ -133,3 +133,48 @@ export const guardarOrdenEstatus = async (req: Request, res: Response) => {
     }
   );
 };
+export const eliminarEstatus = async (req: Request, res: Response) => {
+  let body = req.body;
+  await pool.query(
+    "SELECT * FROM function_statusbitacora_eliminar($1)",
+    [body.id],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const eliminarComentario = async (req: Request, res: Response) => {
+  let body = req.body;
+  console.log(body);
+  await pool.query(
+    "SELECT * FROM function_comentario_eliminar($1)",
+    [body.id],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};

@@ -686,7 +686,7 @@ async function sendCorreo(data) {
               </div>
               <br>
       <div style="float:right;">
-        <p style="text-align:right;">PERÚ, ${moment().format(
+        <p style="text-align:right;">${moment().format(
           "DD [de] MMMM [de] YYYY"
         )}</p>
       </div>
@@ -722,7 +722,7 @@ async function sendCorreo(data) {
 
       ${
         house.token_rastreo
-          ? `<p>Si desea consultar el estado de su carga, haga clic en este <a href="https://aco.agentedecargaonline.com/tracking/${
+          ? `<p>Si desea consultar el estado de su carga, haga clic en este <a href="${global.path_url}tracking/${
               house.token_rastreo || ""
             }">enlace</a></p><br/><br/>`
           : ""
@@ -762,6 +762,7 @@ export const getListarHouses = async (req: Request, res: Response) => {
     dechaeta,
   } = req.query;
 
+  
   await pool.query(
     "SELECT * FROM function_house_listar($1,$2,$3,$4,$5,$6,$7,$8,$9)",
     [

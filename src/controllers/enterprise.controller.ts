@@ -157,26 +157,27 @@ export const readEnterprise = async (req: Request, res: Response) => {
 
 export const updateEnterprise = async (req: Request, res: Response) => {
   const dataObj: postEnterprise = req.body;
-
+  console.log(dataObj);
   await pool.query(
-    "SELECT *from function_enterprise_actualizar($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14,$15,$16);",
+    "SELECT *from function_enterprise_actualizar($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14,$15,$16,$17);",
     [
       dataObj.id,
       dataObj.id_logo ? dataObj.id_logo : null,
-      dataObj.document,
-      dataObj.trade_name,
-      dataObj.business_name,
-      dataObj.slogan,
-      dataObj.address,
-      dataObj.status,
-      dataObj.id_pais,
-      dataObj.id_state,
-      dataObj.id_city,
-      dataObj.id_town,
-      dataObj.id_document,
-      dataObj.ic,
-      dataObj.tipoimpuesto,
-      dataObj.impuesto,
+      dataObj.document ? dataObj.document : null,
+      dataObj.trade_name ? dataObj.trade_name : null,
+      dataObj.business_name ? dataObj.business_name : null,
+      dataObj.slogan ? dataObj.slogan : null,
+      dataObj.address ? dataObj.address : null,
+      dataObj.status ? dataObj.status : null,
+      dataObj.id_pais ? dataObj.id_pais : null,
+      dataObj.id_state ? dataObj.id_state : null,
+      dataObj.id_city ? dataObj.id_city : null,
+      dataObj.id_town ? dataObj.id_town : null,
+      dataObj.id_document ? dataObj.id_document : null,
+      dataObj.ic ? dataObj.ic : null,
+      dataObj.tipoimpuesto ? dataObj.tipoimpuesto : null,
+      dataObj.impuesto ? dataObj.impuesto : null,
+      dataObj.id_branch ? dataObj.id_branch : null,
     ],
     (err, response, fields) => {
       if (!err) {

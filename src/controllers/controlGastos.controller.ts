@@ -449,11 +449,12 @@ export const editEgreso = async (req: Request, res: Response) => {
 };
 
 export const ControlGastosList = async (req: Request, res: Response) => {
-  const { code_master, id_branch } = req.query;
+  const { code_master, id_branch, id } = req.query;
   // const id_branch = req.query.id_branch;
   await pool.query(
-    "select * from function_controlgastos($1,$2)",
-    [code_master, id_branch],
+    // "select * from function_controlgastos($1,$2)",
+    "select * from function_controlgastos_ver($1,$2)",
+    [id, id_branch],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;

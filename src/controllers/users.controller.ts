@@ -211,9 +211,11 @@ export const ActualizarUsuarios = async (req: Request, res: Response) => {
   const user: IUser = req.body;
 
   await pool.query(
-    "SELECT * FROM function_users_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)",
+    "SELECT * FROM function_users_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22)",
     [
       user.id_entitie,
+      user.id_document,
+      user.document,
       user.birthday,
       user.address,
       user.status,
@@ -239,6 +241,8 @@ export const ActualizarUsuarios = async (req: Request, res: Response) => {
         return element.status;
       }),
       user.id,
+      user.cambiarClave,
+      user.clave,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -257,6 +261,7 @@ export const ActualizarUsuarios = async (req: Request, res: Response) => {
     }
   );
 };
+
 
 export const cambiarEstadoUser = async (req: Request, res: Response) => {
   const user = req.body;

@@ -729,22 +729,16 @@ export const validarDocumentoCliente = async (req: Request, res: Response) => {
 export const getEntitiesList = async (req: Request, res: Response) => {
   let role = req.body.id_role;
   let id_branch = req.body.id_branch;
-  let sql;
   role = req.body.id_role;
   if (role == 18) {
     role = 11;
   }
-  // if (role == 15) {
-  //   role = 28;
-  // }
+ 
   if (role == 28) {
     role = 15;
   }
 
-  // if (req.body.id_role == 28) {
-  //   sql = `SELECT distinct * FROM view_entitie_list where statusEntitieRole <> 0 and statusEntitie <> 0 and statusRole <> 0 and id_role =  ${role} and id_branch = ${
-  //     req.body.id_branch ? req.body.id_branch : "id_branch"
-  //   } or es_operativa`;
+ 
 
   await pool.query(
     "SELECT * FROM TABLE_ENTITIES_listar(null,$1,$2,null)",
