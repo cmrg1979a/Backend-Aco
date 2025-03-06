@@ -33,6 +33,7 @@ const path_1 = __importDefault(require("path"));
 const multer_1 = __importDefault(require("multer"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const pg = __importStar(require("pg"));
+const global_1 = require("./../global");
 require("dotenv").config();
 const { Pool } = pg;
 const corsOptions = {
@@ -42,26 +43,7 @@ const corsOptions = {
 };
 const corsMiddleware = (0, cors_1.default)(corsOptions);
 /**PROUCCIÓN */
-// const pool = new Pool({
-//   // host: "10.116.0.2",
-//   host: "157.230.14.98",//// remoto
-//   user: "postgres",
-//   password: "@Developer2021Pic",
-//   port: "5432",
-//   // database: "db_op_main_edison",
-//   database: "db_op_main_01",
-// });
-/** DESARROLLO */
-const pool = new Pool({
-    host: "67.205.129.62",
-    user: "chainsolver",
-    password: "Fr3sc0l1t4+",
-    port: "5432",
-    // database: "db_op_main_dev",
-    // database: "db_op_main_2",
-    database: "db_op_main_qa",
-    // database: "db_op_main_edison",
-});
+const pool = new Pool(global_1.cado);
 const app = (0, express_1.default)();
 const auth_1 = __importDefault(require("./routes/auth"));
 const pais_1 = __importDefault(require("./routes/pais"));
@@ -134,6 +116,7 @@ const position_1 = __importDefault(require("./routes/position"));
 const configuracionInicial_1 = __importDefault(require("./routes/configuracionInicial"));
 const seguridad_1 = __importDefault(require("./routes/seguridad"));
 const configEmpresa_1 = __importDefault(require("./routes/configEmpresa"));
+const StatusHouse_1 = __importDefault(require("./routes/StatusHouse"));
 // settings
 app.set("port", 9200);
 // middlewares
@@ -167,41 +150,6 @@ var storage = multer_1.default.diskStorage({
         callback(null, `${fecha}.${type}`);
     },
 });
-var upload = (0, multer_1.default)({ storage: storage }).single("file");
-// app.post("/uploadFilesSingle", function (req, res) {
-//   upload(req, res, function (err) {
-//     if (err) {
-//       return res.end("Error uploading file.");
-//     }
-//     pool.query(
-//       "select * from Table_Path_insertar_q($1,$2,$3,null,$4)",
-//       [req.body.id_quote, req.body.name, type, ruta],
-//       (err, response, fields) => {
-//         if (!err) {
-//           let rows = response.rows;
-//           if (!!rows[0].estadoflag) {
-//             res.json({
-//               status: 200,
-//               statusBol: true,
-//               data: {
-//                 ruta: "https://api-general.qreport.site/uploads/" + ruta,
-//                 name: ruta,
-//               },
-//             });
-//           } else {
-//             res.json({
-//               status: 200,
-//               statusBol: true,
-//               mensaje: rows[0].mensaje,
-//             });
-//           }
-//         } else {
-//           console.log(err);
-//         }
-//       }
-//     );
-//   });
-// });
 var uploads = (0, multer_1.default)({ storage: storage }).single("file");
 app.post("/uploadAllPath", function (req, res) {
     uploads(req, res, function (err) {
@@ -333,5 +281,6 @@ app.use(position_1.default);
 app.use(configuracionInicial_1.default);
 app.use(seguridad_1.default);
 app.use(configEmpresa_1.default);
+app.use(StatusHouse_1.default);
 exports.default = app;
 //# sourceMappingURL=app.js.map

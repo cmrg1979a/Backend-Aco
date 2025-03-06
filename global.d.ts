@@ -1,5 +1,5 @@
 declare global {
-  var esProduccion: string;
+  var esProduccion: Boolean;
 }
 
 export {};

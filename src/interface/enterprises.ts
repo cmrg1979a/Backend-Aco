@@ -16,4 +16,5 @@ export interface postEnterprise {
   status: number;
   tipoimpuesto?: number;
   impuesto?: number;
+  phone?: String;
 }
