@@ -447,6 +447,7 @@ export const getCallsId = async (req: Request, res: Response) => {
     }
   );
 };
+
 export const getQuoteCalls = async (req: Request, res: Response) => {
   const id = req.params.id;
   await pool.query(
@@ -1242,6 +1243,7 @@ export const ListarMontoFinalesQuoteMONGODB = async (
     res.status(500).send("Error en la consulta");
   }
 };
+
 export const CopiarCotizacion = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM function_quote_copy($1);",
@@ -1263,6 +1265,7 @@ export const CopiarCotizacion = async (req: Request, res: Response) => {
     }
   );
 };
+
 function getServicios({
   flete = [],
   almacen = [],

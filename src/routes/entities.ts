@@ -37,7 +37,8 @@ import {
   validarNombreCliente,
   validarNombreProveedor,
   validarDocumentoCliente,
-  validarDocumentoProveedor
+  validarDocumentoProveedor,
+  cargarEjecutivo
 } from "../controllers/entities.controller";
 
 router.post("/getEntitiesList", TokenValidation, getEntitiesList);
@@ -82,6 +83,7 @@ router.get("/listar_persona_tipo_persona", TokenValidation, ListarPersonaTipoPer
 router.put("/actualizar_rol_proveedor", TokenValidation, guardarRolProveedor);
 router.get("/validar_nombre_cliente", TokenValidation, validarNombreCliente);
 router.get("/validar_documento_cliente", TokenValidation, validarDocumentoCliente);
+router.get("/cargar_ejecutivo", TokenValidation, cargarEjecutivo);
 
 
 export default router;

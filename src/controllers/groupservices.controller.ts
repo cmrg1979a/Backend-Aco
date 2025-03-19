@@ -21,7 +21,7 @@ export const CargarGroupservices = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -30,6 +30,30 @@ export const CargarGroupservices = async (req: Request, res: Response) => {
     }
   );
 };
+
+export const obtenerServicioPricing = async (req: Request, res: Response) => {
+  const data = req.query;
+
+  await pool.query(
+    "SELECT *from function_groupservices_listar($1);",
+    [data.id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
 export const getListGroupservices = async (req: Request, res: Response) => {
   const data = req.query;
 
@@ -49,7 +73,7 @@ export const getListGroupservices = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -72,7 +96,7 @@ export const insertGroupservices = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -95,7 +119,7 @@ export const readGroupservices = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -118,7 +142,7 @@ export const updateGroupservices = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -127,7 +151,6 @@ export const updateGroupservices = async (req: Request, res: Response) => {
     }
   );
 };
-
 
 export const ListarItemServices = async (req: Request, res: Response) => {
   const itemservice: IITemServices = req.query;
@@ -149,7 +172,29 @@ export const ListarItemServices = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-         data: rows,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const cargarCostosPricing = async (req: Request, res: Response) => {
+  const itemservice: IITemServices = req.query;
+
+  await pool.query(
+    "SELECT * FROM function_costesbranch_cargar($1);",
+    [itemservice.id_branch ? itemservice.id_branch : null],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -182,7 +227,7 @@ export const InsertarItemServices = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {
@@ -215,7 +260,7 @@ export const ActualizarItemServices = async (req: Request, res: Response) => {
           status: 200,
           estadoflag: rows[0].estadoflag,
           mensaje: rows[0].mensaje,
-         data: rows,
+          data: rows,
           token: renewTokenMiddleware(req),
         });
       } else {

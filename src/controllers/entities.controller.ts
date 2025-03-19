@@ -25,15 +25,15 @@ export const GuardarProveedor = async (req: Request, res: Response) => {
     lstTelefonos,
     lstContactos,
     lstConvenios,
-    lstTarifas, 
+    lstTarifas,
     lstInformacionBancaria,
-    convenioActual = {}
+    convenioActual = {},
   } = req.body;
 
   await pool.query(
     "SELECT * FROM function_table_entities_registrarproveedor($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36)",
     [
-      id_branch ? id_branch : null,      
+      id_branch ? id_branch : null,
       nombrecompleto ? nombrecompleto : null,
       id_tipoproveedor ? id_tipoproveedor : null,
       id_tipotransaccion ? id_tipotransaccion : null,
@@ -47,27 +47,47 @@ export const GuardarProveedor = async (req: Request, res: Response) => {
       dias_sobreestadia ? dias_sobreestadia : 0,
       dias_almacenaje ? dias_almacenaje : 0,
       notas ? notas : null,
-      lstTelefonos.map((item) => item.id_tipotelefono ? item.id_tipotelefono : null),
-      lstTelefonos.map((item) => item.telefono ? item.telefono : null),
-      lstContactos.map((item) => item.nombre ? item.nombre : null),
-      lstContactos.map((item) => item.id_tipotelefono ? item.id_tipotelefono : null),
-      lstContactos.map((item) => item.telefono ? item.telefono : null),
-      lstConvenios.map((item) => item.fecha ? item.fecha : null),
-      lstConvenios.map((item) => item.dias_credito ? item.dias_credito : 0),
-      lstConvenios.map((item) => item.email_soporte ? item.email_soporte : null),
-      lstConvenios.map((item) => item.id_path ? item.id_path : null),
-      lstTarifas.map((item) => item.fecha ? item.fecha : null),
-      lstTarifas.map((item) => item.codigo ? item.codigo : null),
-      lstTarifas.map((item) => item.email_soporte ? item.email_soporte : null),
-      lstTarifas.map((item) => item.tarifa ? item.tarifa : 0),
-      lstTarifas.map((item) => item.id_path ? item.id_path : null),
-      lstInformacionBancaria.map((item) => item.nro_cuenta ? item.nro_cuenta : null),
-      lstInformacionBancaria.map((item) => item.cci ? item.cci : null),
-      lstInformacionBancaria.map((item) => item.id_banco ? item.id_banco : null),
-      lstInformacionBancaria.map((item) => item.id_coins ? item.id_coins : null),
-      lstInformacionBancaria.map((item) => item.nro_swift ? item.nro_swift : null),
-      lstInformacionBancaria.map((item) => item.id_intermediario ? item.id_intermediario : null),
-      lstInformacionBancaria.map((item) => item.nro_cuenta_intermediario ? item.nro_cuenta_intermediario : null), // 33
+      lstTelefonos.map((item) =>
+        item.id_tipotelefono ? item.id_tipotelefono : null
+      ),
+      lstTelefonos.map((item) => (item.telefono ? item.telefono : null)),
+      lstContactos.map((item) => (item.nombre ? item.nombre : null)),
+      lstContactos.map((item) =>
+        item.id_tipotelefono ? item.id_tipotelefono : null
+      ),
+      lstContactos.map((item) => (item.telefono ? item.telefono : null)),
+      lstConvenios.map((item) => (item.fecha ? item.fecha : null)),
+      lstConvenios.map((item) => (item.dias_credito ? item.dias_credito : 0)),
+      lstConvenios.map((item) =>
+        item.email_soporte ? item.email_soporte : null
+      ),
+      lstConvenios.map((item) => (item.id_path ? item.id_path : null)),
+      lstTarifas.map((item) => (item.fecha ? item.fecha : null)),
+      lstTarifas.map((item) => (item.codigo ? item.codigo : null)),
+      lstTarifas.map((item) =>
+        item.email_soporte ? item.email_soporte : null
+      ),
+      lstTarifas.map((item) => (item.tarifa ? item.tarifa : 0)),
+      lstTarifas.map((item) => (item.id_path ? item.id_path : null)),
+      lstInformacionBancaria.map((item) =>
+        item.nro_cuenta ? item.nro_cuenta : null
+      ),
+      lstInformacionBancaria.map((item) => (item.cci ? item.cci : null)),
+      lstInformacionBancaria.map((item) =>
+        item.id_banco ? item.id_banco : null
+      ),
+      lstInformacionBancaria.map((item) =>
+        item.id_coins ? item.id_coins : null
+      ),
+      lstInformacionBancaria.map((item) =>
+        item.nro_swift ? item.nro_swift : null
+      ),
+      lstInformacionBancaria.map((item) =>
+        item.id_intermediario ? item.id_intermediario : null
+      ),
+      lstInformacionBancaria.map((item) =>
+        item.nro_cuenta_intermediario ? item.nro_cuenta_intermediario : null
+      ), // 33
       convenioActual.dias_credito ? convenioActual.dias_credito : 0,
     ],
     (err, response, fields) => {
@@ -100,7 +120,7 @@ export const getListProveedor = async (req: Request, res: Response) => {
     producto,
     id_pais,
     id_state,
-    status,    
+    status,
   } = req.query;
 
   await pool.query(
@@ -240,7 +260,10 @@ export const getValidaRazonSocial = async (req: Request, res: Response) => {
   );
 };
 
-export const getValidaTipoDocumentoDocument = async (req: Request, res: Response) => {
+export const getValidaTipoDocumentoDocument = async (
+  req: Request,
+  res: Response
+) => {
   const { id_branch, id_tipodocumento, documento } = req.query;
 
   await pool.query(
@@ -285,16 +308,16 @@ export const actualizarProveedor = async (req: Request, res: Response) => {
     lstTelefonos,
     lstContactos,
     lstConvenios,
-    lstTarifas, 
+    lstTarifas,
     lstInformacionBancaria,
-    convenioActual = {}
+    convenioActual = {},
   } = req.body;
 
   await pool.query(
     "SELECT * FROM function_table_entities_actualizarproveedor($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42)",
     [
       id ? id : null,
-      id_branch ? id_branch : null,      
+      id_branch ? id_branch : null,
       nombrecompleto ? nombrecompleto : null,
       id_tipoproveedor ? id_tipoproveedor : null,
       id_tipotransaccion ? id_tipotransaccion : null,
@@ -308,33 +331,53 @@ export const actualizarProveedor = async (req: Request, res: Response) => {
       dias_sobreestadia ? dias_sobreestadia : 0,
       dias_almacenaje ? dias_almacenaje : 0,
       notas ? notas : null,
-      lstTelefonos.map((item) => item.id ? item.id : null),
-      lstTelefonos.map((item) => item.id_tipotelefono ? item.id_tipotelefono : null),
-      lstTelefonos.map((item) => item.telefono ? item.telefono : null),
-      lstContactos.map((item) => item.id ? item.id : null),
-      lstContactos.map((item) => item.nombre ? item.nombre : null),
-      lstContactos.map((item) => item.id_tipotelefono ? item.id_tipotelefono : null),
-      lstContactos.map((item) => item.telefono ? item.telefono : null),
-      lstConvenios.map((item) => item.id ? item.id : null),
-      lstConvenios.map((item) => item.fecha ? item.fecha : null),
-      lstConvenios.map((item) => item.dias_credito ? item.dias_credito : 0),
-      lstConvenios.map((item) => item.email_soporte ? item.email_soporte : null),
-      lstConvenios.map((item) => item.id_path ? item.id_path : null),
-      lstTarifas.map((item) => item.id ? item.id : null),
-      lstTarifas.map((item) => item.fecha ? item.fecha : null),
-      lstTarifas.map((item) => item.codigo ? item.codigo : null),
-      lstTarifas.map((item) => item.email_soporte ? item.email_soporte : null),
-      lstTarifas.map((item) => item.tarifa ? item.tarifa : 0),
-      lstTarifas.map((item) => item.id_path ? item.id_path : null),
-      lstInformacionBancaria.map((item) => item.id ? item.id : null),
-      lstInformacionBancaria.map((item) => item.nro_cuenta ? item.nro_cuenta : null),
-      lstInformacionBancaria.map((item) => item.cci ? item.cci : null),
-      lstInformacionBancaria.map((item) => item.id_banco ? item.id_banco : null),
-      lstInformacionBancaria.map((item) => item.id_coins ? item.id_coins : null),
-      lstInformacionBancaria.map((item) => item.nro_swift ? item.nro_swift : null),
-      lstInformacionBancaria.map((item) => item.id_intermediario ? item.id_intermediario : null),
-      lstInformacionBancaria.map((item) => item.nro_cuenta_intermediario ? item.nro_cuenta_intermediario : null), //39
-      convenioActual.dias_credito ? convenioActual.dias_credito : 0
+      lstTelefonos.map((item) => (item.id ? item.id : null)),
+      lstTelefonos.map((item) =>
+        item.id_tipotelefono ? item.id_tipotelefono : null
+      ),
+      lstTelefonos.map((item) => (item.telefono ? item.telefono : null)),
+      lstContactos.map((item) => (item.id ? item.id : null)),
+      lstContactos.map((item) => (item.nombre ? item.nombre : null)),
+      lstContactos.map((item) =>
+        item.id_tipotelefono ? item.id_tipotelefono : null
+      ),
+      lstContactos.map((item) => (item.telefono ? item.telefono : null)),
+      lstConvenios.map((item) => (item.id ? item.id : null)),
+      lstConvenios.map((item) => (item.fecha ? item.fecha : null)),
+      lstConvenios.map((item) => (item.dias_credito ? item.dias_credito : 0)),
+      lstConvenios.map((item) =>
+        item.email_soporte ? item.email_soporte : null
+      ),
+      lstConvenios.map((item) => (item.id_path ? item.id_path : null)),
+      lstTarifas.map((item) => (item.id ? item.id : null)),
+      lstTarifas.map((item) => (item.fecha ? item.fecha : null)),
+      lstTarifas.map((item) => (item.codigo ? item.codigo : null)),
+      lstTarifas.map((item) =>
+        item.email_soporte ? item.email_soporte : null
+      ),
+      lstTarifas.map((item) => (item.tarifa ? item.tarifa : 0)),
+      lstTarifas.map((item) => (item.id_path ? item.id_path : null)),
+      lstInformacionBancaria.map((item) => (item.id ? item.id : null)),
+      lstInformacionBancaria.map((item) =>
+        item.nro_cuenta ? item.nro_cuenta : null
+      ),
+      lstInformacionBancaria.map((item) => (item.cci ? item.cci : null)),
+      lstInformacionBancaria.map((item) =>
+        item.id_banco ? item.id_banco : null
+      ),
+      lstInformacionBancaria.map((item) =>
+        item.id_coins ? item.id_coins : null
+      ),
+      lstInformacionBancaria.map((item) =>
+        item.nro_swift ? item.nro_swift : null
+      ),
+      lstInformacionBancaria.map((item) =>
+        item.id_intermediario ? item.id_intermediario : null
+      ),
+      lstInformacionBancaria.map((item) =>
+        item.nro_cuenta_intermediario ? item.nro_cuenta_intermediario : null
+      ), //39
+      convenioActual.dias_credito ? convenioActual.dias_credito : 0,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -356,17 +399,11 @@ export const actualizarProveedor = async (req: Request, res: Response) => {
 };
 
 export const validarNombreProveedor = async (req: Request, res: Response) => {
-  const { 
-    id_branch, 
-    nombre 
-  } = req.query;
+  const { id_branch, nombre } = req.query;
 
   await pool.query(
     "SELECT * FROM function_validar_nombre_proveedor($1,$2)",
-    [
-      id_branch, 
-      nombre ? nombre : null
-    ],
+    [id_branch, nombre ? nombre : null],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -385,15 +422,18 @@ export const validarNombreProveedor = async (req: Request, res: Response) => {
     }
   );
 };
-export const validarDocumentoProveedor = async (req: Request, res: Response) => {
+export const validarDocumentoProveedor = async (
+  req: Request,
+  res: Response
+) => {
   const dataObj = req.query;
 
   await pool.query(
     "SELECT * FROM function_validar_documento_proveedor($1,$2,$3)",
     [
-      dataObj.id_branch, 
+      dataObj.id_branch,
       dataObj.id_tipodocumento ? dataObj.id_tipodocumento : null,
-      dataObj.nro_documento ? dataObj.nro_documento : null
+      dataObj.nro_documento ? dataObj.nro_documento : null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -424,7 +464,7 @@ export const getListCliente = async (req: Request, res: Response) => {
     id_state,
     status,
     id_tipoproveedor,
-    nro_documento
+    nro_documento,
   } = req.query;
 
   await pool.query(
@@ -438,7 +478,7 @@ export const getListCliente = async (req: Request, res: Response) => {
       id_state ? id_state : null,
       status ? status : null,
       id_tipoproveedor ? id_tipoproveedor : null,
-      nro_documento ? nro_documento : null
+      nro_documento ? nro_documento : null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -474,11 +514,11 @@ export const GuardarCliente = async (req: Request, res: Response) => {
     lstTelefonos,
     lstContactos,
     lstConvenios,
-    lstTarifas, 
+    lstTarifas,
     lstInformacionBancaria,
     lstShippers,
     informacionEntrega,
-    convenioActual = {}
+    convenioActual = {},
   } = req.body;
 
   await pool.query(
@@ -495,39 +535,65 @@ export const GuardarCliente = async (req: Request, res: Response) => {
       direccion ? direccion : null,
       emailaddress ? emailaddress : null,
       notas ? notas : null,
-      lstTelefonos.map((item) => item.id_tipotelefono ? item.id_tipotelefono : null),
-      lstTelefonos.map((item) => item.telefono ? item.telefono : null),
-      lstContactos.map((item) => item.nombre ? item.nombre : null),
-      lstContactos.map((item) => item.id_tipotelefono ? item.id_tipotelefono : null),
-      lstContactos.map((item) => item.telefono ? item.telefono : null),
-      lstConvenios.map((item) => item.fecha ? item.fecha : null),
-      lstConvenios.map((item) => item.dias_credito ? item.dias_credito : 0),
-      lstConvenios.map((item) => item.email_soporte ? item.email_soporte : null),
-      lstConvenios.map((item) => item.id_path ? item.id_path : null),
-      lstTarifas.map((item) => item.fecha ? item.fecha : null),
-      lstTarifas.map((item) => item.codigo ? item.codigo : null),
-      lstTarifas.map((item) => item.email_soporte ? item.email_soporte : null),
-      lstTarifas.map((item) => item.tarifa ? item.tarifa : 0),
-      lstTarifas.map((item) => item.id_path ? item.id_path : null),
-      lstInformacionBancaria.map((item) => item.nro_cuenta ? item.nro_cuenta : null),
-      lstInformacionBancaria.map((item) => item.cci ? item.cci : null),
-      lstInformacionBancaria.map((item) => item.id_banco ? item.id_banco : null),
-      lstInformacionBancaria.map((item) => item.id_coins ? item.id_coins : null),
-      lstInformacionBancaria.map((item) => item.nro_swift ? item.nro_swift : null),
-      lstInformacionBancaria.map((item) => item.id_intermediario ? item.id_intermediario : null),
-      lstInformacionBancaria.map((item) => item.nro_cuenta_intermediario ? item.nro_cuenta_intermediario : null),
-      lstShippers.map((item) => item.id_shipper ? item.id_shipper : null),
+      lstTelefonos.map((item) =>
+        item.id_tipotelefono ? item.id_tipotelefono : null
+      ),
+      lstTelefonos.map((item) => (item.telefono ? item.telefono : null)),
+      lstContactos.map((item) => (item.nombre ? item.nombre : null)),
+      lstContactos.map((item) =>
+        item.id_tipotelefono ? item.id_tipotelefono : null
+      ),
+      lstContactos.map((item) => (item.telefono ? item.telefono : null)),
+      lstConvenios.map((item) => (item.fecha ? item.fecha : null)),
+      lstConvenios.map((item) => (item.dias_credito ? item.dias_credito : 0)),
+      lstConvenios.map((item) =>
+        item.email_soporte ? item.email_soporte : null
+      ),
+      lstConvenios.map((item) => (item.id_path ? item.id_path : null)),
+      lstTarifas.map((item) => (item.fecha ? item.fecha : null)),
+      lstTarifas.map((item) => (item.codigo ? item.codigo : null)),
+      lstTarifas.map((item) =>
+        item.email_soporte ? item.email_soporte : null
+      ),
+      lstTarifas.map((item) => (item.tarifa ? item.tarifa : 0)),
+      lstTarifas.map((item) => (item.id_path ? item.id_path : null)),
+      lstInformacionBancaria.map((item) =>
+        item.nro_cuenta ? item.nro_cuenta : null
+      ),
+      lstInformacionBancaria.map((item) => (item.cci ? item.cci : null)),
+      lstInformacionBancaria.map((item) =>
+        item.id_banco ? item.id_banco : null
+      ),
+      lstInformacionBancaria.map((item) =>
+        item.id_coins ? item.id_coins : null
+      ),
+      lstInformacionBancaria.map((item) =>
+        item.nro_swift ? item.nro_swift : null
+      ),
+      lstInformacionBancaria.map((item) =>
+        item.id_intermediario ? item.id_intermediario : null
+      ),
+      lstInformacionBancaria.map((item) =>
+        item.nro_cuenta_intermediario ? item.nro_cuenta_intermediario : null
+      ),
+      lstShippers.map((item) => (item.id_shipper ? item.id_shipper : null)),
       informacionEntrega.destinatario ? informacionEntrega.destinatario : null,
-      informacionEntrega.dni_destinatario ? informacionEntrega.dni_destinatario : null,
+      informacionEntrega.dni_destinatario
+        ? informacionEntrega.dni_destinatario
+        : null,
       informacionEntrega.receptor ? informacionEntrega.receptor : null,
       informacionEntrega.dni_receptor ? informacionEntrega.dni_receptor : null,
-      informacionEntrega.id_departamento ? informacionEntrega.id_departamento : null,
+      informacionEntrega.id_departamento
+        ? informacionEntrega.id_departamento
+        : null,
       informacionEntrega.id_provincia ? informacionEntrega.id_provincia : null,
       informacionEntrega.id_distrito ? informacionEntrega.id_distrito : null,
       informacionEntrega.agencia ? informacionEntrega.agencia : null,
-      informacionEntrega.celular_agencia ? informacionEntrega.celular_agencia : null,
+      informacionEntrega.celular_agencia
+        ? informacionEntrega.celular_agencia
+        : null,
       informacionEntrega.status ? 1 : 0, // 41
-      convenioActual.dias_credito ? convenioActual.dias_credito : 0
+      convenioActual.dias_credito ? convenioActual.dias_credito : 0,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -588,11 +654,11 @@ export const ActualizarCliente = async (req: Request, res: Response) => {
     lstTelefonos,
     lstContactos,
     lstConvenios,
-    lstTarifas, 
+    lstTarifas,
     lstInformacionBancaria,
     lstShippers,
     informacionEntrega,
-    convenioActual = {}
+    convenioActual = {},
   } = req.body;
 
   await pool.query(
@@ -609,47 +675,73 @@ export const ActualizarCliente = async (req: Request, res: Response) => {
       id_ciudad ? id_ciudad : null,
       direccion ? direccion : null,
       emailaddress ? emailaddress : null,
-      notas ? notas : null, 
-      lstTelefonos.map((item) => item.id ? item.id : null),
-      lstTelefonos.map((item) => item.id_tipotelefono ? item.id_tipotelefono : null),
-      lstTelefonos.map((item) => item.telefono ? item.telefono : null),
-      lstContactos.map((item) => item.id ? item.id : null),
-      lstContactos.map((item) => item.nombre ? item.nombre : null),
-      lstContactos.map((item) => item.id_tipotelefono ? item.id_tipotelefono : null),
-      lstContactos.map((item) => item.telefono ? item.telefono : null), 
-      lstConvenios.map((item) => item.id ? item.id : null),
-      lstConvenios.map((item) => item.fecha ? item.fecha : null),
-      lstConvenios.map((item) => item.dias_credito ? item.dias_credito : 0),
-      lstConvenios.map((item) => item.email_soporte ? item.email_soporte : null),
-      lstConvenios.map((item) => item.id_path ? item.id_path : null),
-      lstTarifas.map((item) => item.id ? item.id : null),
-      lstTarifas.map((item) => item.fecha ? item.fecha : null),
-      lstTarifas.map((item) => item.codigo ? item.codigo : null),
-      lstTarifas.map((item) => item.email_soporte ? item.email_soporte : null),
-      lstTarifas.map((item) => item.tarifa ? item.tarifa : 0), // 28
-      lstTarifas.map((item) => item.id_path ? item.id_path : null),
-      lstInformacionBancaria.map((item) => item.id ? item.id : null),
-      lstInformacionBancaria.map((item) => item.nro_cuenta ? item.nro_cuenta : null),
-      lstInformacionBancaria.map((item) => item.cci ? item.cci : null),
-      lstInformacionBancaria.map((item) => item.id_banco ? item.id_banco : null),
-      lstInformacionBancaria.map((item) => item.id_coins ? item.id_coins : null),
-      lstInformacionBancaria.map((item) => item.nro_swift ? item.nro_swift : null),
-      lstInformacionBancaria.map((item) => item.id_intermediario ? item.id_intermediario : null),
-      lstInformacionBancaria.map((item) => item.nro_cuenta_intermediario ? item.nro_cuenta_intermediario : null),
-      lstShippers.map((item) => item.id ? item.id : null),
-      lstShippers.map((item) => item.id_shipper ? item.id_shipper : null), // 38
+      notas ? notas : null,
+      lstTelefonos.map((item) => (item.id ? item.id : null)),
+      lstTelefonos.map((item) =>
+        item.id_tipotelefono ? item.id_tipotelefono : null
+      ),
+      lstTelefonos.map((item) => (item.telefono ? item.telefono : null)),
+      lstContactos.map((item) => (item.id ? item.id : null)),
+      lstContactos.map((item) => (item.nombre ? item.nombre : null)),
+      lstContactos.map((item) =>
+        item.id_tipotelefono ? item.id_tipotelefono : null
+      ),
+      lstContactos.map((item) => (item.telefono ? item.telefono : null)),
+      lstConvenios.map((item) => (item.id ? item.id : null)),
+      lstConvenios.map((item) => (item.fecha ? item.fecha : null)),
+      lstConvenios.map((item) => (item.dias_credito ? item.dias_credito : 0)),
+      lstConvenios.map((item) =>
+        item.email_soporte ? item.email_soporte : null
+      ),
+      lstConvenios.map((item) => (item.id_path ? item.id_path : null)),
+      lstTarifas.map((item) => (item.id ? item.id : null)),
+      lstTarifas.map((item) => (item.fecha ? item.fecha : null)),
+      lstTarifas.map((item) => (item.codigo ? item.codigo : null)),
+      lstTarifas.map((item) =>
+        item.email_soporte ? item.email_soporte : null
+      ),
+      lstTarifas.map((item) => (item.tarifa ? item.tarifa : 0)), // 28
+      lstTarifas.map((item) => (item.id_path ? item.id_path : null)),
+      lstInformacionBancaria.map((item) => (item.id ? item.id : null)),
+      lstInformacionBancaria.map((item) =>
+        item.nro_cuenta ? item.nro_cuenta : null
+      ),
+      lstInformacionBancaria.map((item) => (item.cci ? item.cci : null)),
+      lstInformacionBancaria.map((item) =>
+        item.id_banco ? item.id_banco : null
+      ),
+      lstInformacionBancaria.map((item) =>
+        item.id_coins ? item.id_coins : null
+      ),
+      lstInformacionBancaria.map((item) =>
+        item.nro_swift ? item.nro_swift : null
+      ),
+      lstInformacionBancaria.map((item) =>
+        item.id_intermediario ? item.id_intermediario : null
+      ),
+      lstInformacionBancaria.map((item) =>
+        item.nro_cuenta_intermediario ? item.nro_cuenta_intermediario : null
+      ),
+      lstShippers.map((item) => (item.id ? item.id : null)),
+      lstShippers.map((item) => (item.id_shipper ? item.id_shipper : null)), // 38
       informacionEntrega.id ? informacionEntrega.id : null,
       informacionEntrega.destinatario ? informacionEntrega.destinatario : null,
-      informacionEntrega.dni_destinatario ? informacionEntrega.dni_destinatario : null,
+      informacionEntrega.dni_destinatario
+        ? informacionEntrega.dni_destinatario
+        : null,
       informacionEntrega.receptor ? informacionEntrega.receptor : null,
       informacionEntrega.dni_receptor ? informacionEntrega.dni_receptor : null,
-      informacionEntrega.id_departamento ? informacionEntrega.id_departamento : null,
+      informacionEntrega.id_departamento
+        ? informacionEntrega.id_departamento
+        : null,
       informacionEntrega.id_provincia ? informacionEntrega.id_provincia : null,
       informacionEntrega.id_distrito ? informacionEntrega.id_distrito : null,
       informacionEntrega.agencia ? informacionEntrega.agencia : null,
-      informacionEntrega.celular_agencia ? informacionEntrega.celular_agencia : null,
+      informacionEntrega.celular_agencia
+        ? informacionEntrega.celular_agencia
+        : null,
       informacionEntrega.status ? 1 : 0, // 49
-      convenioActual.dias_credito ? convenioActual.dias_credito : 0
+      convenioActual.dias_credito ? convenioActual.dias_credito : 0,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -674,10 +766,7 @@ export const validarNombreCliente = async (req: Request, res: Response) => {
 
   await pool.query(
     "SELECT * FROM function_validar_nombre_cliente($1,$2)",
-    [
-      dataObj.id_branch, 
-      dataObj.nombre ? dataObj.nombre : null
-    ],
+    [dataObj.id_branch, dataObj.nombre ? dataObj.nombre : null],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -702,9 +791,9 @@ export const validarDocumentoCliente = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM function_validar_documento_cliente($1,$2,$3)",
     [
-      dataObj.id_branch, 
+      dataObj.id_branch,
       dataObj.id_tipodocumento ? dataObj.id_tipodocumento : null,
-      dataObj.nro_documento ? dataObj.nro_documento : null
+      dataObj.nro_documento ? dataObj.nro_documento : null,
     ],
     (err, response, fields) => {
       if (!err) {
@@ -733,12 +822,10 @@ export const getEntitiesList = async (req: Request, res: Response) => {
   if (role == 18) {
     role = 11;
   }
- 
+
   if (role == 28) {
     role = 15;
   }
-
- 
 
   await pool.query(
     "SELECT * FROM TABLE_ENTITIES_listar(null,$1,$2,null)",
@@ -769,9 +856,9 @@ export const getEntitiesList = async (req: Request, res: Response) => {
 };
 export const getListadoCliente = async (req: Request, res: Response) => {
   let { id_branch } = req.query;
-  
+
   await pool.query(
-    "SELECT * FROM table_entities_listar_cliente($1)",
+    "SELECT * FROM function_entitie_cargarclientes($1)",
     [id_branch],
     (err, response, fields) => {
       if (!err) {
@@ -1229,7 +1316,10 @@ export const CargarProveedores = async (req: Request, res: Response) => {
   );
 };
 
-export const cargarProveedoresRolNoShipper = async (req: Request, res: Response) => {
+export const cargarProveedoresRolNoShipper = async (
+  req: Request,
+  res: Response
+) => {
   const { id_branch } = req.query;
 
   await pool.query(
@@ -1258,10 +1348,7 @@ export const cargarProveedoresXRol = async (req: Request, res: Response) => {
 
   await pool.query(
     "select * from function_cargar_proveedor_x_rol($1,$2);",
-    [
-      id_branch,
-      rol || null
-    ],
+    [id_branch, rol || null],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -1404,6 +1491,31 @@ export const guardarRolProveedor = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM function_actualizar_rol_persona($1,$2,$3,$4)",
     [id, proveedorflag, clienteflag, personalflag],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const cargarEjecutivo = async (req: Request, res: Response) => {
+  const { id_branch } = req.query;
+
+  await pool.query(
+    "SELECT * FROM function_cargar_personal($1)",
+    [id_branch],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;

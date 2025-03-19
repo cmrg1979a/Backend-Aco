@@ -7,8 +7,10 @@ import {
   CargarGroupservices,
   InsertarItemServices,
   ListarItemServices,
+  cargarCostosPricing,
   getListGroupservices,
   insertGroupservices,
+  obtenerServicioPricing,
   readGroupservices,
   updateGroupservices,
 } from "../controllers/groupservices.controller";
@@ -21,4 +23,6 @@ router.put("/actualizar_groupservices/", TokenValidation, updateGroupservices);
 router.get("/listar_itemservices", TokenValidation, ListarItemServices);
 router.post("/insertar_itemservices", TokenValidation, InsertarItemServices);
 router.put("/actualizar_itemservices", TokenValidation, ActualizarItemServices);
+router.get("/obtener_servicio_pricing", TokenValidation, obtenerServicioPricing);
+router.get("/obtener_costos_pricing", TokenValidation, cargarCostosPricing);
 export default router;
