@@ -178,6 +178,7 @@ export const getQuoteList = async (req: Request, res: Response) => {
   );
 };
 
+
 export const getQuoteId = async (req: Request, res: Response) => {
   const { id } = req.query;
   await pool.query(
