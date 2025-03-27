@@ -178,7 +178,6 @@ export const getQuoteList = async (req: Request, res: Response) => {
   );
 };
 
-
 export const getQuoteId = async (req: Request, res: Response) => {
   const { id } = req.query;
   await pool.query(
@@ -986,9 +985,10 @@ export const aprobarCotizacion = async (req: Request, res: Response) => {
     igvIngreso,
     valorIngreso,
     listCostosInstructivo,
+    listVentasInstructivo,
   } = req.body;
   await pool.query(
-    "SELECT * FROM function_aprobar_cotizacion($1,$2,$3,$4,$5,$6,$7,$8,$9,$10);",
+    "SELECT * FROM function_aprobar_cotizacion($1,$2,$3,$4,$5,$6,$7,$8,$9);",
     [
       id_quote ? id_quote : null,
       nuevoexpediente ? nuevoexpediente : null,
@@ -997,16 +997,8 @@ export const aprobarCotizacion = async (req: Request, res: Response) => {
       igvIngreso ? igvIngreso : null,
       valorIngreso ? valorIngreso : null,
       totalIngreso ? totalIngreso : 0,
-      listCostosInstructivo.map((element: any) => {
-        return element.id ? element.id : null;
-      }),
-
-      listCostosInstructivo.map((element: any) => {
-        return element.service;
-      }),
-      listCostosInstructivo.map((element: any) => {
-        return element.valor;
-      }),
+      JSON.stringify(listCostosInstructivo.filter((item) => item.id)),
+      JSON.stringify(listVentasInstructivo.filter((item) => item.id)),
     ],
 
     (err, response, fields) => {
