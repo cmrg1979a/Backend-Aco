@@ -987,6 +987,7 @@ export const aprobarCotizacion = async (req: Request, res: Response) => {
     listCostosInstructivo,
     listVentasInstructivo,
   } = req.body;
+  let Descripcion = ["SubTotal", "TOTAL"];
   await pool.query(
     "SELECT * FROM function_aprobar_cotizacion($1,$2,$3,$4,$5,$6,$7,$8,$9);",
     [
@@ -998,7 +999,11 @@ export const aprobarCotizacion = async (req: Request, res: Response) => {
       valorIngreso ? valorIngreso : null,
       totalIngreso ? totalIngreso : 0,
       JSON.stringify(listCostosInstructivo.filter((item) => item.id)),
-      JSON.stringify(listVentasInstructivo.filter((item) => item.id)),
+      JSON.stringify(
+        listVentasInstructivo.filter(
+          (item) => !/^(TOTAL|SubTotal)$/i.test(item.descripcion.trim())
+        )
+      ),
     ],
 
     (err, response, fields) => {
@@ -1241,6 +1246,28 @@ export const CopiarCotizacion = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM function_quote_copy($1);",
     [req.body.id],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const getResumenPorEstado = async (req: Request, res: Response) => {
+  await pool.query(
+    "SELECT * FROM function_quote_resumen_por_estado($1);",
+    [req.query.id_branch],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
