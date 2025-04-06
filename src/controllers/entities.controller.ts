@@ -27,11 +27,12 @@ export const GuardarProveedor = async (req: Request, res: Response) => {
     lstConvenios,
     lstTarifas,
     lstInformacionBancaria,
+    lstEmails,
     convenioActual = {},
   } = req.body;
 
   await pool.query(
-    "SELECT * FROM function_table_entities_registrarproveedor($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36)",
+    "SELECT * FROM function_table_entities_registrarproveedor($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37)",
     [
       id_branch ? id_branch : null,
       nombrecompleto ? nombrecompleto : null,
@@ -88,6 +89,7 @@ export const GuardarProveedor = async (req: Request, res: Response) => {
       lstInformacionBancaria.map((item) =>
         item.nro_cuenta_intermediario ? item.nro_cuenta_intermediario : null
       ), // 33
+      JSON.stringify(lstEmails),
       convenioActual.dias_credito ? convenioActual.dias_credito : 0,
     ],
     (err, response, fields) => {
@@ -311,10 +313,10 @@ export const actualizarProveedor = async (req: Request, res: Response) => {
     lstTarifas,
     lstInformacionBancaria,
     convenioActual = {},
+    lstEmails,
   } = req.body;
-
   await pool.query(
-    "SELECT * FROM function_table_entities_actualizarproveedor($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42)",
+    "SELECT * FROM function_table_entities_actualizarproveedor($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43)",
     [
       id ? id : null,
       id_branch ? id_branch : null,
@@ -377,6 +379,7 @@ export const actualizarProveedor = async (req: Request, res: Response) => {
       lstInformacionBancaria.map((item) =>
         item.nro_cuenta_intermediario ? item.nro_cuenta_intermediario : null
       ), //39
+      JSON.stringify(lstEmails),
       convenioActual.dias_credito ? convenioActual.dias_credito : 0,
     ],
     (err, response, fields) => {

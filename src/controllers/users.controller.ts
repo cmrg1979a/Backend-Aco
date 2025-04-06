@@ -11,7 +11,7 @@ import { IUser } from "interface/iUsers";
 
 export const ListarUsuarios = async (req: Request, res: Response) => {
   const user: IUser = req.query;
-
+  console.log(user.id_branch);
   await pool.query(
     "SELECT * FROM function_users_listar($1,$2,$3,$4,$5,$6,$7,$8)",
     [
@@ -261,7 +261,6 @@ export const ActualizarUsuarios = async (req: Request, res: Response) => {
     }
   );
 };
-
 
 export const cambiarEstadoUser = async (req: Request, res: Response) => {
   const user = req.body;

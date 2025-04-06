@@ -46,6 +46,7 @@ export const generarFactura = async (req: Request, res: Response) => {
   const fecha = new Date();
 
   const {
+    nombreProforma,
     cliente_nombre,
     cliente_phone,
     cliente_document,
@@ -86,6 +87,7 @@ export const generarFactura = async (req: Request, res: Response) => {
   ejs.renderFile(
     path.join(__dirname, "../views", "pdf-factura.ejs"),
     {
+      nombreProforma,
       cliente_nombre,
       cliente_phone,
       cliente_document,
@@ -138,16 +140,16 @@ export const generarFactura = async (req: Request, res: Response) => {
         pdf
           .create(data, options)
           .toFile(
-            "files/" + tipo_emisor + "_" + fechaActual + ".pdf",
+            "files/" + nombreProforma + "_" + fechaActual + ".pdf",
             function (err: any, data: any) {
               if (err) {
                 res.send(err);
               } else {
-                res.download("/" + tipo_emisor + "_" + fechaActual + ".pdf");
+                res.download("/" + nombreProforma + "_" + fechaActual + ".pdf");
                 res.send({
                   statusBol: true,
                   msg: "File created successfully",
-                  path: path.join(tipo_emisor + "_" + fechaActual + ".pdf"),
+                  path: path.join(nombreProforma + "_" + fechaActual + ".pdf"),
                   nro_factura: factura,
                 });
               }
@@ -253,6 +255,29 @@ export const AnularFacutar = async (req: Request, res: Response) => {
           status: 200,
           statusBol: true,
           data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const verFacturaHouse = async (req: Request, res: Response) => {
+  let id = req.query.id;
+
+  await pool.query(
+    " SELECT * FROM function_factura_listadoxhouse($1);",
+    [id],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
           token: renewTokenMiddleware(req),
         });
       } else {
