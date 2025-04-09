@@ -469,9 +469,23 @@ export const getTrackingData = async (req: Request, res: Response) => {
 };
 
 export const sendNotificacionHouse = async (req: Request, res: Response) => {
-  const dataObj = req.body;
+  const { id, cuentasBancarias, id_branch, notificacion, token } = req.body;
+  let url = global.path_url + "tracking/";
+  const response = await pool.query(
+    "SELECT * FROM function_generar_mail_aviso($1, $2, $3, $4,$5)",
+    [id, notificacion, id_branch, cuentasBancarias, url]
+  );
+  const data = response.rows[0];
 
-  await sendCorreo(dataObj).catch((error) => {
+  if (!data) {
+    return res.status(404).json({
+      status: 404,
+      statusBol: false,
+      mensaje: "No se encontró información",
+    });
+  }
+  data.tipoNotificacion = notificacion;
+  await sendCorreo(data).catch((error) => {
     console.log(error);
 
     res.status(500);
@@ -484,6 +498,269 @@ export const sendNotificacionHouse = async (req: Request, res: Response) => {
   });
 };
 
+// async function sendCorreo(data) {
+//   const transporter = nodemailer.createTransport({
+//     host: "p3plzcpnl505059.prod.phx3.secureserver.net", // "mail.pic-cargo.com"
+//     port: 465, // 465
+//     secure: true,
+//     auth: {
+//       user: "sistema1@piccargo.com", // "sistema1@pic-cargo.com" // "testkaysen@gmail.com"
+//       pass: "b@+p@f21e48c", // "b@+p@f21e48c", // "csyvzaysfnmntjws", //
+//     },
+//   });
+
+//   const {
+//     user,
+//     house,
+//     notificacion: {
+//       title: tipoNotificacion = "",
+//       value: indiceNotificacion = 0,
+//     },
+//     sentido,
+//     tipoEmbarque,
+//     cuentasBancarias,
+//     razonSocial = "",
+//   } = data;
+
+//   let tabla = "";
+//   if (tipoEmbarque == "Aéreo" || tipoEmbarque == "LCL") {
+//     tabla += `
+//       <table border="1" cellspacing="0" style="width:600px; margin:auto;">
+//         <thead>
+//           <tr>
+//             <th colspan="2" style="text-align:center; padding:.25rem .5rem;">Datos de la Carga</th>
+//           </tr>
+//         </thead>
+//         <tbody>
+//           <tr>
+//             <td style="width:50%; padding:.25rem .5rem;"><b>Peso</b></td>
+//             <td style="width:50%; padding:.25rem .5rem;">${
+//               house.peso ? `${house.peso}Kg` : ""
+//             }</td>
+//           </tr>
+//           <tr>
+//             <td style="width:50%; padding:.25rem .5rem;"><b>Volumen</b></td>
+//             <td style="width:50%; padding:.25rem .5rem;">${
+//               house.volumen ? `${house.volumen}m3` : ""
+//             }</td>
+//           </tr>
+//           <tr>
+//             <td style="width:50%; padding:.25rem .5rem;"><b>Nro. Bultos</b></td>
+//             <td style="width:50%; padding:.25rem .5rem;">${
+//               house.bultos || ""
+//             }</td>
+//           </tr>
+//           <tr>
+//             <td style="width:50%; padding:.25rem .5rem;"><b>Origen</b></td>
+//             <td style="width:50%; padding:.25rem .5rem;">${
+//               house.namelongportbegin || ""
+//             }</td>
+//           </tr>
+//           <tr>
+//             <td style="width:50%; padding:.25rem .5rem;"><b>Destino</b></td>
+//             <td style="width:50%; padding:.25rem .5rem;">${
+//               house.namelongportend || ""
+//             }</td>
+//           </tr>
+//           <tr>
+//             <td style="width:50%; padding:.25rem .5rem;"><b>Proveedor</b></td>
+//             <td style="width:50%; padding:.25rem .5rem;">${
+//               house.nameproveedor || ""
+//             }</td>
+//           </tr>
+//           <tr>
+//             <td style="width:50%; padding:.25rem .5rem;"><b>Nro. BL / Nro. Guía Aérea</b></td>
+//             <td style="width:50%; padding:.25rem .5rem;">${
+//               house.nro_hbl || ""
+//             }</td>
+//           </tr>
+//           <tr>
+//             <td style="width:50%; padding:.25rem .5rem;"><b>Monto Servicio Logístico Cotizado</b></td>
+//             <td style="width:50%; padding:.25rem .5rem;">USD ${
+//               house.monto || ""
+//             }</td>
+//           </tr>
+//         </tbody>
+//       </table>
+//     `;
+//   } else if (tipoEmbarque == "FCL") {
+//     tabla += `
+//       <table border="1" cellspacing="0" style="width:600px; margin:auto;">
+//         <thead>
+//           <tr>
+//             <th colspan="2" style="text-align:center; padding:.25rem .5rem;">Datos de la Carga</th>
+//           </tr>
+//         </thead>
+//         <tbody>
+//           <tr>
+//             <td style="width:50%; padding:.25rem .5rem;"><b>Contenedores</b></td>
+//             <td style="width:50%; padding:.25rem .5rem;">${
+//               house.list_containers
+//                 .map((item) => `${item.namecontainer} (${item.cantidad})`)
+//                 .join(", ") || ""
+//             }</td>
+//           </tr>
+//           <tr>
+//             <td style="width:50%; padding:.25rem .5rem;"><b>Origen</b></td>
+//             <td style="width:50%; padding:.25rem .5rem;">${
+//               house.namelongportbegin || ""
+//             }</td>
+//           </tr>
+//           <tr>
+//             <td style="width:50%; padding:.25rem .5rem;"><b>Destino</b></td>
+//             <td style="width:50%; padding:.25rem .5rem;">${
+//               house.namelongportend || ""
+//             }</td>
+//           </tr>
+//           <tr>
+//             <td style="width:50%; padding:.25rem .5rem;"><b>Proveedor</b></td>
+//             <td style="width:50%; padding:.25rem .5rem;">${
+//               house.nameproveedor || ""
+//             }</td>
+//           </tr>
+//           <tr>
+//             <td style="width:50%; padding:.25rem .5rem;"><b>Nro. BL / Nro. Guía Aérea</b></td>
+//             <td style="width:50%; padding:.25rem .5rem;">${
+//               house.nro_hbl || ""
+//             }</td>
+//           </tr>
+//           <tr>
+//             <td style="width:50%; padding:.25rem .5rem;"><b>Monto Servicio Logístico Cotizado</b></td>
+//             <td style="width:50%; padding:.25rem .5rem;">USD ${
+//               house.monto || ""
+//             }</td>
+//           </tr>
+//         </tbody>
+//       </table>
+//     `;
+//   }
+
+//   let fechaETD_parseada = house.fecha_etd
+//     ? moment(house.fecha_etd).format("D [de] MMMM")
+//     : "";
+//   let fechaETA_parseada = house.fecha_eta
+//     ? moment(house.fecha_eta).format("D [de] MMMM")
+//     : "";
+//   let descripcionNotificacion = "";
+//   if (sentido == "Import") {
+//     switch (indiceNotificacion) {
+//       case 1: // Aviso de Salida
+//         descripcionNotificacion = `te notificamos que tu carga salió el día ${fechaETD_parseada}.`;
+//         break;
+//       case 2: // Actualización de Salida
+//         descripcionNotificacion = `te notificamos que por motivos operacionales, tu carga se estima salir el día ${fechaETD_parseada}.`;
+//         break;
+//       case 3: // Pre - Aviso de Llegada
+//         descripcionNotificacion = `te notificamos que tu carga va a llegar el día ${fechaETA_parseada}.`;
+//         break;
+//       case 4: // Aviso de Llegada
+//         descripcionNotificacion = "te notificamos que tu carga ya llegó.";
+//         break;
+//       case 5: // Actualización de Llegada
+//         descripcionNotificacion = `te notificamos que, por motivos operacionales, tu carga se estima llegar el día ${fechaETA_parseada}.`;
+//         break;
+//     }
+//   } else if (sentido == "Export") {
+//     switch (indiceNotificacion) {
+//       case 1: // Aviso de Salida
+//         descripcionNotificacion = `te notificamos que tu carga salió el día ${fechaETA_parseada}.`;
+//         break;
+//       case 2: // Actualización de Salida
+//         descripcionNotificacion = `te notificamos que por motivos operacionales, tu carga se estima salir el día ${fechaETA_parseada}.`;
+//         break;
+//       case 3: // Aviso de Llegada
+//         descripcionNotificacion = "te notificamos que tu carga ya llegó.";
+//         break;
+//     }
+//   } else {
+//     switch (indiceNotificacion) {
+//       case 1: // Notificación de Salida
+//         descripcionNotificacion = `te notificamos que tu carga salió el día ${fechaETD_parseada}.`;
+//         break;
+//       case 2: // Pre - Aviso de Llegada
+//         descripcionNotificacion = `te notificamos que tu carga va a llegar el día ${fechaETA_parseada}.`;
+//         break;
+//       case 3: // Aviso de Llegada
+//         descripcionNotificacion = "te notificamos que tu carga ya llegó.";
+//         break;
+//       case 4: // Actualización de Llegada
+//         descripcionNotificacion = `te notificamos que, por motivos operacionales, tu carga se estima llegar el día ${fechaETA_parseada}.`;
+//         break;
+//     }
+//   }
+
+//   const mailTemplate = `
+//     <div>
+//       <div style="text-align: center">
+//                 <img
+//                   src="https://api-general.qreport.site/uploads/imgLogin.png"
+//                   alt="Imagen de Bienvenida"
+//                   style="width: 100%; max-width: 550px; height: auto;"
+//                 />
+//               </div>
+//               <br>
+//       <div style="float:right;">
+//         <p style="text-align:right;">${moment().format(
+//           "DD [de] MMMM [de] YYYY"
+//         )}</p>
+//       </div>
+//       <div style="clear:both;"></div>
+
+//       <p>Estimados sr(es): <b>${house.namelongclientefinal}</b></p>
+//       <p>Asunto: <b>${tipoNotificacion}</b></p>
+//       <p>Datos de su Carga:</p>
+
+//       ${tabla}
+
+//       <br/>
+//       <br/>
+
+//       <p>Por medio del presente, ${descripcionNotificacion}</p>
+
+//       <br/>
+
+//       <p>Le recordamos que el servicio logístico que le fue cotizado es un monto de USD ${
+//         house.monto || ""
+//       }, y lo puede pagar a través de cualquiera de las cuentas bancarias:</p>
+//       ${
+//         cuentasBancarias
+//           .map(
+//             (item) => `<p>${item.label.trim()} - CCI: ${item.cci.trim()}.</p>`
+//           )
+//           .join("") || ""
+//       }
+
+//       <br/>
+//       <br/>
+
+//       ${
+//         house.token_rastreo
+//           ? `<p>Si desea consultar el estado de su carga, haga clic en este <a href="${
+//               global.path_url
+//             }tracking/${house.token_rastreo || ""}">enlace</a></p><br/><br/>`
+//           : ""
+//       }
+
+//       <p>Atte.: ${house.nameoperador}</p>
+//       <p>${razonSocial}</p>
+//     </div>
+//      <div style="text-align: center; padding: 10px;">
+//                 <img
+//                   src="https://api-general.qreport.site/uploads/logo-aco.png"
+//                   alt="Logo ACO"
+//                   style="width: 100%; max-width: 300px; height: auto;"
+//                 />
+//               </div>
+//   `;
+//   const mailOptions = {
+//     from: '"ACO" <aco@agentedecargaonline.com>',
+//     email: house.emailaddress_clientefinal || "",
+//     subject: `ACO – ${tipoNotificacion}`,
+//     html: mailTemplate,
+//   };
+//   let respuest = await envioCorreo(mailOptions);
+//   console.log(respuest);
+// }
 async function sendCorreo(data) {
   const transporter = nodemailer.createTransport({
     host: "p3plzcpnl505059.prod.phx3.secureserver.net", // "mail.pic-cargo.com"
@@ -495,254 +772,32 @@ async function sendCorreo(data) {
     },
   });
 
-  const {
-    user,
-    house,
-    notificacion: {
-      title: tipoNotificacion = "",
-      value: indiceNotificacion = 0,
-    },
-    sentido,
-    tipoEmbarque,
-    cuentasBancarias,
-    razonSocial = "",
-  } = data;
+  // const {
+  //   user,
+  //   house,
+  //   notificacion: {
+  //     title: tipoNotificacion = "",
+  //     value: indiceNotificacion = 0,
+  //   },
+  //   sentido,
+  //   tipoEmbarque,
+  //   cuentasBancarias,
+  //   razonSocial = "",
+  // } = data;
 
-  let tabla = "";
-  if (tipoEmbarque == "Aéreo" || tipoEmbarque == "LCL") {
-    tabla += `
-      <table border="1" cellspacing="0" style="width:600px; margin:auto;">
-        <thead>
-          <tr>
-            <th colspan="2" style="text-align:center; padding:.25rem .5rem;">Datos de la Carga</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td style="width:50%; padding:.25rem .5rem;"><b>Peso</b></td>
-            <td style="width:50%; padding:.25rem .5rem;">${
-              house.peso ? `${house.peso}Kg` : ""
-            }</td>
-          </tr>
-          <tr>
-            <td style="width:50%; padding:.25rem .5rem;"><b>Volumen</b></td>
-            <td style="width:50%; padding:.25rem .5rem;">${
-              house.volumen ? `${house.volumen}m3` : ""
-            }</td>
-          </tr>
-          <tr>
-            <td style="width:50%; padding:.25rem .5rem;"><b>Nro. Bultos</b></td>
-            <td style="width:50%; padding:.25rem .5rem;">${
-              house.bultos || ""
-            }</td>
-          </tr>
-          <tr>
-            <td style="width:50%; padding:.25rem .5rem;"><b>Origen</b></td>
-            <td style="width:50%; padding:.25rem .5rem;">${
-              house.namelongportbegin || ""
-            }</td>
-          </tr>
-          <tr>
-            <td style="width:50%; padding:.25rem .5rem;"><b>Destino</b></td>
-            <td style="width:50%; padding:.25rem .5rem;">${
-              house.namelongportend || ""
-            }</td>
-          </tr>
-          <tr>
-            <td style="width:50%; padding:.25rem .5rem;"><b>Proveedor</b></td>
-            <td style="width:50%; padding:.25rem .5rem;">${
-              house.nameproveedor || ""
-            }</td>
-          </tr>
-          <tr>
-            <td style="width:50%; padding:.25rem .5rem;"><b>Nro. BL / Nro. Guía Aérea</b></td>
-            <td style="width:50%; padding:.25rem .5rem;">${
-              house.nro_hbl || ""
-            }</td>
-          </tr>
-          <tr>
-            <td style="width:50%; padding:.25rem .5rem;"><b>Monto Servicio Logístico Cotizado</b></td>
-            <td style="width:50%; padding:.25rem .5rem;">USD ${
-              house.monto || ""
-            }</td>
-          </tr>
-        </tbody>
-      </table>
-    `;
-  } else if (tipoEmbarque == "FCL") {
-    tabla += `
-      <table border="1" cellspacing="0" style="width:600px; margin:auto;">
-        <thead>
-          <tr>
-            <th colspan="2" style="text-align:center; padding:.25rem .5rem;">Datos de la Carga</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td style="width:50%; padding:.25rem .5rem;"><b>Contenedores</b></td>
-            <td style="width:50%; padding:.25rem .5rem;">${
-              house.list_containers
-                .map((item) => `${item.namecontainer} (${item.cantidad})`)
-                .join(", ") || ""
-            }</td>
-          </tr>
-          <tr>
-            <td style="width:50%; padding:.25rem .5rem;"><b>Origen</b></td>
-            <td style="width:50%; padding:.25rem .5rem;">${
-              house.namelongportbegin || ""
-            }</td>
-          </tr>
-          <tr>
-            <td style="width:50%; padding:.25rem .5rem;"><b>Destino</b></td>
-            <td style="width:50%; padding:.25rem .5rem;">${
-              house.namelongportend || ""
-            }</td>
-          </tr>
-          <tr>
-            <td style="width:50%; padding:.25rem .5rem;"><b>Proveedor</b></td>
-            <td style="width:50%; padding:.25rem .5rem;">${
-              house.nameproveedor || ""
-            }</td>
-          </tr>
-          <tr>
-            <td style="width:50%; padding:.25rem .5rem;"><b>Nro. BL / Nro. Guía Aérea</b></td>
-            <td style="width:50%; padding:.25rem .5rem;">${
-              house.nro_hbl || ""
-            }</td>
-          </tr>
-          <tr>
-            <td style="width:50%; padding:.25rem .5rem;"><b>Monto Servicio Logístico Cotizado</b></td>
-            <td style="width:50%; padding:.25rem .5rem;">USD ${
-              house.monto || ""
-            }</td>
-          </tr>
-        </tbody>
-      </table>
-    `;
-  }
+  const mailTemplate = data.html;
 
-  let fechaETD_parseada = house.fecha_etd
-    ? moment(house.fecha_etd).format("D [de] MMMM")
-    : "";
-  let fechaETA_parseada = house.fecha_eta
-    ? moment(house.fecha_eta).format("D [de] MMMM")
-    : "";
-  let descripcionNotificacion = "";
-  if (sentido == "Import") {
-    switch (indiceNotificacion) {
-      case 1: // Aviso de Salida
-        descripcionNotificacion = `te notificamos que tu carga salió el día ${fechaETD_parseada}.`;
-        break;
-      case 2: // Actualización de Salida
-        descripcionNotificacion = `te notificamos que por motivos operacionales, tu carga se estima salir el día ${fechaETD_parseada}.`;
-        break;
-      case 3: // Pre - Aviso de Llegada
-        descripcionNotificacion = `te notificamos que tu carga va a llegar el día ${fechaETA_parseada}.`;
-        break;
-      case 4: // Aviso de Llegada
-        descripcionNotificacion = "te notificamos que tu carga ya llegó.";
-        break;
-      case 5: // Actualización de Llegada
-        descripcionNotificacion = `te notificamos que, por motivos operacionales, tu carga se estima llegar el día ${fechaETA_parseada}.`;
-        break;
-    }
-  } else if (sentido == "Export") {
-    switch (indiceNotificacion) {
-      case 1: // Aviso de Salida
-        descripcionNotificacion = `te notificamos que tu carga salió el día ${fechaETA_parseada}.`;
-        break;
-      case 2: // Actualización de Salida
-        descripcionNotificacion = `te notificamos que por motivos operacionales, tu carga se estima salir el día ${fechaETA_parseada}.`;
-        break;
-      case 3: // Aviso de Llegada
-        descripcionNotificacion = "te notificamos que tu carga ya llegó.";
-        break;
-    }
-  } else {
-    switch (indiceNotificacion) {
-      case 1: // Notificación de Salida
-        descripcionNotificacion = `te notificamos que tu carga salió el día ${fechaETD_parseada}.`;
-        break;
-      case 2: // Pre - Aviso de Llegada
-        descripcionNotificacion = `te notificamos que tu carga va a llegar el día ${fechaETA_parseada}.`;
-        break;
-      case 3: // Aviso de Llegada
-        descripcionNotificacion = "te notificamos que tu carga ya llegó.";
-        break;
-      case 4: // Actualización de Llegada
-        descripcionNotificacion = `te notificamos que, por motivos operacionales, tu carga se estima llegar el día ${fechaETA_parseada}.`;
-        break;
-    }
-  }
-
-  const mailTemplate = `
-    <div>
-      <div style="text-align: center">
-                <img
-                  src="https://api-general.qreport.site/uploads/imgLogin.png"
-                  alt="Imagen de Bienvenida"
-                  style="width: 100%; max-width: 550px; height: auto;"
-                />
-              </div>
-              <br>
-      <div style="float:right;">
-        <p style="text-align:right;">${moment().format(
-          "DD [de] MMMM [de] YYYY"
-        )}</p>
-      </div>
-      <div style="clear:both;"></div>
-      
-      <p>Estimados sr(es): <b>${house.namelongclientefinal}</b></p>
-      <p>Asunto: <b>${tipoNotificacion}</b></p>
-      <p>Datos de su Carga:</p>
-
-      ${tabla}
-
-      <br/>
-      <br/>
-
-      <p>Por medio del presente, ${descripcionNotificacion}</p>
-      
-      <br/>
-
-      <p>Le recordamos que el servicio logístico que le fue cotizado es un monto de USD ${
-        house.monto || ""
-      }, y lo puede pagar a través de cualquiera de las cuentas bancarias:</p> 
-      ${
-        cuentasBancarias
-          .map(
-            (item) => `<p>${item.label.trim()} - CCI: ${item.cci.trim()}.</p>`
-          )
-          .join("") || ""
-      }
-      
-      <br/>
-      <br/>
-      
-
-      ${
-        house.token_rastreo
-          ? `<p>Si desea consultar el estado de su carga, haga clic en este <a href="${global.path_url}tracking/${
-              house.token_rastreo || ""
-            }">enlace</a></p><br/><br/>`
-          : ""
-      }      
-      
-      <p>Atte.: ${house.nameoperador}</p>
-      <p>${razonSocial}</p>
-    </div>
-     <div style="text-align: center; padding: 10px;">
-                <img
-                  src="https://api-general.qreport.site/uploads/logo-aco.png"
-                  alt="Logo ACO"
-                  style="width: 100%; max-width: 300px; height: auto;"
-                />
-              </div>
-  `;
+  // ${
+  //   house.token_rastreo
+  //     ? `<p>Si desea consultar el estado de su carga, haga clic en este <a href="${
+  //         global.path_url
+  //       }tracking/${house.token_rastreo || ""}">enlace</a></p><br/><br/>`
+  //     : ""
+  // }
   const mailOptions = {
     from: '"ACO" <aco@agentedecargaonline.com>',
-    email: house.emailaddress_clientefinal || "",
-    subject: `ACO – ${tipoNotificacion}`,
+    email: data.email || "",
+    subject: `ACO – ${data.tipoNotificacion}`,
     html: mailTemplate,
   };
   let respuest = await envioCorreo(mailOptions);
@@ -762,7 +817,6 @@ export const getListarHouses = async (req: Request, res: Response) => {
     dechaeta,
   } = req.query;
 
-  
   await pool.query(
     "SELECT * FROM function_house_listar($1,$2,$3,$4,$5,$6,$7,$8,$9)",
     [

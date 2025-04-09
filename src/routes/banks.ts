@@ -44,6 +44,8 @@ import {
   validateNroOperacionCobro,
   getListBanksDetailsCargarPorSucursal,
   verFacturas,
+  actualizarCXC,
+  actualizarCXP,
 } from "../controllers/banks.controller";
 
 router.post("/getBanksList", TokenValidation, getBanksList);
@@ -157,7 +159,9 @@ router.get(
   "/ver_facturas",
   TokenValidation,
   verFacturas
-
+  
 );
 
+router.put("/actualizar_cxc",  actualizarCXC);
+router.put("/actualizar_cxp",  actualizarCXP);
 export default router;

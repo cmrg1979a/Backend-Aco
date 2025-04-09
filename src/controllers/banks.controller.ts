@@ -1603,3 +1603,69 @@ export const verFacturas = async (req: Request, res: Response) => {
     }
   );
 };
+
+export const actualizarCXC = async (req: Request, res: Response) => {
+  let {
+    nro_operacion,
+    id_cuenta,
+    id_banco_salida,
+    fecha_pago,
+    id_pago,
+    detalles,
+  } = req.body;
+  await pool.query(
+    "SELECT * FROM function_actualizarcxc($1,$2,$3,$4,$5,$6)",
+    [
+      nro_operacion,
+      id_cuenta,
+      id_banco_salida,
+      fecha_pago,
+      id_pago,
+      JSON.stringify(detalles),
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const actualizarCXP = async (req: Request, res: Response) => {
+  let { nro_operacion, id_banco_salida, fecha_pago, id_pago, detalle } =
+    req.body;
+  await pool.query(
+    "SELECT * FROM function_actualizar_cxp($1,$2,$3,$4,$5)",
+    [
+      nro_operacion,
+      id_banco_salida,
+      fecha_pago,
+      id_pago,
+      JSON.stringify(detalle),
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};

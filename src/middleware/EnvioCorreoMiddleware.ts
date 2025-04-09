@@ -6,6 +6,7 @@ sgMail.setApiKey(SENDGRID_API_KEY);
 
 // console.log(sgMail);
 export async function envioCorreo(data: any) {
+  // console.log(data)
   const mailOptions = {
     from: "aco@agentedecargaonline.com",
     to: data.email,
