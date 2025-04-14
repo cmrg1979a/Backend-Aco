@@ -1610,7 +1610,7 @@ export const actualizarCXC = async (req: Request, res: Response) => {
     id_cuenta,
     id_banco_salida,
     fecha_pago,
-    id_pago,
+    id_path,
     detalles,
   } = req.body;
   await pool.query(
@@ -1620,7 +1620,7 @@ export const actualizarCXC = async (req: Request, res: Response) => {
       id_cuenta,
       id_banco_salida,
       fecha_pago,
-      id_pago,
+      id_path,
       JSON.stringify(detalles),
     ],
     (err, response, fields) => {
@@ -1641,15 +1641,16 @@ export const actualizarCXC = async (req: Request, res: Response) => {
   );
 };
 export const actualizarCXP = async (req: Request, res: Response) => {
-  let { nro_operacion, id_banco_salida, fecha_pago, id_pago, detalle } =
+  let { nro_operacion, id_banco_salida, fecha_pago, id_path, detalle } =
     req.body;
+  console.log("id_pago", id_path);
   await pool.query(
     "SELECT * FROM function_actualizar_cxp($1,$2,$3,$4,$5)",
     [
       nro_operacion,
       id_banco_salida,
       fecha_pago,
-      id_pago,
+      id_path,
       JSON.stringify(detalle),
     ],
     (err, response, fields) => {
