@@ -120,6 +120,7 @@ import seguridad from "./routes/seguridad";
 import config from "./routes/configEmpresa";
 import StatusHouse from "./routes/StatusHouse";
 import configAvisos from "./routes/configAvisos";
+import branch from "./routes/branch";
 
 // settings
 app.set("port", 9200);
@@ -304,4 +305,5 @@ app.use(seguridad);
 app.use(config);
 app.use(StatusHouse);
 app.use(configAvisos);
+app.use(branch);
 export default app;

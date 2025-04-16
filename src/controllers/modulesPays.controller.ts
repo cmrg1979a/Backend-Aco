@@ -464,7 +464,7 @@ export const setInvoiceAdminCxC = async (req: Request, res: Response) => {
 export const getVerInvoiceAdminCxC = async (req: Request, res: Response) => {
   let objData = req.params;
   await pool.query(
-    `SELECT * FROM TABLE_INVOICEADMINCXC_ver($1);`,
+    `SELECT * FROM table_invoiceadmincxc_ver($1);`,
     [objData.id],
     (err, response, fields) => {
       if (!err) {
