@@ -1,0 +1,37 @@
+import { Router } from "express";
+const router: Router = Router();
+import { TokenValidation } from "../libs/verifyToken";
+
+import {
+  actualizarAduana,
+  aduanaUnificar,
+  getAduanaList,
+  getAduanaVer,
+  obtenerAduanaParaUnificar,
+  obtenerCotizacionParaUnificar,
+  obtenerListadoServiciosAduanaQuote,
+  setAduana,
+} from "../controllers/aduanas.controller";
+
+router.get(
+  "/obtenerListadoServiciosAduanaQuote",
+  TokenValidation,
+  obtenerListadoServiciosAduanaQuote
+);
+router.post("/insert_aduana", TokenValidation, setAduana);
+router.get("/listar_aduana", TokenValidation, getAduanaList);
+router.get("/ver_aduana", TokenValidation, getAduanaVer);
+router.put("/actualizar_aduana", TokenValidation, actualizarAduana);
+router.get(
+  "/obtener_cotizacion_unificar",
+  TokenValidation,
+  obtenerCotizacionParaUnificar
+);
+router.get(
+  "/obtener_aduana_unificar",
+  TokenValidation,
+  obtenerAduanaParaUnificar
+);
+router.post("/aduana_unificar", TokenValidation, aduanaUnificar);
+
+export default router;

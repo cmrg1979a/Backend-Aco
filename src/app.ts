@@ -86,7 +86,6 @@ import depositoRoute from "./routes/deposito";
 import enterpriseRoute from "./routes/enterprise";
 import accountRoute from "./routes/account";
 import banksRoute from "./routes/banks";
-import { addPath } from "graphql/jsutils/Path";
 import filesRoute from "./routes/files";
 import spaymentRoute from "./routes/spayment";
 import versionRoute from "./routes/version";
@@ -121,6 +120,7 @@ import config from "./routes/configEmpresa";
 import StatusHouse from "./routes/StatusHouse";
 import configAvisos from "./routes/configAvisos";
 import branch from "./routes/branch";
+import aduanas from "./routes/aduanas";
 
 // settings
 app.set("port", 9200);
@@ -306,4 +306,5 @@ app.use(config);
 app.use(StatusHouse);
 app.use(configAvisos);
 app.use(branch);
+app.use(aduanas);
 export default app;
