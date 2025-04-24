@@ -3,6 +3,7 @@ import { conexion } from "../routes/databasePGOp";
 import { getCollection } from "../routes/mongoDB";
 import { Collection, InsertOneResult, UpdateResult } from "mongodb";
 import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
+import { io } from "../index";
 import * as pg from "pg";
 const { Pool } = pg;
 
@@ -87,7 +88,12 @@ export const setQuote = async (req: Request, res: Response) => {
     ],
     (err, response, fields) => {
       if (!err) {
+        let id_branch = dataObj.id_branch;
         let rows = response.rows;
+        io.to(id_branch).emit("nueva-operacion", {
+          mensaje: "Cotización ingresada con el número " + rows[0].nro_quote,
+          id_branch,
+        });
         res.json({
           estadoflag: rows[0].estadoflag,
           status: 200,

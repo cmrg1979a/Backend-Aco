@@ -8,7 +8,7 @@ import * as pg from "pg";
 require("dotenv").config();
 const { Pool } = pg;
 
-global.esProduccion = true;
+global.esProduccion = false;
 
 const corsOptions = {
   origin: "*",

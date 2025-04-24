@@ -30,3 +30,5 @@ const PORT = app.get("port");
 server.listen(PORT, () => {
   console.log(`Servidor escuchando en PUERTO:${PORT}`);
 });
+
+export { io };
