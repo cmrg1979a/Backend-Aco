@@ -7,10 +7,13 @@ import {
   aduanaUnificar,
   getAduanaList,
   getAduanaVer,
+  getListCallsAduana,
   obtenerAduanaParaUnificar,
   obtenerCotizacionParaUnificar,
   obtenerListadoServiciosAduanaQuote,
   setAduana,
+  setCallsAduana,
+  updateAduanaRecibidoEnviado,
 } from "../controllers/aduanas.controller";
 
 router.get(
@@ -33,5 +36,18 @@ router.get(
   obtenerAduanaParaUnificar
 );
 router.post("/aduana_unificar", TokenValidation, aduanaUnificar);
+router.put(
+  "/update_aduana_recibido_enviado",
+  TokenValidation,
+  updateAduanaRecibidoEnviado
+);
+router.post("/set_calls_aduana", TokenValidation, setCallsAduana);
 
+router.get(
+  "/list_calls_aduana",
+  TokenValidation,
+  getListCallsAduana
+);
 export default router;
+
+

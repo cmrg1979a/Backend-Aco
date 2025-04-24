@@ -381,3 +381,122 @@ export const aduanaUnificar = async (req: Request, res: Response) => {
     }
   );
 };
+
+export const updateAduanaRecibidoEnviado = async (
+  req: Request,
+  res: Response
+) => {
+  console.log(req.body);
+  await pool.query(
+    "SELECT * FROM function_aduana_actualizar_recibido_enviado($1,$2,$3,$4,$5,$6,$7)",
+    [
+      req.body.id,
+      req.body.id_master_recibidocotizacion
+        ? req.body.id_master_recibidocotizacion
+        : null,
+      req.body.id_master_enviadocliente
+        ? req.body.id_master_enviadocliente
+        : null,
+      req.body.fecha_enviocliente ? req.body.fecha_enviocliente : null,
+      req.body.id_status ? req.body.id_status : null,
+      req.body.comentario,
+      req.body.id_pricing,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const setCallsAduana = async (req: Request, res: Response) => {
+  const { id_quote, fecha, id_operador, comentario } = req.body;
+  await pool.query(
+    "select * from aduana_calls_insertar($1,$2,$3,$4)",
+    [id_quote, fecha, id_operador, comentario],
+
+    (err, rows, fields) => {
+      if (!err) {
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows.rows,
+        });
+      } else {
+        res.json({
+          status: 400,
+          statusBol: false,
+          data: err,
+        });
+      }
+    }
+  );
+};
+
+export const getListCallsAduana = async (req: Request, res: Response) => {
+  let {
+    id_branch,
+    id_estado,
+    id_sentido,
+    id_carga,
+    id_icoterms,
+    desde,
+    hasta,
+    estado,
+  } = req.query;
+  let stado = 1;
+
+  switch (estado) {
+    case "1":
+    case "true":
+      stado = 1;
+      break;
+    case "0":
+    case "false":
+      stado = 0;
+      break;
+
+    default:
+      stado = null;
+      break;
+  }
+  await pool.query(
+    "select * from lista_llamadas_aduana($1,$2,$3,$4,$5,$6,$7,$8)",
+    [
+      id_branch ? id_branch : null,
+      id_estado ? id_estado : null,
+      id_sentido ? id_sentido : null,
+      id_carga ? id_carga : null,
+      id_icoterms ? id_icoterms : null,
+      desde ? desde : null,
+      hasta ? hasta : null,
+      stado,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
