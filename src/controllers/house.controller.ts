@@ -3,12 +3,15 @@ import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 import { conexion } from "../routes/databasePGOp";
 import * as pg from "pg";
 const { Pool } = pg;
+import fs from "fs";
 const nodemailer = require("nodemailer");
+const moment = require("moment");
 const pool = conexion();
-import { postHouse } from "../interface/house";
-import { postHouseEdit } from "../interface/house";
+var xl = require("excel4node");
+import ExcelJS from "exceljs";
+import path from "path";
+
 import { envioCorreo } from "../middleware/EnvioCorreoMiddleware";
-import moment from "moment";
 
 export const setHouse = async (req: Request, res: Response) => {
   const dataObj = req.body;
@@ -869,4 +872,303 @@ export const getVerHouse = async (req: Request, res: Response) => {
       }
     }
   );
+};
+
+// export const generarFormatoBL = async (req: Request, res: Response) => {
+//   var wb = new xl.Workbook({
+//     dateFormat: "dd/mm/yyyy",
+//     author: "PIC CARGO - IMPORTADORES",
+//   });
+//   await pool.query(
+//     "SELECT * from function_export_ingresos($1)",
+//     [req.body.id_branch],
+//     (err, response, fields) => {
+//       if (!err) {
+//         let rows = response.rows;
+
+//         let cabTitle = wb.createStyle({
+//           font: {
+//             color: "#ffffff",
+//             bold: true,
+//           },
+//           fill: {
+//             type: "pattern",
+//             patternType: "solid",
+//             fgColor: "#A43542",
+//           },
+//           alignment: {
+//             vertical: "center",
+//             horizontal: "center",
+//           },
+//         });
+//         const fechaActual = moment().format("DD/MM/YYYY");
+//         var wt = wb.addWorksheet("FormatoBL");
+
+//         wt.cell(4, 1, 7, 5, true).string("");
+//         wt.cell(9, 1, 11, 5, true).string("");
+//         wt.cell(13, 1, 18, 5, true).string("");
+//         wt.cell(31, 5, 46, 8, true).string("");
+
+//         wt.cell(3, 1, 3, 5, true).string("SHIPPER:");
+//         wt.cell(8, 1, 8, 5, true).string("CONSIGNEE:");
+//         wt.cell(12, 1, 12, 5, true).string("NOTIFY ADDRESS:");
+//         wt.cell(21, 1, 21, 2, true).string("OCEAN  VESSEL");
+//         wt.cell(24, 1, 24, 2, true).string("PORT OF DISCHARGE:");
+//         wt.cell(28, 1, 28, 2, true).string("MARKS AND No.");
+
+//         wt.cell(19, 4, 19, 5, true).string("PLACE OF RECEPT:");
+//         wt.cell(21, 4, 21, 5, true).string("PORT OF LOADING:");
+//         wt.cell(24, 4, 24, 5, true).string("PORT OF DELIVERY:");
+//         wt.cell(28, 3, 28, 4, true).string("QUANTTY GOODS");
+//         wt.cell(28, 5, 28, 6, true).string("DESCRIPTION OF GOODS");
+//         wt.cell(28, 9).string("GROSS WEIGTH");
+//         wt.cell(28, 10).string("MEASUREMENT");
+//         wt.cell(69, 8).string(fechaActual);
+
+//         wt.cell(5, 8).string("B/L No.");
+//         wt.cell(49, 8).string("TOTAL");
+
+//         let pathexcel = path.join(`${__dirname}../../../uploads`, "BL.xlsx");
+//         wb.write(pathexcel, function (err, stats) {
+//           if (err) {
+//             console.log(err);
+//           } else {
+//             res.download(pathexcel);
+//           }
+//         });
+//       }
+//     }
+//   );
+// };
+
+// export const generarFormatoBL = async (req: Request, res: Response) => {
+//   try {
+//     const result = await pool.query(
+//       "SELECT * from function_export_ingresos($1)",
+//       [req.body.id_branch]
+//     );
+//     const rows = result.rows;
+
+//     const workbook = new ExcelJS.Workbook();
+//     workbook.creator = "PIC CARGO - IMPORTADORES";
+//     workbook.created = new Date();
+
+//     const worksheet = workbook.addWorksheet("FormatoBL", {
+//       views: [{ showGridLines: false }],
+//     });
+
+//     // Configuración básica
+//     worksheet.properties.defaultColWidth = 20;
+
+//     // Estilos
+//     const cabTitle = {
+//       font: { color: { argb: "FFFFFFFF" }, bold: true },
+//       fill: {
+//         type: "pattern",
+//         pattern: "solid",
+//         fgColor: { argb: "A43542" },
+//       },
+//       alignment: { vertical: "middle", horizontal: "center" },
+//     };
+
+//     // Texto en celdas (equivalente a .cell().string())
+//     worksheet.mergeCells("A4:E7");
+//     worksheet.getCell("A4").value = "";
+//     worksheet.mergeCells("A9:E11");
+//     worksheet.getCell("A9").value = "";
+//     worksheet.mergeCells("A13:E18");
+//     worksheet.getCell("A13").value = "";
+//     worksheet.mergeCells("E31:H46");
+//     worksheet.getCell("E31").value = "";
+
+//     worksheet.mergeCells("A3:E3");
+//     worksheet.getCell("A3").value = "SHIPPER:";
+
+//     worksheet.mergeCells("A8:E8");
+//     worksheet.getCell("A8").value = "CONSIGNEE:";
+
+//     worksheet.mergeCells("A12:E12");
+//     worksheet.getCell("A12").value = "NOTIFY ADDRESS:";
+
+//     worksheet.mergeCells("A21:B21");
+//     worksheet.getCell("A21").value = "OCEAN  VESSEL";
+
+//     worksheet.mergeCells("A24:B24");
+//     worksheet.getCell("A24").value = "PORT OF DISCHARGE:";
+
+//     worksheet.mergeCells("A28:B28");
+//     worksheet.getCell("A28").value = "MARKS AND No.";
+
+//     worksheet.mergeCells("D19:E19");
+//     worksheet.getCell("D19").value = "PLACE OF RECEPT:";
+
+//     worksheet.mergeCells("D21:E21");
+//     worksheet.getCell("D21").value = "PORT OF LOADING:";
+
+//     worksheet.mergeCells("D24:E24");
+//     worksheet.getCell("D24").value = "PORT OF DELIVERY:";
+
+//     worksheet.mergeCells("C28:D28");
+//     worksheet.getCell("C28").value = "QUANTTY GOODS";
+
+//     worksheet.mergeCells("E28:F28");
+//     worksheet.getCell("E28").value = "DESCRIPTION OF GOODS";
+
+//     worksheet.getCell("I28").value = "GROSS WEIGTH";
+//     worksheet.getCell("J28").value = "MEASUREMENT";
+
+//     worksheet.getCell("H69").value = moment().format("DD/MM/YYYY");
+
+//     worksheet.getCell("H5").value = "B/L No.";
+//     worksheet.getCell("H49").value = "TOTAL";
+
+//     // Agregar imagen de fondo
+//     const imagePath = path.join(__dirname, "../../public/img/fondo.png");
+//     const imageId = workbook.addImage({
+//       filename: imagePath,
+//       extension: "png",
+//     });
+
+//     worksheet.addImage(imageId, {
+//       tl: { col: 0, row: 0 },
+//       ext: { width: 1000, height: 800 }, // ajusta el tamaño según tu fondo
+//       editAs: "oneCell",
+//     });
+
+//     const dirPath = path.join(__dirname, "../../../uploads");
+//     if (!fs.existsSync(dirPath)) {
+//       fs.mkdirSync(dirPath, { recursive: true });
+//     }
+
+//     const filePath = path.join(dirPath, "BL.xlsx");
+//     await workbook.xlsx.writeFile(filePath);
+//     res.download(filePath);
+//   } catch (error) {
+//     console.error("Error generando Excel:", error);
+//     res.status(500).send("Error generando Excel");
+//   }
+// };
+
+export const generarFormatoBL = async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT * from function_house_datosbl($1)",
+      [req.query.id_house]
+    );
+
+    const rows = result.rows;
+    let data = rows[0];
+
+    const workbook = new ExcelJS.Workbook();
+    let templatePath = "";
+    let name = "";
+    if (req.query.formatoflag === "true") {
+      console.log("aaaaaa", typeof req.query.formatoflag);
+      name = "FORMATO_BL_CON_FONDO";
+      // Leer plantilla
+      templatePath = path.join(
+        __dirname,
+        "../../plantillas/FORMATO_BL_CON_FONDO.xlsx"
+      );
+    } else {
+      console.log("bbbbb", req.query.formatoflag);
+      name = "FORMATO_BL_SIN_FONDO";
+      templatePath = path.join(
+        __dirname,
+        "../../plantillas/FORMATO_BL_SIN_FONDO.xlsx"
+      );
+    }
+    await workbook.xlsx.readFile(templatePath);
+
+    const worksheet = workbook.getWorksheet("FormatoBL");
+
+    // // Editar celdas (sin perder el fondo)
+    worksheet.getCell("H6").value = data.nro_hbl;
+    worksheet.getCell("A3").value = data.proveedor;
+    worksheet.getCell("A8").value = data.consignatario;
+    worksheet.getCell("A11").value = data.notify;
+    worksheet.getCell("D17").value = data.port_begin;
+    worksheet.getCell("D22").value = data.port_end;
+
+    worksheet.getCell("G56").value = moment().format("DD/MM/YYYY");
+
+    // Crear carpeta uploads si no existe
+    const outputDir = path.join(__dirname, "../../../uploads");
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true });
+    }
+
+    const outputPath = path.join(outputDir, name + ".xlsx");
+    await workbook.xlsx.writeFile(outputPath);
+
+    // Enviar archivo generado
+    res.download(outputPath);
+  } catch (error) {
+    console.error("Error generando Excel:", error);
+    res.status(500).send("Error generando Excel");
+  }
+};
+export const generarFormatoAWB = async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT * from function_house_datosbl($1)",
+      [req.query.id_house]
+    );
+
+    const rows = result.rows;
+    let data = rows[0];
+
+    const workbook = new ExcelJS.Workbook();
+    let templatePath = "";
+    let name = "";
+    if (req.query.formatoflag === "true") {
+     
+      name = "FORMATO_BL_CON_FONDO";
+      // Leer plantilla
+      templatePath = path.join(
+        __dirname,
+        "../../plantillas/FORMATO_AWB_CON_FONDO.xlsx"
+      );
+    } else {
+      console.log("bbbbb", req.query.formatoflag);
+      name = "FORMATO_BL_SIN_FONDO";
+      templatePath = path.join(
+        __dirname,
+        "../../plantillas/FORMATO_AWB_SIN_FONDO.xlsx"
+      );
+    }
+    await workbook.xlsx.readFile(templatePath);
+
+    const worksheet = workbook.getWorksheet("GUIA");
+
+    // // Editar celdas (sin perder el fondo)
+    worksheet.getCell("B2").value = data.proveedor;
+    worksheet.getCell("B8").value = data.consignatario;
+    worksheet.getCell("B15").value = '';
+    worksheet.getCell("F15").value = '';
+    worksheet.getCell("B21").value = data.port_begin;
+    worksheet.getCell("B23").value = data.port_begin;
+    worksheet.getCell("B25").value = data.port_end;
+    worksheet.getCell("A28").value = data.notify;
+    worksheet.getCell("A49").value = data.bultos;
+    worksheet.getCell("B49").value = data.peso;
+    worksheet.getCell("C49").value = data.volumen;
+
+    worksheet.getCell("E58").value = moment().format("DD/MM/YYYY");
+
+    // Crear carpeta uploads si no existe
+    const outputDir = path.join(__dirname, "../../../uploads");
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true });
+    }
+
+    const outputPath = path.join(outputDir, name + ".xlsx");
+    await workbook.xlsx.writeFile(outputPath);
+
+    // Enviar archivo generado
+    res.download(outputPath);
+  } catch (error) {
+    console.error("Error generando Excel:", error);
+    res.status(500).send("Error generando Excel");
+  }
 };
