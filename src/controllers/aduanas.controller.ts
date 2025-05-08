@@ -500,3 +500,52 @@ export const getListCallsAduana = async (req: Request, res: Response) => {
     }
   );
 };
+
+export const aprobarCotizacionAduana = async (req: Request, res: Response) => {
+  let {
+    id_quote,
+    nuevoexpediente,
+    id_exp,
+    fecha_validez,
+    totalIngreso,
+    igvIngreso,
+    valorIngreso,
+    listCostosInstructivo,
+    listVentasInstructivo,
+  } = req.body;
+  let Descripcion = ["SubTotal", "TOTAL"];
+  await pool.query(
+    "SELECT * FROM function_aprobar_cotizacionaduana($1,$2,$3,$4,$5,$6,$7,$8,$9);",
+    [
+      id_quote ? id_quote : null,
+      nuevoexpediente ? nuevoexpediente : null,
+      id_exp ? id_exp : null,
+      fecha_validez ? fecha_validez : null,
+      igvIngreso ? igvIngreso : null,
+      valorIngreso ? valorIngreso : null,
+      totalIngreso ? totalIngreso : 0,
+      JSON.stringify(listCostosInstructivo.filter((item) => item.id)),
+      JSON.stringify(
+        listVentasInstructivo.filter(
+          (item) => !/^(TOTAL|SubTotal)$/i.test(item.descripcion.trim())
+        )
+      ),
+    ],
+
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};

@@ -5,6 +5,7 @@ import { TokenValidation } from "../libs/verifyToken";
 import {
   actualizarAduana,
   aduanaUnificar,
+  aprobarCotizacionAduana,
   getAduanaList,
   getAduanaVer,
   getListCallsAduana,
@@ -42,6 +43,7 @@ router.put(
   updateAduanaRecibidoEnviado
 );
 router.post("/set_calls_aduana", TokenValidation, setCallsAduana);
+router.put("/aprobar_cotizacion_aduana", TokenValidation, aprobarCotizacionAduana);
 
 router.get(
   "/list_calls_aduana",

@@ -1231,6 +1231,7 @@ export const verPagosControlEgresos = async (req: Request, res: Response) => {
     }
   );
 };
+
 export const validarNroOperacion = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM function_table_pagoscontrolegresos_validarnro_op($1)",
