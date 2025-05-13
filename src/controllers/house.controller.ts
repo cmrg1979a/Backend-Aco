@@ -7,6 +7,8 @@ import fs from "fs";
 const nodemailer = require("nodemailer");
 const moment = require("moment");
 const pool = conexion();
+const mime = require("mime-types");
+const axios = require("axios");
 var xl = require("excel4node");
 import ExcelJS from "exceljs";
 import path from "path";
@@ -1063,15 +1065,12 @@ export const generarFormatoBL = async (req, res) => {
     let templatePath = "";
     let name = "";
     if (req.query.formatoflag === "true") {
-      console.log("aaaaaa", typeof req.query.formatoflag);
       name = "FORMATO_BL_CON_FONDO";
-      // Leer plantilla
       templatePath = path.join(
         __dirname,
         "../../plantillas/FORMATO_BL_CON_FONDO.xlsx"
       );
     } else {
-      console.log("bbbbb", req.query.formatoflag);
       name = "FORMATO_BL_SIN_FONDO";
       templatePath = path.join(
         __dirname,
@@ -1082,17 +1081,50 @@ export const generarFormatoBL = async (req, res) => {
 
     const worksheet = workbook.getWorksheet("FormatoBL");
 
-    // // Editar celdas (sin perder el fondo)
+    // 👉 Insertar datos en celdas
     worksheet.getCell("H6").value = data.nro_hbl;
     worksheet.getCell("A3").value = data.proveedor;
     worksheet.getCell("A8").value = data.consignatario;
     worksheet.getCell("A11").value = data.notify;
     worksheet.getCell("D17").value = data.port_begin;
     worksheet.getCell("D22").value = data.port_end;
-
     worksheet.getCell("G56").value = moment().format("DD/MM/YYYY");
 
-    // Crear carpeta uploads si no existe
+    // 👉 Descargar e insertar imagen (logo)
+    if (data.logo) {
+      try {
+        const response = await axios.get(data.logo, {
+          responseType: "arraybuffer",
+        });
+        const contentType = response.headers["content-type"]; // ej. 'image/png'
+        const extension = mime.extension(contentType); // ej. 'png', 'jpeg'
+
+        if (!["png", "jpeg", "jpg"].includes(extension)) {
+          console.warn("Tipo de imagen no soportado:", extension);
+        } else {
+          const imageBuffer = Buffer.from(response.data);
+
+          const imageId = workbook.addImage({
+            buffer: imageBuffer,
+            extension: extension === "jpg" ? "jpeg" : extension,
+          });
+
+          worksheet.addImage(imageId, {
+            tl: { col: 4, row: 5 }, // E6
+            ext: { width: 150, height: 60 },
+          });
+
+          // Insertar en F52
+          worksheet.addImage(imageId, {
+            tl: { col: 5, row: 51 }, // F52
+            ext: { width: 150, height: 60 },
+          });
+        }
+      } catch (imgErr) {
+        console.warn("No se pudo insertar el logo:", imgErr.message);
+      }
+    }
+
     const outputDir = path.join(__dirname, "../../../uploads");
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir, { recursive: true });
@@ -1101,7 +1133,6 @@ export const generarFormatoBL = async (req, res) => {
     const outputPath = path.join(outputDir, name + ".xlsx");
     await workbook.xlsx.writeFile(outputPath);
 
-    // Enviar archivo generado
     res.download(outputPath);
   } catch (error) {
     console.error("Error generando Excel:", error);
@@ -1122,7 +1153,6 @@ export const generarFormatoAWB = async (req, res) => {
     let templatePath = "";
     let name = "";
     if (req.query.formatoflag === "true") {
-     
       name = "FORMATO_BL_CON_FONDO";
       // Leer plantilla
       templatePath = path.join(
@@ -1144,8 +1174,8 @@ export const generarFormatoAWB = async (req, res) => {
     // // Editar celdas (sin perder el fondo)
     worksheet.getCell("B2").value = data.proveedor;
     worksheet.getCell("B8").value = data.consignatario;
-    worksheet.getCell("B15").value = '';
-    worksheet.getCell("F15").value = '';
+    worksheet.getCell("B15").value = "";
+    worksheet.getCell("F15").value = "";
     worksheet.getCell("B21").value = data.port_begin;
     worksheet.getCell("B23").value = data.port_begin;
     worksheet.getCell("B25").value = data.port_end;
