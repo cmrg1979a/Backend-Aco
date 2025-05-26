@@ -6,8 +6,10 @@ import {
   actualizarAduana,
   aduanaUnificar,
   aprobarCotizacionAduana,
+  cargarListadoQuoteAduana,
   getAduanaList,
   getAduanaVer,
+  getInstructivoIdAduana,
   getListCallsAduana,
   obtenerAduanaParaUnificar,
   obtenerCotizacionParaUnificar,
@@ -17,6 +19,7 @@ import {
   updateAduanaRecibidoEnviado,
 } from "../controllers/aduanas.controller";
 
+
 router.get(
   "/obtenerListadoServiciosAduanaQuote",
   TokenValidation,
@@ -24,6 +27,7 @@ router.get(
 );
 router.post("/insert_aduana", TokenValidation, setAduana);
 router.get("/listar_aduana", TokenValidation, getAduanaList);
+router.get("/cargar__quote_aduana", TokenValidation, cargarListadoQuoteAduana);
 router.get("/ver_aduana", TokenValidation, getAduanaVer);
 router.put("/actualizar_aduana", TokenValidation, actualizarAduana);
 router.get(
@@ -50,6 +54,8 @@ router.get(
   TokenValidation,
   getListCallsAduana
 );
+
+router.post("/getInstructivoIdAduana/:id_quote", TokenValidation, getInstructivoIdAduana);
 export default router;
 
 
