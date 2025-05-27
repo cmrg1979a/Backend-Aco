@@ -652,7 +652,7 @@ export const exportarReporteGanancias = async (req: Request, res: Response) => {
 function dGanancia(year, month) {
   return new Promise((resolve, reject) => {
     pool.query(
-      "SELECT * FROM function_monto_egreso_x_exp($1,$2);",
+      "SELECT * FROM function_monto_egreso_x_exp($1,$2,null,null,null,null);",
       [year, month],
       (err, response) => {
         let rows = response.rows;
@@ -680,7 +680,7 @@ function rGanancia(year, month) {
 function dPerdida(year, month) {
   return new Promise((resolve, reject) => {
     pool.query(
-      "SELECT * FROM function_monto_gastos_x_proveedor($1,$2);",
+      "SELECT * FROM function_monto_gastos_x_proveedor($1,$2,null,null,null,null);",
       [year, month],
       (err, response) => {
         let rows = response.rows;
