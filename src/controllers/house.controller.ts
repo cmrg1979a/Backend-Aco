@@ -1153,7 +1153,7 @@ export const generarFormatoAWB = async (req, res) => {
     let templatePath = "";
     let name = "";
     if (req.query.formatoflag === "true") {
-      name = "FORMATO_BL_CON_FONDO";
+      name = "FORMATO_AWB_CON_FONDO";
       // Leer plantilla
       templatePath = path.join(
         __dirname,
@@ -1161,7 +1161,7 @@ export const generarFormatoAWB = async (req, res) => {
       );
     } else {
       console.log("bbbbb", req.query.formatoflag);
-      name = "FORMATO_BL_SIN_FONDO";
+      name = "FORMATO_AWB_CON_FONDO";
       templatePath = path.join(
         __dirname,
         "../../plantillas/FORMATO_AWB_SIN_FONDO.xlsx"

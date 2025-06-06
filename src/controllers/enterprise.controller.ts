@@ -286,7 +286,6 @@ export const RegistroNuevaEmpresa = async (req: Request, res: Response) => {
     clave,
   } = req.body;
   // let clave = generarContrasenaAleatoria(10);
-
   await pool.query(
     "SELECT *from function_enterprise_registro($1,$2, $3, $4,$5,$6,$7,$8);",
     [trade_name, id_pais, names, surname, second_surname, clave, email, phone],

@@ -33,6 +33,7 @@ router.get(
   TokenValidation,
   validateDocumentEnterpriseEditar
 );
+
 router.post("/registro_nueva_empresa", RegistroNuevaEmpresa);
 router.get("/obtener_impuestos_branch", obtenerImpuestosXBranch);
 
