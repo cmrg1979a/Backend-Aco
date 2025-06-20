@@ -8,10 +8,10 @@ import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 const pool = conexion();
 
 export const getPortBegin = async (req: Request, res: Response) => {
-  const { id_transport } = req.body;
+  const { id_transport, id, search } = req.body;
   await pool.query(
-    "SELECT * FROM PORT_BEGINEND_listar($1,$2);",
-    [1, id_transport],
+    "SELECT * FROM PORT_BEGINEND_listar($1,$2,$3,$4);",
+    [1, id_transport, id ? id : null, search],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -31,10 +31,10 @@ export const getPortBegin = async (req: Request, res: Response) => {
 };
 
 export const getPortEnd = async (req: Request, res: Response) => {
-  const { id_transport } = req.body;
+  const { id_transport, id, search } = req.body;
   await pool.query(
-    "SELECT * FROM PORT_BEGINEND_listar($1,$2);",
-    [2, id_transport],
+    "SELECT * FROM PORT_BEGINEND_listar($1,$2,$3,$4);",
+    [2, id_transport, id ? id : null, search],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;

@@ -62,7 +62,7 @@ export const setPayForProveedor = async (req: Request, res: Response) => {
   const details = req.body.details;
 
   await pool.query(
-    "SELECT * FROM detailsPaysInvoiceAdmin_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
+    "SELECT * FROM detailspaysinvoiceadmin_insertar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
     [
       details.map((element) => {
         return element.id;

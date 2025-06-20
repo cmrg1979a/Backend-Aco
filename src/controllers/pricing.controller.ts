@@ -6,7 +6,7 @@ import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 import { io } from "../index";
 import * as pg from "pg";
 const { Pool } = pg;
-
+// import puppeteer from "puppeteer";
 const pool = conexion();
 let ejs = require("ejs");
 let pdf = require("html-pdf");
@@ -14,6 +14,9 @@ let path = require("path");
 import moment from "moment";
 import { QuoteNote } from "interface/quoteNote";
 moment.locale("es");
+
+const fs = require("fs");
+
 export const setQuote = async (req: Request, res: Response) => {
   const dataObj = req.body;
   let serviciocotizacion = dataObj.serviciocotizacion;
@@ -816,92 +819,16 @@ export const listadoCotizacionMercadeo = async (
 };
 
 export const quotePreviewTotales = async (req: Request, res: Response) => {
-  let {
-    index,
-    TipoCostos,
-    isImport,
-    datosOrigen,
-    totalOrigen,
-    code,
-    iso,
-    id_branch,
-    business_name,
-    address,
-    tipo,
-    cliente,
-    slogancliente,
-    fechafin,
-    tiempoTransito,
-    origen,
-    destino,
-    impuesto,
-    flete,
-    almacen,
-    aduana,
-    local,
-    totalImpuesto,
-    incluye,
-    noincluye,
-    importante,
-    contenedor,
-    conceptos,
-    sentido,
-    embarque,
-    icoterm,
-    datosFlete,
-    datosLocales,
-    datosAduanas,
-    datosAlmacenes,
-    datosGastosTerceros,
-    totalImpuestosIGV,
-    totalFlete,
-    totalLocales,
-    totalAduanas,
-    totalAlmacenes,
-    totalGastosTercero,
-    totalServicios,
-    total,
-    iso_pais,
-    numerobultos,
-    peso,
-    volumen,
-    pais,
-    url_logo,
-    nameEmpresa,
-    esunica,
-    nombre_impuesto,
-  } = req.body;
-  let fecha = moment().format("DD-MM-YYYY");
-
-  let servicios = getServicios({
-    flete: flete,
-    almacen: almacen,
-    aduana: aduana,
-    local: local,
-    contenedor: contenedor,
-    numerobultos: numerobultos,
-    peso: peso,
-    volumen: volumen,
-  });
-  let lengthServ = servicios.length;
-  console.log(iso);
-  let protocol = req.protocol; // 'http' o 'https'
-  let host = req.get("host"); // El host (dominio o IP con puerto)
-  let url = `${protocol}://${host}/uploads/`;
-  // let url_logo = `http://localhost:9200/uploads/1726792533981.png`;
-  ejs.renderFile(
-    path.join(__dirname, "../views/", "quoteDetallado.ejs"),
-    {
+  console.log("llegó m");
+  try {
+    let {
       index,
       TipoCostos,
       isImport,
       datosOrigen,
       totalOrigen,
-      iso,
-      servicios,
-      lengthServ,
-      fecha,
       code,
+      iso,
       id_branch,
       business_name,
       address,
@@ -940,46 +867,326 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
       totalServicios,
       total,
       iso_pais,
+      numerobultos,
+      peso,
+      volumen,
       pais,
       url_logo,
       nameEmpresa,
       esunica,
       nombre_impuesto,
-    },
+    } = req.body;
+    let fecha = moment().format("DD-MM-YYYY");
+    console.log("llegó m2");
+    let servicios = getServicios({
+      flete: flete,
+      almacen: almacen,
+      aduana: aduana,
+      local: local,
+      contenedor: contenedor,
+      numerobultos: numerobultos,
+      peso: peso,
+      volumen: volumen,
+    });
+    console.log("llegó m3");
+    let lengthServ = servicios.length;
+    // let protocol = req.protocol; // 'http' o 'https'
+    // let host = req.get("host"); // El host (dominio o IP con puerto)
+    // let url = `${protocol}://${host}/uploads/`;
+    // let url_logo = `http://localhost:9200/uploads/1726792533981.png`;
+    console.log("llegó a");
+    ejs.renderFile(
+      path.join(__dirname, "../views/", "quoteDetallado.ejs"),
+      {
+        index,
+        TipoCostos,
+        isImport,
+        datosOrigen,
+        totalOrigen,
+        iso,
+        servicios,
+        lengthServ,
+        fecha,
+        code,
+        id_branch,
+        business_name,
+        address,
+        tipo,
+        cliente,
+        slogancliente,
+        fechafin,
+        tiempoTransito,
+        origen,
+        destino,
+        impuesto,
+        flete,
+        almacen,
+        aduana,
+        local,
+        totalImpuesto,
+        incluye,
+        noincluye,
+        importante,
+        contenedor,
+        conceptos,
+        sentido,
+        embarque,
+        icoterm,
+        datosFlete,
+        datosLocales,
+        datosAduanas,
+        datosAlmacenes,
+        datosGastosTerceros,
+        totalImpuestosIGV,
+        totalFlete,
+        totalLocales,
+        totalAduanas,
+        totalAlmacenes,
+        totalGastosTercero,
+        totalServicios,
+        total,
+        iso_pais,
+        pais,
+        url_logo,
+        nameEmpresa,
+        esunica,
+        nombre_impuesto,
+      },
 
-    (err: any, data: any) => {
-      if (err) {
-        // res.send(err);
-        console.log(err);
-      } else {
-        let options = {
-          page_size: "A4",
-          // header: {
-          //   height: "15mm",
-          // },
-        };
+      (err: any, data: any) => {
+        console.log("llegó b");
+        if (err) {
+          // res.send(err);
+          console.log(err);
+        } else {
+          let options = {
+            page_size: "A4",
+            // header: {
+            //   height: "15mm",
+            // },
+          };
 
-        pdf
-          .create(data, options)
-          .toFile(
-            `files/COTIZACION_${id_branch}_${index}.pdf`,
-            function (err: any, data: any) {
-              if (err) {
-                res.send(err);
-              } else {
-                res.download(`/COTIZACION_${id_branch}_${index}.pdf`);
-                res.send({
-                  estadoflag: true,
-                  msg: "File created successfully",
-                  path: path.join(`COTIZACION_${id_branch}_${index}.pdf`),
-                });
+          pdf
+            .create(data, options)
+            .toFile(
+              `files/COTIZACION_${id_branch}_${index}.pdf`,
+              function (err: any, data: any) {
+                if (err) {
+                  res.send(err);
+                } else {
+                  res.download(`/COTIZACION_${id_branch}_${index}.pdf`);
+                  res.send({
+                    estadoflag: true,
+                    msg: "File created successfully",
+                    path: path.join(`COTIZACION_${id_branch}_${index}.pdf`),
+                  });
+                }
               }
-            }
-          );
+            );
+        }
       }
-    }
-  );
+    );
+  } catch (error) {
+    console.log("error", error);
+  }
 };
+
+// export const quotePreviewTotales = async (req: Request, res: Response) => {
+//   let {
+//     index,
+//     TipoCostos,
+//     isImport,
+//     datosOrigen,
+//     totalOrigen,
+//     code,
+//     iso,
+//     id_branch,
+//     business_name,
+//     address,
+//     tipo,
+//     cliente,
+//     slogancliente,
+//     fechafin,
+//     tiempoTransito,
+//     origen,
+//     destino,
+//     impuesto,
+//     flete,
+//     almacen,
+//     aduana,
+//     local,
+//     totalImpuesto,
+//     incluye,
+//     noincluye,
+//     importante,
+//     contenedor,
+//     conceptos,
+//     sentido,
+//     embarque,
+//     icoterm,
+//     datosFlete,
+//     datosLocales,
+//     datosAduanas,
+//     datosAlmacenes,
+//     datosGastosTerceros,
+//     totalImpuestosIGV,
+//     totalFlete,
+//     totalLocales,
+//     totalAduanas,
+//     totalAlmacenes,
+//     totalGastosTercero,
+//     totalServicios,
+//     total,
+//     iso_pais,
+//     numerobultos,
+//     peso,
+//     volumen,
+//     pais,
+//     url_logo, // URL del logo, asegúrate que Puppeteer pueda acceder a ella
+//     nameEmpresa,
+//     esunica,
+//     nombre_impuesto,
+//     document,
+//     phone,
+//   } = req.body;
+
+//   let fecha = moment().format("DD-MM-YYYY");
+
+//   let servicios = getServicios({
+//     flete: flete,
+//     almacen: almacen,
+//     aduana: aduana,
+//     local: local,
+//     contenedor: contenedor,
+//     numerobultos: numerobultos,
+//     peso: peso,
+//     volumen: volumen,
+//   });
+//   let lengthServ = servicios.length;
+
+//   const getBase64Image = (imagePath: string) => {
+//     const filePath = path.resolve(__dirname, imagePath);
+//     return `data:image/png;base64,${fs.readFileSync(filePath, "base64")}`;
+//   };
+
+//   const iconoMaritimo = getBase64Image("../../public/img/maritimo.png");
+//   const iconoMaletin = getBase64Image("../../public/img/maletin.png");
+//   const iconoCheck = getBase64Image("../../public/img/check.png");
+//   const iconoCheck2 = getBase64Image("../../public/img/check2.png");
+//   const iconoClock = getBase64Image("../../public/img/clock.png");
+
+//   let browser = await puppeteer.launch();
+//   // Declarar aquí para el bloque finally
+//   try {
+//     // 1. Renderizar la plantilla EJS a HTML
+//     const htmlContent = await ejs.renderFile(
+//       path.join(__dirname, "../views/", "quoteDetallado.ejs"),
+//       {
+//         iconoMaritimo,
+//         iconoMaletin,
+//         iconoCheck,
+//         iconoCheck2,
+//         iconoClock,
+//         index,
+//         TipoCostos,
+//         isImport,
+//         datosOrigen,
+//         totalOrigen,
+//         iso,
+//         servicios,
+//         lengthServ,
+//         fecha,
+//         code,
+//         id_branch,
+//         business_name,
+//         address,
+//         tipo,
+//         cliente,
+//         slogancliente,
+//         fechafin,
+//         tiempoTransito,
+//         origen,
+//         destino,
+//         impuesto,
+//         flete,
+//         almacen,
+//         aduana,
+//         local,
+//         totalImpuesto,
+//         incluye,
+//         noincluye,
+//         importante,
+//         contenedor,
+//         numerobultos,
+//         conceptos,
+//         sentido,
+//         embarque,
+//         icoterm,
+//         datosFlete,
+//         datosLocales,
+//         datosAduanas,
+//         datosAlmacenes,
+//         datosGastosTerceros,
+//         totalImpuestosIGV,
+//         totalFlete,
+//         totalLocales,
+//         totalAduanas,
+//         totalAlmacenes,
+//         totalGastosTercero,
+//         totalServicios,
+//         total,
+//         iso_pais,
+//         pais,
+//         url_logo, // URL del logo
+//         nameEmpresa,
+//         esunica,
+//         nombre_impuesto,
+//         peso,
+//         volumen,
+//         document,
+//         phone,
+//       }
+//     );
+
+//     browser = await puppeteer.launch({
+//       headless: true, // true para producción. false para depuración visual
+//       args: ["--no-sandbox", "--disable-setuid-sandbox"], // Recomendado para entornos de servidor
+//     });
+//     const page = await browser.newPage();
+
+//     await page.setContent(htmlContent, { waitUntil: "networkidle0" });
+
+//     // 4. Generar el PDF
+//     const pdfBuffer = await page.pdf({
+//       format: "A4",
+//       printBackground: true, // Muy importante para colores de fondo y bordes de Bootstrap
+//       margin: {
+//         top: "20mm",
+//         right: "20mm",
+//         bottom: "20mm",
+//         left: "20mm",
+//       },
+//     });
+
+//     const fileName = `COTIZACION_${id_branch}_${index}.pdf`;
+//     const filePath = path.join(__dirname, "../../files", fileName);
+//     fs.writeFileSync(filePath, pdfBuffer);
+
+//     res.download(`/COTIZACION_${id_branch}_${index}.pdf`);
+//     res.send({
+//       estadoflag: true,
+//       msg: "File created successfully",
+//       path: path.join(`COTIZACION_${id_branch}_${index}.pdf`),
+//     });
+//   } catch (error) {
+//     console.error("Error al generar o enviar el PDF:", error);
+//     res.status(500).send("Error interno del servidor al generar el PDF.");
+//   } finally {
+//     if (browser) {
+//       await browser.close(); // Siempre cierra el navegador de Puppeteer
+//     }
+//   }
+// };
 
 export const aprobarCotizacion = async (req: Request, res: Response) => {
   let {
@@ -1345,19 +1552,19 @@ function getServicios({
   }
   if (!!numerobultos) {
     serv.push({
-      name: "Nro Bultos",
+      name: "N° BULTOS",
       estado: numerobultos,
     });
   }
   if (!!peso) {
     serv.push({
-      name: "Peso",
+      name: "PESO",
       estado: peso,
     });
   }
   if (!!volumen) {
     serv.push({
-      name: "Volumen",
+      name: "VOLUMEN",
       estado: volumen,
     });
   }

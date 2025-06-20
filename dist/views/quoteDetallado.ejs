@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <header>
-    <table width="100%" style="margin-top: 0 !important;">
+    <table width="100%" style="margin-top: 0 !important">
       <tbody>
         <tr>
           <td width="50%" class="align-left" colspan="4">
@@ -143,13 +143,12 @@
                 </g>
               </g>
             </svg> -->
-          <img src="<%= url_logo%>" width="120px" alt="logo_empresa">
-             
+            <img src="<%= url_logo%>" width="120px" alt="logo_empresa" />
           </td>
           <td width="50%" class="align-right" colspan="2">
-            <h1 class="titleOpcion"> <% if (!esunica) { %>
-              OPCIÓN <%= index %>
-            <% } %></h1>
+            <h1 class="titleOpcion">
+              <% if (!esunica) { %> OPCIÓN <%= index %> <% } %>
+            </h1>
           </td>
         </tr>
       </tbody>
@@ -506,15 +505,15 @@
         <td class="align-right st-bg" colspan="1"><%=totalImpuesto%></td>
       </tr>
       <tr style="border-bottom: 1.5px solid black">
-        <td class="align-left" colspan="5"><%= nombre_impuesto %> SOBRE SERVICIOS LOGISTICO</td>
+        <td class="align-left" colspan="5">
+          <%= nombre_impuesto %> SOBRE SERVICIOS LOGISTICO
+        </td>
         <td class="align-right" colspan="1"><%=totalImpuestosIGV %></td>
       </tr>
       <tr style="border-bottom: 1.5px solid black">
         <td class="align-left st-ti" colspan="5">
-          TOTAL SERVICIOS DE <%= nameEmpresa %> <% if (impuesto.length>0) { %> + IMPUESTO DE
-          ADUANA 
-          <%if (iso=='9589')  {%> SUNAT <%}%>
-          <%} %>
+          TOTAL SERVICIOS DE <%= nameEmpresa %> <% if (impuesto.length>0) { %> +
+          IMPUESTO DE ADUANA <%if (iso=='9589') {%> SUNAT <%}%> <%} %>
         </td>
         <td class="align-right st-ti" colspan="1"><%=total%></td>
       </tr>
@@ -615,7 +614,7 @@
             font-size: 0.7em;
           "
         >
-          <%=business_name%><%=address%> Página {{page}} de {{pages}}
+          <%=business_name%><%=address%> Página {{ page }} de {{ pages }}
         </p>
       </div>
     </div>
@@ -627,7 +626,7 @@
   * {
     font-family: "Roboto", sans-serif;
   }
-  .titleOpcion{
+  .titleOpcion {
     font-size: 2rem !important;
   }
   body {

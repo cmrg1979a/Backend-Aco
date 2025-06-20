@@ -748,7 +748,7 @@ export const ActualizarCliente = async (req: Request, res: Response) => {
         : null,
       informacionEntrega.status ? 1 : 0, // 49
       convenioActual.dias_credito ? convenioActual.dias_credito : 0,
-      JSON.stringify(lstEmails)
+      JSON.stringify(lstEmails),
     ],
     (err, response, fields) => {
       if (!err) {
@@ -1527,6 +1527,29 @@ export const cargarEjecutivo = async (req: Request, res: Response) => {
       if (!err) {
         let rows = response.rows;
 
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const cargarProveedoresPricing = async (req: Request, res: Response) => {
+  const { id_branch, id, search } = req.query;
+  await pool.query(
+    "select * from function_proveedor_pricing($1,$2,$3);",
+    [id_branch, id, search],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
         res.json({
           status: 200,
           statusBol: true,
