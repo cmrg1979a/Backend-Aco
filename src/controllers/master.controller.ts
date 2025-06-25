@@ -251,6 +251,7 @@ export const getMasterList = async (req: Request, res: Response) => {
   } = req.query;
   // console.log(req.query)
 
+  
   await pool.query(
     "SELECT * FROM TABLE_MASTERCONTROL_listar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15);",
     [
