@@ -54,15 +54,15 @@ export const setMaster = async (req: Request, res: Response) => {
       dataObj.id_canal ? dataObj.id_canal : null,
       dataObj.nro_manifiesto ? dataObj.nro_manifiesto : null,
       dataObj.namecampaign ? dataObj.namecampaign : null,
-      dataObj.master_itemsContainers.map(item => item.id_container || null),
-      dataObj.master_itemsContainers.map(item => item.nro_container || null),
-      dataObj.master_itemsContainers.map(item => item.nro_precinto || null),
-      dataObj.master_itemsContainers.map(item => item.cantidad || 0),
+      dataObj.master_itemsContainers.map((item) => item.id_container || null),
+      dataObj.master_itemsContainers.map((item) => item.nro_container || null),
+      dataObj.master_itemsContainers.map((item) => item.nro_precinto || null),
+      dataObj.master_itemsContainers.map((item) => item.cantidad || 0),
     ],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-        
+
         res.json({
           status: 200,
           statusBol: true,
@@ -79,7 +79,7 @@ export const setMaster = async (req: Request, res: Response) => {
 
 export const editMaster = async (req: Request, res: Response) => {
   const dataObj = req.body;
-  const id      = req.params.id;
+  const id = req.params.id;
 
   await pool.query(
     "SELECT * FROM function_mastercontrol_actualizar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48)",
@@ -127,11 +127,11 @@ export const editMaster = async (req: Request, res: Response) => {
       dataObj.id_canal ? dataObj.id_canal : null,
       dataObj.nro_manifiesto ? dataObj.nro_manifiesto : null,
       dataObj.namecampaign ? dataObj.namecampaign : null,
-      dataObj.master_itemsContainers.map(item => item.id || null),
-      dataObj.master_itemsContainers.map(item => item.id_container || null),
-      dataObj.master_itemsContainers.map(item => item.nro_container || null),
-      dataObj.master_itemsContainers.map(item => item.nro_precinto || null),
-      dataObj.master_itemsContainers.map(item => item.cantidad || 0),
+      dataObj.master_itemsContainers.map((item) => item.id || null),
+      dataObj.master_itemsContainers.map((item) => item.id_container || null),
+      dataObj.master_itemsContainers.map((item) => item.nro_container || null),
+      dataObj.master_itemsContainers.map((item) => item.nro_precinto || null),
+      dataObj.master_itemsContainers.map((item) => item.cantidad || 0),
     ],
     (err, rows, fields) => {
       if (!err) {
@@ -155,10 +155,7 @@ export const nullMaster = async (req: Request, res: Response) => {
 
   await pool.query(
     "SELECT * FROM function_mastercontrol_anular_expediente($1,$2)",
-    [
-      id,
-      status
-    ],
+    [id, status],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -232,7 +229,7 @@ export const lockMasterAdm = async (req: Request, res: Response) => {
 };
 
 export const getMasterList = async (req: Request, res: Response) => {
-  const { 
+  const {
     id_branch,
     id_canal,
     id_sentido,
@@ -247,11 +244,10 @@ export const getMasterList = async (req: Request, res: Response) => {
     pagina,
     limite,
     orden,
-    busqueda
+    busqueda,
   } = req.query;
   // console.log(req.query)
 
-  
   await pool.query(
     "SELECT * FROM TABLE_MASTERCONTROL_listar($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15);",
     [
@@ -291,7 +287,7 @@ export const getMasterList = async (req: Request, res: Response) => {
 };
 
 export const getTotalMasterList = async (req: Request, res: Response) => {
-  const { 
+  const {
     id_branch,
     id_canal,
     id_sentido,
@@ -303,7 +299,7 @@ export const getTotalMasterList = async (req: Request, res: Response) => {
     fecha_eta,
     status_op,
     status_adm,
-    busqueda
+    busqueda,
   } = req.query;
   // console.log(req.query)
 
@@ -326,7 +322,7 @@ export const getTotalMasterList = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-          
+
         res.json({
           status: 200,
           statusBol: true,
@@ -360,6 +356,34 @@ export const cargarMaster = async (req: Request, res: Response) => {
       id_port_begin ? id_port_begin : null,
       id_port_end ? id_port_end : null,
     ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          estadoflag: rows[0].estadoflag,
+          status: 200,
+          statusBol: true,
+          data: rows,
+          token: renewTokenMiddleware(req),
+          mensaje: rows[0].mensaje,
+          insertId: rows[0].insertid,
+          nro_quote: rows[0].nro_quote,
+          msg: "Cotización ingresada con el número " + rows[0].nro_quote,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const cargarHouseAsociadoMaster = async (
+  req: Request,
+  res: Response
+) => {
+  let { id_master } = req.query;
+  await pool.query(
+    "SELECT * FROM function_house_x_master($1);",
+    [id_master],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -495,7 +519,7 @@ export const deleteMaster = async (req: Request, res: Response) => {
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
-          
+
         res.json({
           status: 200,
           statusBol: true,
