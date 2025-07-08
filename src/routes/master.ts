@@ -18,6 +18,7 @@ import {
   getTotalMasterList,
   deleteMaster,
   cargarHouseAsociadoMaster,
+  validarExistePagoMaster,
 } from "../controllers/master.controller";
 
 router.post("/setMaster", TokenValidation, setMaster);
@@ -30,9 +31,23 @@ router.get("/getMasterList", TokenValidation, getMasterList);
 router.get("/getTotalMasterList", TokenValidation, getTotalMasterList);
 router.get("/cargar_house", TokenValidation, getCargarHouse);
 router.get("/cargar_master", TokenValidation, cargarMaster);
-router.get("/cargar_house_asociado_master", TokenValidation, cargarHouseAsociadoMaster);
+router.get(
+  "/cargar_house_asociado_master",
+  TokenValidation,
+  cargarHouseAsociadoMaster
+);
 router.put("/update_folder_onedrive", TokenValidation, updateFolderOneDrive);
-router.post("/insert_comentario_master", TokenValidation, insertComentarioMaster);
+router.post(
+  "/insert_comentario_master",
+  TokenValidation,
+  insertComentarioMaster
+);
 router.delete("/deleteMaster/:id", TokenValidation, deleteMaster);
+
+router.get(
+  "/validar_existe_pago_master",
+  TokenValidation,
+  validarExistePagoMaster
+);
 
 export default router;
