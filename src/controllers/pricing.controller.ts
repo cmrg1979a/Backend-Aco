@@ -13,6 +13,7 @@ let pdf = require("html-pdf");
 let path = require("path");
 import moment from "moment";
 import { QuoteNote } from "interface/quoteNote";
+import axios from "axios";
 moment.locale("es");
 
 const fs = require("fs");
@@ -1063,7 +1064,7 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
     volumen: volumen,
   });
   let lengthServ = servicios.length;
-  let browser = await puppeteer.launch();
+  let browser = null;
   if (global.esProduccion) {
     browser = await puppeteer.launch({
       executablePath: "/usr/bin/google-chrome",
@@ -1180,6 +1181,10 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
 };
 
 export const aprobarCotizacion = async (req: Request, res: Response) => {
+  let baseURL = "http://localhost:9200/";
+  if (global.esProduccion) {
+    baseURL = "https://api-general.qreport.site/";
+  }
   let {
     id_quote,
     nuevoexpediente,
@@ -1204,8 +1209,8 @@ export const aprobarCotizacion = async (req: Request, res: Response) => {
       igvIngreso ? igvIngreso : null,
       valorIngreso ? valorIngreso : null,
       totalIngreso ? totalIngreso : 0,
-      id_house,
-      id_opcion,
+      id_house == "" ? null : id_house,
+      id_opcion == "" ? null : id_opcion,
       JSON.stringify(listCostosInstructivo.filter((item) => item.id)),
       JSON.stringify(
         listVentasInstructivo.filter(
@@ -1214,9 +1219,14 @@ export const aprobarCotizacion = async (req: Request, res: Response) => {
       ),
     ],
 
-    (err, response, fields) => {
+    async (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+        await axios
+          .put(`${baseURL}eliminar_quote_mongo`, { id: id_quote })
+          .catch((e) => {
+            console.log(e);
+          });
         res.json({
           status: 200,
           statusBol: true,
@@ -1372,18 +1382,17 @@ export const InsertMontoFinalesQuoteMONGODB = async (
   req: Request,
   res: Response
 ) => {
-  const collectionName = "quote_montos_finales"; // Nombre de tu colección
+  const collectionName = "quote_montos_finales";
   const dataToInsert = req.body;
 
   try {
     const collection: Collection = await getCollection(collectionName);
-    const cursor = collection.find({ id: dataToInsert.id });
-    const result = await cursor.toArray();
+    const filtro = { id: dataToInsert.id };
+    const existente = await collection.findOne(filtro);
 
-    if (result.length > 0) {
+    if (existente) {
       const update = { $set: req.body };
-
-      const result: UpdateResult = await collection.updateOne(cursor, update);
+      await collection.updateOne(filtro, update);
     } else {
       await collection.insertOne(dataToInsert);
     }
@@ -1398,6 +1407,63 @@ export const InsertMontoFinalesQuoteMONGODB = async (
   } catch (e) {
     console.log(e);
     res.status(500).send("Error al insertar datos");
+  }
+};
+
+export const ListarMontosFinalesQuoteMONGODB = async (
+  req: Request,
+  res: Response
+) => {
+  const collectionName = "quote_montos_finales";
+  const { id_branch } = req.query;
+
+  try {
+    const collection: Collection = await getCollection(collectionName);
+
+    const filtro: any = {};
+    if (id_branch) {
+      filtro.id_branch = Number(id_branch); // 👈 conversión necesaria
+    }
+
+    const data = await collection.find(filtro).toArray();
+    
+    res.json({
+      status: 200,
+      statusBol: true,
+      mensaje: "Listado obtenido correctamente",
+      estadoflag: true,
+      data: data,
+      token: renewTokenMiddleware(req),
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      status: 500,
+      statusBol: false,
+      mensaje: "Error al obtener listado",
+      estadoflag: false,
+      data: [],
+      token: renewTokenMiddleware(req),
+    });
+  }
+};
+
+export const ELiminarQuoteMongo = async (req: Request, res: Response) => {
+  const { id } = req.body;
+  try {
+    const collection = await getCollection("quote_montos_finales");
+    const result = await collection.deleteOne({ id: Number(id) });
+
+    if (result.deletedCount === 1) {
+      res.json({ success: true, mensaje: "Eliminado con éxito" });
+    } else {
+      res
+        .status(404)
+        .json({ success: false, mensaje: "No se encontró el documento" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, mensaje: "Error al eliminar" });
   }
 };
 

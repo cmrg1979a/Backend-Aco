@@ -876,6 +876,7 @@ export const getVerHouse = async (req: Request, res: Response) => {
   );
 };
 
+
 // export const generarFormatoBL = async (req: Request, res: Response) => {
 //   var wb = new xl.Workbook({
 //     dateFormat: "dd/mm/yyyy",

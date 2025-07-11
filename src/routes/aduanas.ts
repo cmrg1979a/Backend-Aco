@@ -7,10 +7,13 @@ import {
   aduanaUnificar,
   aprobarCotizacionAduana,
   cargarListadoQuoteAduana,
+  ELiminarAduanaMongo,
   getAduanaList,
   getAduanaVer,
   getInstructivoIdAduana,
   getListCallsAduana,
+  InsertMontoFinalesAduanaMONGODB,
+  ListarMontosFinalesAduanaMONGODB,
   obtenerAduanaParaUnificar,
   obtenerCotizacionParaUnificar,
   obtenerListadoServiciosAduanaQuote,
@@ -18,7 +21,6 @@ import {
   setCallsAduana,
   updateAduanaRecibidoEnviado,
 } from "../controllers/aduanas.controller";
-
 
 router.get(
   "/obtenerListadoServiciosAduanaQuote",
@@ -47,15 +49,29 @@ router.put(
   updateAduanaRecibidoEnviado
 );
 router.post("/set_calls_aduana", TokenValidation, setCallsAduana);
-router.put("/aprobar_cotizacion_aduana", TokenValidation, aprobarCotizacionAduana);
-
-router.get(
-  "/list_calls_aduana",
+router.put(
+  "/aprobar_cotizacion_aduana",
   TokenValidation,
-  getListCallsAduana
+  aprobarCotizacionAduana
 );
 
-router.post("/getInstructivoIdAduana/:id_quote", TokenValidation, getInstructivoIdAduana);
+router.get("/list_calls_aduana", TokenValidation, getListCallsAduana);
+
+router.post(
+  "/getInstructivoIdAduana/:id_quote",
+  TokenValidation,
+  getInstructivoIdAduana
+);
+
+router.post(
+  "/insert_monto_finales_aduana",
+  // TokenValidation,
+  InsertMontoFinalesAduanaMONGODB
+);
+router.get(
+  "/listar_montos_finales_aduana",
+  TokenValidation,
+  ListarMontosFinalesAduanaMONGODB
+);
+router.put("/eliminar_aduana_mongo", ELiminarAduanaMongo);
 export default router;
-
-

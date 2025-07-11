@@ -2,7 +2,9 @@ import { Request, response, Response } from "express";
 import { conexion } from "../routes/databasePGOp";
 const pool = conexion();
 import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
-
+import axios from "axios";
+import { Collection, InsertOneResult, UpdateResult } from "mongodb";
+import { getCollection } from "../routes/mongoDB";
 export const obtenerListadoServiciosAduanaQuote = async (
   req: Request,
   res: Response
@@ -386,7 +388,6 @@ export const updateAduanaRecibidoEnviado = async (
   req: Request,
   res: Response
 ) => {
-  console.log(req.body);
   await pool.query(
     "SELECT * FROM function_aduana_actualizar_recibido_enviado($1,$2,$3,$4,$5,$6,$7)",
     [
@@ -502,6 +503,10 @@ export const getListCallsAduana = async (req: Request, res: Response) => {
 };
 
 export const aprobarCotizacionAduana = async (req: Request, res: Response) => {
+  let baseURL = "http://localhost:9200/";
+  if (global.esProduccion) {
+    baseURL = "https://api-general.qreport.site/";
+  }
   let {
     id_quote,
     nuevoexpediente,
@@ -526,8 +531,8 @@ export const aprobarCotizacionAduana = async (req: Request, res: Response) => {
       igvIngreso ? igvIngreso : null,
       valorIngreso ? valorIngreso : null,
       totalIngreso ? totalIngreso : 0,
-      id_house,
-      id_opcion,
+      id_house == "" ? null : id_house,
+      id_opcion == "" ? null : id_opcion,
       JSON.stringify(listCostosInstructivo.filter((item) => item.id)),
       JSON.stringify(
         listVentasInstructivo.filter(
@@ -536,9 +541,14 @@ export const aprobarCotizacionAduana = async (req: Request, res: Response) => {
       ),
     ],
 
-    (err, response, fields) => {
+    async (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
+        await axios
+          .put(`${baseURL}eliminar_aduana_mongo`, { id: id_quote })
+          .catch((e) => {
+            console.log(e);
+          });
         res.json({
           status: 200,
           statusBol: true,
@@ -597,4 +607,92 @@ export const getInstructivoIdAduana = async (req: Request, res: Response) => {
       }
     }
   );
+};
+
+export const InsertMontoFinalesAduanaMONGODB = async (
+  req: Request,
+  res: Response
+) => {
+  const collectionName = "aduana_montos_finales";
+  const dataToInsert = req.body;
+
+  try {
+    const collection: Collection = await getCollection(collectionName);
+    const filtro = { id: dataToInsert.id };
+    const existente = await collection.findOne(filtro);
+
+    if (existente) {
+      const update = { $set: req.body };
+      await collection.updateOne(filtro, update);
+    } else {
+      await collection.insertOne(dataToInsert);
+    }
+
+    res.json({
+      status: 200,
+      statusBol: true,
+      mensaje: "Registro Correcto",
+      estadoflag: true,
+      data: [],
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).send("Error al insertar datos");
+  }
+};
+
+export const ListarMontosFinalesAduanaMONGODB = async (
+  req: Request,
+  res: Response
+) => {
+  const collectionName = "aduana_montos_finales";
+  const { id_branch } = req.query;
+
+  try {
+    const collection: Collection = await getCollection(collectionName);
+
+    const filtro: any = {};
+    if (id_branch) {
+      filtro.id_branch = Number(id_branch); // 👈 conversión necesaria
+    }
+
+    const data = await collection.find(filtro).toArray();
+
+    res.json({
+      status: 200,
+      statusBol: true,
+      mensaje: "Listado obtenido correctamente",
+      estadoflag: true,
+      data: data,
+      token: renewTokenMiddleware(req),
+    });
+  } catch (e) {
+    res.status(500).json({
+      status: 500,
+      statusBol: false,
+      mensaje: "Error al obtener listado",
+      estadoflag: false,
+      data: [],
+      token: renewTokenMiddleware(req),
+    });
+  }
+};
+
+export const ELiminarAduanaMongo = async (req: Request, res: Response) => {
+  const { id } = req.body;
+  try {
+    const collection = await getCollection("aduana_montos_finales");
+    const result = await collection.deleteOne({ id: Number(id) });
+
+    if (result.deletedCount === 1) {
+      res.json({ success: true, mensaje: "Eliminado con éxito" });
+    } else {
+      res
+        .status(404)
+        .json({ success: false, mensaje: "No se encontró el documento" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, mensaje: "Error al eliminar" });
+  }
 };

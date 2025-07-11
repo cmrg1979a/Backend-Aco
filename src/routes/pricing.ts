@@ -42,6 +42,8 @@ import {
   getCargarPersonalPricing,
   CopiarCotizacion,
   getResumenPorEstado,
+  ListarMontosFinalesQuoteMONGODB,
+  ELiminarQuoteMongo,
 } from "../controllers/pricing.controller";
 
 router.post("/setQuote", TokenValidation, setQuote);
@@ -120,4 +122,10 @@ router.post(
 );
 
 router.get("/resumen_por_estado", TokenValidation, getResumenPorEstado);
+router.get(
+  "/listar_montos_finales_quote",
+  TokenValidation,
+  ListarMontosFinalesQuoteMONGODB
+);
+router.put("/eliminar_quote_mongo", ELiminarQuoteMongo);
 export default router;
