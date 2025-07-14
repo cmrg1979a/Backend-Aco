@@ -1611,24 +1611,24 @@ function getServicios({
       });
     });
   }
-  if (!!numerobultos) {
-    serv.push({
-      name: "N° BULTOS",
-      estado: numerobultos,
-    });
-  }
-  if (!!peso) {
-    serv.push({
-      name: "PESO",
-      estado: peso,
-    });
-  }
-  if (!!volumen) {
-    serv.push({
-      name: "VOLUMEN",
-      estado: volumen,
-    });
-  }
+  // if (!!numerobultos) {
+  //   serv.push({
+  //     name: "N° BULTOS",
+  //     estado: numerobultos,
+  //   });
+  // }
+  // if (!!peso) {
+  //   serv.push({
+  //     name: "PESO",
+  //     estado: peso,
+  //   });
+  // }
+  // if (!!volumen) {
+  //   serv.push({
+  //     name: "VOLUMEN",
+  //     estado: volumen,
+  //   });
+  // }
 
   return serv;
 }
