@@ -600,3 +600,67 @@ export const obtenerImpuestosXBranch = async (req: Request, res: Response) => {
     }
   );
 };
+
+export const listarCuentaEmpresa = async (req: Request, res: Response) => {
+  const { id_branch } = req.query;
+  await pool.query(
+    "select * from function_listado_cuentas($1);",
+    [id_branch],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+
+        res.json({
+          status: 200,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const registrarCuentaEmpresa = async (req: Request, res: Response) => {
+  const {
+    id_branch,
+    id_banco,
+    acronymbanco,
+    nombrebanco,
+    id_coins,
+    numerocuenta,
+    cci,
+    esprincipalflag,
+  } = req.body;
+  await pool.query(
+    "select * from function_banco_registrar($1,$2,$3,$4,$5,$6,$7,$8);",
+    [
+      id_branch,
+      id_banco,
+      acronymbanco,
+      nombrebanco,
+      id_coins,
+      numerocuenta,
+      cci,
+      esprincipalflag,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+
+        res.json({
+          status: 200,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};

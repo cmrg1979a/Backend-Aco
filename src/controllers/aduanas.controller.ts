@@ -519,10 +519,11 @@ export const aprobarCotizacionAduana = async (req: Request, res: Response) => {
     listVentasInstructivo,
     id_house,
     id_opcion,
+    id_opcion_house,
   } = req.body;
   let Descripcion = ["SubTotal", "TOTAL"];
   await pool.query(
-    "SELECT * FROM function_aprobar_cotizacionaduana($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11);",
+    "SELECT * FROM function_aprobar_cotizacionaduana($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12);",
     [
       id_quote ? id_quote : null,
       nuevoexpediente ? nuevoexpediente : null,
@@ -533,6 +534,7 @@ export const aprobarCotizacionAduana = async (req: Request, res: Response) => {
       totalIngreso ? totalIngreso : 0,
       id_house == "" ? null : id_house,
       id_opcion == "" ? null : id_opcion,
+      id_opcion_house == "" ? null : id_opcion_house,
       JSON.stringify(listCostosInstructivo.filter((item) => item.id)),
       JSON.stringify(
         listVentasInstructivo.filter(

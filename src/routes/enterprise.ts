@@ -14,6 +14,8 @@ import {
   validarCorreoRegistro,
   ReEstablecerContrasenia,
   obtenerImpuestosXBranch,
+  listarCuentaEmpresa,
+  registrarCuentaEmpresa,
 } from "../controllers/enterprise.controller";
 
 router.post("/getBranch/:id_branch", TokenValidation, getBracnh);
@@ -34,7 +36,10 @@ router.get(
   validateDocumentEnterpriseEditar
 );
 
+
 router.post("/registro_nueva_empresa", RegistroNuevaEmpresa);
 router.get("/obtener_impuestos_branch", obtenerImpuestosXBranch);
+router.get("/listado_cuentas_empresa", listarCuentaEmpresa);
+router.post("/banco_registrar", registrarCuentaEmpresa);
 
 export default router;

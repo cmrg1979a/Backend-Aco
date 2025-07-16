@@ -26,7 +26,9 @@ import {
   cuotasMasterTipoProveedorInsertarActualizar,
   setProformaFiscal,
   getFacturasFiscales,
-  delProformaFiscal
+  delProformaFiscal,
+  copiarCGingresos,
+  copiarCGEgresos
 } from "../controllers/controlGastos.controller";
 
 router.post("/setControl", TokenValidation, setControl);
@@ -72,5 +74,8 @@ router.post(
 router.post("/setProformaFiscal", TokenValidation, setProformaFiscal);
 router.get("/getFacturasFiscales", TokenValidation, getFacturasFiscales);
 router.post("/delProformaFiscal/:id", TokenValidation, delProformaFiscal);
+router.put("/copiar_cgingresos", TokenValidation, copiarCGingresos);
+router.put("/copiar_cgegresos", TokenValidation, copiarCGEgresos);
+
 
 export default router;

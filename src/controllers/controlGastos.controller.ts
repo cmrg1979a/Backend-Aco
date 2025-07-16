@@ -742,3 +742,49 @@ export const delProformaFiscal = async (req: Request, res: Response) => {
     }
   );
 };
+export const copiarCGingresos = async (req: Request, res: Response) => {
+  const { id_orders } = req.body;
+  await pool.query(
+    "select * from function_copiar_cgingresos($1)",
+    [id_orders],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const copiarCGEgresos = async (req: Request, res: Response) => {
+  const { id_proveedor, id_master, id_correlativo } = req.body;
+  await pool.query(
+    "select * from function_copiar_cgegresos($1,$2,$3)",
+    [id_proveedor, id_master, id_correlativo],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
