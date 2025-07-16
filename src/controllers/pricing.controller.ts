@@ -1172,7 +1172,9 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Error al generar o enviar el PDF:", error);
-    res.status(500).send("Error interno del servidor al generar el PDF.");
+    res
+      .status(500)
+      .send(["Error interno del servidor al generar el PDF.", error]);
   } finally {
     if (browser) {
       await browser.close(); // Siempre cierra el navegador de Puppeteer
