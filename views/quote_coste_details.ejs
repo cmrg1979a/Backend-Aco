@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0 cm 0 cm !important;
+        /* padding: 0 1rem !important; */
+      }
+      .align-left {
+        text-align: left;
+      }
+
+      .align-right {
+        text-align: right;
+      }
+
+      .red {
+        background-color: #a43542 !important;
+        color: white !important;
+        padding: 0.2rem 0rem !important;
+      }
+      table {
+        min-width: 100% !important;
+      }
+    </style>
+  </head>
+  <body>
+    <table>
+      <tbody>
+        <tr>
+          <td colspan="3"><b>Cliente:</b><%=cliente%></td>
+          <td colspan="3" class="align-right"><b>Fecha:</b><%=fecha%></td>
+        </tr>
+        <tr>
+          <td colspan="6" class="red">
+            <center>DETALLES DEL SERVICIO</center>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="6">
+            <center><%=cliente%> - <%=embarque%> - <%=icoterm%></center>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3"><b>PUERTO DE ORIGEN:</b><%=origen%></td>
+          <td colspan="3"><b>PUERTO DE DESTINO:</b><%=destino%></td>
+        </tr>
+        <tr>
+          <td colspan="2"><b>FECHA VALIDEZ:</b> <%=fechafin%></td>
+          <td colspan="2">
+            <b>TIEMPO EN TRÁNSITO:</b> <%=tiempoTransito%> día(s)
+          </td>
+          <td colspan="2"><b>N° QUOTE:</b> <%=code%></td>
+        </tr>
+        <tr>
+          <td colspan="3"></td>
+          <td colspan="3"></td>
+        </tr>
+        <tr>
+          <td colspan="4"></td>
+          <td colspan="2"></td>
+        </tr>
+        <tr>
+          <td colspan="4"></td>
+          <td colspan="2"></td>
+        </tr>
+        <tr>
+          <td colspan="4"></td>
+          <td colspan="2"></td>
+        </tr>
+        <tr>
+          <td colspan="2"></td>
+          <td colspan="4"></td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>
