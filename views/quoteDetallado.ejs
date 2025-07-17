@@ -633,8 +633,6 @@
           </tr>
           <%});%> <%}%>
         </table>
-      </div>
-      <div class="col-6">
         <table class="table table-sm">
           <tr>
             <td style="background: #dd2c00 !important; color: white !important">
@@ -649,6 +647,24 @@
             </td>
           </tr>
           <%});%> <%}%>
+        </table>
+      </div>
+      <div class="col-6">
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <td style="background: #FFEB3B !important;">
+                IMPORTANTE
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <%if (importante.length>0) {%> <% importante.forEach(element => {%>
+            <tr>
+              <td><%=element.name%></td>
+            </tr>
+            <%});%> <%}%>
+          </tbody>
         </table>
       </div>
     </div>
