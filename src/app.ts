@@ -16,7 +16,6 @@ const corsOptions = {
   allowedHeaders: "Content-Type,Authorization",
 };
 
-
 const corsMiddleware = cors(corsOptions);
 
 /**PROUCCIÓN */
@@ -24,12 +23,10 @@ let cado = {};
 if (global.esProduccion) {
   global.path_url = "https://aco.agentedecargaonline.com/";
   cado = {
-    host: "10.116.0.2",
-
+    host: "10.116.0.15",
     user: "postgres",
     password: "@Developer2021Pic",
     port: "5432",
-
     database: "db_op_main_01",
   };
 } else {
