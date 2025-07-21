@@ -224,11 +224,6 @@ export const getControlFileAllFilterMaster = async (
 };
 
 export const pdfInstructivo = async (req: Request, res: Response) => {
-  let ejs = require("ejs");
-  let pdf = require("html-pdf");
-  let path = require("path");
-  const fechaYHora = new Date();
-
   const {
     nro_control,
     code_master,
@@ -292,8 +287,8 @@ export const pdfInstructivo = async (req: Request, res: Response) => {
       ruc,
       totalIngreso,
       totalIngresoOp,
-      totalEgresoOp,
       totalEgreso,
+      totalEgresoOp,
       exp,
       totalIgvEgresos,
       totalIgvEgresosOp,
@@ -310,35 +305,35 @@ export const pdfInstructivo = async (req: Request, res: Response) => {
       igvop,
       subtotalop,
     },
-    (err: any, data: any) => {
+    async (err: any, html: any) => {
       if (err) {
-        res.send(err);
-      } else {
-        let options = {
-          page_size: "A4",
-          orientation: "portrait",
-          header: {
-            height: "1mm",
-          },
-          footer: {
-            height: "2mm",
-          },
-        };
-
-        pdf
-          .create(data, options)
-          .toFile("files/INSTRUCTIVO.pdf", function (err: any, data: any) {
-            if (err) {
-              res.send(err);
-            } else {
-              res.download("/INSTRUCTIVO.pdf");
-              res.send({
-                msg: "File created successfully",
-                path: path.join("/INSTRUCTIVO.pdf"),
-              });
-            }
-          });
+        return res.send(err);
       }
+
+      const browser = await puppeteer.launch({ headless: "new" });
+      const page = await browser.newPage();
+      await page.setContent(html, { waitUntil: "networkidle0" });
+
+      const outputPath = path.join("files", "INSTRUCTIVO.pdf");
+      await page.pdf({
+        path: outputPath,
+        format: "A4",
+        printBackground: true,
+        margin: {
+          top: "10mm",
+          bottom: "10mm",
+          left: "10mm",
+          right: "10mm",
+        },
+      });
+
+      await browser.close();
+
+      res.download("/INSTRUCTIVO.pdf");
+      res.send({
+        msg: "File created successfully",
+        path: "INSTRUCTIVO.pdf", // sin slash adelante como pediste
+      });
     }
   );
 };
@@ -428,9 +423,6 @@ export const pdfSolicitud = async (req: Request, res: Response) => {
   }
 };
 export const createdPDF = async (req: Request, res: Response) => {
-  let ejs = require("ejs");
-  let pdf = require("html-pdf");
-  let path = require("path");
   const fechaYHora = new Date();
   let {
     id_branch,
@@ -441,6 +433,7 @@ export const createdPDF = async (req: Request, res: Response) => {
     desde,
     hasta,
   } = req.body;
+
   await pool.query(
     "SELECT * FROM function_reporte_file($1,$2,$3,$4,$5,$6,$7);",
     [
@@ -456,9 +449,9 @@ export const createdPDF = async (req: Request, res: Response) => {
       if (!err) {
         let rows = response.rows;
         const operadoresInfo = {};
+
         if (rows.length > 0) {
-          // Itera sobre las etiquetas
-          await rows.forEach((etiqueta) => {
+          rows.forEach((etiqueta) => {
             const operador = etiqueta.operador;
             if (!operadoresInfo[operador]) {
               operadoresInfo[operador] = {
@@ -484,13 +477,9 @@ export const createdPDF = async (req: Request, res: Response) => {
           let totalOtras = rows.filter((v) => v.orden == 3).length;
           let totalFile = rows.length;
           let branch = rows[0].branch;
-          let status_op = "";
-          let status_admin = "";
-          let sentido = "";
-          let desde = "";
-          let hasta = "";
           let operadoresArray = Object.values(operadoresInfo);
           let list = rows;
+
           if (req.body.status_op) {
             status_op = req.body.status_op == 0 ? "Abiertos" : "Cerrados";
           }
@@ -509,7 +498,6 @@ export const createdPDF = async (req: Request, res: Response) => {
 
           ejs.renderFile(
             path.join(__dirname, "../views/", "report-template.ejs"),
-
             {
               fecha,
               totalFile,
@@ -527,41 +515,38 @@ export const createdPDF = async (req: Request, res: Response) => {
               totalPorLLegar,
               totalOtras,
             },
-
-            (err: any, data: any) => {
+            async (err: any, html: any) => {
               if (err) {
-                // res.send(err);
                 console.log(err);
-              } else {
-                let options = {
-                  page_size: "A4",
-                  orientation: "landscape",
-                  header: {
-                    height: "10mm",
-                  },
-                  footer: {
-                    height: "10mm",
-                  },
-                };
-
-                pdf
-                  .create(data, options)
-                  .toFile(
-                    "files/REPORT_CONTROL_FILE.pdf",
-                    function (err: any, data: any) {
-                      if (err) {
-                        res.send(err);
-                      } else {
-                        res.download("/REPORT_CONTROL_FILE.pdf");
-                        res.send({
-                          estadoflag: true,
-                          msg: "File created successfully",
-                          path: path.join("/REPORT_CONTROL_FILE.pdf"),
-                        });
-                      }
-                    }
-                  );
+                return;
               }
+
+              const browser = await puppeteer.launch({ headless: "new" });
+              const page = await browser.newPage();
+              await page.setContent(html, { waitUntil: "networkidle0" });
+
+              const outputPath = path.join("files", "REPORT_CONTROL_FILE.pdf");
+              await page.pdf({
+                path: outputPath,
+                format: "A4",
+                printBackground: true,
+                landscape: true,
+                margin: {
+                  top: "10mm",
+                  bottom: "10mm",
+                  left: "10mm",
+                  right: "10mm",
+                },
+              });
+
+              await browser.close();
+
+              res.download("/REPORT_CONTROL_FILE.pdf");
+              res.send({
+                estadoflag: true,
+                msg: "File created successfully",
+                path: path.join("/REPORT_CONTROL_FILE.pdf"),
+              });
             }
           );
         } else {
@@ -573,70 +558,6 @@ export const createdPDF = async (req: Request, res: Response) => {
         }
       } else {
         console.log(err);
-      }
-    }
-  );
-};
-
-export const test = async (req: Request, res: Response) => {
-  let ejs = require("ejs");
-  let pdf = require("html-pdf");
-  let path = require("path");
-  let students = [
-    { name: "Joy", email: "joy@example.com", city: "New York", country: "USA" },
-    {
-      name: "John",
-      email: "John@example.com",
-      city: "San Francisco",
-      country: "USA",
-    },
-    {
-      name: "Clark",
-      email: "Clark@example.com",
-      city: "Seattle",
-      country: "USA",
-    },
-    {
-      name: "Watson",
-      email: "Watson@example.com",
-      city: "Boston",
-      country: "USA",
-    },
-    {
-      name: "Tony",
-      email: "Tony@example.com",
-      city: "Los Angels",
-      country: "USA",
-    },
-  ];
-
-  ejs.renderFile(
-    path.join(__dirname, "../views/", "report-template.ejs"),
-    { students: students },
-    (err: any, data: any) => {
-      if (err) {
-        res.send(err);
-      } else {
-        let options = {
-          page_size: "A4",
-          orientation: "landscape",
-          header: {
-            height: "20mm",
-          },
-          footer: {
-            height: "20mm",
-          },
-          footerTemplate: "<h1>{{totalPages}} </h1>",
-        };
-        pdf
-          .create(data, options)
-          .toFile("report.pdf", function (err: any, data: any) {
-            if (err) {
-              res.send(err);
-            } else {
-              res.send("File created successfully");
-            }
-          });
       }
     }
   );
@@ -678,32 +599,34 @@ export const getReportFileDetails = async (req: Request, res: Response) => {
 
 export const pdfFD = async (req: Request, res: Response) => {
   const { id_branch, desde, hasta } = req.body;
-  let ejs = require("ejs");
-  let pdf = require("html-pdf");
-  let path = require("path");
   const fechaYHora = new Date();
+
   await pool.query(
     "SELECT * FROM function_report_filedetallado($1,$2,$3)",
     [id_branch, desde, hasta],
-    (err, response, fields) => {
+    async (err, response, fields) => {
       if (!err) {
         let data = response.rows;
         let totalExp = data.length;
+
         let gananciaPr = data.reduce((total, item) => {
           return (
             parseFloat(total) +
             (parseFloat(item.ingresos_pr) - parseFloat(item.egresos_pr))
           );
         }, 0);
+
         let gananciaOp = data.reduce((total, item) => {
           return (
             parseFloat(total) +
             (parseFloat(item.ingresos_op) - parseFloat(item.egresos_op))
           );
         }, 0);
+
         let cobrado = data.reduce((total, item) => {
           return parseFloat(total) + parseFloat(item.ingesos_pagado);
         }, 0);
+
         let porCobrar = data.reduce((total, item) => {
           return (
             parseFloat(total) +
@@ -713,6 +636,7 @@ export const pdfFD = async (req: Request, res: Response) => {
               parseFloat(item.ingesos_pagado))
           );
         }, 0);
+
         let porPagar = data.reduce((total, item) => {
           return (
             parseFloat(total) +
@@ -722,65 +646,56 @@ export const pdfFD = async (req: Request, res: Response) => {
               parseFloat(item.egresos_pagado))
           );
         }, 0);
-        let fecha = moment().format("YYYY_MM_DD");
-        let fechaYHora = moment().format("YYYY-MMM-DD HH:mm:ss");
-        try {
-          ejs.renderFile(
-            path.join(__dirname, "../views/", "pdf-fileDetails.ejs"),
-            // path.join(__dirname, "../views/", "pdf-fileDetails.ejs"),
-            {
-              data,
-              totalExp,
-              gananciaPr,
-              gananciaOp,
-              cobrado,
-              porCobrar,
-              porPagar,
-              desde,
-              hasta,
-              fechaYHora,
-            },
-            (err: any, data: any) => {
-              if (err) {
-                res.send(err);
-              } else {
-                let options = {
-                  page_size: "A4",
-                  orientation: "landscape",
-                  header: {
-                    height: "15mm",
-                  },
-                  footer: {
-                    height: "15mm",
-                  },
-                };
 
-                pdf
-                  .create(data, options)
-                  .toFile(
-                    "files/REPORTE_FILES_DETALLADO_" + fecha + ".pdf",
-                    function (err: any, data: any) {
-                      if (err) {
-                        res.send(err);
-                      } else {
-                        res.download(
-                          "/REPORTE_FILES_DETALLADO_" + fecha + ".pdf"
-                        );
-                        res.send({
-                          msg: "File created successfully",
-                          path: path.join(
-                            "/REPORTE_FILES_DETALLADO_" + fecha + ".pdf"
-                          ),
-                        });
-                      }
-                    }
-                  );
-              }
+        let fecha = moment().format("YYYY_MM_DD");
+        let fechaYHoraStr = moment().format("YYYY-MMM-DD HH:mm:ss");
+
+        ejs.renderFile(
+          path.join(__dirname, "../views/", "pdf-fileDetails.ejs"),
+          {
+            data,
+            totalExp,
+            gananciaPr,
+            gananciaOp,
+            cobrado,
+            porCobrar,
+            porPagar,
+            desde,
+            hasta,
+            fechaYHora: fechaYHoraStr,
+          },
+          async (err: any, html: any) => {
+            if (err) {
+              res.send(err);
+            } else {
+              const browser = await puppeteer.launch({ headless: "new" });
+              const page = await browser.newPage();
+              await page.setContent(html, { waitUntil: "networkidle0" });
+
+              const outputPath = `files/REPORTE_FILES_DETALLADO_${fecha}.pdf`;
+              await page.pdf({
+                path: outputPath,
+                format: "A4",
+                printBackground: true,
+                landscape: true,
+                margin: {
+                  top: "15mm",
+                  bottom: "15mm",
+                  left: "10mm",
+                  right: "10mm",
+                },
+              });
+
+              await browser.close();
+
+              res.download(`/REPORTE_FILES_DETALLADO_${fecha}.pdf`);
+              res.send({
+                msg: "File created successfully",
+                path: path.join(`/REPORTE_FILES_DETALLADO_${fecha}.pdf`),
+              });
             }
-          );
-        } catch (err) {
-          console.log(err);
-        }
+          }
+        );
       }
     }
   );
@@ -1393,9 +1308,9 @@ export const getPdfInstructivoDetallado = async (
   req: Request,
   res: Response
 ) => {
-  let ejs = require("ejs");
-  let pdf = require("html-pdf");
-  let path = require("path");
+  const path = require("path");
+  const ejs = require("ejs");
+  const puppeteer = require("puppeteer");
 
   const {
     bultos,
@@ -1445,42 +1360,40 @@ export const getPdfInstructivoDetallado = async (
         totalIgvEgresosOp,
         totalTotalEgresosOp,
       },
-      (err: any, data: any) => {
+      async (err: any, html: string) => {
         if (err) {
           res.send(err);
         } else {
-          let options = {
-            page_size: "A4",
-            orientation: "portrait",
-            header: {
-              height: "1mm",
-            },
-            footer: {
-              height: "2mm",
-            },
-          };
+          const browser = await puppeteer.launch({ headless: "new" });
+          const page = await browser.newPage();
+          await page.setContent(html, { waitUntil: "networkidle0" });
 
-          pdf
-            .create(data, options)
-            .toFile(
-              "files/INSTRUCTIVO_DETALLADO.pdf",
-              function (err: any, data: any) {
-                if (err) {
-                  res.send(err);
-                } else {
-                  res.download("INSTRUCTIVO_DETALLADO.pdf");
-                  res.send({
-                    msg: "File created successfully",
-                    path: path.join("INSTRUCTIVO_DETALLADO.pdf"),
-                  });
-                }
-              }
-            );
+          const outputPath = "files/INSTRUCTIVO_DETALLADO.pdf";
+          await page.pdf({
+            path: outputPath,
+            format: "A4",
+            printBackground: true,
+            margin: {
+              top: "10mm",
+              bottom: "10mm",
+              left: "10mm",
+              right: "10mm",
+            },
+          });
+
+          await browser.close();
+
+          res.download("INSTRUCTIVO_DETALLADO.pdf");
+          res.send({
+            msg: "File created successfully",
+            path: path.join("INSTRUCTIVO_DETALLADO.pdf"),
+          });
         }
       }
     );
   } catch (err) {
     console.log(err);
+    res.status(500).send("Error al generar PDF");
   }
 };
 
@@ -1769,9 +1682,10 @@ function resumenCXC(rows, rows2) {
 
 export const exportarPDFCXP = async (req: Request, res: Response) => {
   const { tipo_reporte: formato } = req.query;
-
-  let ejs = require("ejs");
-  let pdf = require("html-pdf");
+  const ejs = require("ejs");
+  const puppeteer = require("puppeteer");
+  const path = require("path");
+  const moment = require("moment");
 
   let title = "REPORTE DE CUENTAS POR PAGAR";
   let fechaEmision = moment().format("DD-MM-YYYY");
@@ -1781,31 +1695,24 @@ export const exportarPDFCXP = async (req: Request, res: Response) => {
   let header = await obtenerHeaderCXP(req.query);
 
   let filtro = [];
-  console.log(header);
-  if (header[0].proveedor) {
+
+  if (header[0].proveedor)
     filtro.push({ nombre: "Cliente", descripcion: header[0].proveedor });
-  }
-  if (header[0].desde) {
+  if (header[0].desde)
     filtro.push({ nombre: "Desde", descripcion: header[0].desde });
-  }
-  if (header[0].hasta) {
+  if (header[0].hasta)
     filtro.push({ nombre: "Hasta", descripcion: header[0].hasta });
-  }
-  if (header[0].llegada) {
+  if (header[0].llegada)
     filtro.push({ nombre: "Llegada", descripcion: header[0].llegada });
-  }
-  if (header[0].nro_expediente) {
+  if (header[0].nro_expediente)
     filtro.push({
       nombre: "Nro Expediente",
       descripcion: header[0].nro_expediente,
     });
-  }
-  if (header[0].gasto) {
+  if (header[0].gasto)
     filtro.push({ nombre: "Ingreso", descripcion: header[0].gasto });
-  }
-  if (header[0].subgasto) {
+  if (header[0].subgasto)
     filtro.push({ nombre: "Sub Ingreso", descripcion: header[0].subgasto });
-  }
 
   let totalvencidoObj_default = {
     "+60": null,
@@ -1852,16 +1759,17 @@ export const exportarPDFCXP = async (req: Request, res: Response) => {
               fechavencimiento: detalle.fecha_vencimiento
                 ? moment(detalle.fecha_vencimiento).format("DD/MM/YYYY")
                 : "",
-              diasatraso: detalle.dias_atraso ? detalle.dias_atraso : 0,
-              estatus: detalle.estatus ? detalle.estatus : "",
-              dias_credito: detalle.dias_credito ? detalle.dias_credito : 0,
-              dias_vencidos: detalle.dias_vencidos ? detalle.dias_vencidos : 0,
+              diasatraso: detalle.dias_atraso || 0,
+              estatus: detalle.estatus || "",
+              dias_credito: detalle.dias_credito || 0,
+              dias_vencidos: detalle.dias_vencidos || 0,
             });
           });
         }
       });
     }
   }
+
   if (Array.isArray(rowsAdmin)) {
     if (rowsAdmin.length > 0) {
       rowsAdmin.forEach((element) => {
@@ -1887,10 +1795,10 @@ export const exportarPDFCXP = async (req: Request, res: Response) => {
               fechavencimiento: detalle.fecha_vencimiento
                 ? moment(detalle.fecha_vencimiento).format("DD/MM/YYYY")
                 : "",
-              diasatraso: detalle.dias_atraso ? detalle.dias_atraso : 0,
-              estatus: detalle.estatus ? detalle.estatus : "",
-              dias_credito: detalle.dias_credito ? detalle.dias_credito : 0,
-              dias_vencidos: detalle.dias_vencidos ? detalle.dias_vencidos : 0,
+              diasatraso: detalle.dias_atraso || 0,
+              estatus: detalle.estatus || "",
+              dias_credito: detalle.dias_credito || 0,
+              dias_vencidos: detalle.dias_vencidos || 0,
             });
           });
         }
@@ -1900,237 +1808,77 @@ export const exportarPDFCXP = async (req: Request, res: Response) => {
 
   dataset.filter((v) => {
     const { dias_vencidos, total_pagar: monto, estatus } = v;
-
     if (estatus.toUpperCase() == "VENCIDO") {
       switch (true) {
         case dias_vencidos > 60:
-          totalvencidoObj["+60"] = parseFloat(totalvencidoObj["+60"]) || 0;
+          totalvencidoObj["+60"] = totalvencidoObj["+60"] || 0;
           totalvencidoObj["+60"] += monto;
           break;
         case dias_vencidos <= 60 && dias_vencidos > 45:
-          totalvencidoObj["+45"] = parseFloat(totalvencidoObj["+45"]) || 0;
+          totalvencidoObj["+45"] = totalvencidoObj["+45"] || 0;
           totalvencidoObj["+45"] += monto;
           break;
         case dias_vencidos <= 45 && dias_vencidos > 30:
-          totalvencidoObj["+30"] = parseFloat(totalvencidoObj["+30"]) || 0;
+          totalvencidoObj["+30"] = totalvencidoObj["+30"] || 0;
           totalvencidoObj["+30"] += monto;
           break;
         case dias_vencidos <= 30 && dias_vencidos > 15:
-          totalvencidoObj["+15"] = parseFloat(totalvencidoObj["+15"]) || 0;
+          totalvencidoObj["+15"] = totalvencidoObj["+15"] || 0;
           totalvencidoObj["+15"] += monto;
           break;
         case dias_vencidos <= 15 && dias_vencidos > 7:
-          totalvencidoObj["+7"] = parseFloat(totalvencidoObj["+7"]) || 0;
+          totalvencidoObj["+7"] = totalvencidoObj["+7"] || 0;
           totalvencidoObj["+7"] += monto;
           break;
         case dias_vencidos <= 7 && dias_vencidos > 0:
-          totalvencidoObj["+0"] = parseFloat(totalvencidoObj["+0"]) || 0;
+          totalvencidoObj["+0"] = totalvencidoObj["+0"] || 0;
           totalvencidoObj["+0"] += monto;
           break;
       }
     } else if (estatus.toUpperCase() == "POR VENCER") {
       switch (true) {
         case dias_vencidos <= -60:
-          totalxvencerObj["+60"] = parseFloat(totalxvencerObj["+60"]) || 0;
+          totalxvencerObj["+60"] = totalxvencerObj["+60"] || 0;
           totalxvencerObj["+60"] += monto;
           break;
         case dias_vencidos > -60 && dias_vencidos <= -45:
-          totalxvencerObj["-60"] = parseFloat(totalxvencerObj["-60"]) || 0;
+          totalxvencerObj["-60"] = totalxvencerObj["-60"] || 0;
           totalxvencerObj["-60"] += monto;
           break;
         case dias_vencidos > -45 && dias_vencidos <= -30:
-          totalxvencerObj["-45"] = parseFloat(totalxvencerObj["-45"]) || 0;
+          totalxvencerObj["-45"] = totalxvencerObj["-45"] || 0;
           totalxvencerObj["-45"] += monto;
           break;
         case dias_vencidos > -30 && dias_vencidos <= -15:
-          totalxvencerObj["-30"] = parseFloat(totalxvencerObj["-30"]) || 0;
+          totalxvencerObj["-30"] = totalxvencerObj["-30"] || 0;
           totalxvencerObj["-30"] += monto;
           break;
         case dias_vencidos > -15 && dias_vencidos <= -7:
-          totalxvencerObj["-15"] = parseFloat(totalxvencerObj["-15"]) || 0;
+          totalxvencerObj["-15"] = totalxvencerObj["-15"] || 0;
           totalxvencerObj["-15"] += monto;
           break;
         case dias_vencidos > -7:
-          totalxvencerObj["-7"] = parseFloat(totalxvencerObj["-7"]) || 0;
+          totalxvencerObj["-7"] = totalxvencerObj["-7"] || 0;
           totalxvencerObj["-7"] += monto;
           break;
       }
     }
   });
 
-  let totalvencido_array = Object.entries(totalvencidoObj);
-  let totalxvencer_array = Object.entries(totalxvencerObj);
-  let totalvencido = totalvencido_array.reduce(
-    (suma, v) => suma + (v[1] || 0),
-    0
-  );
-  let totalxvencer = totalxvencer_array.reduce(
-    (suma, v) => suma + (v[1] || 0),
-    0
-  );
-
-  totalvencido_array = totalvencido_array.map(([k, v]) => [
+  let totalvencido_array = Object.entries(totalvencidoObj).map(([k, v]) => [
     k,
     v ? v.toFixed(2) : null,
   ]);
-  totalxvencer_array = totalxvencer_array.map(([k, v]) => [
+  let totalxvencer_array = Object.entries(totalxvencerObj).map(([k, v]) => [
     k,
     v ? v.toFixed(2) : null,
   ]);
-  totalvencido = totalvencido ? parseFloat(totalvencido).toFixed(2) : null;
-  totalxvencer = totalxvencer ? parseFloat(totalxvencer).toFixed(2) : null;
-
-  let data = [];
-  if (formato == "1") {
-    // Generar PDF por Fecha de Vencimiento
-    title += " - Por Fecha de vencimiento";
-
-    dataset.sort((a, b) => {
-      return b.diasatraso - a.diasatraso;
-    });
-
-    data = dataset;
-  } else if (formato == "2") {
-    // Generar PDF por Proveedor
-    title += " - Por Proveedores";
-
-    let expedientesxproveedorObj = {};
-    dataset.map((v) => {
-      if (expedientesxproveedorObj[v.id_proveedor] === undefined) {
-        expedientesxproveedorObj[v.id_proveedor] = {
-          proveedor: v.proveedor.trim(),
-          dias_credito: v.dias_credito,
-          totalvencido: null,
-          totalxvencer: null,
-          expedientes: [
-            {
-              expediente: v.expediente,
-              factura: v.factura,
-              monto: v.total_pagar,
-              estatus: v.estatus,
-              dias_vencidos: v.dias_vencidos,
-              vencido: { ...totalvencidoObj_default },
-              xvencer: { ...totalxvencerObj_default },
-            },
-          ],
-        };
-      } else {
-        expedientesxproveedorObj[v.id_proveedor]["expedientes"].push({
-          expediente: v.expediente,
-          factura: v.factura,
-          monto: v.total_pagar,
-          estatus: v.estatus,
-          dias_vencidos: v.dias_vencidos,
-          vencido: { ...totalvencidoObj_default },
-          xvencer: { ...totalxvencerObj_default },
-        });
-      }
-    });
-
-    Object.entries(expedientesxproveedorObj).map(([key, item]) => {
-      item["expedientes"].map((v) => {
-        let total = 0;
-
-        let { dias_vencidos, monto, estatus } = v;
-        if (estatus.toUpperCase() == "VENCIDO") {
-          switch (true) {
-            case dias_vencidos > 60:
-              v["vencido"]["+60"] = parseFloat(v["vencido"]["+60"]) || 0;
-              v["vencido"]["+60"] += monto;
-              total += monto;
-              break;
-            case dias_vencidos <= 60 && dias_vencidos > 45:
-              v["vencido"]["+45"] = parseFloat(v["vencido"]["+45"]) || 0;
-              v["vencido"]["+45"] += monto;
-              total += monto;
-              break;
-            case dias_vencidos <= 45 && dias_vencidos > 30:
-              v["vencido"]["+30"] = parseFloat(v["vencido"]["+30"]) || 0;
-              v["vencido"]["+30"] += monto;
-              total += monto;
-              break;
-            case dias_vencidos <= 30 && dias_vencidos > 15:
-              v["vencido"]["+15"] = parseFloat(v["vencido"]["+15"]) || 0;
-              v["vencido"]["+15"] += monto;
-              total += monto;
-              break;
-            case dias_vencidos <= 15 && dias_vencidos > 7:
-              v["vencido"]["+7"] = parseFloat(v["vencido"]["+7"]) || 0;
-              v["vencido"]["+7"] += monto;
-              total += monto;
-              break;
-            case dias_vencidos <= 7 && dias_vencidos > 0:
-              v["vencido"]["+0"] = parseFloat(v["vencido"]["+0"]) || 0;
-              v["vencido"]["+0"] += monto;
-              total += monto;
-              break;
-          }
-
-          if (total) {
-            item["totalvencido"] =
-              (parseFloat(item["totalvencido"]) || 0) + total;
-          }
-        } else if (estatus.toUpperCase() == "POR VENCER") {
-          switch (true) {
-            case dias_vencidos <= -60:
-              v["xvencer"]["+60"] = parseFloat(v["xvencer"]["+60"]) || 0;
-              v["xvencer"]["+60"] += monto;
-              total += monto;
-              break;
-            case dias_vencidos > -60 && dias_vencidos <= -45:
-              v["xvencer"]["-60"] = parseFloat(v["xvencer"]["-60"]) || 0;
-              v["xvencer"]["-60"] += monto;
-              total += monto;
-              break;
-            case dias_vencidos > -45 && dias_vencidos <= -30:
-              v["xvencer"]["-45"] = parseFloat(v["xvencer"]["-45"]) || 0;
-              v["xvencer"]["-45"] += monto;
-              total += monto;
-              break;
-            case dias_vencidos > -30 && dias_vencidos <= -15:
-              v["xvencer"]["-30"] = parseFloat(v["xvencer"]["-30"]) || 0;
-              v["xvencer"]["-30"] += monto;
-              total += monto;
-              break;
-            case dias_vencidos > -15 && dias_vencidos <= -7:
-              v["xvencer"]["-15"] = parseFloat(v["xvencer"]["-15"]) || 0;
-              v["xvencer"]["-15"] += monto;
-              total += monto;
-              break;
-            case dias_vencidos > -7:
-              v["xvencer"]["-7"] = parseFloat(v["xvencer"]["-7"]) || 0;
-              v["xvencer"]["-7"] += monto;
-              total += monto;
-              break;
-          }
-
-          if (total) {
-            item["totalxvencer"] =
-              (parseFloat(item["totalxvencer"]) || 0) + total;
-          }
-        }
-
-        return v;
-      });
-
-      data.push(item);
-    });
-
-    data.map((item) => {
-      item["totalvencido"] = item.totalvencido
-        ? item.totalvencido.toFixed(2)
-        : null;
-      item["totalxvencer"] = item.totalxvencer
-        ? item.totalxvencer.toFixed(2)
-        : null;
-
-      return item;
-    });
-
-    data.sort((a, b) => {
-      return a.proveedor.localeCompare(b.proveedor);
-    });
-  }
+  let totalvencido = Object.values(totalvencidoObj)
+    .reduce((s, v) => s + (v || 0), 0)
+    .toFixed(2);
+  let totalxvencer = Object.values(totalxvencerObj)
+    .reduce((s, v) => s + (v || 0), 0)
+    .toFixed(2);
 
   ejs.renderFile(
     path.join(__dirname, "../views/", "reporteCXP.ejs"),
@@ -2138,43 +1886,36 @@ export const exportarPDFCXP = async (req: Request, res: Response) => {
       title,
       formato,
       fechaEmision,
-      data,
+      data: dataset,
       totalvencido_array,
       totalxvencer_array,
       totalvencido,
       totalxvencer,
       filtro,
     },
-    (err, html) => {
+    async (err, html) => {
       if (err) {
         res.send(err);
       } else {
-        let options = {
-          page_size: "A4",
-          orientation: "landscape",
-          border: {
+        const browser = await puppeteer.launch({ headless: "new" });
+        const page = await browser.newPage();
+        await page.setContent(html, { waitUntil: "networkidle0" });
+
+        const buffer = await page.pdf({
+          format: "A4",
+          printBackground: true,
+          landscape: true,
+          margin: {
             top: "10mm",
             right: "10mm",
             bottom: "10mm",
             left: "10mm",
           },
-          header: {
-            height: "1mm",
-          },
-          footer: {
-            height: "2mm",
-            contents:
-              '<div style="text-align: center;">Author: Marc Bachmann</div>',
-          },
-        };
-        pdf.create(html, options).toBuffer(function (err, buffer) {
-          if (err) {
-            res.status(500).json({ error: "Error generating PDF" });
-          } else {
-            res.setHeader("Content-Type", "application/pdf");
-            res.status(200).send(buffer);
-          }
         });
+
+        await browser.close();
+        res.setHeader("Content-Type", "application/pdf");
+        res.status(200).send(buffer);
       }
     }
   );
@@ -2243,9 +1984,10 @@ function getDebsToPayAdmin(data) {
 
 export const exportarPDFCXC = async (req: Request, res: Response) => {
   const { tipo_reporte: formato } = req.query;
-
-  let ejs = require("ejs");
-  let pdf = require("html-pdf");
+  const ejs = require("ejs");
+  const puppeteer = require("puppeteer");
+  const path = require("path");
+  const moment = require("moment");
 
   let title = "REPORTE DE CUENTAS POR COBRAR";
   let fechaEmision = moment().format("DD-MM-YYYY");
@@ -2255,31 +1997,24 @@ export const exportarPDFCXC = async (req: Request, res: Response) => {
   let rowsAdmin = await getReporteCXCAdmin(req.query);
 
   let filtro = [];
-  console.log(header);
-  if (header[0].cliente) {
+
+  if (header[0].cliente)
     filtro.push({ nombre: "Cliente", descripcion: header[0].cliente });
-  }
-  if (header[0].desde) {
+  if (header[0].desde)
     filtro.push({ nombre: "Desde", descripcion: header[0].desde });
-  }
-  if (header[0].hasta) {
+  if (header[0].hasta)
     filtro.push({ nombre: "Hasta", descripcion: header[0].hasta });
-  }
-  if (header[0].llegada) {
+  if (header[0].llegada)
     filtro.push({ nombre: "Llegada", descripcion: header[0].llegada });
-  }
-  if (header[0].nro_expediente) {
+  if (header[0].nro_expediente)
     filtro.push({
       nombre: "Nro Expediente",
       descripcion: header[0].nro_expediente,
     });
-  }
-  if (header[0].ingreso) {
+  if (header[0].ingreso)
     filtro.push({ nombre: "Ingreso", descripcion: header[0].ingreso });
-  }
-  if (header[0].subingreso) {
+  if (header[0].subingreso)
     filtro.push({ nombre: "Sub Ingreso", descripcion: header[0].subingreso });
-  }
 
   let totalvencidoObj_default = {
     "+60": null,
@@ -2302,306 +2037,108 @@ export const exportarPDFCXC = async (req: Request, res: Response) => {
   let totalxvencerObj = { ...totalxvencerObj_default };
 
   if (Array.isArray(rowsOp)) {
-    if (rowsOp.length > 0) {
-      rowsOp.forEach((element) => {
-        let detalles = element.details;
-        if (detalles.length > 0) {
-          detalles.forEach((detalle) => {
-            dataset.push({
-              fechavencimiento: detalle.fechadevencimiento
-                ? moment(detalle.fechadevencimiento).format("DD/MM/YYYY")
-                : "",
-              esoperativo: true,
-              esadministrativo: false,
-              proveedor: detalle.nameconsigner,
-              expediente: detalle.nro_master,
-              id_consigner: detalle.id_consigner ? detalle.id_consigner : 0,
-              nameconsigner: detalle.nameconsigner,
-              llegada: detalle.llegada == 1 ? "LLEGADA" : "NO LLEGADA",
-              fecha_disponibilidad: detalle.fecha_disponibilidad
-                ? moment(detalle.fecha_disponibilidad).format("DD/MM/YYYY")
-                : "",
-              factura: detalle.nro_factura ? detalle.nro_factura : "N/F",
-              symbol: detalle.symbol,
-              total_pagar: detalle.total_pagar,
-              diasatraso: detalle.diasatraso ? detalle.diasatraso : 0,
-              dias_credito: detalle.dias_credito ? detalle.dias_credito : 0,
-              dias_vencidos: detalle.dias_vencidos ? detalle.dias_vencidos : 0,
-              estatus: detalle.estatus ? detalle.estatus : "",
-            });
-          });
-        }
+    rowsOp.forEach((element) => {
+      element.details.forEach((detalle) => {
+        dataset.push({
+          fechavencimiento: detalle.fechadevencimiento
+            ? moment(detalle.fechadevencimiento).format("DD/MM/YYYY")
+            : "",
+          esoperativo: true,
+          esadministrativo: false,
+          proveedor: detalle.nameconsigner,
+          expediente: detalle.nro_master,
+          id_consigner: detalle.id_consigner || 0,
+          nameconsigner: detalle.nameconsigner,
+          llegada: detalle.llegada == 1 ? "LLEGADA" : "NO LLEGADA",
+          fecha_disponibilidad: detalle.fecha_disponibilidad
+            ? moment(detalle.fecha_disponibilidad).format("DD/MM/YYYY")
+            : "",
+          factura: detalle.nro_factura || "N/F",
+          symbol: detalle.symbol,
+          total_pagar: detalle.total_pagar,
+          diasatraso: detalle.diasatraso || 0,
+          dias_credito: detalle.dias_credito || 0,
+          dias_vencidos: detalle.dias_vencidos || 0,
+          estatus: detalle.estatus || "",
+        });
       });
-    }
+    });
   }
+
   if (Array.isArray(rowsAdmin)) {
-    if (rowsAdmin.length > 0) {
-      rowsAdmin.forEach((element) => {
-        let detalles = element.details;
-        if (detalles.length > 0) {
-          detalles.forEach((detalle) => {
-            dataset.push({
-              fechavencimiento: detalle.fechavencimiento
-                ? moment(detalle.fechavencimiento).format("DD/MM/YYYY")
-                : "",
-              esoperativo: false,
-              esadministrativo: true,
-              proveedor: detalle.nameconsigner,
-              expediente: "",
-              id_consigner: detalle.id_consigner ? detalle.id_consigner : 0,
-              nameconsigner: detalle.nameconsigner,
-              llegada: detalle.llegada == 1 ? "LLEGADA" : "NO LLEGADA",
-              fecha_disponibilidad: detalle.fecha
-                ? moment(detalle.fecha).format("DD/MM/YYYY")
-                : "",
-              factura: detalle.concepto ? detalle.concepto : "N/F",
-              symbol: detalle.symbol,
-              // total_pagar: detalle.monto,
-              total_pagar: detalle.total_pagar,
-              diasatraso: detalle.diasatraso ? detalle.diasatraso : 0,
-              dias_credito: detalle.dias_credito ? detalle.dias_credito : 0,
-              dias_vencidos: detalle.dias_vencidos ? detalle.dias_vencidos : 0,
-              estatus: detalle.estatus ? detalle.estatus : "",
-            });
-          });
-        }
+    rowsAdmin.forEach((element) => {
+      element.details.forEach((detalle) => {
+        dataset.push({
+          fechavencimiento: detalle.fechavencimiento
+            ? moment(detalle.fechavencimiento).format("DD/MM/YYYY")
+            : "",
+          esoperativo: false,
+          esadministrativo: true,
+          proveedor: detalle.nameconsigner,
+          expediente: "",
+          id_consigner: detalle.id_consigner || 0,
+          nameconsigner: detalle.nameconsigner,
+          llegada: detalle.llegada == 1 ? "LLEGADA" : "NO LLEGADA",
+          fecha_disponibilidad: detalle.fecha
+            ? moment(detalle.fecha).format("DD/MM/YYYY")
+            : "",
+          factura: detalle.concepto || "N/F",
+          symbol: detalle.symbol,
+          total_pagar: detalle.total_pagar,
+          diasatraso: detalle.diasatraso || 0,
+          dias_credito: detalle.dias_credito || 0,
+          dias_vencidos: detalle.dias_vencidos || 0,
+          estatus: detalle.estatus || "",
+        });
       });
-    }
+    });
   }
 
   dataset.filter((v) => {
     const { dias_vencidos, total_pagar: monto, estatus } = v;
 
     if (estatus.toUpperCase() == "VENCIDO") {
-      switch (true) {
-        case dias_vencidos > 60:
-          totalvencidoObj["+60"] = parseFloat(totalvencidoObj["+60"]) || 0;
-          totalvencidoObj["+60"] += monto;
-          break;
-        case dias_vencidos <= 60 && dias_vencidos > 45:
-          totalvencidoObj["+45"] = parseFloat(totalvencidoObj["+45"]) || 0;
-          totalvencidoObj["+45"] += monto;
-          break;
-        case dias_vencidos <= 45 && dias_vencidos > 30:
-          totalvencidoObj["+30"] = parseFloat(totalvencidoObj["+30"]) || 0;
-          totalvencidoObj["+30"] += monto;
-          break;
-        case dias_vencidos <= 30 && dias_vencidos > 15:
-          totalvencidoObj["+15"] = parseFloat(totalvencidoObj["+15"]) || 0;
-          totalvencidoObj["+15"] += monto;
-          break;
-        case dias_vencidos <= 15 && dias_vencidos > 7:
-          totalvencidoObj["+7"] = parseFloat(totalvencidoObj["+7"]) || 0;
-          totalvencidoObj["+7"] += monto;
-          break;
-        case dias_vencidos <= 7 && dias_vencidos > 0:
-          totalvencidoObj["+0"] = parseFloat(totalvencidoObj["+0"]) || 0;
-          totalvencidoObj["+0"] += monto;
-          break;
-      }
+      if (dias_vencidos > 60)
+        totalvencidoObj["+60"] = (totalvencidoObj["+60"] || 0) + monto;
+      else if (dias_vencidos > 45)
+        totalvencidoObj["+45"] = (totalvencidoObj["+45"] || 0) + monto;
+      else if (dias_vencidos > 30)
+        totalvencidoObj["+30"] = (totalvencidoObj["+30"] || 0) + monto;
+      else if (dias_vencidos > 15)
+        totalvencidoObj["+15"] = (totalvencidoObj["+15"] || 0) + monto;
+      else if (dias_vencidos > 7)
+        totalvencidoObj["+7"] = (totalvencidoObj["+7"] || 0) + monto;
+      else if (dias_vencidos > 0)
+        totalvencidoObj["+0"] = (totalvencidoObj["+0"] || 0) + monto;
     } else if (estatus.toUpperCase() == "POR VENCER") {
-      switch (true) {
-        case dias_vencidos <= -60:
-          totalxvencerObj["+60"] = parseFloat(totalxvencerObj["+60"]) || 0;
-          totalxvencerObj["+60"] += monto;
-          break;
-        case dias_vencidos > -60 && dias_vencidos <= -45:
-          totalxvencerObj["-60"] = parseFloat(totalxvencerObj["-60"]) || 0;
-          totalxvencerObj["-60"] += monto;
-          break;
-        case dias_vencidos > -45 && dias_vencidos <= -30:
-          totalxvencerObj["-45"] = parseFloat(totalxvencerObj["-45"]) || 0;
-          totalxvencerObj["-45"] += monto;
-          break;
-        case dias_vencidos > -30 && dias_vencidos <= -15:
-          totalxvencerObj["-30"] = parseFloat(totalxvencerObj["-30"]) || 0;
-          totalxvencerObj["-30"] += monto;
-          break;
-        case dias_vencidos > -15 && dias_vencidos <= -7:
-          totalxvencerObj["-15"] = parseFloat(totalxvencerObj["-15"]) || 0;
-          totalxvencerObj["-15"] += monto;
-          break;
-        case dias_vencidos > -7:
-          totalxvencerObj["-7"] = parseFloat(totalxvencerObj["-7"]) || 0;
-          totalxvencerObj["-7"] += monto;
-          break;
-      }
+      if (dias_vencidos <= -60)
+        totalxvencerObj["+60"] = (totalxvencerObj["+60"] || 0) + monto;
+      else if (dias_vencidos <= -45)
+        totalxvencerObj["-60"] = (totalxvencerObj["-60"] || 0) + monto;
+      else if (dias_vencidos <= -30)
+        totalxvencerObj["-45"] = (totalxvencerObj["-45"] || 0) + monto;
+      else if (dias_vencidos <= -15)
+        totalxvencerObj["-30"] = (totalxvencerObj["-30"] || 0) + monto;
+      else if (dias_vencidos <= -7)
+        totalxvencerObj["-15"] = (totalxvencerObj["-15"] || 0) + monto;
+      else totalxvencerObj["-7"] = (totalxvencerObj["-7"] || 0) + monto;
     }
   });
 
-  let totalvencido_array = Object.entries(totalvencidoObj);
-  let totalxvencer_array = Object.entries(totalxvencerObj);
-  let totalvencido = totalvencido_array.reduce(
-    (suma, v) => suma + (v[1] || 0),
-    0
-  );
-  let totalxvencer = totalxvencer_array.reduce(
-    (suma, v) => suma + (v[1] || 0),
-    0
-  );
-
-  totalvencido_array = totalvencido_array.map(([k, v]) => [
+  let totalvencido_array = Object.entries(totalvencidoObj).map(([k, v]) => [
     k,
     v ? v.toFixed(2) : null,
   ]);
-  totalxvencer_array = totalxvencer_array.map(([k, v]) => [
+  let totalxvencer_array = Object.entries(totalxvencerObj).map(([k, v]) => [
     k,
     v ? v.toFixed(2) : null,
   ]);
-  totalvencido = totalvencido ? parseFloat(totalvencido).toFixed(2) : null;
-  totalxvencer = totalxvencer ? parseFloat(totalxvencer).toFixed(2) : null;
-
-  let data = [];
-  if (formato == "1") {
-    // Generar PDF por Fecha de Vencimiento
-    title += " - Por Fecha de vencimiento";
-
-    dataset.sort((a, b) => {
-      return b.dias_vencidos - a.dias_vencidos;
-    });
-
-    data = dataset;
-  } else if (formato == "2") {
-    // Generar PDF por Cliente
-    title += " - Por Clientes";
-
-    let expedientesxclienteObj = {};
-    dataset.map((v) => {
-      if (expedientesxclienteObj[v.id_consigner] === undefined) {
-        expedientesxclienteObj[v.id_consigner] = {
-          cliente: v.nameconsigner.trim(),
-          dias_credito: v.dias_credito,
-          totalvencido: null,
-          totalxvencer: null,
-          expedientes: [
-            {
-              expediente: v.expediente,
-              factura: v.factura,
-              monto: v.total_pagar,
-              estatus: v.estatus,
-              dias_vencidos: v.dias_vencidos,
-              vencido: { ...totalvencidoObj_default },
-              xvencer: { ...totalxvencerObj_default },
-            },
-          ],
-        };
-      } else {
-        expedientesxclienteObj[v.id_consigner]["expedientes"].push({
-          expediente: v.expediente,
-          factura: v.factura,
-          monto: v.total_pagar,
-          estatus: v.estatus,
-          dias_vencidos: v.dias_vencidos,
-          vencido: { ...totalvencidoObj_default },
-          xvencer: { ...totalxvencerObj_default },
-        });
-      }
-    });
-
-    Object.entries(expedientesxclienteObj).map(([key, item]) => {
-      item["expedientes"].map((v) => {
-        let total = 0;
-
-        let { dias_vencidos, monto, estatus } = v;
-        if (estatus.toUpperCase() == "VENCIDO") {
-          switch (true) {
-            case dias_vencidos > 60:
-              v["vencido"]["+60"] = parseFloat(v["vencido"]["+60"]) || 0;
-              v["vencido"]["+60"] += monto;
-              total += monto;
-              break;
-            case dias_vencidos <= 60 && dias_vencidos > 45:
-              v["vencido"]["+45"] = parseFloat(v["vencido"]["+45"]) || 0;
-              v["vencido"]["+45"] += monto;
-              total += monto;
-              break;
-            case dias_vencidos <= 45 && dias_vencidos > 30:
-              v["vencido"]["+30"] = parseFloat(v["vencido"]["+30"]) || 0;
-              v["vencido"]["+30"] += monto;
-              total += monto;
-              break;
-            case dias_vencidos <= 30 && dias_vencidos > 15:
-              v["vencido"]["+15"] = parseFloat(v["vencido"]["+15"]) || 0;
-              v["vencido"]["+15"] += monto;
-              total += monto;
-              break;
-            case dias_vencidos <= 15 && dias_vencidos > 7:
-              v["vencido"]["+7"] = parseFloat(v["vencido"]["+7"]) || 0;
-              v["vencido"]["+7"] += monto;
-              total += monto;
-              break;
-            case dias_vencidos <= 7 && dias_vencidos > 0:
-              v["vencido"]["+0"] = parseFloat(v["vencido"]["+0"]) || 0;
-              v["vencido"]["+0"] += monto;
-              total += monto;
-              break;
-          }
-
-          if (total) {
-            item["totalvencido"] =
-              (parseFloat(item["totalvencido"]) || 0) + total;
-          }
-        } else if (estatus.toUpperCase() == "POR VENCER") {
-          switch (true) {
-            case dias_vencidos <= -60:
-              v["xvencer"]["+60"] = parseFloat(v["xvencer"]["+60"]) || 0;
-              v["xvencer"]["+60"] += monto;
-              total += monto;
-              break;
-            case dias_vencidos > -60 && dias_vencidos <= -45:
-              v["xvencer"]["-60"] = parseFloat(v["xvencer"]["-60"]) || 0;
-              v["xvencer"]["-60"] += monto;
-              total += monto;
-              break;
-            case dias_vencidos > -45 && dias_vencidos <= -30:
-              v["xvencer"]["-45"] = parseFloat(v["xvencer"]["-45"]) || 0;
-              v["xvencer"]["-45"] += monto;
-              total += monto;
-              break;
-            case dias_vencidos > -30 && dias_vencidos <= -15:
-              v["xvencer"]["-30"] = parseFloat(v["xvencer"]["-30"]) || 0;
-              v["xvencer"]["-30"] += monto;
-              total += monto;
-              break;
-            case dias_vencidos > -15 && dias_vencidos <= -7:
-              v["xvencer"]["-15"] = parseFloat(v["xvencer"]["-15"]) || 0;
-              v["xvencer"]["-15"] += monto;
-              total += monto;
-              break;
-            case dias_vencidos > -7:
-              v["xvencer"]["-7"] = parseFloat(v["xvencer"]["-7"]) || 0;
-              v["xvencer"]["-7"] += monto;
-              total += monto;
-              break;
-          }
-
-          if (total) {
-            item["totalxvencer"] =
-              (parseFloat(item["totalxvencer"]) || 0) + total;
-          }
-        }
-
-        return v;
-      });
-
-      data.push(item);
-    });
-
-    data.map((item) => {
-      item["totalvencido"] = item.totalvencido
-        ? item.totalvencido.toFixed(2)
-        : null;
-      item["totalxvencer"] = item.totalxvencer
-        ? item.totalxvencer.toFixed(2)
-        : null;
-
-      return item;
-    });
-
-    data.sort((a, b) => {
-      return a.cliente.localeCompare(b.cliente);
-    });
-  }
+  let totalvencido = Object.values(totalvencidoObj)
+    .reduce((s, v) => s + (v || 0), 0)
+    .toFixed(2);
+  let totalxvencer = Object.values(totalxvencerObj)
+    .reduce((s, v) => s + (v || 0), 0)
+    .toFixed(2);
 
   ejs.renderFile(
     path.join(__dirname, "../views/", "reporteCXC.ejs"),
@@ -2610,37 +2147,35 @@ export const exportarPDFCXC = async (req: Request, res: Response) => {
       title,
       formato,
       fechaEmision,
-      data,
+      data: dataset,
       totalvencido_array,
       totalxvencer_array,
       totalvencido,
       totalxvencer,
     },
-    (err, html) => {
+    async (err, html) => {
       if (err) {
         res.send(err);
       } else {
-        let options = {
-          page_size: "A4",
-          orientation: "landscape",
-          header: {
-            height: "1mm",
-          },
-          footer: {
-            height: "2mm",
-            contents:
-              '<div style="text-align: center;">Author: Marc Bachmann</div>',
-          },
-        };
+        const browser = await puppeteer.launch({ headless: "new" });
+        const page = await browser.newPage();
+        await page.setContent(html, { waitUntil: "networkidle0" });
 
-        pdf.create(html, options).toBuffer(function (err, buffer) {
-          if (err) {
-            res.status(500).json({ error: "Error generating PDF" });
-          } else {
-            res.setHeader("Content-Type", "application/pdf");
-            res.status(200).send(buffer);
-          }
+        const buffer = await page.pdf({
+          format: "A4",
+          printBackground: true,
+          landscape: true,
+          margin: {
+            top: "10mm",
+            right: "10mm",
+            bottom: "10mm",
+            left: "10mm",
+          },
         });
+
+        await browser.close();
+        res.setHeader("Content-Type", "application/pdf");
+        res.status(200).send(buffer);
       }
     }
   );
@@ -2864,124 +2399,104 @@ function getColumnLetter(columnNumber) {
 }
 
 export const exportListQuote = async (req: Request, res: Response) => {
-  let ejs = require("ejs");
-  let pdf = require("html-pdf");
-  let path = require("path");
-  let { id_branch, filtro } = req.body;
-  const fechaYHora = new Date();
+  const ejs = require("ejs");
+  const puppeteer = require("puppeteer");
+  const path = require("path");
+  const { id_branch, filtro } = req.body;
   req.setTimeout(0);
 
   await pool.query(
     "select * from TABLE_QUOTE_list($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
     [
-      id_branch ? id_branch : null,
-      filtro.id_marketing ? filtro.id_marketing : null,
-      filtro.id_status ? filtro.id_status : null,
-      filtro.id_entities ? filtro.id_entities : null,
-      filtro.id_modality ? filtro.id_modality : null,
-      filtro.id_shipment ? filtro.id_shipment : null,
-      filtro.id_incoterm ? filtro.id_incoterm : null,
-      filtro.fechainicio ? filtro.fechainicio : null,
-      filtro.fechafin ? filtro.fechafin : null,
-      filtro.estado ? filtro.estado : null,
+      id_branch || null,
+      filtro.id_marketing || null,
+      filtro.id_status || null,
+      filtro.id_entities || null,
+      filtro.id_modality || null,
+      filtro.id_shipment || null,
+      filtro.id_incoterm || null,
+      filtro.fechainicio || null,
+      filtro.fechafin || null,
+      filtro.estado || null,
     ],
-    async (err, response, fields) => {
+    async (err, response) => {
       if (!err) {
-        let rows = response.rows;
-        let sucursal = rows[0].trade_name_sucursal;
-        const countByStatus = {};
+        const rows = response.rows;
+        const sucursal = rows[0]?.trade_name_sucursal || "";
+        const countByStatus: any = {};
 
-        // Itera sobre el array JSON
-        await rows.forEach((item) => {
+        rows.forEach((item) => {
           const status = item.status;
-
           if (!countByStatus[status]) {
-            countByStatus[status] = {
-              status: status,
-              total: 0,
-            };
+            countByStatus[status] = { status, total: 0 };
           }
           countByStatus[status].total++;
-
-          // -------------------------
         });
-        //----------------------------------------
+
         const v_activos = [1, 2, 3, 4, 5, 6, 8, 9, 10, 14, 7];
         const v_inactivos = [15, 11, 13, 12];
 
-        // Contar elementos activos
-        const countActivos = rows.filter((item) => {
-          return (
+        const countActivos = rows.filter(
+          (item) =>
             v_activos.includes(item.status_code) &&
             item.aprobadoflag == false &&
             item.statusmain == 1
-          );
-        }).length;
+        ).length;
 
-        // Contar elementos inactivos
-        const countInactivos = rows.filter((item) => {
-          // (qs.code = any(v_inactivos)) or((qs.code = any(v_activos) and tq.aprobadoflag )AND tq.status =1 )
-          return (
+        const countInactivos = rows.filter(
+          (item) =>
             (v_inactivos.includes(item.status_code) && item.statusmain == 1) ||
             (v_activos.includes(item.status_code) &&
               item.aprobadoflag &&
               item.statusmain == 1)
-          );
-        }).length;
-        const countEliminados = rows.filter((v) => {
-          return v.statusmain == 0;
-        }).length;
+        ).length;
 
-        //---------------------------------------- countByActivosArray
-        let countByStatusArray = Object.values(countByStatus);
-        let countByActivosArray = [];
-        countByActivosArray.push({ name: "Activo", total: countActivos });
-        countByActivosArray.push({ name: "Inactivo", total: countInactivos });
-        countByActivosArray.push({
-          name: "Eliminado",
-          total: countEliminados,
-        });
+        const countEliminados = rows.filter((v) => v.statusmain == 0).length;
+
+        const countByStatusArray = Object.values(countByStatus);
+        const countByActivosArray = [
+          { name: "Activo", total: countActivos },
+          { name: "Inactivo", total: countInactivos },
+          { name: "Eliminado", total: countEliminados },
+        ];
+
         ejs.renderFile(
           path.join(__dirname, "../views/", "reporteListQuote.ejs"),
           { sucursal, countByStatusArray, countByActivosArray, rows },
-          (err: any, data: any) => {
+          async (err: any, html: any) => {
             if (err) {
-              // res.send(err);
               console.log(err);
+              res.status(500).send("Error al renderizar el HTML");
             } else {
-              let options = {
-                page_size: "A4",
-                orientation: "landscape",
-                header: {
-                  height: "10mm",
+              const browser = await puppeteer.launch({ headless: "new" });
+              const page = await browser.newPage();
+              await page.setContent(html, { waitUntil: "networkidle0" });
+
+              const buffer = await page.pdf({
+                format: "A4",
+                landscape: true,
+                printBackground: true,
+                margin: {
+                  top: "10mm",
+                  right: "10mm",
+                  bottom: "10mm",
+                  left: "10mm",
                 },
-                footer: {
-                  height: "10mm",
-                },
-              };
-              pdf
-                .create(data, options)
-                .toFile(
-                  "files/REPORT_LISTADO_QUOTE.pdf",
-                  function (err: any, data: any) {
-                    if (err) {
-                      res.send(err);
-                    } else {
-                      res.download("/REPORT_LISTADO_QUOTE.pdf");
-                      res.send({
-                        msg: "File created successfully",
-                        path: path.join("REPORT_LISTADO_QUOTE.pdf"),
-                      });
-                    }
-                  }
-                );
+              });
+
+              await browser.close();
+              res.setHeader("Content-Type", "application/pdf");
+              res.status(200).send(buffer);
             }
           }
         );
+      } else {
+        res.status(500).send("Error al ejecutar la consulta");
       }
     }
   );
 };
+
 export const exportListQuoteEXCEL = async (req: Request, res: Response) => {
   let wb = new xl.Workbook({
     dateFormat: "dd/mm/yyyy",

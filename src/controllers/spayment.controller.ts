@@ -8,6 +8,11 @@ const { Pool } = pg;
 
 const pool = conexion();
 
+import path from "path";
+import puppeteer from "puppeteer";
+import fs from "fs";
+let ejs = require("ejs");
+
 export const setSPaymentPro = async (req: Request, res: Response) => {
   const dataObj = req.body;
   const conceptos = dataObj.conceptos;
@@ -682,11 +687,6 @@ export const setCheckDebsClient = async (req: Request, res: Response) => {
 };
 
 export const pdfcxp = async (req: Request, res: Response) => {
-  let ejs = require("ejs");
-  let pdf = require("html-pdf");
-  let path = require("path");
-  const fechaYHora = new Date();
-
   const {
     itemsCpp,
     total_pagar,
@@ -720,52 +720,36 @@ export const pdfcxp = async (req: Request, res: Response) => {
       dateRange,
       status,
     },
-    (err: any, data: any) => {
+    async (err: any, html: any) => {
       if (err) {
         res.send(err);
       } else {
-        let options = {
-          page_size: "A4",
-          orientation: "landscape",
-          header: {
-            height: "15mm",
-          },
-          footer: {
-            height: "15mm",
-          },
-        };
+        const browser = await puppeteer.launch({ headless: "new" });
+        const page = await browser.newPage();
+        await page.setContent(html, { waitUntil: "networkidle0" });
 
-        pdf
-          .create(data, options)
-          .toFile(
-            "files/REPORTE_DE_CUENTAS_POR_PAGAR_FECHA_" + fecha + ".pdf",
-            function (err: any, data: any) {
-              if (err) {
-                res.send(err);
-              } else {
-                res.download(
-                  "/REPORTE_DE_CUENTAS_POR_PAGAR_FECHA_" + fecha + ".pdf"
-                );
-                res.send({
-                  msg: "File created successfully",
-                  path: path.join(
-                    "/REPORTE_DE_CUENTAS_POR_PAGAR_FECHA_" + fecha + ".pdf"
-                  ),
-                });
-              }
-            }
-          );
+        const buffer = await page.pdf({
+          format: "A4",
+          landscape: true,
+          printBackground: true,
+          margin: {
+            top: "15mm",
+            bottom: "15mm",
+            left: "10mm",
+            right: "10mm",
+          },
+        });
+
+        await browser.close();
+
+        res.setHeader("Content-Type", "application/pdf");
+        res.status(200).send(buffer);
       }
     }
   );
 };
 
 export const pdfcxc = async (req: Request, res: Response) => {
-  let ejs = require("ejs");
-  let pdf = require("html-pdf");
-  let path = require("path");
-  const fechaYHora = new Date();
-
   const {
     itemsCpp,
     total_pagar,
@@ -799,52 +783,36 @@ export const pdfcxc = async (req: Request, res: Response) => {
       dateRange,
       status,
     },
-    (err: any, data: any) => {
+    async (err: any, html: any) => {
       if (err) {
         res.send(err);
       } else {
-        let options = {
-          page_size: "A4",
-          orientation: "landscape",
-          header: {
-            height: "15mm",
-          },
-          footer: {
-            height: "15mm",
-          },
-        };
+        const browser = await puppeteer.launch({ headless: "new" });
+        const page = await browser.newPage();
+        await page.setContent(html, { waitUntil: "networkidle0" });
 
-        pdf
-          .create(data, options)
-          .toFile(
-            "files/REPORTE_DE_CUENTAS_POR_COBRAR_FECHA_" + fecha + ".pdf",
-            function (err: any, data: any) {
-              if (err) {
-                res.send(err);
-              } else {
-                res.download(
-                  "/REPORTE_DE_CUENTAS_POR_COBRAR_FECHA_" + fecha + ".pdf"
-                );
-                res.send({
-                  msg: "File created successfully",
-                  path: path.join(
-                    "/REPORTE_DE_CUENTAS_POR_COBRAR_FECHA_" + fecha + ".pdf"
-                  ),
-                });
-              }
-            }
-          );
+        const buffer = await page.pdf({
+          format: "A4",
+          landscape: true,
+          printBackground: true,
+          margin: {
+            top: "15mm",
+            bottom: "15mm",
+            left: "10mm",
+            right: "10mm",
+          },
+        });
+
+        await browser.close();
+
+        res.setHeader("Content-Type", "application/pdf");
+        res.status(200).send(buffer);
       }
     }
   );
 };
 
 export const pdfcxpD = async (req: Request, res: Response) => {
-  let ejs = require("ejs");
-  let pdf = require("html-pdf");
-  let path = require("path");
-  const fechaYHora = new Date();
-
   const {
     itemsCpp,
     total_pagar,
@@ -878,58 +846,36 @@ export const pdfcxpD = async (req: Request, res: Response) => {
       dateRange,
       status,
     },
-    (err: any, data: any) => {
+    async (err: any, html: any) => {
       if (err) {
         res.send(err);
       } else {
-        let options = {
-          page_size: "A4",
-          orientation: "landscape",
-          header: {
-            height: "15mm",
-          },
-          footer: {
-            height: "15mm",
-          },
-        };
+        const browser = await puppeteer.launch({ headless: "new" });
+        const page = await browser.newPage();
+        await page.setContent(html, { waitUntil: "networkidle0" });
 
-        pdf
-          .create(data, options)
-          .toFile(
-            "files/REPORTE_DETALLADO_DE_CUENTAS_POR_PAGAR_FECHA_" +
-              fecha +
-              ".pdf",
-            function (err: any, data: any) {
-              if (err) {
-                res.send(err);
-              } else {
-                res.download(
-                  "/REPORTE_DETALLADO_DE_CUENTAS_POR_PAGAR_FECHA_" +
-                    fecha +
-                    ".pdf"
-                );
-                res.send({
-                  msg: "File created successfully",
-                  path: path.join(
-                    "/REPORTE_DETALLADO_DE_CUENTAS_POR_PAGAR_FECHA_" +
-                      fecha +
-                      ".pdf"
-                  ),
-                });
-              }
-            }
-          );
+        const buffer = await page.pdf({
+          format: "A4",
+          landscape: true,
+          printBackground: true,
+          margin: {
+            top: "15mm",
+            bottom: "15mm",
+            left: "10mm",
+            right: "10mm",
+          },
+        });
+
+        await browser.close();
+
+        res.setHeader("Content-Type", "application/pdf");
+        res.status(200).send(buffer);
       }
     }
   );
 };
 
 export const pdfcxcD = async (req: Request, res: Response) => {
-  let ejs = require("ejs");
-  let pdf = require("html-pdf");
-  let path = require("path");
-  const fechaYHora = new Date();
-
   const {
     itemsCpp,
     total_pagar,
@@ -963,47 +909,30 @@ export const pdfcxcD = async (req: Request, res: Response) => {
       dateRange,
       status,
     },
-    (err: any, data: any) => {
+    async (err: any, html: any) => {
       if (err) {
         res.send(err);
       } else {
-        let options = {
-          page_size: "A4",
-          orientation: "landscape",
-          header: {
-            height: "15mm",
-          },
-          footer: {
-            height: "15mm",
-          },
-        };
+        const browser = await puppeteer.launch({ headless: "new" });
+        const page = await browser.newPage();
+        await page.setContent(html, { waitUntil: "networkidle0" });
 
-        pdf
-          .create(data, options)
-          .toFile(
-            "files/REPORTE_DETALLADO_DE_CUENTAS_POR_COBRAR_FECHA_" +
-              fecha +
-              ".pdf",
-            function (err: any, data: any) {
-              if (err) {
-                res.send(err);
-              } else {
-                res.download(
-                  "/REPORTE_DETALLADO_DE_CUENTAS_POR_COBRAR_FECHA_" +
-                    fecha +
-                    ".pdf"
-                );
-                res.send({
-                  msg: "File created successfully",
-                  path: path.join(
-                    "/REPORTE_DETALLADO_DE_CUENTAS_POR_COBRAR_FECHA_" +
-                      fecha +
-                      ".pdf"
-                  ),
-                });
-              }
-            }
-          );
+        const buffer = await page.pdf({
+          format: "A4",
+          landscape: true,
+          printBackground: true,
+          margin: {
+            top: "15mm",
+            bottom: "15mm",
+            left: "10mm",
+            right: "10mm",
+          },
+        });
+
+        await browser.close();
+
+        res.setHeader("Content-Type", "application/pdf");
+        res.status(200).send(buffer);
       }
     }
   );
