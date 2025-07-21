@@ -388,8 +388,10 @@ export const pdfSolicitud = async (req: Request, res: Response) => {
       },
       (err: any, data: any) => {
         if (err) {
+          console.log("a", err);
           return res.status(500).send(err);
         } else {
+          console.log("b", err);
           let options = {
             page_size: "A4",
             orientation: "portrait",
@@ -400,12 +402,14 @@ export const pdfSolicitud = async (req: Request, res: Response) => {
               height: "2mm",
             },
           };
+
           const outputPath = path.join(
             __dirname,
             "../files",
             `SOLICITUD_EXPEDIENTE_${expediente}_${nameProveedor}_${number}.pdf`
           );
           console.log("Ruta completa PDF:", outputPath);
+          console.log("d", "d");
           pdf
             .create(data, options)
             .toFile(
@@ -418,8 +422,10 @@ export const pdfSolicitud = async (req: Request, res: Response) => {
                 ".pdf",
               function (err: any, data: any) {
                 if (err) {
+                  console.log("e", err);
                   return res.status(500).send(err);
                 } else {
+                  console.log("f", "f");
                   res.download(
                     "/SOLICITUD_EXPEDIENTE_" +
                       expediente +
@@ -429,6 +435,7 @@ export const pdfSolicitud = async (req: Request, res: Response) => {
                       number +
                       ".pdf"
                   );
+                  console.log("g", "g");
                   res.send({
                     msg: "File created successfully",
                     path: path.join(
