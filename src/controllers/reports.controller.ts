@@ -9,6 +9,9 @@ var xl = require("excel4node");
 import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
 import path from "path";
 moment.locale("es");
+import puppeteer from "puppeteer";
+import fs from "fs";
+let ejs = require("ejs");
 export const getControlFile = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM function_reporte_file($1,$2,$3,$4,$5,$6,$7);",
@@ -341,32 +344,34 @@ export const pdfInstructivo = async (req: Request, res: Response) => {
 };
 
 export const pdfSolicitud = async (req: Request, res: Response) => {
+  const {
+    nameProveedor,
+    nameConsignatario,
+    totalPagar,
+    expediente,
+    fecha,
+    totalProveedores,
+    comentarios,
+    codigo_pago,
+    codigo_master,
+    cuentas,
+    operador,
+    conceptos,
+    selected,
+    totalSelected,
+    number,
+    url_logo,
+  } = req.body;
+
+  let browser = null;
   try {
-    let ejs = require("ejs");
-    let pdf = require("html-pdf");
-    let path = require("path");
-    const fechaYHora = new Date();
+    // Formatea nombre de archivo limpio
+    const safeName = nameProveedor.replace(/[^\w\d]/g, "_");
+    const fileName = `SOLICITUD_EXPEDIENTE_${expediente}_${safeName}_${number}.pdf`;
+    const outputPath = path.join(__dirname, "../../files", fileName);
 
-    const {
-      nameProveedor,
-      nameConsignatario,
-      totalPagar,
-      expediente,
-      fecha,
-      totalProveedores,
-      comentarios,
-      codigo_pago,
-      codigo_master,
-      cuentas,
-      operador,
-      conceptos,
-      selected,
-      totalSelected,
-      number,
-      url_logo,
-    } = req.body;
-
-    ejs.renderFile(
+    // Renderiza plantilla EJS
+    const htmlContent = await ejs.renderFile(
       path.join(__dirname, "../views/", "pdf-solicitud.ejs"),
       {
         nameProveedor,
@@ -385,78 +390,45 @@ export const pdfSolicitud = async (req: Request, res: Response) => {
         totalSelected,
         number,
         url_logo,
-      },
-      (err: any, data: any) => {
-        if (err) {
-          console.log("a", err);
-          return res.status(500).send(err);
-        } else {
-          console.log("b", err);
-          let options = {
-            page_size: "A4",
-            orientation: "portrait",
-            header: {
-              height: "1mm",
-            },
-            footer: {
-              height: "2mm",
-            },
-          };
-
-          const outputPath = path.join(
-            __dirname,
-            "../files",
-            `SOLICITUD_EXPEDIENTE_${expediente}_${nameProveedor}_${number}.pdf`
-          );
-          console.log("Ruta completa PDF:", outputPath);
-          console.log("d", "d");
-          pdf
-            .create(data, options)
-            .toFile(
-              "files/SOLICITUD_EXPEDIENTE_" +
-                expediente +
-                "_" +
-                nameProveedor +
-                "_" +
-                number +
-                ".pdf",
-              function (err: any, data: any) {
-                if (err) {
-                  console.log("e", err);
-                  return res.status(500).send(err);
-                } else {
-                  console.log("f", "f");
-                  res.download(
-                    "/SOLICITUD_EXPEDIENTE_" +
-                      expediente +
-                      "_" +
-                      nameProveedor +
-                      "_" +
-                      number +
-                      ".pdf"
-                  );
-                  console.log("g", "g");
-                  res.send({
-                    msg: "File created successfully",
-                    path: path.join(
-                      "/SOLICITUD_EXPEDIENTE_" +
-                        expediente +
-                        "_" +
-                        nameProveedor +
-                        "_" +
-                        number +
-                        ".pdf"
-                    ),
-                  });
-                }
-              }
-            );
-        }
       }
     );
+
+    // Lanza Puppeteer
+    browser = await puppeteer.launch({
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      ...(global.esProduccion && { executablePath: "/usr/bin/google-chrome" }),
+    });
+
+    const page = await browser.newPage();
+    await page.setContent(htmlContent, { waitUntil: "networkidle0" });
+
+    // Crea PDF en buffer
+    const pdfBuffer = await page.pdf({
+      format: "A4",
+      printBackground: true,
+      margin: {
+        top: "10mm",
+        right: "10mm",
+        bottom: "10mm",
+        left: "10mm",
+      },
+    });
+
+    // Guarda el archivo
+    fs.writeFileSync(outputPath, pdfBuffer);
+
+    // Enviar como descarga
+    return res.download(outputPath, fileName);
+    // O si prefieres enviar solo JSON con la ruta:
+    // return res.send({ msg: "PDF generado", path: `/files/${fileName}` });
   } catch (error) {
-    console.error("Error general en pdfSolicitud:", error);
-    res.status(500).send("Error interno al generar el PDF");
+    console.error("Error al generar PDF con Puppeteer:", error);
+    return res.status(500).send("Error al generar el PDF");
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
   }
 };
 
