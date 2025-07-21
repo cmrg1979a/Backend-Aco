@@ -365,12 +365,10 @@ export const pdfSolicitud = async (req: Request, res: Response) => {
 
   let browser = null;
   try {
-    // Formatea nombre de archivo limpio
     const safeName = nameProveedor.replace(/[^\w\d]/g, "_");
     const fileName = `SOLICITUD_EXPEDIENTE_${expediente}_${safeName}_${number}.pdf`;
     const outputPath = path.join(__dirname, "../../files", fileName);
 
-    // Renderiza plantilla EJS
     const htmlContent = await ejs.renderFile(
       path.join(__dirname, "../views/", "pdf-solicitud.ejs"),
       {
@@ -393,7 +391,6 @@ export const pdfSolicitud = async (req: Request, res: Response) => {
       }
     );
 
-    // Lanza Puppeteer
     browser = await puppeteer.launch({
       headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
@@ -403,7 +400,6 @@ export const pdfSolicitud = async (req: Request, res: Response) => {
     const page = await browser.newPage();
     await page.setContent(htmlContent, { waitUntil: "networkidle0" });
 
-    // Crea PDF en buffer
     const pdfBuffer = await page.pdf({
       format: "A4",
       printBackground: true,
@@ -415,13 +411,13 @@ export const pdfSolicitud = async (req: Request, res: Response) => {
       },
     });
 
-    // Guarda el archivo
     fs.writeFileSync(outputPath, pdfBuffer);
 
-    // Enviar como descarga
-    return res.download(outputPath, fileName);
-    // O si prefieres enviar solo JSON con la ruta:
-    // return res.send({ msg: "PDF generado", path: `/files/${fileName}` });
+    // 🔁 RESPUESTA COMPATIBLE CON TU FRONTEND
+    return res.send({
+      msg: "File created successfully",
+      path: `/files/${fileName}`, // esto es lo que usas en window.open()
+    });
   } catch (error) {
     console.error("Error al generar PDF con Puppeteer:", error);
     return res.status(500).send("Error al generar el PDF");
@@ -431,7 +427,6 @@ export const pdfSolicitud = async (req: Request, res: Response) => {
     }
   }
 };
-
 export const createdPDF = async (req: Request, res: Response) => {
   let ejs = require("ejs");
   let pdf = require("html-pdf");
