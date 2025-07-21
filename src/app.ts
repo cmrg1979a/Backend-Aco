@@ -43,6 +43,7 @@ if (global.esProduccion) {
 const pool = new Pool(cado);
 
 const app: Application = express();
+app.use('/files', express.static(path.join(__dirname, '../files')));
 
 import authRoutes from "./routes/auth";
 import paisRoutes from "./routes/pais";
