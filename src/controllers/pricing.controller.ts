@@ -1185,7 +1185,7 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
 export const aprobarCotizacion = async (req: Request, res: Response) => {
   let baseURL = "http://localhost:9200/";
   if (global.esProduccion) {
-    baseURL = "https://api-general.qreport.site/";
+    baseURL = "https://api.agentedecargaonline.com/";
   }
   let {
     id_quote,

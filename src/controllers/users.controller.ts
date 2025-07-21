@@ -180,7 +180,7 @@ export const InsertarUsuarios = async (req: Request, res: Response) => {
         <p> <b>clave: </b> ${user.clave} </p>
         Para acceder de click <a href="https://chainsolver.piccargo.com/"> Aqui </a>  
         <div style="float:left;">
-          <img src="https://api-general.qreport.site/uploads/1713276374733.jfif" alt="LogoChain" max-width="350" height="300" />
+          <img src="https://api.agentedecargaonline.com/uploads/1713276374733.jfif" alt="LogoChain" max-width="350" height="300" />
         </div>
     
         `;

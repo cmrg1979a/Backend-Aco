@@ -197,7 +197,7 @@ export const envioMSGEmail = async (req: Request, res: Response) => {
     >
       <div style="text-align: center">
         <img
-          src="https://api-general.qreport.site/uploads/imgLogin.png"
+          src="https://api.agentedecargaonline.com/uploads/imgLogin.png"
           alt="Imagen de Bienvenida"
           style="width: 100%; max-width: 550px; height: auto;"
         />
@@ -239,7 +239,7 @@ export const envioMSGEmail = async (req: Request, res: Response) => {
       </div>
       <div style="text-align: center; padding: 10px;">
         <img
-          src="https://api-general.qreport.site/uploads/logo-aco.png"
+          src="https://api.agentedecargaonline.com/uploads/logo-aco.png"
           alt="Logo ACO"
           style="width: 100%; max-width: 300px; height: auto;"
         />
@@ -260,7 +260,7 @@ export const envioMSGEmail = async (req: Request, res: Response) => {
   // Duración del código: 1h
   // </div>
   // <div style="float:left;">
-  //         <img src="https://api-general.qreport.site/uploads/1713276374733.jfif" alt="LogoChain" max-width="350" height="300" />
+  //         <img src="https://api.agentedecargaonline.com/uploads/1713276374733.jfif" alt="LogoChain" max-width="350" height="300" />
   // </div>
   // `;
   let data = {

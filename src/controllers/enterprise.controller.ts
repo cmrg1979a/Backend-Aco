@@ -318,7 +318,7 @@ export const RegistroNuevaEmpresa = async (req: Request, res: Response) => {
             >
               <div style="text-align: center">
                 <img
-                  src="https://api-general.qreport.site/uploads/imgLogin.png"
+                  src="https://api.agentedecargaonline.com/uploads/imgLogin.png"
                   alt="Imagen de Bienvenida"
                   style="width: 100%; max-width: 550px; height: auto;"
                 />
@@ -357,7 +357,7 @@ export const RegistroNuevaEmpresa = async (req: Request, res: Response) => {
               </div>
               <div style="text-align: center; padding: 10px;">
                 <img
-                  src="https://api-general.qreport.site/uploads/logo-aco.png"
+                  src="https://api.agentedecargaonline.com/uploads/logo-aco.png"
                   alt="Logo ACO"
                   style="width: 100%; max-width: 300px; height: auto;"
                 />
@@ -510,7 +510,7 @@ export const ReEstablecerContrasenia = async (req: Request, res: Response) => {
               >
                 <div style="text-align: center">
                   <img
-                    src="https://api-general.qreport.site/uploads/imgLogin.png"
+                    src="https://api.agentedecargaonline.com/uploads/imgLogin.png"
                     alt="Imagen de Bienvenida"
                     style="width: 100%; max-width: 550px; height: auto;"
                   />
@@ -549,7 +549,7 @@ export const ReEstablecerContrasenia = async (req: Request, res: Response) => {
                 </div>
                 <div style="text-align: center; padding: 10px;">
                   <img
-                    src="https://api-general.qreport.site/uploads/logo-aco.png"
+                    src="https://api.agentedecargaonline.com/uploads/logo-aco.png"
                     alt="Logo ACO"
                     style="width: 100%; max-width: 300px; height: auto;"
                   />
