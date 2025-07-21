@@ -5,7 +5,10 @@ import * as pg from "pg";
 const { Pool } = pg;
 const pool = conexion();
 import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
-
+import puppeteer from "puppeteer";
+import fs from "fs";
+let ejs = require("ejs");
+import path from "path";
 export const datosFactura = async (req: Request, res: Response) => {
   let id_house = req.params.id_house;
   let id_branch = req.params.id_branch;
@@ -39,10 +42,6 @@ export const datosFactura = async (req: Request, res: Response) => {
 };
 
 export const generarFactura = async (req: Request, res: Response) => {
-  let ejs = require("ejs");
-  let pdf = require("html-pdf");
-  let path = require("path");
-
   const fecha = new Date();
 
   const {
@@ -81,84 +80,81 @@ export const generarFactura = async (req: Request, res: Response) => {
     url_logo,
   } = req.body;
 
-  let fechaActual = `${fecha.getUTCDay()}_${fecha.getMonth()}_${fecha.getFullYear()}_${fecha.getTime()}`;
-  let fechaRegistro = fecha.toLocaleDateString();
+  const fechaActual = `${fecha.getUTCDay()}_${fecha.getMonth()}_${fecha.getFullYear()}_${fecha.getTime()}`;
+  const fechaRegistro = fecha.toLocaleDateString();
 
-  ejs.renderFile(
-    path.join(__dirname, "../views", "pdf-factura.ejs"),
-    {
-      nombreProforma,
-      cliente_nombre,
-      cliente_phone,
-      cliente_document,
-      cliente_address,
-      proveedor_nombre,
-      proveedor_phone,
-      proveedor_address,
-      proveedor_document,
-      bultos,
-      volumen,
-      peso,
-      puerto,
-      pais,
-      total_monto,
-      total_igv,
-      total,
-      details,
-      fechaRegistro,
-      code_master,
-      factura,
-      branch_nombre,
-      branch_address,
-      branch_phone,
-      branch_documento,
-      tipo_emisor,
-      cuenta_descripcion,
-      cuenta_beneficiario,
-      cuenta_numero,
-      cuenta_cci,
-      cuenta_tienecci,
-      tipo_imp,
-      coins,
-      url_logo,
-    },
-    (err: any, data: any) => {
-      if (err) {
-        res.send(err);
-      } else {
-        let options = {
-          page_size: "A4",
-          margin: "1mm",
-          header: {
-            height: "5mm",
-          },
-          footer: {
-            height: "5mm",
-          },
-        };
+  const filePath = `files/${nombreProforma}_${fechaActual}.pdf`;
 
-        pdf
-          .create(data, options)
-          .toFile(
-            "files/" + nombreProforma + "_" + fechaActual + ".pdf",
-            function (err: any, data: any) {
-              if (err) {
-                res.send(err);
-              } else {
-                res.download("/" + nombreProforma + "_" + fechaActual + ".pdf");
-                res.send({
-                  statusBol: true,
-                  msg: "File created successfully",
-                  path: path.join(nombreProforma + "_" + fechaActual + ".pdf"),
-                  nro_factura: factura,
-                });
-              }
-            }
-          );
+  try {
+    const html = await ejs.renderFile(
+      path.join(__dirname, "../views", "pdf-factura.ejs"),
+      {
+        nombreProforma,
+        cliente_nombre,
+        cliente_phone,
+        cliente_document,
+        cliente_address,
+        proveedor_nombre,
+        proveedor_phone,
+        proveedor_address,
+        proveedor_document,
+        bultos,
+        volumen,
+        peso,
+        puerto,
+        pais,
+        total_monto,
+        total_igv,
+        total,
+        details,
+        fechaRegistro,
+        code_master,
+        factura,
+        branch_nombre,
+        branch_address,
+        branch_phone,
+        branch_documento,
+        tipo_emisor,
+        cuenta_descripcion,
+        cuenta_beneficiario,
+        cuenta_numero,
+        cuenta_cci,
+        cuenta_tienecci,
+        tipo_imp,
+        coins,
+        url_logo,
       }
-      //
-    }
-  );
+    );
+
+    const browser = await puppeteer.launch({
+      headless: "new",
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
+    const page = await browser.newPage();
+    await page.setContent(html, { waitUntil: "networkidle0" });
+
+    const pdfBuffer = await page.pdf({
+      format: "A4",
+      landscape: true,
+      margin: { top: "10mm", right: "10mm", bottom: "10mm", left: "10mm" },
+    });
+
+    await browser.close();
+
+    fs.writeFileSync(filePath, pdfBuffer);
+
+    res.download("/" + nombreProforma + "_" + fechaActual + ".pdf");
+    res.send({
+      statusBol: true,
+      msg: "File created successfully",
+      path: path.join(nombreProforma + "_" + fechaActual + ".pdf"),
+      nro_factura: factura,
+    });
+  } catch (err) {
+    res
+      .status(500)
+      .send({ statusBol: false, msg: "Error generating PDF", error: err });
+  }
 };
 
 export const registrarFactura = async (req: Request, res: Response) => {
