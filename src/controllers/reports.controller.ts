@@ -416,7 +416,7 @@ export const pdfSolicitud = async (req: Request, res: Response) => {
     // 🔁 RESPUESTA COMPATIBLE CON TU FRONTEND
     return res.send({
       msg: "File created successfully",
-      path: `/files/${fileName}`, // esto es lo que usas en window.open()
+      path: `files/${fileName}`, // esto es lo que usas en window.open()
     });
   } catch (error) {
     console.error("Error al generar PDF con Puppeteer:", error);
