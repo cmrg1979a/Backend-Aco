@@ -400,7 +400,12 @@ export const pdfSolicitud = async (req: Request, res: Response) => {
               height: "2mm",
             },
           };
-
+          const outputPath = path.join(
+            __dirname,
+            "../files",
+            `SOLICITUD_EXPEDIENTE_${expediente}_${nameProveedor}_${number}.pdf`
+          );
+          console.log("Ruta completa PDF:", outputPath);
           pdf
             .create(data, options)
             .toFile(
