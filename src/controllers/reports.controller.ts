@@ -341,33 +341,13 @@ export const pdfInstructivo = async (req: Request, res: Response) => {
 };
 
 export const pdfSolicitud = async (req: Request, res: Response) => {
-  let ejs = require("ejs");
-  let pdf = require("html-pdf");
-  let path = require("path");
-  const fechaYHora = new Date();
+  try {
+    let ejs = require("ejs");
+    let pdf = require("html-pdf");
+    let path = require("path");
+    const fechaYHora = new Date();
 
-  const {
-    nameProveedor,
-    nameConsignatario,
-    totalPagar,
-    expediente,
-    fecha,
-    totalProveedores,
-    comentarios,
-    codigo_pago,
-    codigo_master,
-    cuentas,
-    operador,
-    conceptos,
-    selected,
-    totalSelected,
-    number,
-    url_logo,
-  } = req.body;
-
-  ejs.renderFile(
-    path.join(__dirname, "../views/", "pdf-solicitud.ejs"),
-    {
+    const {
       nameProveedor,
       nameConsignatario,
       totalPagar,
@@ -384,48 +364,58 @@ export const pdfSolicitud = async (req: Request, res: Response) => {
       totalSelected,
       number,
       url_logo,
-    },
-    (err: any, data: any) => {
-      if (err) {
-        res.send(err);
-      } else {
-        let options = {
-          page_size: "A4",
-          orientation: "portrait",
-          header: {
-            height: "1mm",
-          },
-          footer: {
-            height: "2mm",
-          },
-        };
+    } = req.body;
 
-        pdf
-          .create(data, options)
-          .toFile(
-            "files/SOLICITUD_EXPEDIENTE_" +
-              expediente +
-              "_" +
-              nameProveedor +
-              "_" +
-              number +
-              ".pdf",
-            function (err: any, data: any) {
-              if (err) {
-                res.send(err);
-              } else {
-                res.download(
-                  "/SOLICITUD_EXPEDIENTE_" +
-                    expediente +
-                    "_" +
-                    nameProveedor +
-                    "_" +
-                    number +
-                    ".pdf"
-                );
-                res.send({
-                  msg: "File created successfully",
-                  path: path.join(
+    ejs.renderFile(
+      path.join(__dirname, "../views/", "pdf-solicitud.ejs"),
+      {
+        nameProveedor,
+        nameConsignatario,
+        totalPagar,
+        expediente,
+        fecha,
+        totalProveedores,
+        comentarios,
+        codigo_pago,
+        codigo_master,
+        cuentas,
+        operador,
+        conceptos,
+        selected,
+        totalSelected,
+        number,
+        url_logo,
+      },
+      (err: any, data: any) => {
+        if (err) {
+          return res.status(500).send(err);
+        } else {
+          let options = {
+            page_size: "A4",
+            orientation: "portrait",
+            header: {
+              height: "1mm",
+            },
+            footer: {
+              height: "2mm",
+            },
+          };
+
+          pdf
+            .create(data, options)
+            .toFile(
+              "files/SOLICITUD_EXPEDIENTE_" +
+                expediente +
+                "_" +
+                nameProveedor +
+                "_" +
+                number +
+                ".pdf",
+              function (err: any, data: any) {
+                if (err) {
+                  return res.status(500).send(err);
+                } else {
+                  res.download(
                     "/SOLICITUD_EXPEDIENTE_" +
                       expediente +
                       "_" +
@@ -433,14 +423,29 @@ export const pdfSolicitud = async (req: Request, res: Response) => {
                       "_" +
                       number +
                       ".pdf"
-                  ),
-                });
+                  );
+                  res.send({
+                    msg: "File created successfully",
+                    path: path.join(
+                      "/SOLICITUD_EXPEDIENTE_" +
+                        expediente +
+                        "_" +
+                        nameProveedor +
+                        "_" +
+                        number +
+                        ".pdf"
+                    ),
+                  });
+                }
               }
-            }
-          );
+            );
+        }
       }
-    }
-  );
+    );
+  } catch (error) {
+    console.error("Error general en pdfSolicitud:", error);
+    res.status(500).send("Error interno al generar el PDF");
+  }
 };
 
 export const createdPDF = async (req: Request, res: Response) => {
