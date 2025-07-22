@@ -1247,59 +1247,9 @@ export const aprobarCotizacion = async (req: Request, res: Response) => {
 };
 
 export const generarInstructivoQuote = async (req: Request, res: Response) => {
-  let {
-    nro_propuesta,
-    expediente,
-    sentido,
-    carga,
-    incoterms,
-    nombre,
-    direccion,
-    telefono,
-    vendedor,
-    proveedor,
-    origen,
-    destino,
-    fiscal,
-    ruc,
-    listServiciosInstructivo,
-    listIngresosInstructivo,
-    listCostosInstructivo,
-    sucursal,
-    status,
-    code_house,
-    code_master,
-    notas,
-    containers,
-    numerobultos,
-    peso,
-    volumen,
-    totalIngresos,
-    totalCostos,
-    profit,
-    listImpuestosInstructivo,
-    tipoimportacionaduana,
-    url_logo,
-  } = req.body;
-  let fecha = moment().format("ll");
-
-  ejs.renderFile(
-    path.join(__dirname, "../views/", "pdfQuoteInstructivo.ejs"),
-    {
+  try {
+    const {
       nro_propuesta,
-      totalIngresos,
-      totalCostos,
-      profit,
-      containers,
-      numerobultos,
-      peso,
-      volumen,
-      status,
-      notas,
-      code_house,
-      code_master,
-      sucursal,
-      fecha,
       expediente,
       sentido,
       carga,
@@ -1316,47 +1266,108 @@ export const generarInstructivoQuote = async (req: Request, res: Response) => {
       listServiciosInstructivo,
       listIngresosInstructivo,
       listCostosInstructivo,
+      sucursal,
+      status,
+      code_house,
+      code_master,
+      notas,
+      containers,
+      numerobultos,
+      peso,
+      volumen,
+      totalIngresos,
+      totalCostos,
+      profit,
       listImpuestosInstructivo,
       tipoimportacionaduana,
       url_logo,
-    },
+    } = req.body;
 
-    (err: any, data: any) => {
-      if (err) {
-        // res.send(err);
-        console.log(err);
-      } else {
-        let options = {
-          format: "Letter", // O el formato deseado
-          border: {
-            top: "0px", // Establecer el margen superior a 0
-          },
-          page_size: "A4",
-          // header: {
-          //   height: "15mm",
-          // },
-        };
+    let fecha = moment().format("ll");
 
-        pdf
-          .create(data, options)
-          .toFile(
-            `files/InstructivoQuote_${nro_propuesta}.pdf`,
-            function (err: any, data: any) {
-              if (err) {
-                res.send(err);
-              } else {
-                res.download(`/InstructivoQuote_${nro_propuesta}.pdf`);
-                res.send({
-                  estadoflag: true,
-                  msg: "File created successfully",
-                  path: path.join(`InstructivoQuote_${nro_propuesta}.pdf`),
-                });
-              }
-            }
+    ejs.renderFile(
+      path.join(__dirname, "../views/", "pdfQuoteInstructivo.ejs"),
+      {
+        nro_propuesta,
+        totalIngresos,
+        totalCostos,
+        profit,
+        containers,
+        numerobultos,
+        peso,
+        volumen,
+        status,
+        notas,
+        code_house,
+        code_master,
+        sucursal,
+        fecha,
+        expediente,
+        sentido,
+        carga,
+        incoterms,
+        nombre,
+        direccion,
+        telefono,
+        vendedor,
+        proveedor,
+        origen,
+        destino,
+        fiscal,
+        ruc,
+        listServiciosInstructivo,
+        listIngresosInstructivo,
+        listCostosInstructivo,
+        listImpuestosInstructivo,
+        tipoimportacionaduana,
+        url_logo,
+      },
+      async (err: any, data: any) => {
+        if (err) {
+          console.log(err);
+          return res.send(err);
+        } else {
+          const browser = await puppeteer.launch({
+            headless: true,
+            args: ["--no-sandbox", "--disable-setuid-sandbox"],
+          });
+          const page = await browser.newPage();
+
+          await page.setContent(data, { waitUntil: "networkidle0" });
+
+          const outputPath = path.join(
+            __dirname,
+            "../../files",
+            `InstructivoQuote_${nro_propuesta}.pdf`
           );
+
+          await page.pdf({
+            path: outputPath,
+            format: "Letter",
+            printBackground: true,
+            margin: {
+              top: "0mm",
+              right: "0mm",
+              bottom: "0mm",
+              left: "0mm",
+            },
+          });
+
+          await browser.close();
+
+          res.download(outputPath);
+          res.send({
+            estadoflag: true,
+            msg: "File created successfully",
+            path: path.join(`InstructivoQuote_${nro_propuesta}.pdf`),
+          });
+        }
       }
-    }
-  );
+    );
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Error generando PDF" });
+  }
 };
 
 export const setNoteQuote = async (req: Request, res: Response) => {
