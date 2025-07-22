@@ -21,6 +21,7 @@ const corsMiddleware = cors(corsOptions);
 /**PROUCCIÓN */
 let cado = {};
 if (global.esProduccion) {
+  console.log("NODE_ENV", process.env.NODE_ENV);
   global.path_url = "https://aco.agentedecargaonline.com/";
   cado = {
     host: "10.116.0.15",
@@ -32,18 +33,17 @@ if (global.esProduccion) {
 } else {
   global.path_url = "https://devapigeneral.piccargo.com/";
   cado = {
-    host: "67.205.129.62",
-    user: "chainsolver",
-    password: "Fr3sc0l1t4+",
+    host: "143.244.167.240",
+    user: "postgres",
+    password: "@Developer2021Pic",
     port: "5432",
-
-    database: "db_op_main_qa",
+    database: "db_op_main_02",
   };
 }
 const pool = new Pool(cado);
 
 const app: Application = express();
-app.use('/files', express.static(path.join(__dirname, '../files')));
+app.use("/files", express.static(path.join(__dirname, "../files")));
 
 import authRoutes from "./routes/auth";
 import paisRoutes from "./routes/pais";
@@ -120,6 +120,7 @@ import StatusHouse from "./routes/StatusHouse";
 import configAvisos from "./routes/configAvisos";
 import branch from "./routes/branch";
 import aduanas from "./routes/aduanas";
+import { env } from "process";
 
 // settings
 app.set("port", 9200);

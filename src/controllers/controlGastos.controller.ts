@@ -766,10 +766,12 @@ export const copiarCGingresos = async (req: Request, res: Response) => {
   );
 };
 export const copiarCGEgresos = async (req: Request, res: Response) => {
-  const { id_proveedor, id_master, id_correlativo } = req.body;
+  const { id_proveedor, id_master, id_correlativo, id_coins, tipocambio } =
+    req.body;
+
   await pool.query(
-    "select * from function_copiar_cgegresos($1,$2,$3)",
-    [id_proveedor, id_master, id_correlativo],
+    "select * from function_copiar_cgegresos($1,$2,$3,$4,$5)",
+    [id_proveedor, id_master, id_correlativo, id_coins, tipocambio],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;

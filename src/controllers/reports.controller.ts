@@ -541,11 +541,10 @@ export const createdPDF = async (req: Request, res: Response) => {
 
               await browser.close();
 
-              res.download("/REPORT_CONTROL_FILE.pdf");
               res.send({
                 estadoflag: true,
                 msg: "File created successfully",
-                path: path.join("/REPORT_CONTROL_FILE.pdf"),
+                path: path.join("files/REPORT_CONTROL_FILE.pdf"),
               });
             }
           );
