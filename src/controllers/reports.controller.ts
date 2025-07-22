@@ -422,7 +422,10 @@ export const pdfSolicitud = async (req: Request, res: Response) => {
     }
   }
 };
+
 export const createdPDF = async (req: Request, res: Response) => {
+  console.log("📥 1. Inicio de endpoint /createdPDF");
+
   const fechaYHora = new Date();
   let {
     id_branch,
@@ -433,6 +436,16 @@ export const createdPDF = async (req: Request, res: Response) => {
     desde,
     hasta,
   } = req.body;
+
+  console.log("📦 2. Parámetros recibidos:", {
+    id_branch,
+    id_operativo,
+    status_op,
+    status_admin,
+    sentido,
+    desde,
+    hasta,
+  });
 
   await pool.query(
     "SELECT * FROM function_reporte_file($1,$2,$3,$4,$5,$6,$7);",
@@ -447,7 +460,7 @@ export const createdPDF = async (req: Request, res: Response) => {
     ],
     async (err, response, fields) => {
       if (err) {
-        console.error("❌ ERROR en la consulta SQL:");
+        console.error("❌ 3. ERROR en la consulta SQL:");
         console.error(err.message);
         console.error(err.stack);
         return res.status(500).send({
@@ -455,119 +468,132 @@ export const createdPDF = async (req: Request, res: Response) => {
           detalle: err.message,
         });
       }
-      if (!err) {
-        let rows = response.rows;
-        const operadoresInfo = {};
 
-        if (rows.length > 0) {
-          rows.forEach((etiqueta) => {
-            const operador = etiqueta.operador;
-            if (!operadoresInfo[operador]) {
-              operadoresInfo[operador] = {
-                operador: operador,
-                totalAbiertas: 0,
-                totalCerradas: 0,
-                totalFiles: 0,
-              };
-            }
+      console.log("✅ 4. Consulta ejecutada correctamente");
 
-            if (etiqueta.statuslock === 0) {
-              operadoresInfo[operador].totalAbiertas++;
-            } else if (etiqueta.statuslock === 1) {
-              operadoresInfo[operador].totalCerradas++;
-            }
-          });
+      let rows = response.rows;
+      console.log("📊 5. Registros encontrados:", rows.length);
 
-          let fecha = moment().format("DD-MMM-YYYY HH:mm:ss");
-          let totalAbiertas = rows.filter((v) => v.statuslock == 0).length;
-          let totalCerradas = rows.filter((v) => v.statuslock == 1).length;
-          let totalLlegadas = rows.filter((v) => v.orden == 1).length;
-          let totalPorLLegar = rows.filter((v) => v.orden == 2).length;
-          let totalOtras = rows.filter((v) => v.orden == 3).length;
-          let totalFile = rows.length;
-          let branch = rows[0].branch;
-          let operadoresArray = Object.values(operadoresInfo);
-          let list = rows;
+      const operadoresInfo = {};
 
-          if (req.body.status_op) {
-            status_op = req.body.status_op == 0 ? "Abiertos" : "Cerrados";
-          }
-          if (req.body.status_admin) {
-            status_admin = req.body.status_admin == 0 ? "Abiertos" : "Cerrados";
-          }
-          if (req.body.sentido) {
-            sentido = rows[0].modality;
-          }
-          if (req.body.desde) {
-            desde = req.body.desde;
-          }
-          if (req.body.hasta) {
-            hasta = req.body.hasta;
+      if (rows.length > 0) {
+        rows.forEach((etiqueta) => {
+          const operador = etiqueta.operador;
+          if (!operadoresInfo[operador]) {
+            operadoresInfo[operador] = {
+              operador: operador,
+              totalAbiertas: 0,
+              totalCerradas: 0,
+              totalFiles: 0,
+            };
           }
 
-          ejs.renderFile(
-            path.join(__dirname, "../views/", "report-template.ejs"),
-            {
-              fecha,
-              totalFile,
-              branch,
-              status_op,
-              status_admin,
-              sentido,
-              desde,
-              hasta,
-              operadoresArray,
-              list,
-              totalAbiertas,
-              totalCerradas,
-              totalLlegadas,
-              totalPorLLegar,
-              totalOtras,
-            },
-            async (err: any, html: any) => {
-              if (err) {
-                console.log(err);
-                return;
-              }
+          if (etiqueta.statuslock === 0) {
+            operadoresInfo[operador].totalAbiertas++;
+          } else if (etiqueta.statuslock === 1) {
+            operadoresInfo[operador].totalCerradas++;
+          }
+        });
 
-              const browser = await puppeteer.launch({ headless: "new" });
-              const page = await browser.newPage();
-              await page.setContent(html, { waitUntil: "networkidle0" });
+        console.log("🔍 6. Procesamiento de operadores finalizado");
 
-              const outputPath = path.join("files", "REPORT_CONTROL_FILE.pdf");
-              await page.pdf({
-                path: outputPath,
-                format: "A4",
-                printBackground: true,
-                landscape: true,
-                margin: {
-                  top: "10mm",
-                  bottom: "10mm",
-                  left: "10mm",
-                  right: "10mm",
-                },
-              });
+        let fecha = moment().format("DD-MMM-YYYY HH:mm:ss");
+        let totalAbiertas = rows.filter((v) => v.statuslock == 0).length;
+        let totalCerradas = rows.filter((v) => v.statuslock == 1).length;
+        let totalLlegadas = rows.filter((v) => v.orden == 1).length;
+        let totalPorLLegar = rows.filter((v) => v.orden == 2).length;
+        let totalOtras = rows.filter((v) => v.orden == 3).length;
+        let totalFile = rows.length;
+        let branch = rows[0].branch;
+        let operadoresArray = Object.values(operadoresInfo);
+        let list = rows;
 
-              await browser.close();
-
-              res.send({
-                estadoflag: true,
-                msg: "File created successfully",
-                path: "files/REPORT_CONTROL_FILE.pdf",
-              });
-            }
-          );
-        } else {
-          res.send({
-            estadoflag: false,
-            msg: "No se encontraron datos para generar el reporte",
-            path: null,
-          });
+        if (req.body.status_op) {
+          status_op = req.body.status_op == 0 ? "Abiertos" : "Cerrados";
         }
+        if (req.body.status_admin) {
+          status_admin = req.body.status_admin == 0 ? "Abiertos" : "Cerrados";
+        }
+        if (req.body.sentido) {
+          sentido = rows[0].modality;
+        }
+        if (req.body.desde) {
+          desde = req.body.desde;
+        }
+        if (req.body.hasta) {
+          hasta = req.body.hasta;
+        }
+
+        console.log("🛠️ 7. Datos preparados para renderizar el template");
+
+        ejs.renderFile(
+          path.join(__dirname, "../views/", "report-template.ejs"),
+          {
+            fecha,
+            totalFile,
+            branch,
+            status_op,
+            status_admin,
+            sentido,
+            desde,
+            hasta,
+            operadoresArray,
+            list,
+            totalAbiertas,
+            totalCerradas,
+            totalLlegadas,
+            totalPorLLegar,
+            totalOtras,
+          },
+          async (err: any, html: any) => {
+            if (err) {
+              console.error("❌ 8. Error al renderizar EJS:", err.message);
+              return;
+            }
+
+            console.log("✅ 9. EJS renderizado correctamente");
+
+            const browser = await puppeteer.launch({ headless: "new" });
+            const page = await browser.newPage();
+            console.log("🚀 10. Puppeteer lanzado");
+
+            await page.setContent(html, { waitUntil: "networkidle0" });
+            console.log("🖨️ 11. HTML cargado en Puppeteer");
+
+            const outputPath = path.join("files", "REPORT_CONTROL_FILE.pdf");
+            await page.pdf({
+              path: outputPath,
+              format: "A4",
+              printBackground: true,
+              landscape: true,
+              margin: {
+                top: "10mm",
+                bottom: "10mm",
+                left: "10mm",
+                right: "10mm",
+              },
+            });
+
+            console.log("💾 12. PDF generado y guardado en:", outputPath);
+
+            await browser.close();
+            console.log("🧹 13. Puppeteer cerrado");
+
+            res.send({
+              estadoflag: true,
+              msg: "File created successfully",
+              path: outputPath,
+            });
+
+            console.log("📤 14. Respuesta enviada al cliente");
+          }
+        );
       } else {
-        res.status(500).json({
-          error: "Error al ejecutar la consulta",
-          detalle: err?.message || "Error desconocido",
+        console.warn("⚠️ 15. No se encontraron datos para generar el reporte");
+        res.send({
+          estadoflag: false,
+          msg: "No se encontraron datos para generar el reporte",
+          path: null,
         });
       }
     }
