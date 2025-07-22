@@ -724,7 +724,10 @@ export const pdfcxp = async (req: Request, res: Response) => {
       if (err) {
         res.send(err);
       } else {
-        const browser = await puppeteer.launch({ headless: "new" });
+        const browser = await puppeteer.launch({
+          headless: true,
+          args: ["--no-sandbox", "--disable-setuid-sandbox"],
+        });
         const page = await browser.newPage();
         await page.setContent(html, { waitUntil: "networkidle0" });
 
@@ -787,7 +790,10 @@ export const pdfcxc = async (req: Request, res: Response) => {
       if (err) {
         res.send(err);
       } else {
-        const browser = await puppeteer.launch({ headless: "new" });
+        const browser = await puppeteer.launch({
+          headless: true,
+          args: ["--no-sandbox", "--disable-setuid-sandbox"],
+        });
         const page = await browser.newPage();
         await page.setContent(html, { waitUntil: "networkidle0" });
 
@@ -850,7 +856,10 @@ export const pdfcxpD = async (req: Request, res: Response) => {
       if (err) {
         res.send(err);
       } else {
-        const browser = await puppeteer.launch({ headless: "new" });
+        const browser = await puppeteer.launch({
+          headless: true,
+          args: ["--no-sandbox", "--disable-setuid-sandbox"],
+        });
         const page = await browser.newPage();
         await page.setContent(html, { waitUntil: "networkidle0" });
 
@@ -913,7 +922,10 @@ export const pdfcxcD = async (req: Request, res: Response) => {
       if (err) {
         res.send(err);
       } else {
-        const browser = await puppeteer.launch({ headless: "new" });
+        const browser = await puppeteer.launch({
+          headless: true,
+          args: ["--no-sandbox", "--disable-setuid-sandbox"],
+        });
         const page = await browser.newPage();
         await page.setContent(html, { waitUntil: "networkidle0" });
 

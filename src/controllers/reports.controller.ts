@@ -310,7 +310,10 @@ export const pdfInstructivo = async (req: Request, res: Response) => {
         return res.send(err);
       }
 
-      const browser = await puppeteer.launch({ headless: "new" });
+      const browser = await puppeteer.launch({
+        headless: true,
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      });
       const page = await browser.newPage();
       await page.setContent(html, { waitUntil: "networkidle0" });
 
@@ -553,7 +556,10 @@ export const createdPDF = async (req: Request, res: Response) => {
 
             console.log("✅ 9. EJS renderizado correctamente");
 
-            const browser = await puppeteer.launch({ headless: "new" });
+            const browser = await puppeteer.launch({
+              headless: true,
+              args: ["--no-sandbox", "--disable-setuid-sandbox"],
+            });
             const page = await browser.newPage();
             console.log("🚀 10. Puppeteer lanzado");
 
@@ -705,7 +711,10 @@ export const pdfFD = async (req: Request, res: Response) => {
             if (err) {
               res.send(err);
             } else {
-              const browser = await puppeteer.launch({ headless: "new" });
+              const browser = await puppeteer.launch({
+                headless: true,
+                args: ["--no-sandbox", "--disable-setuid-sandbox"],
+              });
               const page = await browser.newPage();
               await page.setContent(html, { waitUntil: "networkidle0" });
 
@@ -1401,7 +1410,10 @@ export const getPdfInstructivoDetallado = async (
         if (err) {
           res.send(err);
         } else {
-          const browser = await puppeteer.launch({ headless: "new" });
+          const browser = await puppeteer.launch({
+            headless: true,
+            args: ["--no-sandbox", "--disable-setuid-sandbox"],
+          });
           const page = await browser.newPage();
           await page.setContent(html, { waitUntil: "networkidle0" });
 
@@ -1934,7 +1946,10 @@ export const exportarPDFCXP = async (req: Request, res: Response) => {
       if (err) {
         res.send(err);
       } else {
-        const browser = await puppeteer.launch({ headless: "new" });
+        const browser = await puppeteer.launch({
+          headless: true,
+          args: ["--no-sandbox", "--disable-setuid-sandbox"],
+        });
         const page = await browser.newPage();
         await page.setContent(html, { waitUntil: "networkidle0" });
 
@@ -2194,7 +2209,10 @@ export const exportarPDFCXC = async (req: Request, res: Response) => {
       if (err) {
         res.send(err);
       } else {
-        const browser = await puppeteer.launch({ headless: "new" });
+        const browser = await puppeteer.launch({
+          headless: true,
+          args: ["--no-sandbox", "--disable-setuid-sandbox"],
+        });
         const page = await browser.newPage();
         await page.setContent(html, { waitUntil: "networkidle0" });
 
@@ -2505,7 +2523,10 @@ export const exportListQuote = async (req: Request, res: Response) => {
               console.log(err);
               res.status(500).send("Error al renderizar el HTML");
             } else {
-              const browser = await puppeteer.launch({ headless: "new" });
+              const browser = await puppeteer.launch({
+                headless: true,
+                args: ["--no-sandbox", "--disable-setuid-sandbox"],
+              });
               const page = await browser.newPage();
               await page.setContent(html, { waitUntil: "networkidle0" });
 
