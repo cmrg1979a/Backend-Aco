@@ -448,10 +448,14 @@ export const createdPDF = async (req: Request, res: Response) => {
       ],
       async (err, response, fields) => {
         if (err) {
-          console.error("Error en consulta:", err);
-          return res.status(500).send({ error: "Error al ejecutar la consulta" });
+          console.error("❌ ERROR en la consulta SQL:");
+          console.error(err.message);
+          console.error(err.stack);
+          return res.status(500).send({
+            error: "Error al ejecutar la consulta",
+            detalle: err.message,
+          });
         }
-
         const rows = response.rows;
         if (rows.length === 0) {
           return res.send({
@@ -473,8 +477,10 @@ export const createdPDF = async (req: Request, res: Response) => {
             };
           }
 
-          if (etiqueta.statuslock === 0) operadoresInfo[operador].totalAbiertas++;
-          else if (etiqueta.statuslock === 1) operadoresInfo[operador].totalCerradas++;
+          if (etiqueta.statuslock === 0)
+            operadoresInfo[operador].totalAbiertas++;
+          else if (etiqueta.statuslock === 1)
+            operadoresInfo[operador].totalCerradas++;
         });
 
         const fecha = moment().format("DD-MMM-YYYY HH:mm:ss");
