@@ -446,6 +446,15 @@ export const createdPDF = async (req: Request, res: Response) => {
       hasta || null,
     ],
     async (err, response, fields) => {
+      if (err) {
+        console.error("❌ ERROR en la consulta SQL:");
+        console.error(err.message);
+        console.error(err.stack);
+        return res.status(500).send({
+          error: "Error al ejecutar la consulta",
+          detalle: err.message,
+        });
+      }
       if (!err) {
         let rows = response.rows;
         const operadoresInfo = {};
