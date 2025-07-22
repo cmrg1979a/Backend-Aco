@@ -423,84 +423,79 @@ export const pdfSolicitud = async (req: Request, res: Response) => {
   }
 };
 export const createdPDF = async (req: Request, res: Response) => {
-  try {
-    const fechaYHora = new Date();
-    let {
-      id_branch,
-      id_operativo,
-      status_op,
-      status_admin,
-      sentido,
-      desde,
-      hasta,
-    } = req.body;
+  const fechaYHora = new Date();
+  let {
+    id_branch,
+    id_operativo,
+    status_op,
+    status_admin,
+    sentido,
+    desde,
+    hasta,
+  } = req.body;
 
-    await pool.query(
-      "SELECT * FROM function_reporte_file($1,$2,$3,$4,$5,$6,$7);",
-      [
-        id_branch ?? null,
-        id_operativo ?? null,
-        status_op ?? null,
-        status_admin ?? null,
-        sentido ?? null,
-        desde ?? null,
-        hasta ?? null,
-      ],
-      async (err, response, fields) => {
-        if (err) {
-          console.error("❌ ERROR en la consulta SQL:");
-          console.error(err.message);
-          console.error(err.stack);
-          return res.status(500).send({
-            error: "Error al ejecutar la consulta",
-            detalle: err.message,
-          });
-        }
-        const rows = response.rows;
-        if (rows.length === 0) {
-          return res.send({
-            estadoflag: false,
-            msg: "No hay datos para generar el PDF.",
-            path: null,
-          });
-        }
-
+  await pool.query(
+    "SELECT * FROM function_reporte_file($1,$2,$3,$4,$5,$6,$7);",
+    [
+      id_branch || null,
+      id_operativo || null,
+      status_op || null,
+      status_admin || null,
+      sentido || null,
+      desde || null,
+      hasta || null,
+    ],
+    async (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
         const operadoresInfo = {};
-        rows.forEach((etiqueta) => {
-          const operador = etiqueta.operador;
-          if (!operadoresInfo[operador]) {
-            operadoresInfo[operador] = {
-              operador: operador,
-              totalAbiertas: 0,
-              totalCerradas: 0,
-              totalFiles: 0,
-            };
+
+        if (rows.length > 0) {
+          rows.forEach((etiqueta) => {
+            const operador = etiqueta.operador;
+            if (!operadoresInfo[operador]) {
+              operadoresInfo[operador] = {
+                operador: operador,
+                totalAbiertas: 0,
+                totalCerradas: 0,
+                totalFiles: 0,
+              };
+            }
+
+            if (etiqueta.statuslock === 0) {
+              operadoresInfo[operador].totalAbiertas++;
+            } else if (etiqueta.statuslock === 1) {
+              operadoresInfo[operador].totalCerradas++;
+            }
+          });
+
+          let fecha = moment().format("DD-MMM-YYYY HH:mm:ss");
+          let totalAbiertas = rows.filter((v) => v.statuslock == 0).length;
+          let totalCerradas = rows.filter((v) => v.statuslock == 1).length;
+          let totalLlegadas = rows.filter((v) => v.orden == 1).length;
+          let totalPorLLegar = rows.filter((v) => v.orden == 2).length;
+          let totalOtras = rows.filter((v) => v.orden == 3).length;
+          let totalFile = rows.length;
+          let branch = rows[0].branch;
+          let operadoresArray = Object.values(operadoresInfo);
+          let list = rows;
+
+          if (req.body.status_op) {
+            status_op = req.body.status_op == 0 ? "Abiertos" : "Cerrados";
+          }
+          if (req.body.status_admin) {
+            status_admin = req.body.status_admin == 0 ? "Abiertos" : "Cerrados";
+          }
+          if (req.body.sentido) {
+            sentido = rows[0].modality;
+          }
+          if (req.body.desde) {
+            desde = req.body.desde;
+          }
+          if (req.body.hasta) {
+            hasta = req.body.hasta;
           }
 
-          if (etiqueta.statuslock === 0)
-            operadoresInfo[operador].totalAbiertas++;
-          else if (etiqueta.statuslock === 1)
-            operadoresInfo[operador].totalCerradas++;
-        });
-
-        const fecha = moment().format("DD-MMM-YYYY HH:mm:ss");
-        const totalAbiertas = rows.filter((v) => v.statuslock == 0).length;
-        const totalCerradas = rows.filter((v) => v.statuslock == 1).length;
-        const totalLlegadas = rows.filter((v) => v.orden == 1).length;
-        const totalPorLLegar = rows.filter((v) => v.orden == 2).length;
-        const totalOtras = rows.filter((v) => v.orden == 3).length;
-        const totalFile = rows.length;
-        const branch = rows[0].branch;
-        const operadoresArray = Object.values(operadoresInfo);
-        const list = rows;
-
-        status_op = req.body.status_op == 0 ? "Abiertos" : "Cerrados";
-        status_admin = req.body.status_admin == 0 ? "Abiertos" : "Cerrados";
-        sentido = req.body.sentido ? rows[0].modality : "";
-        desde = req.body.desde;
-        hasta = req.body.hasta;
-
-        const html = await new Promise<string>((resolve, reject) => {
           ejs.renderFile(
             path.join(__dirname, "../views/", "report-template.ejs"),
             {
@@ -520,49 +515,55 @@ export const createdPDF = async (req: Request, res: Response) => {
               totalPorLLegar,
               totalOtras,
             },
-            (err, html) => {
-              if (err) return reject(err);
-              resolve(html);
+            async (err: any, html: any) => {
+              if (err) {
+                console.log(err);
+                return;
+              }
+
+              const browser = await puppeteer.launch({ headless: "new" });
+              const page = await browser.newPage();
+              await page.setContent(html, { waitUntil: "networkidle0" });
+
+              const outputPath = path.join("files", "REPORT_CONTROL_FILE.pdf");
+              await page.pdf({
+                path: outputPath,
+                format: "A4",
+                printBackground: true,
+                landscape: true,
+                margin: {
+                  top: "10mm",
+                  bottom: "10mm",
+                  left: "10mm",
+                  right: "10mm",
+                },
+              });
+
+              await browser.close();
+
+              res.download("/REPORT_CONTROL_FILE.pdf");
+              res.send({
+                estadoflag: true,
+                msg: "File created successfully",
+                path: path.join("/REPORT_CONTROL_FILE.pdf"),
+              });
             }
           );
-        });
-
-        const browser = await puppeteer.launch({
-          headless: "new",
-          args: ["--no-sandbox", "--disable-setuid-sandbox"],
-        });
-        const page = await browser.newPage();
-        await page.setContent(html, { waitUntil: "networkidle0" });
-
-        const outputPath = path.join("files", "REPORT_CONTROL_FILE.pdf");
-        fs.mkdirSync("files", { recursive: true }); // Asegura que la carpeta exista
-
-        await page.pdf({
-          path: outputPath,
-          format: "A4",
-          printBackground: true,
-          landscape: true,
-          margin: {
-            top: "10mm",
-            bottom: "10mm",
-            left: "10mm",
-            right: "10mm",
-          },
-        });
-
-        await browser.close();
-
-        return res.send({
-          estadoflag: true,
-          msg: "File created successfully",
-          path: outputPath,
+        } else {
+          res.send({
+            estadoflag: false,
+            msg: "No se encontraron datos para generar el reporte",
+            path: null,
+          });
+        }
+      } else {
+        res.status(500).json({
+          error: "Error al ejecutar la consulta",
+          detalle: err?.message || "Error desconocido",
         });
       }
-    );
-  } catch (error) {
-    console.error("Error general:", error);
-    return res.status(500).send({ error: "Error al generar el PDF" });
-  }
+    }
+  );
 };
 
 export const getReportFileDetails = async (req: Request, res: Response) => {
