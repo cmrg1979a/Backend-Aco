@@ -9,6 +9,7 @@ import { createServer } from "http";
 import { Server as IOServer } from "socket.io";
 import { Server as HTTPServer } from "http";
 
+
 import { initWhatsapp } from "./services/whatsapp";
 require("dotenv").config();
 const { Pool } = pg;
