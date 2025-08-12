@@ -36,6 +36,7 @@ import {
   ValidarRegistrosLCL,
   validateToken,
 } from "../controllers/calculadoraController";
+import { cargarPaises, cargarPuertos } from "../controllers/calculadoraFletes";
 
 router.get("/validar_correo/:correo", ValidarCorreoExiste);
 router.post("/registrar_usuarios", RegistrarUsuario);
@@ -89,10 +90,7 @@ router.post("/validate_token", validateToken);
 router.post("/reestablecer_clave", UpdatePass);
 router.post("/cargue_status", TokenValidation, StatusCarge);
 router.post("/insert_call", TokenValidation, InsertCall);
-router.post(
-  "/cotizacion_cliente_register",
-  InsertCotizacionXCliente
-);
+router.post("/cotizacion_cliente_register", InsertCotizacionXCliente);
 router.get("/get_cot_fcl", TokenValidation, GetCotFCL);
 router.get("/get_cot_fcl_resumen", TokenValidation, GetCotFCLResumen);
 router.get("/get_cot_lcl", TokenValidation, GetCotLCL);
@@ -100,5 +98,7 @@ router.get("/get_cot_lcl_resumen", TokenValidation, GetCotLCLResumen);
 router.get("/get_cot_aereo", TokenValidation, GetCotAereo);
 router.get("/get_cot_aereo_resumen", TokenValidation, GetCotAereoResumen);
 router.post("/get_total_cotizacion", GetTotalCotizacion);
+router.get("/calc/cargar_puertos", cargarPuertos);
+router.get("/calc/cargar_paises", cargarPaises);
 
 export default router;

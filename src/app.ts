@@ -5,6 +5,11 @@ import path from "path";
 import multer from "multer";
 import bodyParser from "body-parser";
 import * as pg from "pg";
+import { createServer } from "http";
+import { Server as IOServer } from "socket.io";
+import { Server as HTTPServer } from "http";
+
+import { initWhatsapp } from "./services/whatsapp";
 require("dotenv").config();
 const { Pool } = pg;
 
@@ -43,6 +48,10 @@ if (global.esProduccion) {
 const pool = new Pool(cado);
 
 const app: Application = express();
+
+const httpServer: HTTPServer = createServer(app);
+const io = new IOServer(httpServer);
+
 app.use("/files", express.static(path.join(__dirname, "../files")));
 
 import authRoutes from "./routes/auth";
@@ -120,6 +129,7 @@ import StatusHouse from "./routes/StatusHouse";
 import configAvisos from "./routes/configAvisos";
 import branch from "./routes/branch";
 import aduanas from "./routes/aduanas";
+import whatsapp from "./routes/whatsapp";
 import { env } from "process";
 
 // settings
@@ -307,4 +317,11 @@ app.use(StatusHouse);
 app.use(configAvisos);
 app.use(branch);
 app.use(aduanas);
+app.use(whatsapp);
+
+initWhatsapp(io);
+
+app.get("/", (_, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
 export default app;

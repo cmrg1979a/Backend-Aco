@@ -12,6 +12,7 @@ moment.locale("es");
 import puppeteer from "puppeteer";
 import fs from "fs";
 let ejs = require("ejs");
+
 export const getControlFile = async (req: Request, res: Response) => {
   await pool.query(
     "SELECT * FROM function_reporte_file($1,$2,$3,$4,$5,$6,$7);",

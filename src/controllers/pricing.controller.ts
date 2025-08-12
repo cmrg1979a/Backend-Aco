@@ -1049,6 +1049,7 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
     nombre_impuesto,
     document,
     phone,
+    amount
   } = req.body;
 
   let fecha = moment().format("DD-MM-YYYY");
@@ -1141,6 +1142,7 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
         volumen,
         document,
         phone,
+        amount
       }
     );
 
