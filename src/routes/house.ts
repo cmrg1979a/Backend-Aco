@@ -24,6 +24,7 @@ import {
   generarFormatoBL,
   generarFormatoAWB,
   validarExistePagoHouse,
+  functionObtenerHouseMasterAsociados,
 } from "../controllers/house.controller";
 
 router.post("/setHouse", TokenValidation, setHouse);
@@ -46,5 +47,6 @@ router.get("/house_ver",  getVerHouse);
 router.get("/generar_formato_bl",  generarFormatoBL);
 router.get("/generar_formato_awb",  generarFormatoAWB);
 router.get("/validar_existe_pago_house",  validarExistePagoHouse);
+router.get("/obtener_house_master_asociados",  functionObtenerHouseMasterAsociados);
 
 export default router;

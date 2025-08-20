@@ -876,7 +876,6 @@ export const getVerHouse = async (req: Request, res: Response) => {
   );
 };
 
-
 // export const generarFormatoBL = async (req: Request, res: Response) => {
 //   var wb = new xl.Workbook({
 //     dateFormat: "dd/mm/yyyy",
@@ -1204,12 +1203,39 @@ export const generarFormatoAWB = async (req, res) => {
   }
 };
 
-
 export const validarExistePagoHouse = async (req: Request, res: Response) => {
   const { id } = req.query;
 
   await pool.query(
     "SELECT * FROM function_validar_existe_pagos_x_house($1);",
+    [id],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const functionObtenerHouseMasterAsociados = async (
+  req: Request,
+  res: Response
+) => {
+  const { id } = req.query;
+
+  await pool.query(
+    "SELECT * FROM function_obtener_housexmaster($1);",
     [id],
     (err, response, fields) => {
       if (!err) {
