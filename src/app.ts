@@ -16,7 +16,6 @@ const { Pool } = pg;
 
 global.esProduccion = true;
 
-
 const corsOptions = {
   origin: "*",
   methods: "GET,POST",

@@ -36,7 +36,7 @@ import {
   ValidarRegistrosLCL,
   validateToken,
 } from "../controllers/calculadoraController";
-import { cargarPaises, cargarPuertos } from "../controllers/calculadoraFletes";
+import { cargarPaises, cargarPuertos,  getCalcCostos,  getCalcMultiplicador, getCalcServicio, getCalcServicioInsert, getTipoCosto, getValDataLCL, postCalcCostosInsert } from "../controllers/calculadoraFletes";
 
 router.get("/validar_correo/:correo", ValidarCorreoExiste);
 router.post("/registrar_usuarios", RegistrarUsuario);
@@ -100,5 +100,12 @@ router.get("/get_cot_aereo_resumen", TokenValidation, GetCotAereoResumen);
 router.post("/get_total_cotizacion", GetTotalCotizacion);
 router.get("/calc/cargar_puertos", cargarPuertos);
 router.get("/calc/cargar_paises", cargarPaises);
+router.get("/calc/tipo_costo", getTipoCosto);
+router.get("/calc/servicio", getCalcServicio);
+router.post("/calc/servicio/guardar", getCalcServicioInsert);
+router.get("/calc/multiplicador", getCalcMultiplicador);
+router.post("/calc/costos/insertar", postCalcCostosInsert);
+router.get("/calc/costos", getCalcCostos);
+router.post("/calc/val_data_lcl", getValDataLCL);
 
 export default router;

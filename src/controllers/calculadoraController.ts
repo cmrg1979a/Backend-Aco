@@ -1,6 +1,5 @@
 import { Request, response, Response } from "express";
 import { conexion } from "../routes/databasePg";
-
 import * as pg from "pg";
 import { usuarioCalculadora } from "interface/usuariosCalculadora";
 import jwt from "jsonwebtoken";
@@ -1488,3 +1487,4 @@ export const GetTotalCotizacion = async (req: Request, res: Response) => {
     }
   );
 };
+
