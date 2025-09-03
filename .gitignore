@@ -7,3 +7,5 @@ src/routes/databasePg.ts
 src/controllers/onedrive.controller.ts
 .wwebjs_cache
 .wwebjs_auth
+.env
+env
