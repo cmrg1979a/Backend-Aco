@@ -115,8 +115,6 @@ export const getCalcServicioInsert = async (req: Request, res: Response) => {
 
 export const getCalcMultiplicador = async (req: Request, res: Response) => {
   let { id_branch, shimpent } = req.query;
-
-  console.log(shimpent);
   await pool.query(
     `select * From function_calc_multiplicador($1,$2);`,
     [id_branch, shimpent],
@@ -224,6 +222,57 @@ export const getValDataLCL = async (req: Request, res: Response) => {
           mensaje: rows[0].mensaje,
           estadoflag: rows[0].estadoflag,
           data: rows,
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const postCalcCostos = async (req: Request, res: Response) => {
+  let { costos, user, shipment, id_modality } = req.body;
+  await pool.query(
+    `SELECT * FROM function_calc_costo_insert($1,$2,$3,$4);`,
+    [JSON.stringify(costos), user, id_modality, shipment],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        if (!!rows[0].estadoflag) {
+          res.json({
+            status: 200,
+            statusBol: true,
+            data: rows,
+          });
+        } else {
+          res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+          });
+        }
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const getCalcCostosLis = async (req: Request, res: Response) => {
+  let { id_pais, shimpent, id_modality } = req.query;
+  await pool.query(
+    `SELECT * FROM function_calc_costos_list($1,$2,$3);`,
+    [shimpent, id_pais, id_modality],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          // token: renewTokenMiddleware(req),
         });
       } else {
         console.log(err);
