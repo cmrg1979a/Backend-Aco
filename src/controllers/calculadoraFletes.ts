@@ -236,21 +236,15 @@ export const postCalcCostos = async (req: Request, res: Response) => {
     `SELECT * FROM function_calc_costo_insert($1,$2,$3,$4);`,
     [JSON.stringify(costos), user, id_modality, shipment],
     (err, response, fields) => {
+      let rows = response.rows;
       if (!err) {
-        let rows = response.rows;
-        if (!!rows[0].estadoflag) {
-          res.json({
-            status: 200,
-            statusBol: true,
-            data: rows,
-          });
-        } else {
-          res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-          });
-        }
+        res.json({
+          status: 200,
+          statusBol: true,
+          data: rows,
+          estadoflag: rows[0].estadoflag,
+          mensaje: rows[0].mensaje,
+        });
       } else {
         console.log(err);
       }
