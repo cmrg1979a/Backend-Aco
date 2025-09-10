@@ -3,10 +3,10 @@ import { conexion } from "../routes/databasePGOp";
 const pool = conexion();
 
 export const cargarPuertos = async (req: Request, res: Response) => {
-  let { search } = req.query;
+  let { search, tipo } = req.query;
   await pool.query(
-    "SELECT * FROM function_calc_puerto($1)",
-    [!!search ? search : null],
+    "SELECT * FROM function_calc_puerto($1,$2,$3)",
+    [!!search ? search : null, null, tipo],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
@@ -263,6 +263,72 @@ export const getCalcCostosLis = async (req: Request, res: Response) => {
   await pool.query(
     `SELECT * FROM function_calc_costos_list($1,$2,$3);`,
     [shimpent, id_pais, id_modality],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          // token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const postCalcProfit = async (req: Request, res: Response) => {
+  let {
+    id_modality,
+    id_pais,
+    shimpent,
+    profit,
+    peso,
+    volumen,
+    valor,
+    estado,
+    user,
+  } = req.body;
+  await pool.query(
+    `SELECT * FROM function_calc_profit($1,$2,$3,$4,$5,$6,$7,$8,$9);`,
+    [
+      id_modality,
+      id_pais,
+      shimpent,
+      profit,
+      peso,
+      volumen,
+      valor,
+      estado,
+      user,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          // token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const getCalcProfitList = async (req: Request, res: Response) => {
+  let { id_pais, shimpent, id_modality } = req.query;
+  await pool.query(
+    `SELECT * FROM function_calc_profit_list($1,$2,$3);`,
+    [id_pais, shimpent, id_modality],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;

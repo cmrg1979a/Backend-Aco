@@ -15,7 +15,7 @@ function conexion() {
     : {
         // host: "67.205.129.62",
         // host: "143.244.169.120",
-        host: "143.244.167.240",
+        host: "143.244.169.120",
         user: "postgres",
         password: "@Developer2021Pic",
         port: "5432",

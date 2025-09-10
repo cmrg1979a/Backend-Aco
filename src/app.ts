@@ -39,7 +39,7 @@ if (global.esProduccion) {
 } else {
   global.path_url = "https://devapigeneral.piccargo.com/";
   cado = {
-    host: "143.244.167.240",
+    host: "143.244.169.120",
     user: "postgres",
     password: "@Developer2021Pic",
     port: "5432",
