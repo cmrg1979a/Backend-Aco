@@ -36,7 +36,23 @@ import {
   ValidarRegistrosLCL,
   validateToken,
 } from "../controllers/calculadoraController";
-import { cargarPaises, cargarPuertos,  getCalcCostos,  getCalcCostosLis,  getCalcMultiplicador, getCalcProfitList, getCalcServicio, getCalcServicioInsert, getTipoCosto, getValDataLCL, postCalcCostos, postCalcCostosInsert, postCalcProfit } from "../controllers/calculadoraFletes";
+import {
+  calcCostoEditar,
+  calcCostoEliminar,
+  cargarPaises,
+  cargarPuertos,
+  getCalcCostos,
+  getCalcCostosLis,
+  getCalcMultiplicador,
+  getCalcProfitList,
+  getCalcServicio,
+  getCalcServicioInsert,
+  getTipoCosto,
+  getValDataLCL,
+  postCalcCostos,
+  postCalcCostosInsert,
+  postCalcProfit,
+} from "../controllers/calculadoraFletes";
 
 router.get("/validar_correo/:correo", ValidarCorreoExiste);
 router.post("/registrar_usuarios", RegistrarUsuario);
@@ -111,5 +127,7 @@ router.post("/calc/costos_calc", postCalcCostos);
 router.get("/calc/costos_list", getCalcCostosLis);
 router.post("/calc/profit", postCalcProfit);
 router.get("/calc/profit_list", getCalcProfitList);
+router.put("/calc/costo/actualizar", calcCostoEditar);
+router.put("/calc/costo/eliminar", calcCostoEliminar);
 
 export default router;

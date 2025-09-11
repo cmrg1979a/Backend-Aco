@@ -144,6 +144,7 @@ export const postCalcCostosInsert = async (req: Request, res: Response) => {
     concepto,
     id_multiplicador,
     unitario,
+    costominimo,
     fechavalidez,
     opcion,
     users,
@@ -152,7 +153,7 @@ export const postCalcCostosInsert = async (req: Request, res: Response) => {
   } = req.body;
 
   await pool.query(
-    `select * From function_calc_costoinsert($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12);`,
+    `select * From function_calc_costoinsert($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13);`,
     [
       id_pais,
       id_service,
@@ -161,6 +162,7 @@ export const postCalcCostosInsert = async (req: Request, res: Response) => {
       id_multiplicador,
       concepto,
       unitario,
+      costominimo,
       fechavalidez,
       opcion,
       users,
@@ -323,6 +325,67 @@ export const getCalcProfitList = async (req: Request, res: Response) => {
   await pool.query(
     `SELECT * FROM function_calc_profit_list($1,$2,$3);`,
     [id_pais, shimpent, id_modality],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          // token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const calcCostoEditar = async (req: Request, res: Response) => {
+  let {
+    id_multiplicador,
+    concepto,
+    punitario,
+    fechavalidez,
+    costominimo,
+    usuario,
+    id,
+  } = req.body;
+  await pool.query(
+    `SELECT * FROM function_calc_costo_editar($1,$2,$3,$4,$5,$6,$7);`,
+    [
+      id_multiplicador,
+      concepto,
+      punitario,
+      fechavalidez,
+      costominimo,
+      usuario,
+      id,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          // token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const calcCostoEliminar = async (req: Request, res: Response) => {
+  let { id, user } = req.body;
+  await pool.query(
+    `SELECT * FROM function_calc_costo_eliminar($1,$2);`,
+    [id, user],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
