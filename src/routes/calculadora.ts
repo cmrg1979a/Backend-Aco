@@ -43,10 +43,14 @@ import {
   cargarPuertos,
   getCalcCostos,
   getCalcCostosLis,
+  getCalcDepartamentos,
+  getCalcDistritos,
   getCalcMultiplicador,
   getCalcProfitList,
   getCalcServicio,
   getCalcServicioInsert,
+  getCalcTransporte,
+  getCalcTransporteGuardar,
   getTipoCosto,
   getValDataLCL,
   postCalcCostos,
@@ -129,5 +133,9 @@ router.post("/calc/profit", postCalcProfit);
 router.get("/calc/profit_list", getCalcProfitList);
 router.put("/calc/costo/actualizar", calcCostoEditar);
 router.put("/calc/costo/eliminar", calcCostoEliminar);
+router.get("/calc/departamentos", getCalcDepartamentos);
+router.get("/calc/distritos", getCalcDistritos);
+router.post("/calc/transporte/guardar", getCalcTransporteGuardar);
+router.get("/calc/transporte", getCalcTransporte);
 
 export default router;

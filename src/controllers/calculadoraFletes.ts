@@ -403,3 +403,94 @@ export const calcCostoEliminar = async (req: Request, res: Response) => {
     }
   );
 };
+
+export const getCalcDepartamentos = async (req: Request, res: Response) => {
+  let { id_pais, shimpent, id_modality } = req.query;
+  await pool.query(
+    `SELECT * FROM function_calc_state($1);`,
+    [id_pais],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          // token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const getCalcTransporte = async (req: Request, res: Response) => {
+  let { id_pais } = req.query;
+  await pool.query(
+    `SELECT * FROM function_calc_transporte($1);`,
+    [id_pais],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          // token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const getCalcDistritos = async (req: Request, res: Response) => {
+  let { id_state } = req.query;
+  await pool.query(
+    `SELECT * FROM function_calc_profit_town($1);`,
+    [id_state],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          // token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const getCalcTransporteGuardar = async (req: Request, res: Response) => {
+  let { id_town, monto } = req.body;
+  await pool.query(
+    `SELECT * FROM function_calc_transporte_insertar($1,$2);`,
+    [id_town, monto],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          // token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
