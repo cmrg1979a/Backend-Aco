@@ -13,7 +13,6 @@ import { Server as HTTPServer } from "http";
 import { initWhatsapp } from "./services/whatsapp";
 require("dotenv").config();
 const { Pool } = pg;
-
 global.esProduccion = true;
 
 const corsOptions = {

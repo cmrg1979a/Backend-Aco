@@ -473,10 +473,10 @@ export const getCalcDistritos = async (req: Request, res: Response) => {
 };
 
 export const getCalcTransporteGuardar = async (req: Request, res: Response) => {
-  let { id_town, monto } = req.body;
+  let { id_town, monto, opcion } = req.body;
   await pool.query(
-    `SELECT * FROM function_calc_transporte_insertar($1,$2);`,
-    [id_town, monto],
+    `SELECT * FROM function_calc_transporte_insertar($1,$2,$3);`,
+    [id_town, monto, opcion],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
