@@ -56,6 +56,8 @@ import {
   postCalcCostos,
   postCalcCostosInsert,
   postCalcProfit,
+  postCalcProfitActualizar,
+  postCalcProfitAnular,
 } from "../controllers/calculadoraFletes";
 
 router.get("/validar_correo/:correo", ValidarCorreoExiste);
@@ -130,6 +132,8 @@ router.post("/calc/val_data_lcl", getValDataLCL);
 router.post("/calc/costos_calc", postCalcCostos);
 router.get("/calc/costos_list", getCalcCostosLis);
 router.post("/calc/profit", postCalcProfit);
+router.put("/calc/profit/actualizar", postCalcProfitActualizar);
+router.put("/calc/profit/anular", postCalcProfitAnular);
 router.get("/calc/profit_list", getCalcProfitList);
 router.put("/calc/costo/actualizar", calcCostoEditar);
 router.put("/calc/costo/eliminar", calcCostoEliminar);

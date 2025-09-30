@@ -288,9 +288,12 @@ export const postCalcProfit = async (req: Request, res: Response) => {
     valor,
     estado,
     user,
+    opcion,
+    metromc,
+    metromcad,
   } = req.body;
   await pool.query(
-    `SELECT * FROM function_calc_profit($1,$2,$3,$4,$5,$6,$7,$8,$9);`,
+    `SELECT * FROM function_calc_profit($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12);`,
     [
       id_modality,
       id_pais,
@@ -301,7 +304,54 @@ export const postCalcProfit = async (req: Request, res: Response) => {
       valor,
       estado,
       user,
+      opcion,
+      metromc,
+      metromcad,
     ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          // token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const postCalcProfitActualizar = async (req: Request, res: Response) => {
+  let { id, profit, peso, volumen, valor, metromc, metromcad } = req.body;
+  await pool.query(
+    `SELECT * FROM function_calc_profit_actualizar($1,$2,$3,$4,$5,$6,$7);`,
+    [id, profit, peso, volumen, valor, metromc, metromcad],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          // token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+export const postCalcProfitAnular = async (req: Request, res: Response) => {
+  let { id, profit, peso, volumen, valor, metromc, metromcad } = req.body;
+  await pool.query(
+    `SELECT * FROM function_calc_profit_anular($1);`,
+    [id],
     (err, response, fields) => {
       if (!err) {
         let rows = response.rows;
