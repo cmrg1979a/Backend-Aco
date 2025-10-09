@@ -544,3 +544,102 @@ export const getCalcTransporteGuardar = async (req: Request, res: Response) => {
     }
   );
 };
+
+export const getCalObtenerMontos = async (req: Request, res: Response) => {
+  let {
+    tipo,
+    id_pais_origen,
+    port_origen,
+    id_pais_destino,
+    port_destino,
+    peso,
+    volumen,
+    servicios,
+    valormercancia,
+    id_town,
+    email,
+  } = req.query;
+
+  await pool.query(
+    `SELECT * FROM function_cal_totales($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11);`,
+    [
+      tipo,
+      id_pais_origen,
+      port_origen,
+      id_pais_destino,
+      port_destino,
+      peso,
+      volumen,
+      null,
+      valormercancia,
+      id_town,
+      email,
+    ],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          // token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const getCalcDepartamentoSearch = async (
+  req: Request,
+  res: Response
+) => {
+  let { id_pais, search } = req.query;
+  await pool.query(
+    `SELECT * FROM function_calc_deparatamentos($1,$2);`,
+    [id_pais, search],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          // token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
+
+export const getCalcDistritoSearch = async (req: Request, res: Response) => {
+  let { id_departamento, search } = req.query;
+  console.log("id_departamento", id_departamento);
+  console.log("search", search);
+  await pool.query(
+    `SELECT * FROM function_calc_distrito($1,$2);`,
+    [id_departamento, search],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          // token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};
