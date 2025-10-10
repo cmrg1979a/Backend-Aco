@@ -302,7 +302,7 @@ export const postCalcProfit = async (req: Request, res: Response) => {
       peso,
       volumen,
       valor,
-      estado,
+      1,
       user,
       opcion,
       metromc,
