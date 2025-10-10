@@ -4,7 +4,7 @@ const { Pool } = pg;
 require("dotenv").config();
 
 function conexion() {
-  const config = global.esProduccion
+  const config = process.env.NODE_ENV
     ? {
         host: "10.116.0.2",
         // host: "157.230.14.98", // remoto

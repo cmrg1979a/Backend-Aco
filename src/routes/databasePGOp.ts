@@ -1,10 +1,8 @@
 import * as pg from "pg";
 const { Pool } = pg;
 
-console.log("esProduccion", global.esProduccion);
-
 function conexion() {
-  const config = global.esProduccion
+  const config = process.env.NODE_ENV
     ? {
         host: "10.116.0.15",
         user: "postgres",
