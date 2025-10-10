@@ -7,7 +7,7 @@ let io: Server;
 let clientReady = false;
 let browser = null;
 let ultimoQR: string | null = null;
-if (global.esProduccion) {
+if (process.env.NODE_ENV) {
   browser = puppeteer.launch({
     executablePath: "/usr/bin/google-chrome",
     headless: true,

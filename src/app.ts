@@ -13,7 +13,6 @@ import { Server as HTTPServer } from "http";
 import { initWhatsapp } from "./services/whatsapp";
 require("dotenv").config();
 const { Pool } = pg;
-global.esProduccion = true;
 
 const corsOptions = {
   origin: "*",
@@ -25,7 +24,7 @@ const corsMiddleware = cors(corsOptions);
 
 /**PROUCCIÓN */
 let cado = {};
-if (global.esProduccion) {
+if (process.env.NODE_ENV) {
   console.log("NODE_ENV", process.env.NODE_ENV);
   global.path_url = "https://aco.agentedecargaonline.com/";
   cado = {

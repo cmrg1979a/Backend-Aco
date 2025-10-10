@@ -4,7 +4,7 @@ export function getCollection(collectionName: string): Promise<Collection> {
   // const url = "67.205.129.62";
   const dbName = "db_op_main_01";
   let url = "mongodb://localhost:27017";
-  if (global.esProduccion) {
+  if (process.env.NODE_ENV) {
     url =
       "mongodb+srv://doadmin:2jS0z6g47it9s15D@db-mongodb-nyc1-68607-8b7bd198.mongo.ondigitalocean.com/admin?retryWrites=true&w=majority&tls=true";
   }

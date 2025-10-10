@@ -504,7 +504,7 @@ export const getListCallsAduana = async (req: Request, res: Response) => {
 
 export const aprobarCotizacionAduana = async (req: Request, res: Response) => {
   let baseURL = "http://localhost:9200/";
-  if (global.esProduccion) {
+  if (process.env.NODE_ENV) {
     baseURL = "https://api.agentedecargaonline.com/";
   }
   let {
