@@ -21,36 +21,18 @@ let isProduction = process.env.NODE_ENV === "production";
 //   });
 // }
 
-const puppeteerOptions = isProduction
-  ? {
-      executablePath: "/usr/bin/chromium-browser", // o /usr/bin/chromium
-      headless: true,
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--disable-accelerated-2d-canvas",
-        "--no-first-run",
-        "--no-zygote",
-        "--single-process",
-        "--disable-gpu",
-      ],
-    }
-  : {
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    };
-(async () => {
-  try {
-    console.log("🚀 Intentando lanzar Puppeteer...");
-    const browser = await puppeteer.launch(puppeteerOptions);
-    console.log("✅ Puppeteer se lanzó correctamente.");
-    await browser.close();
-  } catch (err) {
-    console.error("❌ Error lanzando Puppeteer:", err);
-  }
-})();
-
+const puppeteerOptions = {
+  headless: true,
+  args: [
+    "--no-sandbox",
+    "--disable-setuid-sandbox",
+    "--disable-dev-shm-usage",
+    "--disable-accelerated-2d-canvas",
+    "--no-first-run",
+    "--no-zygote",
+    "--disable-gpu",
+  ],
+};
 const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: puppeteerOptions,
