@@ -7,22 +7,43 @@ let io: Server;
 let clientReady = false;
 let browser = null;
 let ultimoQR: string | null = null;
-if (process.env.NODE_ENV) {
-  browser = puppeteer.launch({
-    executablePath: "/usr/bin/google-chrome",
-    headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-  });
-} else {
-  browser = puppeteer.launch({
-    headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-  });
-}
+let isProduction = process.env.NODE_ENV;
+// if (process.env.NODE_ENV) {
+//   browser = puppeteer.launch({
+//     executablePath: "/usr/bin/google-chrome",
+//     headless: true,
+//     args: ["--no-sandbox", "--disable-setuid-sandbox"],
+//   });
+// } else {
+//   browser = puppeteer.launch({
+//     headless: true,
+//     args: ["--no-sandbox", "--disable-setuid-sandbox"],
+//   });
+// }
+
+const puppeteerOptions = isProduction
+  ? {
+      executablePath: "/usr/bin/chromium-browser", // o /usr/bin/chromium
+      headless: true,
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-accelerated-2d-canvas",
+        "--no-first-run",
+        "--no-zygote",
+        "--single-process",
+        "--disable-gpu",
+      ],
+    }
+  : {
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    };
 
 const client = new Client({
   authStrategy: new LocalAuth(),
-  puppeteer: browser,
+  puppeteer: puppeteerOptions,
 });
 
 export const initWhatsapp = (_io: Server) => {
