@@ -10,37 +10,36 @@ router.post("/enviarWhastapp", enviarWhatsapp);
 router.get("/whatsapp-qr", (_req, res) => {
   const qrDataUrl = getUltimoQR();
 
-  res.send(`
+  const html = `
     <html>
       <head>
         <title>QR WhatsApp</title>
         <script src="/socket.io/socket.io.js"></script>
       </head>
       <body style="display:flex;align-items:center;justify-content:center;height:100vh">
-        
-       <div style="text-align:center">
+        <div style="text-align:center">
           <h2>Escanea este QR con WhatsApp</h2>
-          <img src="${qrDataUrl}" alt="QR de WhatsApp" style="border:1px solid #ccc"/>
+          ${
+            qrDataUrl
+              ? `<img src="${qrDataUrl}" alt="QR de WhatsApp" style="border:1px solid #ccc"/>`
+              : `<p style="font-size:18px">⏳ Generando QR... recarga en unos segundos.</p>`
+          }
         </div>
 
         <script>
           const socket = io();
-          const qrImage = document.getElementById("qrImage");
-          const estado = document.getElementById("estado");
-
           socket.on("qr", (dataUrl) => {
-            qrImage.src = dataUrl;
-            estado.innerText = "♻️ QR actualizado. Escanéalo con WhatsApp";
+            document.body.innerHTML = '<img src="' + dataUrl + '" alt="QR actualizado" />';
           });
-
           socket.on("mensaje", (msg) => {
-            estado.innerText = msg;
+            console.log(msg);
           });
         </script>
       </body>
     </html>
-  `);
+  `;
+
+  res.send(html);
 });
 
 export default router;
-

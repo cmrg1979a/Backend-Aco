@@ -40,7 +40,13 @@ const puppeteerOptions = isProduction
       headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     };
-
+try {
+  console.log("🚀 Iniciando Puppeteer...");
+  const browser = await puppeteer.launch(puppeteerOptions);
+  console.log("✅ Puppeteer lanzado correctamente");
+} catch (err) {
+  console.error("❌ Error lanzando Puppeteer:", err);
+}
 const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: puppeteerOptions,
