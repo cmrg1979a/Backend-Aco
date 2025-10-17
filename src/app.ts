@@ -9,7 +9,6 @@ import { createServer } from "http";
 import { Server as IOServer } from "socket.io";
 import { Server as HTTPServer } from "http";
 
-
 import { initWhatsapp } from "./services/whatsapp";
 require("dotenv").config();
 const { Pool } = pg;
@@ -24,7 +23,7 @@ const corsMiddleware = cors(corsOptions);
 
 /**PROUCCIÓN */
 let cado = {};
-if (process.env.NODE_ENV) {
+if (process.env.NODE_ENV === "production") {
   console.log("NODE_ENV", process.env.NODE_ENV);
   global.path_url = "https://aco.agentedecargaonline.com/";
   cado = {

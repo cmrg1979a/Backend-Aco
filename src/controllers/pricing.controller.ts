@@ -1066,7 +1066,7 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
   });
   let lengthServ = servicios.length;
   let browser = null;
-  if (process.env.NODE_ENV) {
+  if (process.env.NODE_ENV === "production") {
     browser = await puppeteer.launch({
       executablePath: "/usr/bin/google-chrome",
       headless: true,
@@ -1186,7 +1186,7 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
 
 export const aprobarCotizacion = async (req: Request, res: Response) => {
   let baseURL = "http://localhost:9200/";
-  if (process.env.NODE_ENV) {
+  if (process.env.NODE_ENV === "production") {
     baseURL = "https://api.agentedecargaonline.com/";
   }
   let {

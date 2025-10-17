@@ -393,7 +393,7 @@ export const pdfSolicitud = async (req: Request, res: Response) => {
     browser = await puppeteer.launch({
       headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      ...(process.env.NODE_ENV && { executablePath: "/usr/bin/google-chrome" }),
+      ...(process.env.NODE_ENV==='production' && { executablePath: "/usr/bin/google-chrome" }),
     });
 
     const page = await browser.newPage();
