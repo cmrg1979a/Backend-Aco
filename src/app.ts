@@ -1,4 +1,5 @@
 import express, { Application } from "express";
+require("dotenv").config();
 import morgan from "morgan";
 import cors from "cors";
 import path from "path";
@@ -10,7 +11,7 @@ import { Server as IOServer } from "socket.io";
 import { Server as HTTPServer } from "http";
 
 import { initWhatsapp } from "./services/whatsapp";
-require("dotenv").config();
+
 const { Pool } = pg;
 
 const corsOptions = {
@@ -22,27 +23,14 @@ const corsOptions = {
 const corsMiddleware = cors(corsOptions);
 
 /**PROUCCIÓN */
-let cado = {};
-if (process.env.NODE_ENV === "production") {
-  console.log("NODE_ENV", process.env.NODE_ENV);
-  global.path_url = "https://aco.agentedecargaonline.com/";
-  cado = {
-    host: "10.116.0.15",
-    user: "postgres",
-    password: "@Developer2021Pic",
-    port: "5432",
-    database: "db_op_main_01",
-  };
-} else {
-  global.path_url = "https://devapigeneral.piccargo.com/";
-  cado = {
-    host: "143.244.169.120",
-    user: "postgres",
-    password: "@Developer2021Pic",
-    port: "5432",
-    database: "db_op_main_02",
-  };
-}
+
+let cado = {
+  host: process.env.host,
+  user: process.env.user,
+  password: process.env.password,
+  port: process.env.port,
+  database: process.env.database,
+};
 const pool = new Pool(cado);
 
 const app: Application = express();

@@ -475,7 +475,7 @@ export const getTrackingData = async (req: Request, res: Response) => {
 
 export const sendNotificacionHouse = async (req: Request, res: Response) => {
   const { id, cuentasBancarias, id_branch, notificacion, token } = req.body;
-  let url = global.path_url + "tracking/";
+  let url = process.env.path_url + "tracking/";
   const response = await pool.query(
     "SELECT * FROM function_generar_mail_aviso($1, $2, $3, $4,$5)",
     [id, notificacion, id_branch, cuentasBancarias, url]

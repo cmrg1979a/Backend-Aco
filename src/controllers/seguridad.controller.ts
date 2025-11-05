@@ -39,7 +39,7 @@ export const setRecuperarClave = async (req: Request, res: Response) => {
       if (!err) {
         let rows = response.rows;
         if (rows[0].token) {
-          let url = `${global.path_url}reestablecer_clave/${rows[0].token}`;
+          let url = `${process.env.path_url}reestablecer_clave/${rows[0].token}`;
           let html = `
               <!DOCTYPE html>
                 <html>

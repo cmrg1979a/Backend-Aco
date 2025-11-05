@@ -563,17 +563,17 @@ export const getCalObtenerMontos = async (req: Request, res: Response) => {
   await pool.query(
     `SELECT * FROM function_cal_totales($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11);`,
     [
-      tipo,
-      id_pais_origen,
-      port_origen,
-      id_pais_destino,
-      port_destino,
-      peso,
-      volumen,
+      tipo ? tipo : null,
+      id_pais_origen ? id_pais_origen : null,
+      port_origen ? port_origen : null,
+      id_pais_destino ? id_pais_destino : null,
+      port_destino ? port_destino : null,
+      peso ? peso : null,
+      volumen ? volumen : null,
       null,
-      valormercancia,
-      id_town,
-      email,
+      valormercancia ? valormercancia : null,
+      id_town ? id_town : null,
+      email ? email : null,
     ],
     (err, response, fields) => {
       if (!err) {
