@@ -718,105 +718,112 @@ export const listadoCotizacionMercadeo = async (
 ) => {
   let { filtro, id_branch } = req.body;
 
-  await pool.query(
-    "SELECT * FROM listado_cotizacion_mercadeo($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
-    [
-      id_branch ? id_branch : null,
-      filtro.fechafin ? filtro.fechafin : null,
-      filtro.fechainicio ? filtro.fechainicio : null,
-      filtro.id_entities ? filtro.id_entities : null,
-      filtro.id_incoterm ? filtro.id_incoterm : null,
-      filtro.id_marketing ? filtro.id_marketing : null,
-      filtro.id_modality ? filtro.id_modality : null,
-      filtro.id_shipment ? filtro.id_shipment : null,
-      filtro.id_status ? filtro.id_status : null,
-      filtro.estado ? filtro.estado : null,
-    ],
+  try {
+    const result = await pool.query(
+      "SELECT * FROM listado_cotizacion_mercadeo($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
+      [
+        id_branch ? id_branch : null,
+        filtro.fechafin ? filtro.fechafin : null,
+        filtro.fechainicio ? filtro.fechainicio : null,
+        filtro.id_entities ? filtro.id_entities : null,
+        filtro.id_incoterm ? filtro.id_incoterm : null,
+        filtro.id_marketing ? filtro.id_marketing : null,
+        filtro.id_modality ? filtro.id_modality : null,
+        filtro.id_shipment ? filtro.id_shipment : null,
+        filtro.id_status ? filtro.id_status : null,
+        filtro.estado ? filtro.estado : null,
+      ]
+    );
 
-    (err, response, fields) => {
-      if (!err) {
-        let rows = response.rows;
+    const rows = result.rows;
 
-        if (!!rows[0].estadoflag) {
-          let lstTotalPorDia = rows[0].lsttotaldia;
-          let lstmarketing = rows;
-          let sucursal = rows[0].trade_name_sucursal;
-
-          const countByStatus = {};
-
-          // Itera a través del array y cuenta los estados
-          for (const item of rows) {
-            const status = item.namemarketing;
-            if (countByStatus[status]) {
-              countByStatus[status] += 1;
-            } else {
-              countByStatus[status] = 1;
-            }
-          }
-          // ------------------------
-          // let countByStatusArray = Object.values(countByStatus);
-          const countByActivosArray = Object.entries(countByStatus).map(
-            ([name, cantidad]) => ({ name, cantidad })
-          );
-
-          // ------------------------
-          ejs.renderFile(
-            path.join(__dirname, "../views/", "pdfQuoteMarketing.ejs"),
-
-            {
-              sucursal,
-              countByActivosArray,
-              lstmarketing,
-            },
-
-            (err: any, data: any) => {
-              if (err) {
-                // res.send(err);
-                console.log(err);
-              } else {
-                let options = {
-                  page_size: "A4",
-                  orientation: "landscape",
-                  header: {
-                    height: "10mm",
-                  },
-                  footer: {
-                    height: "10mm",
-                  },
-                };
-
-                pdf
-                  .create(data, options)
-                  .toFile(
-                    "files/pdfQuoteMarketing.pdf",
-                    function (err: any, data: any) {
-                      if (err) {
-                        res.send(err);
-                      } else {
-                        res.download("/pdfQuoteMarketing.pdf");
-                        res.send({
-                          estadoflag: true,
-                          msg: "File created successfully",
-                          path: path.join("pdfQuoteMarketing.pdf"),
-                        });
-                      }
-                    }
-                  );
-              }
-            }
-          );
-        } else {
-          res.send({
-            estadoflag: false,
-            msg: "No se encontraron registros",
-            // path: path.join("pdfQuoteMarketing.pdf"),
-          });
-        }
-      } else {
-        console.log(err);
-      }
+    if (!rows.length || !rows[0].estadoflag) {
+      return res.send({
+        estadoflag: false,
+        msg: "No se encontraron registros",
+      });
     }
-  );
+
+    // Variables de datos
+    const lstTotalPorDia = rows[0].lsttotaldia;
+    const lstmarketing = rows;
+    const sucursal = rows[0].trade_name_sucursal;
+
+    // Conteo por estado
+    const countByStatus: Record<string, number> = {};
+    for (const item of rows) {
+      const status = item.namemarketing;
+      countByStatus[status] = (countByStatus[status] || 0) + 1;
+    }
+
+    const countByActivosArray = Object.entries(countByStatus).map(
+      ([name, cantidad]) => ({ name, cantidad })
+    );
+
+    const fecha = moment().format("DD-MM-YYYY");
+
+    // Renderizar EJS a HTML
+    const htmlContent = await ejs.renderFile(
+      path.join(__dirname, "../views/", "pdfQuoteMarketing.ejs"),
+      {
+        sucursal,
+        countByActivosArray,
+        lstmarketing,
+        fecha,
+      }
+    );
+
+    // Configurar Puppeteer
+    let browser = null;
+    if (process.env.NODE_ENV === "production") {
+      browser = await puppeteer.launch({
+        executablePath: "/usr/bin/google-chrome",
+        headless: true,
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      });
+    } else {
+      browser = await puppeteer.launch({
+        headless: true,
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      });
+    }
+
+    const page = await browser.newPage();
+    await page.setContent(htmlContent, { waitUntil: "networkidle0" });
+
+    // Generar PDF
+    const pdfBuffer = await page.pdf({
+      format: "A4",
+      landscape: true,
+      printBackground: true,
+      margin: {
+        top: "10mm",
+        right: "10mm",
+        bottom: "10mm",
+        left: "10mm",
+      },
+    });
+
+    const fileName = `pdfQuoteMarketing_${id_branch || "all"}_${fecha}.pdf`;
+    const filePath = path.join(__dirname, "../../files", fileName);
+    fs.writeFileSync(filePath, pdfBuffer);
+
+    await browser.close();
+
+    // Enviar respuesta
+    res.send({
+      estadoflag: true,
+      msg: "File created successfully",
+      path: fileName,
+    });
+  } catch (error) {
+    console.error("Error al generar el PDF:", error);
+    res.status(500).send({
+      estadoflag: false,
+      msg: "Error interno del servidor al generar el PDF.",
+      error,
+    });
+  }
 };
 
 // export const quotePreviewTotales = async (req: Request, res: Response) => {
@@ -1049,7 +1056,7 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
     nombre_impuesto,
     document,
     phone,
-    amount
+    amount,
   } = req.body;
 
   let fecha = moment().format("DD-MM-YYYY");
@@ -1142,7 +1149,7 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
         volumen,
         document,
         phone,
-        amount
+        amount,
       }
     );
 
