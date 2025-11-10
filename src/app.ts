@@ -20,6 +20,11 @@ const corsOptions = {
   allowedHeaders: "Content-Type,Authorization",
 };
 
+const app: Application = express();
+const httpServer: HTTPServer = createServer(app);
+const io = new IOServer(httpServer);
+
+initWhatsapp(io);
 const corsMiddleware = cors(corsOptions);
 
 /**PROUCCIÓN */
@@ -32,11 +37,6 @@ let cado = {
   database: process.env.database,
 };
 const pool = new Pool(cado);
-
-const app: Application = express();
-
-const httpServer: HTTPServer = createServer(app);
-const io = new IOServer(httpServer);
 
 app.use("/files", express.static(path.join(__dirname, "../files")));
 
@@ -304,8 +304,6 @@ app.use(configAvisos);
 app.use(branch);
 app.use(aduanas);
 app.use(whatsapp);
-
-initWhatsapp(io);
 
 app.get("/", (_, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
