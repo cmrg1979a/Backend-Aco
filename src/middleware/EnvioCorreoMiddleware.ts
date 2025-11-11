@@ -1,7 +1,6 @@
 // const nodemailer = require("nodemailer");
 const sgMail = require("@sendgrid/mail");
-let SENDGRID_API_KEY =
-  "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";
+const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY || "";
 sgMail.setApiKey(SENDGRID_API_KEY);
 
 // console.log(sgMail);

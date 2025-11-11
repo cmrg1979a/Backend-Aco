@@ -3,7 +3,7 @@ import { conexion } from "../routes/databasePGOp";
 import { getCollection } from "../routes/mongoDB";
 import { Collection, InsertOneResult, UpdateResult } from "mongodb";
 import { renewTokenMiddleware } from "../middleware/verifyTokenMiddleware";
-import { io } from "../index";
+import { io } from "../server";
 import * as pg from "pg";
 const { Pool } = pg;
 import puppeteer from "puppeteer";
