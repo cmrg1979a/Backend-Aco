@@ -8,13 +8,12 @@
       <tbody>
         <tr style="height: 10px">
           <td style="width: 50%; height: 10px">
-            <!-- <img
+            <img
               src="https://point.qreport.site/files/logopiccargo.svg"
               alt=""
               width="233"
               height="51"
-            /> -->
-            <img src="<%= url_logo%>" width="120px" alt="logo_empresa">
+            />
           </td>
           <td style="width: 50%; height: 10px; text-align: center">
             <h3><strong>EXP <%= expediente %></strong></h3>
@@ -40,7 +39,7 @@
                     USD:
                   </td>
                   <td style="width: 50%; height: 5px">
-                    <h3><strong>$ <%= totalSelected %></strong></h3>
+                    <h3><strong>$ <%= totalPagar %></strong></h3>
                   </td>
                 </tr>
               </tbody>
@@ -89,57 +88,6 @@
         </tr>
       </tbody>
     </table>
-
-    <table
-      border="1"
-      style="
-        border-collapse: collapse;
-        width: 100%;
-        height: 18px;
-        margin-top: 10px;
-      "
-    >
-      <tbody>
-        <tr>
-          <td
-            colspan="2"
-            style="text-align: center; font-size: 10pt; font-weight: bold"
-          >
-            CONCEPTOS A PAGAR
-          </td>
-        </tr>
-
-        <% if (selected.length < 1) { %> <% conceptos.forEach(item => {%>
-        <tr style="height: 18px">
-          <td
-            style="
-              text-align: left;
-              padding: 5px;
-              font-size: 8pt;
-              font-weight: bold;
-            "
-          >
-            <%= item.concepto %>
-          </td>
-        </tr>
-        <% });%> <% }%> <% if (selected.length > 0) { %> <%
-        selected.forEach(item => {%>
-        <tr style="height: 18px">
-          <td
-            style="
-              text-align: left;
-              padding: 5px;
-              font-size: 8pt;
-              font-weight: bold;
-            "
-          >
-            <%= item.concepto %>
-          </td>
-        </tr>
-        <% });%> <% }%>
-      </tbody>
-    </table>
-
     <table
       border="1"
       style="
@@ -353,7 +301,7 @@
         <% if (totalProveedores.length > 0) { %> <%
         totalProveedores.forEach(item => {%>
         <tr>
-          <td><%= item.nameproveedor %></td>
+          <td><%= item.nameProveedor %></td>
           <td>USD <%= item.total_pr %></td>
           <td>USD <%= item.total_op %></td>
         </tr>

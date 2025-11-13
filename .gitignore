@@ -8,4 +8,5 @@ src/controllers/onedrive.controller.ts
 .wwebjs_cache
 .wwebjs_auth
 .env
+.envExample
 puppeteer_profiles

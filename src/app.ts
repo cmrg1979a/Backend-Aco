@@ -119,7 +119,7 @@ import whatsapp from "./routes/whatsapp";
 import { env } from "process";
 
 // settings
-app.set("port", 9200);
+app.set("port", Number(process.env.APP_PORT) || 9200);
 
 // middlewares
 app.use(morgan("dev"));

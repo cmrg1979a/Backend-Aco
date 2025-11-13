@@ -1080,10 +1080,28 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
   } else {
-    browser = await puppeteer.launch({
+    // Intentar usar Chrome o Edge instalado en Windows para evitar descargas de Chromium
+    const findChrome = () => {
+      const candidates = [
+        'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+        'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+        process.env.LOCALAPPDATA ? `${process.env.LOCALAPPDATA}\\Google\\Chrome\\Application\\chrome.exe` : undefined,
+        // Fallback a Microsoft Edge si Chrome no existe
+        'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
+        'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
+      ].filter(Boolean);
+      for (const p of candidates as string[]) {
+        try { if (fs.existsSync(p)) return p; } catch {}
+      }
+      return null;
+    };
+    const chromePath = findChrome();
+    const launchOptions: any = {
       headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    });
+    };
+    if (chromePath) launchOptions.executablePath = chromePath;
+    browser = await puppeteer.launch(launchOptions);
   }
 
   try {
@@ -1155,7 +1173,7 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
 
     const page = await browser.newPage();
 
-    await page.setContent(htmlContent, { waitUntil: "networkidle0" });
+    await page.setContent(htmlContent, { waitUntil: "load" });
 
     // 4. Generar el PDF
     const pdfBuffer = await page.pdf({
@@ -1170,14 +1188,18 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
     });
 
     const fileName = `COTIZACION_${id_branch}_${index}.pdf`;
-    const filePath = path.join(__dirname, "../../files", fileName);
+    // Guardar en projectRoot/files para coincidir con app.use('/files', express.static(path.join(__dirname, '../files')))
+    const outDir = path.join(__dirname, "../../files");
+    if (!fs.existsSync(outDir)) {
+      fs.mkdirSync(outDir, { recursive: true });
+    }
+    const filePath = path.join(outDir, fileName);
     fs.writeFileSync(filePath, pdfBuffer);
 
-    res.download(`/COTIZACION_${id_branch}_${index}.pdf`);
-    res.send({
+    return res.send({
       estadoflag: true,
       msg: "File created successfully",
-      path: path.join(`COTIZACION_${id_branch}_${index}.pdf`),
+      path: `files/${fileName}`,
     });
   } catch (error) {
     console.error("Error al generar o enviar el PDF:", error);

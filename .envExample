@@ -9,6 +9,7 @@ authToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb3dzIjpbeyJlc3RhZG9mbGFnIjp0c
 #NODE_ENV=production
 NODE_ENV=development
 #NODE_ENV=test 
+APP_PORT=9200
 host=143.244.169.120
 user=postgres
 password=@Developer2021Pic

@@ -21,7 +21,25 @@ let isProduction = process.env.NODE_ENV === "production";
 //   });
 // }
 
-const puppeteerOptions = {
+// Buscar Chrome en ubicaciones comunes de Windows
+const findChrome = () => {
+  const possiblePaths = [
+    'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+    'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+    process.env.LOCALAPPDATA + '\\Google\\Chrome\\Application\\chrome.exe',
+  ];
+  
+  const fs = require('fs');
+  for (const path of possiblePaths) {
+    if (fs.existsSync(path)) {
+      return path;
+    }
+  }
+  return null;
+};
+
+const chromePath = findChrome();
+const puppeteerOptions: any = {
   headless: true,
   args: [
     "--no-sandbox",
@@ -33,6 +51,12 @@ const puppeteerOptions = {
     "--disable-gpu",
   ],
 };
+
+// Si encontramos Chrome instalado, usarlo
+if (chromePath) {
+  puppeteerOptions.executablePath = chromePath;
+  console.log('🔧 Usando Chrome del sistema:', chromePath);
+}
 const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: puppeteerOptions,
