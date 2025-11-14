@@ -1180,14 +1180,31 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
 
     await page.setContent(htmlContent, { waitUntil: "load" });
 
-    // 4. Generar el PDF
+    const footerTemplate = `
+      <div style="width:100%; font-family: Arial, Helvetica, sans-serif; color:#000; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
+        <div style="background:#182e4b; height:3px; width:100%;"></div>
+        <div style="padding:8px 16px; display:flex; justify-content:space-between; align-items:center; width:100%; background:#ffffff; font-size:12px; line-height:1.2;">
+          <div style="overflow:hidden; white-space:nowrap; text-overflow:ellipsis;">
+            <span style="font-weight:700;">${business_name || nameEmpresa || ""}</span>
+            <span style="opacity:0.85;"> • ${address || ""} • Tel: ${phone || ""}</span>
+          </div>
+          <div style="white-space:nowrap; font-weight:600;">
+            Página <span class="pageNumber"></span> de <span class="totalPages"></span>
+          </div>
+        </div>
+      </div>
+    `;
+
     const pdfBuffer = await page.pdf({
       format: "A4",
-      printBackground: true, // Muy importante para colores de fondo y bordes de Bootstrap
+      printBackground: true,
+      displayHeaderFooter: true,
+      headerTemplate: "<div></div>",
+      footerTemplate,
       margin: {
         top: "20mm",
         right: "20mm",
-        bottom: "20mm",
+        bottom: "30mm",
         left: "20mm",
       },
     });
