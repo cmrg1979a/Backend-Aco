@@ -1050,16 +1050,21 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
     peso,
     volumen,
     pais,
-    url_logo, // URL del logo, asegúrate que Puppeteer pueda acceder a ella
+    url_logo, 
     nameEmpresa,
     esunica,
     nombre_impuesto,
     document,
     phone,
-    amount,
+    amount, 
+    date_end,
+    tiempo_transito,
   } = req.body;
 
   let fecha = moment().format("DD-MM-YYYY");
+
+  fechafin = fechafin || date_end;
+  tiempoTransito = tiempoTransito || tiempo_transito;
 
   let servicios = getServicios({
     flete: flete,
