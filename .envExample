@@ -15,3 +15,4 @@ password=@Developer2021Pic
 port=5432
 database=db_op_main_02
 path_url=https://devapigeneral.piccargo.com/
+WHATSAPP_API_TOKEN=api-token-datos-de-whatsapp

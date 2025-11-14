@@ -116,6 +116,7 @@ import configAvisos from "./routes/configAvisos";
 import branch from "./routes/branch";
 import aduanas from "./routes/aduanas";
 import whatsapp from "./routes/whatsapp";
+import whatsappQuote from "./routes/whatsappQuote";
 import { env } from "process";
 
 // settings
@@ -304,6 +305,7 @@ app.use(configAvisos);
 app.use(branch);
 app.use(aduanas);
 app.use(whatsapp);
+app.use(whatsappQuote);
 
 app.get("/", (_, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
