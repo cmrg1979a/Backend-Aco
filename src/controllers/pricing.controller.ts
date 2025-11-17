@@ -319,8 +319,22 @@ export const putQuote = async (req: Request, res: Response) => {
       dataObj.id_percepcionaduana ? dataObj.id_percepcionaduana : null,
       JSON.stringify(opcionCostos),
     ],
-    (err, response, fields) => {
+    async (err, response, fields) => {
       if (!err) {
+        // Actualizar campos adicionales si vienen en el body
+        const { tiempo_transito, date_end, fecha_fin } = dataObj;
+        const fechaFinToSet = fecha_fin || date_end || null;
+        if (tiempo_transito || fechaFinToSet) {
+          try {
+            await pool.query(
+              "UPDATE Table_Quote SET fecha_fin = COALESCE($1, fecha_fin), tiempo_transito = COALESCE($2, tiempo_transito) WHERE id = $3",
+              [fechaFinToSet, tiempo_transito || null, pid]
+            );
+          } catch (e) {
+            console.log("Warning: no se pudo actualizar fecha_fin/tiempo_transito:", e);
+          }
+        }
+
         let rows = response.rows;
         res.json({
           estadoflag: rows[0].estadoflag,
@@ -1236,67 +1250,105 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
 };
 
 export const aprobarCotizacion = async (req: Request, res: Response) => {
-  let baseURL = "http://localhost:9200/";
-  if (process.env.NODE_ENV === "production") {
-    baseURL = "https://api.agentedecargaonline.com/";
-  }
-  let {
-    id_quote,
-    nuevoexpediente,
-    id_exp,
-    fecha_validez,
-    totalIngreso,
-    igvIngreso,
-    valorIngreso,
-    listCostosInstructivo,
-    listVentasInstructivo,
-    id_house,
-    id_opcion,
-    id_opcion_house,
-  } = req.body;
-
-  await pool.query(
-    "SELECT * FROM function_aprobar_cotizacion($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12);",
-    [
-      id_quote ? id_quote : null,
-      nuevoexpediente ? nuevoexpediente : null,
-      id_exp ? id_exp : null,
-      fecha_validez ? fecha_validez : null,
-      igvIngreso ? igvIngreso : null,
-      valorIngreso ? valorIngreso : null,
-      totalIngreso ? totalIngreso : 0,
-      id_house == "" ? null : id_house,
-      id_opcion == "" ? null : id_opcion,
-      id_opcion_house == "" ? null : id_opcion_house,
-      JSON.stringify(listCostosInstructivo.filter((item) => item.id)),
-      JSON.stringify(
-        listVentasInstructivo.filter(
-          (item) => !/^(TOTAL|SubTotal)$/i.test(item.descripcion.trim())
-        )
-      ),
-    ],
-
-    async (err, response, fields) => {
-      if (!err) {
-        let rows = response.rows;
-        await axios
-          .put(`${baseURL}eliminar_quote_mongo`, { id: id_quote })
-          .catch((e) => {
-            console.log(e);
-          });
-        res.json({
-          status: 200,
-          statusBol: true,
-          mensaje: rows[0].mensaje,
-          estadoflag: rows[0].estadoflag,
-          data: rows,
-          token: renewTokenMiddleware(req),
-        });
-      } else {
-        console.log(err);
-      }
+  try {
+    let baseURL = "http://localhost:9200/";
+    if (process.env.NODE_ENV === "production") {
+      baseURL = "https://api.agentedecargaonline.com/";
     }
-  );
+    let {
+      id_quote,
+      nuevoexpediente,
+      id_exp,
+      fecha_validez,
+      totalIngreso,
+      igvIngreso,
+      valorIngreso,
+      listCostosInstructivo,
+      listVentasInstructivo,
+      id_house,
+      id_opcion,
+      id_opcion_house,
+    } = req.body;
+
+    // Validar y normalizar arrays antes de filtrar
+    const costosSafe = Array.isArray(listCostosInstructivo) ? listCostosInstructivo : [];
+    const ventasSafe = Array.isArray(listVentasInstructivo) ? listVentasInstructivo : [];
+
+    const costosFiltrados = costosSafe.filter((item) => item && item.id);
+    const ventasFiltradas = ventasSafe.filter(
+      (item) => item && item.descripcion && !/^(TOTAL|SubTotal)$/i.test(item.descripcion.trim())
+    );
+
+    await pool.query(
+      "SELECT * FROM function_aprobar_cotizacion($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12);",
+      [
+        id_quote ? id_quote : null,
+        nuevoexpediente ? nuevoexpediente : null,
+        id_exp ? id_exp : null,
+        fecha_validez ? fecha_validez : null,
+        igvIngreso ? igvIngreso : null,
+        valorIngreso ? valorIngreso : null,
+        totalIngreso ? totalIngreso : 0,
+        id_house == "" ? null : id_house,
+        id_opcion == "" ? null : id_opcion,
+        id_opcion_house == "" ? null : id_opcion_house,
+        JSON.stringify(costosFiltrados),
+        JSON.stringify(ventasFiltradas),
+      ],
+
+      async (err, response, fields) => {
+        if (!err) {
+          let rows = response.rows;
+          
+          // Limpiar en Mongo sin bloquear respuesta
+          axios
+            .put(`${baseURL}eliminar_quote_mongo`, { id: id_quote })
+            .catch((e) => {
+              console.log("Error eliminando quote de Mongo:", e?.message || e);
+            });
+
+          // Validar que rows tenga datos
+          if (!rows || rows.length === 0) {
+            return res.json({
+              status: 200,
+              statusBol: true,
+              mensaje: "Cotización aprobada correctamente",
+              estadoflag: true,
+              data: [],
+              token: renewTokenMiddleware(req),
+            });
+          }
+
+          return res.json({
+            status: 200,
+            statusBol: true,
+            mensaje: rows[0].mensaje,
+            estadoflag: rows[0].estadoflag,
+            data: rows,
+            token: renewTokenMiddleware(req),
+          });
+        } else {
+          console.error("Error en function_aprobar_cotizacion:", err);
+          return res.status(500).json({
+            status: 500,
+            statusBol: false,
+            mensaje: "Error al aprobar la cotización",
+            estadoflag: false,
+            error: err?.message || String(err),
+          });
+        }
+      }
+    );
+  } catch (error) {
+    console.error("Error en aprobarCotizacion:", error);
+    return res.status(500).json({
+      status: 500,
+      statusBol: false,
+      mensaje: "Error interno al procesar la aprobación",
+      estadoflag: false,
+      error: error?.message || String(error),
+    });
+  }
 };
 
 export const generarInstructivoQuote = async (req: Request, res: Response) => {
@@ -1336,51 +1388,75 @@ export const generarInstructivoQuote = async (req: Request, res: Response) => {
       url_logo,
     } = req.body;
 
+    // Validar campos requeridos
+    if (!nro_propuesta) {
+      return res.status(400).json({
+        estadoflag: false,
+        msg: "El campo 'nro_propuesta' es requerido",
+        error: "Missing required field: nro_propuesta"
+      });
+    }
+
+    if (!expediente) {
+      return res.status(400).json({
+        estadoflag: false,
+        msg: "El campo 'expediente' es requerido",
+        error: "Missing required field: expediente"
+      });
+    }
+
     let fecha = moment().format("ll");
 
     ejs.renderFile(
       path.join(__dirname, "../views/", "pdfQuoteInstructivo.ejs"),
       {
         nro_propuesta,
-        totalIngresos,
-        totalCostos,
-        profit,
-        containers,
-        numerobultos,
-        peso,
-        volumen,
-        status,
-        notas,
-        code_house,
-        code_master,
-        sucursal,
+        totalIngresos: totalIngresos || 0,
+        totalCostos: totalCostos || 0,
+        profit: profit || 0,
+        containers: containers || [],
+        numerobultos: numerobultos || 0,
+        peso: peso || 0,
+        volumen: volumen || 0,
+        status: status || "",
+        notas: notas || "",
+        code_house: code_house || "",
+        code_master: code_master || "",
+        sucursal: sucursal || "",
         fecha,
         expediente,
-        sentido,
-        carga,
-        incoterms,
-        nombre,
-        direccion,
-        telefono,
-        vendedor,
-        proveedor,
-        origen,
-        destino,
-        fiscal,
-        ruc,
-        listServiciosInstructivo,
-        listIngresosInstructivo,
-        listCostosInstructivo,
-        listImpuestosInstructivo,
-        tipoimportacionaduana,
-        url_logo,
+        sentido: sentido || "",
+        carga: carga || "",
+        incoterms: incoterms || "",
+        nombre: nombre || "",
+        direccion: direccion || "",
+        telefono: telefono || "",
+        vendedor: vendedor || "",
+        proveedor: proveedor || "",
+        origen: origen || "",
+        destino: destino || "",
+        fiscal: fiscal || "",
+        ruc: ruc || "",
+        listServiciosInstructivo: listServiciosInstructivo || [],
+        listIngresosInstructivo: listIngresosInstructivo || [],
+        listCostosInstructivo: listCostosInstructivo || [],
+        listImpuestosInstructivo: listImpuestosInstructivo || [],
+        tipoimportacionaduana: tipoimportacionaduana || "",
+        url_logo: url_logo || "",
       },
       async (err: any, data: any) => {
         if (err) {
-          console.log(err);
-          return res.send(err);
-        } else {
-          const browser = await puppeteer.launch({
+          console.error("Error renderizando EJS:", err);
+          return res.status(500).json({
+            estadoflag: false,
+            msg: "Error al renderizar la plantilla PDF",
+            error: err?.message || String(err)
+          });
+        }
+
+        let browser = null;
+        try {
+          browser = await puppeteer.launch({
             headless: true,
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
           });
@@ -1393,6 +1469,12 @@ export const generarInstructivoQuote = async (req: Request, res: Response) => {
             "../../files",
             `InstructivoQuote_${nro_propuesta}.pdf`
           );
+
+          // Asegurar que existe el directorio
+          const outDir = path.join(__dirname, "../../files");
+          if (!fs.existsSync(outDir)) {
+            fs.mkdirSync(outDir, { recursive: true });
+          }
 
           await page.pdf({
             path: outputPath,
@@ -1407,19 +1489,34 @@ export const generarInstructivoQuote = async (req: Request, res: Response) => {
           });
 
           await browser.close();
+          browser = null;
 
-          res.download(outputPath);
-          res.send({
+          // Enviar solo JSON con la ruta del archivo (no res.download)
+          return res.json({
             estadoflag: true,
             msg: "File created successfully",
-            path: path.join(`InstructivoQuote_${nro_propuesta}.pdf`),
+            path: `files/InstructivoQuote_${nro_propuesta}.pdf`,
+          });
+        } catch (pdfError) {
+          console.error("Error generando PDF con Puppeteer:", pdfError);
+          if (browser) {
+            await browser.close();
+          }
+          return res.status(500).json({
+            estadoflag: false,
+            msg: "Error al generar el PDF",
+            error: pdfError?.message || String(pdfError)
           });
         }
       }
     );
   } catch (error) {
-    console.error(error);
-    res.status(500).send({ error: "Error generando PDF" });
+    console.error("Error en generarInstructivoQuote:", error);
+    return res.status(500).json({
+      estadoflag: false,
+      msg: "Error interno al generar instructivo",
+      error: error?.message || String(error)
+    });
   }
 };
 
