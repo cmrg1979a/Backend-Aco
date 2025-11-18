@@ -2516,9 +2516,43 @@ export const exportListQuote = async (req: Request, res: Response) => {
           { name: "Eliminado", total: countEliminados },
         ];
 
+        // Calcular totales por cliente
+        const countByClient: any = {};
+        let totalGeneral = 0;
+        let montoTotalGeneral = 0;
+
+        rows.forEach((item) => {
+          const clientId = item.id_entities;
+          const clientName = item.nombres || "Sin cliente";
+          const monto = parseFloat(item.total || 0);
+
+          if (!countByClient[clientId]) {
+            countByClient[clientId] = {
+              nombre: clientName,
+              cantidad: 0,
+              monto_total: 0,
+            };
+          }
+
+          countByClient[clientId].cantidad++;
+          countByClient[clientId].monto_total += monto;
+          totalGeneral++;
+          montoTotalGeneral += monto;
+        });
+
+        const countByClientArray = Object.values(countByClient);
+
         ejs.renderFile(
           path.join(__dirname, "../views/", "reporteListQuote.ejs"),
-          { sucursal, countByStatusArray, countByActivosArray, rows },
+          {
+            sucursal,
+            countByStatusArray,
+            countByActivosArray,
+            countByClientArray,
+            totalGeneral,
+            montoTotalGeneral,
+            rows,
+          },
           async (err: any, html: any) => {
             if (err) {
               console.log(err);
@@ -2527,6 +2561,7 @@ export const exportListQuote = async (req: Request, res: Response) => {
               const browser = await puppeteer.launch({
                 headless: true,
                 args: ["--no-sandbox", "--disable-setuid-sandbox"],
+                ...(process.env.NODE_ENV==='production' && { executablePath: "/usr/bin/google-chrome" }),
               });
               const page = await browser.newPage();
               await page.setContent(html, { waitUntil: "networkidle0" });

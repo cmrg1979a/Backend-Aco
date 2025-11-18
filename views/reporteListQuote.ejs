@@ -48,6 +48,47 @@
       </div>
     </div>
 
+    <!-- Nueva sección: Totales -->
+    <div class="container">
+      <div class="item">
+        <h3>TOTAL GENERAL:</h3>
+        <table>
+          <tbody>
+            <tr>
+              <td><strong>Total de Cotizaciones:</strong></td>
+              <td><strong><%= totalGeneral %></strong></td>
+            </tr>
+            <tr>
+              <td><strong>Monto Total:</strong></td>
+              <td><strong>$<%= montoTotalGeneral.toFixed(2) %></strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="item">
+        <h3>TOTAL POR CLIENTE:</h3>
+        <table>
+          <thead>
+            <tr>
+              <th class="headerDetalle">Cliente</th>
+              <th class="headerDetalle">Cantidad</th>
+              <th class="headerDetalle">Monto Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (countByClientArray.length > 0) {%>
+            <%countByClientArray.forEach(element => {%>
+            <tr>
+              <td><%= element.nombre %></td>
+              <td><%= element.cantidad %></td>
+              <td>$<%= element.monto_total.toFixed(2) %></td>
+            </tr>
+            <%});%> <%}%>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
     <table style="width: 100% !important">
       <thead>
         <tr>
