@@ -784,6 +784,7 @@ export const listadoCotizacionMercadeo = async (
     } else {
       browser = await puppeteer.launch({
         headless: true,
+        executablePath: process.env.CHROME_PATH || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
         args: ["--no-sandbox", "--disable-setuid-sandbox"],
       });
     }

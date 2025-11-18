@@ -24,7 +24,7 @@ const app: Application = express();
 const httpServer: HTTPServer = createServer(app);
 const io = new IOServer(httpServer);
 
-initWhatsapp(io);
+/**initWhatsapp(io);*/
 const corsMiddleware = cors(corsOptions);
 
 /**PROUCCIÓN */
