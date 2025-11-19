@@ -29,7 +29,7 @@ io.on("connection", (socket) => {
   });
 });
 
-const PORT = process.env.APP_APP_PORT || app.get("APP_PORT") || 9200;
+const PORT = process.env.APP_PORT || app.get("APP_PORT") || 9200;
 
 server.listen(PORT, () => {
   console.log(`?? Servidor escuchando en PUERTO: ${PORT}`);
