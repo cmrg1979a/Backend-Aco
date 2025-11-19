@@ -667,3 +667,27 @@ export const getValidarCodigoWhatsapp = async (req: Request, res: Response) => {
     }
   );
 };
+
+export const getOpciones = async (req: Request, res: Response) => {
+  let { id_pais_destino, tipo } = req.query;
+
+  await pool.query(
+    `SELECT * FROM function_calc_opciones($1,$2);`,
+    [id_pais_destino, tipo],
+    (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          // token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
+};

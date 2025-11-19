@@ -54,6 +54,7 @@ import {
   getCalcTransporte,
   getCalcTransporteGuardar,
   getCalObtenerMontos,
+  getOpciones,
   getTipoCosto,
   getValDataLCL,
   getValidarCodigoWhatsapp,
@@ -148,6 +149,7 @@ router.get("/calc/transporte", getCalcTransporte);
 router.get("/calc/departamento/search", getCalcDepartamentoSearch);
 router.get("/calc/distrito/search", getCalcDistritoSearch);
 router.post("/calc/montos", getCalObtenerMontos);
+router.get("/calc/opciones", getOpciones);
 router.get("/calc/validar/codigo", getValidarCodigoWhatsapp);
 
 export default router;
