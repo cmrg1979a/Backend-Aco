@@ -26,7 +26,7 @@ io.on("connection", (socket) => {
 });
 
 // Inicia el servidor en el puerto especificado
-const PORT = app.get("port");
+const PORT = app.get("APP_PORT");
 server.listen(PORT, () => {
   console.log(`Servidor escuchando en PUERTO:${PORT}`);
 });

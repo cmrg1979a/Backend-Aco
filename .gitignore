@@ -9,3 +9,6 @@ src/controllers/onedrive.controller.ts
 .wwebjs_auth
 .env
 puppeteer_profiles
+
+#Documentación para guíarme durante el desarrollo
+*.md

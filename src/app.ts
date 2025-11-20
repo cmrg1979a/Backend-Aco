@@ -24,7 +24,7 @@ const app: Application = express();
 const httpServer: HTTPServer = createServer(app);
 const io = new IOServer(httpServer);
 
-initWhatsapp(io);
+/**initWhatsapp(io);*/
 const corsMiddleware = cors(corsOptions);
 
 /**PROUCCIÓN */
@@ -116,10 +116,11 @@ import configAvisos from "./routes/configAvisos";
 import branch from "./routes/branch";
 import aduanas from "./routes/aduanas";
 import whatsapp from "./routes/whatsapp";
+import whatsappQuote from "./routes/whatsappQuote";
 import { env } from "process";
 
 // settings
-app.set("port", 9200);
+app.set("port", Number(process.env.APP_PORT) || 9200);
 
 // middlewares
 app.use(morgan("dev"));
@@ -304,6 +305,7 @@ app.use(configAvisos);
 app.use(branch);
 app.use(aduanas);
 app.use(whatsapp);
+app.use(whatsappQuote);
 
 app.get("/", (_, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));

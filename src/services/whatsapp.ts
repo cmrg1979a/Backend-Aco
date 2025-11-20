@@ -15,13 +15,32 @@ let isProduction = process.env.NODE_ENV === "production";
 //     args: ["--no-sandbox", "--disable-setuid-sandbox"],
 //   });
 // } else {
-//   browser = puppeteer.launch({
-//     headless: true,
-//     args: ["--no-sandbox", "--disable-setuid-sandbox"],
-//   });
-// }
 
-const puppeteerOptions = {
+// Buscar navegador (Chrome o Edge) en ubicaciones comunes de Windows
+const findChrome = () => {
+  const localApp = process.env.LOCALAPPDATA || "C\\Users\\AppData\\Local";
+  const possiblePaths = [
+    // Chrome
+    "C\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "C\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+    `${localApp}\\Google\\Chrome\\Application\\chrome.exe`,
+    // Edge
+    "C\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe",
+    "C\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+    `${localApp}\\Microsoft\\Edge\\Application\\msedge.exe`,
+  ];
+
+  const fs = require("fs");
+  for (const path of possiblePaths) {
+    if (fs.existsSync(path)) {
+      return path;
+    }
+  }
+  return null;
+};
+
+const chromePath = findChrome();
+const puppeteerOptions: any = {
   headless: true,
   args: [
     "--no-sandbox",
@@ -33,6 +52,16 @@ const puppeteerOptions = {
     "--disable-gpu",
   ],
 };
+
+// Si encontramos navegador instalado, usarlo
+if (chromePath) {
+  puppeteerOptions.executablePath = chromePath;
+  console.log("🔧 Usando navegador del sistema para WhatsApp:", chromePath);
+} else {
+  console.warn(
+    "⚠️ No se encontró Chrome/Edge en las rutas comunes. WhatsApp no se inicializará para evitar que Puppeteer rompa el servidor."
+  );
+}
 const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: puppeteerOptions,
@@ -41,6 +70,14 @@ const client = new Client({
 export const initWhatsapp = (_io: Server) => {
   io = _io;
   if (clientReady) return;
+
+  // Si no hay navegador disponible, no inicializar WhatsApp para evitar crash
+  if (!chromePath) {
+    console.warn(
+      "WhatsApp-Web no se inicializa porque no se encontró un navegador compatible (Chrome/Edge)."
+    );
+    return;
+  }
 
   client.on("qr", async (qr) => {
     qrcodeTerminal.generate(qr, { small: true });
