@@ -20,7 +20,7 @@ io.on("connection", (socket) => {
   console.log("Cliente conectado:", socket.id);
 
   socket.on("join-empresa", (id_branch) => {
-    console.log(`Cliente ${socket.id} se uniÃ³ a la sala: ${id_branch}`);
+    console.log(`Cliente ${socket.id} se unió a la sala: ${id_branch}`);
     socket.join(id_branch);
   });
 
@@ -29,7 +29,7 @@ io.on("connection", (socket) => {
   });
 });
 
-const PORT = process.env.APP_PORT || app.get("APP_PORT") || 9200;
+const PORT = process.env.PORT || app.get("port") || 9200;
 
 server.listen(PORT, () => {
   console.log(`?? Servidor escuchando en PUERTO: ${PORT}`);

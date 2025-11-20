@@ -319,22 +319,8 @@ export const putQuote = async (req: Request, res: Response) => {
       dataObj.id_percepcionaduana ? dataObj.id_percepcionaduana : null,
       JSON.stringify(opcionCostos),
     ],
-    async (err, response, fields) => {
+    (err, response, fields) => {
       if (!err) {
-        // Actualizar campos adicionales si vienen en el body
-        const { tiempo_transito, date_end, fecha_fin } = dataObj;
-        const fechaFinToSet = fecha_fin || date_end || null;
-        if (tiempo_transito || fechaFinToSet) {
-          try {
-            await pool.query(
-              "UPDATE Table_Quote SET fecha_fin = COALESCE($1, fecha_fin), tiempo_transito = COALESCE($2, tiempo_transito) WHERE id = $3",
-              [fechaFinToSet, tiempo_transito || null, pid]
-            );
-          } catch (e) {
-            console.log("Warning: no se pudo actualizar fecha_fin/tiempo_transito:", e);
-          }
-        }
-
         let rows = response.rows;
         res.json({
           estadoflag: rows[0].estadoflag,
@@ -798,7 +784,6 @@ export const listadoCotizacionMercadeo = async (
     } else {
       browser = await puppeteer.launch({
         headless: true,
-        executablePath: process.env.CHROME_PATH || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
         args: ["--no-sandbox", "--disable-setuid-sandbox"],
       });
     }
@@ -1065,21 +1050,16 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
     peso,
     volumen,
     pais,
-    url_logo, 
+    url_logo, // URL del logo, asegúrate que Puppeteer pueda acceder a ella
     nameEmpresa,
     esunica,
     nombre_impuesto,
     document,
     phone,
-    amount, 
-    date_end,
-    tiempo_transito,
+    amount,
   } = req.body;
 
   let fecha = moment().format("DD-MM-YYYY");
-
-  fechafin = fechafin || date_end;
-  tiempoTransito = tiempoTransito || tiempo_transito;
 
   let servicios = getServicios({
     flete: flete,
@@ -1100,28 +1080,10 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
   } else {
-    // Intentar usar Chrome o Edge instalado en Windows para evitar descargas de Chromium
-    const findChrome = () => {
-      const candidates = [
-        'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
-        'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
-        process.env.LOCALAPPDATA ? `${process.env.LOCALAPPDATA}\\Google\\Chrome\\Application\\chrome.exe` : undefined,
-        // Fallback a Microsoft Edge si Chrome no existe
-        'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
-        'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
-      ].filter(Boolean);
-      for (const p of candidates as string[]) {
-        try { if (fs.existsSync(p)) return p; } catch {}
-      }
-      return null;
-    };
-    const chromePath = findChrome();
-    const launchOptions: any = {
+    browser = await puppeteer.launch({
       headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    };
-    if (chromePath) launchOptions.executablePath = chromePath;
-    browser = await puppeteer.launch(launchOptions);
+    });
   }
 
   try {
@@ -1193,50 +1155,29 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
 
     const page = await browser.newPage();
 
-    await page.setContent(htmlContent, { waitUntil: "load" });
+    await page.setContent(htmlContent, { waitUntil: "networkidle0" });
 
-    const footerTemplate = `
-      <div style="width:100%; font-family: Arial, Helvetica, sans-serif; color:#000; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
-        <div style="background:#182e4b; height:3px; width:100%;"></div>
-        <div style="padding:8px 16px; display:flex; justify-content:space-between; align-items:center; width:100%; background:#ffffff; font-size:12px; line-height:1.2;">
-          <div style="overflow:hidden; white-space:nowrap; text-overflow:ellipsis;">
-            <span style="font-weight:700;">${business_name || nameEmpresa || ""}</span>
-            <span style="opacity:0.85;"> • ${address || ""} • Tel: ${phone || ""}</span>
-          </div>
-          <div style="white-space:nowrap; font-weight:600;">
-            Página <span class="pageNumber"></span> de <span class="totalPages"></span>
-          </div>
-        </div>
-      </div>
-    `;
-
+    // 4. Generar el PDF
     const pdfBuffer = await page.pdf({
       format: "A4",
-      printBackground: true,
-      displayHeaderFooter: true,
-      headerTemplate: "<div></div>",
-      footerTemplate,
+      printBackground: true, // Muy importante para colores de fondo y bordes de Bootstrap
       margin: {
         top: "20mm",
         right: "20mm",
-        bottom: "30mm",
+        bottom: "20mm",
         left: "20mm",
       },
     });
 
     const fileName = `COTIZACION_${id_branch}_${index}.pdf`;
-    // Guardar en projectRoot/files para coincidir con app.use('/files', express.static(path.join(__dirname, '../files')))
-    const outDir = path.join(__dirname, "../../files");
-    if (!fs.existsSync(outDir)) {
-      fs.mkdirSync(outDir, { recursive: true });
-    }
-    const filePath = path.join(outDir, fileName);
+    const filePath = path.join(__dirname, "../../files", fileName);
     fs.writeFileSync(filePath, pdfBuffer);
 
-    return res.send({
+    res.download(`/COTIZACION_${id_branch}_${index}.pdf`);
+    res.send({
       estadoflag: true,
       msg: "File created successfully",
-      path: `files/${fileName}`,
+      path: path.join(`COTIZACION_${id_branch}_${index}.pdf`),
     });
   } catch (error) {
     console.error("Error al generar o enviar el PDF:", error);
@@ -1251,105 +1192,67 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
 };
 
 export const aprobarCotizacion = async (req: Request, res: Response) => {
-  try {
-    let baseURL = "http://localhost:9200/";
-    if (process.env.NODE_ENV === "production") {
-      baseURL = "https://api.agentedecargaonline.com/";
-    }
-    let {
-      id_quote,
-      nuevoexpediente,
-      id_exp,
-      fecha_validez,
-      totalIngreso,
-      igvIngreso,
-      valorIngreso,
-      listCostosInstructivo,
-      listVentasInstructivo,
-      id_house,
-      id_opcion,
-      id_opcion_house,
-    } = req.body;
-
-    // Validar y normalizar arrays antes de filtrar
-    const costosSafe = Array.isArray(listCostosInstructivo) ? listCostosInstructivo : [];
-    const ventasSafe = Array.isArray(listVentasInstructivo) ? listVentasInstructivo : [];
-
-    const costosFiltrados = costosSafe.filter((item) => item && item.id);
-    const ventasFiltradas = ventasSafe.filter(
-      (item) => item && item.descripcion && !/^(TOTAL|SubTotal)$/i.test(item.descripcion.trim())
-    );
-
-    await pool.query(
-      "SELECT * FROM function_aprobar_cotizacion($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12);",
-      [
-        id_quote ? id_quote : null,
-        nuevoexpediente ? nuevoexpediente : null,
-        id_exp ? id_exp : null,
-        fecha_validez ? fecha_validez : null,
-        igvIngreso ? igvIngreso : null,
-        valorIngreso ? valorIngreso : null,
-        totalIngreso ? totalIngreso : 0,
-        id_house == "" ? null : id_house,
-        id_opcion == "" ? null : id_opcion,
-        id_opcion_house == "" ? null : id_opcion_house,
-        JSON.stringify(costosFiltrados),
-        JSON.stringify(ventasFiltradas),
-      ],
-
-      async (err, response, fields) => {
-        if (!err) {
-          let rows = response.rows;
-          
-          // Limpiar en Mongo sin bloquear respuesta
-          axios
-            .put(`${baseURL}eliminar_quote_mongo`, { id: id_quote })
-            .catch((e) => {
-              console.log("Error eliminando quote de Mongo:", e?.message || e);
-            });
-
-          // Validar que rows tenga datos
-          if (!rows || rows.length === 0) {
-            return res.json({
-              status: 200,
-              statusBol: true,
-              mensaje: "Cotización aprobada correctamente",
-              estadoflag: true,
-              data: [],
-              token: renewTokenMiddleware(req),
-            });
-          }
-
-          return res.json({
-            status: 200,
-            statusBol: true,
-            mensaje: rows[0].mensaje,
-            estadoflag: rows[0].estadoflag,
-            data: rows,
-            token: renewTokenMiddleware(req),
-          });
-        } else {
-          console.error("Error en function_aprobar_cotizacion:", err);
-          return res.status(500).json({
-            status: 500,
-            statusBol: false,
-            mensaje: "Error al aprobar la cotización",
-            estadoflag: false,
-            error: err?.message || String(err),
-          });
-        }
-      }
-    );
-  } catch (error) {
-    console.error("Error en aprobarCotizacion:", error);
-    return res.status(500).json({
-      status: 500,
-      statusBol: false,
-      mensaje: "Error interno al procesar la aprobación",
-      estadoflag: false,
-      error: error?.message || String(error),
-    });
+  let baseURL = "http://localhost:9200/";
+  if (process.env.NODE_ENV === "production") {
+    baseURL = "https://api.agentedecargaonline.com/";
   }
+  let {
+    id_quote,
+    nuevoexpediente,
+    id_exp,
+    fecha_validez,
+    totalIngreso,
+    igvIngreso,
+    valorIngreso,
+    listCostosInstructivo,
+    listVentasInstructivo,
+    id_house,
+    id_opcion,
+    id_opcion_house,
+  } = req.body;
+
+  await pool.query(
+    "SELECT * FROM function_aprobar_cotizacion($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12);",
+    [
+      id_quote ? id_quote : null,
+      nuevoexpediente ? nuevoexpediente : null,
+      id_exp ? id_exp : null,
+      fecha_validez ? fecha_validez : null,
+      igvIngreso ? igvIngreso : null,
+      valorIngreso ? valorIngreso : null,
+      totalIngreso ? totalIngreso : 0,
+      id_house == "" ? null : id_house,
+      id_opcion == "" ? null : id_opcion,
+      id_opcion_house == "" ? null : id_opcion_house,
+      JSON.stringify(listCostosInstructivo.filter((item) => item.id)),
+      JSON.stringify(
+        listVentasInstructivo.filter(
+          (item) => !/^(TOTAL|SubTotal)$/i.test(item.descripcion.trim())
+        )
+      ),
+    ],
+
+    async (err, response, fields) => {
+      if (!err) {
+        let rows = response.rows;
+        await axios
+          .put(`${baseURL}eliminar_quote_mongo`, { id: id_quote })
+          .catch((e) => {
+            console.log(e);
+          });
+        res.json({
+          status: 200,
+          statusBol: true,
+          mensaje: rows[0].mensaje,
+          estadoflag: rows[0].estadoflag,
+          data: rows,
+          token: renewTokenMiddleware(req),
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  );
 };
 
 export const generarInstructivoQuote = async (req: Request, res: Response) => {
@@ -1389,75 +1292,51 @@ export const generarInstructivoQuote = async (req: Request, res: Response) => {
       url_logo,
     } = req.body;
 
-    // Validar campos requeridos
-    if (!nro_propuesta) {
-      return res.status(400).json({
-        estadoflag: false,
-        msg: "El campo 'nro_propuesta' es requerido",
-        error: "Missing required field: nro_propuesta"
-      });
-    }
-
-    if (!expediente) {
-      return res.status(400).json({
-        estadoflag: false,
-        msg: "El campo 'expediente' es requerido",
-        error: "Missing required field: expediente"
-      });
-    }
-
     let fecha = moment().format("ll");
 
     ejs.renderFile(
       path.join(__dirname, "../views/", "pdfQuoteInstructivo.ejs"),
       {
         nro_propuesta,
-        totalIngresos: totalIngresos || 0,
-        totalCostos: totalCostos || 0,
-        profit: profit || 0,
-        containers: containers || [],
-        numerobultos: numerobultos || 0,
-        peso: peso || 0,
-        volumen: volumen || 0,
-        status: status || "",
-        notas: notas || "",
-        code_house: code_house || "",
-        code_master: code_master || "",
-        sucursal: sucursal || "",
+        totalIngresos,
+        totalCostos,
+        profit,
+        containers,
+        numerobultos,
+        peso,
+        volumen,
+        status,
+        notas,
+        code_house,
+        code_master,
+        sucursal,
         fecha,
         expediente,
-        sentido: sentido || "",
-        carga: carga || "",
-        incoterms: incoterms || "",
-        nombre: nombre || "",
-        direccion: direccion || "",
-        telefono: telefono || "",
-        vendedor: vendedor || "",
-        proveedor: proveedor || "",
-        origen: origen || "",
-        destino: destino || "",
-        fiscal: fiscal || "",
-        ruc: ruc || "",
-        listServiciosInstructivo: listServiciosInstructivo || [],
-        listIngresosInstructivo: listIngresosInstructivo || [],
-        listCostosInstructivo: listCostosInstructivo || [],
-        listImpuestosInstructivo: listImpuestosInstructivo || [],
-        tipoimportacionaduana: tipoimportacionaduana || "",
-        url_logo: url_logo || "",
+        sentido,
+        carga,
+        incoterms,
+        nombre,
+        direccion,
+        telefono,
+        vendedor,
+        proveedor,
+        origen,
+        destino,
+        fiscal,
+        ruc,
+        listServiciosInstructivo,
+        listIngresosInstructivo,
+        listCostosInstructivo,
+        listImpuestosInstructivo,
+        tipoimportacionaduana,
+        url_logo,
       },
       async (err: any, data: any) => {
         if (err) {
-          console.error("Error renderizando EJS:", err);
-          return res.status(500).json({
-            estadoflag: false,
-            msg: "Error al renderizar la plantilla PDF",
-            error: err?.message || String(err)
-          });
-        }
-
-        let browser = null;
-        try {
-          browser = await puppeteer.launch({
+          console.log(err);
+          return res.send(err);
+        } else {
+          const browser = await puppeteer.launch({
             headless: true,
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
           });
@@ -1470,12 +1349,6 @@ export const generarInstructivoQuote = async (req: Request, res: Response) => {
             "../../files",
             `InstructivoQuote_${nro_propuesta}.pdf`
           );
-
-          // Asegurar que existe el directorio
-          const outDir = path.join(__dirname, "../../files");
-          if (!fs.existsSync(outDir)) {
-            fs.mkdirSync(outDir, { recursive: true });
-          }
 
           await page.pdf({
             path: outputPath,
@@ -1490,34 +1363,19 @@ export const generarInstructivoQuote = async (req: Request, res: Response) => {
           });
 
           await browser.close();
-          browser = null;
 
-          // Enviar solo JSON con la ruta del archivo (no res.download)
-          return res.json({
+          res.download(outputPath);
+          res.send({
             estadoflag: true,
             msg: "File created successfully",
-            path: `files/InstructivoQuote_${nro_propuesta}.pdf`,
-          });
-        } catch (pdfError) {
-          console.error("Error generando PDF con Puppeteer:", pdfError);
-          if (browser) {
-            await browser.close();
-          }
-          return res.status(500).json({
-            estadoflag: false,
-            msg: "Error al generar el PDF",
-            error: pdfError?.message || String(pdfError)
+            path: path.join(`InstructivoQuote_${nro_propuesta}.pdf`),
           });
         }
       }
     );
   } catch (error) {
-    console.error("Error en generarInstructivoQuote:", error);
-    return res.status(500).json({
-      estadoflag: false,
-      msg: "Error interno al generar instructivo",
-      error: error?.message || String(error)
-    });
+    console.error(error);
+    res.status(500).send({ error: "Error generando PDF" });
   }
 };
 
