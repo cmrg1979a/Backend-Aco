@@ -644,6 +644,7 @@ export const getCalcDistritoSearch = async (req: Request, res: Response) => {
   );
 };
 
+
 export const getValidarCodigoWhatsapp = async (req: Request, res: Response) => {
   let { codigo, nombre, email, telefono } = req.query;
 
