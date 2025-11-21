@@ -5,10 +5,11 @@
       <h1 class="title">REPORTE DE QUOTE GENERAL</h1>
       <h3 class="subtitle"><%=sucursal %></h3>
     </div>
+    <!-- Primera Sección: Total por Estatus y Resumen -->
     <div class="container">
       <div class="item">
-        <h3>Total por Estatus:</h3>
-        <table>
+        <h3>TOTAL POR ESTATUS:</h3>
+        <table style="width: 100%;">
           <thead>
             <tr>
               <th class="headerDetalle">Estatus</th>
@@ -16,58 +17,52 @@
             </tr>
           </thead>
           <tbody>
-            <% if (countByStatusArray.length > 0) {%>
-            <%countByStatusArray.forEach(element => {%>
+            <% 
+            let totalEstatus = 0;
+            if (countByStatusArray && countByStatusArray.length > 0) {
+              countByStatusArray.forEach(element => {
+                totalEstatus += element.total;
+            %>
             <tr>
               <td><%= element.status %></td>
-              <td><%= element.total %></td>
+              <td style="text-align: center;"><%= element.total %></td>
             </tr>
-            <%});%> <%}%>
+            <%});%>
+            <!-- Fila de Total -->
+            <tr style="background-color: #f0f0f0; font-weight: bold;">
+              <td><strong>TOTAL</strong></td>
+              <td style="text-align: center;"><strong><%= totalEstatus %></strong></td>
+            </tr>
+            <%}%>
           </tbody>
         </table>
       </div>
       <div class="item">
-        <b> Total Por Estatus </b>
-        <table>
-          <thead>
-            <tr>
-              <th class="headerDetalle">Estatus</th>
-              <th class="headerDetalle">Cantidad</th>
-            </tr>
-          </thead>
+        <h3>RESUMEN GENERAL:</h3>
+        <table style="width: 100%;">
           <tbody>
-            <% if (countByActivosArray.length > 0) {%>
-            <%countByActivosArray.forEach(element => {%>
             <tr>
-              <td><%= element.name %></td>
-              <td><%= element.total %></td>
+              <td><strong>Total de Cotizaciones:</strong></td>
+              <td style="text-align: right;"><strong><%= totalGeneral %></strong></td>
             </tr>
-            <%});%> <%}%>
+            <tr>
+              <td><strong>Monto Total General:</strong></td>
+              <td style="text-align: right;"><strong>$<%= montoTotalGeneral.toFixed(2) %></strong></td>
+            </tr>
+            <tr>
+              <td><strong>Total de Clientes:</strong></td>
+              <td style="text-align: right;"><strong><%= countByClientArray.length %></strong></td>
+            </tr>
           </tbody>
         </table>
       </div>
     </div>
 
-    <!-- Nueva sección: Totales -->
+    <!-- Segunda Sección: Total por Cliente -->
     <div class="container">
-      <div class="item">
-        <h3>TOTAL GENERAL:</h3>
-        <table>
-          <tbody>
-            <tr>
-              <td><strong>Total de Cotizaciones:</strong></td>
-              <td><strong><%= totalGeneral %></strong></td>
-            </tr>
-            <tr>
-              <td><strong>Monto Total:</strong></td>
-              <td><strong>$<%= montoTotalGeneral.toFixed(2) %></strong></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="item">
+      <div class="item" style="width: 100% !important;">
         <h3>TOTAL POR CLIENTE:</h3>
-        <table>
+        <table style="width: 100%;">
           <thead>
             <tr>
               <th class="headerDetalle">Cliente</th>
@@ -76,14 +71,31 @@
             </tr>
           </thead>
           <tbody>
-            <% if (countByClientArray.length > 0) {%>
-            <%countByClientArray.forEach(element => {%>
+            <% 
+            let totalCantidadClientes = 0;
+            let totalMontoClientes = 0;
+            if (countByClientArray && countByClientArray.length > 0) {
+              countByClientArray.forEach(element => {
+                totalCantidadClientes += element.cantidad;
+                totalMontoClientes += element.monto_total;
+            %>
             <tr>
               <td><%= element.nombre %></td>
-              <td><%= element.cantidad %></td>
-              <td>$<%= element.monto_total.toFixed(2) %></td>
+              <td style="text-align: center;"><%= element.cantidad %></td>
+              <td style="text-align: right;">$<%= element.monto_total.toFixed(2) %></td>
             </tr>
-            <%});%> <%}%>
+            <%});%>
+            <!-- Fila de Total -->
+            <tr style="background-color: #f0f0f0; font-weight: bold;">
+              <td><strong>TOTAL</strong></td>
+              <td style="text-align: center;"><strong><%= totalCantidadClientes %></strong></td>
+              <td style="text-align: right;"><strong>$<%= totalMontoClientes.toFixed(2) %></strong></td>
+            </tr>
+            <%} else {%>
+            <tr>
+              <td colspan="3" style="text-align: center;">No hay datos de clientes</td>
+            </tr>
+            <%}%>
           </tbody>
         </table>
       </div>

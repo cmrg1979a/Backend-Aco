@@ -7,6 +7,7 @@ import { io } from "../server";
 import * as pg from "pg";
 const { Pool } = pg;
 import puppeteer from "puppeteer";
+import { getPuppeteerConfigForPDF, getBrowserInfo } from "../utils/puppeteer-config";
 const pool = conexion();
 let ejs = require("ejs");
 let pdf = require("html-pdf");
@@ -190,25 +191,77 @@ export const getQuoteList = async (req: Request, res: Response) => {
 
 export const getQuoteId = async (req: Request, res: Response) => {
   const { id } = req.query;
-  await pool.query(
-    "select * from TABLE_QUOTE_VER($1);",
-    [id],
-    (err, response, fields) => {
-      if (!err) {
-        let rows = response.rows;
+  
+  try {
+    // Intentar llamar a la función original
+    const result = await pool.query("select * from TABLE_QUOTE_VER($1);", [id]);
+    
+    let rows = result.rows;
+    res.json({
+      status: 200,
+      statusBol: true,
+      mensaje: rows[0]?.mensaje || "Consulta exitosa",
+      estadoflag: rows[0]?.estadoflag !== undefined ? rows[0].estadoflag : true,
+      data: rows,
+      token: renewTokenMiddleware(req),
+    });
+  } catch (err: any) {
+    // Si hay error de tipo (código 42804), hacer consulta directa con CAST
+    if (err.code === '42804') {
+      console.log("⚠️ Error de tipo detectado, usando consulta alternativa con CAST");
+      
+      try {
+        // Consulta alternativa que hace CAST explícito de los campos problemáticos
+        const alternativeQuery = `
+          SELECT 
+            q.*,
+            CAST(q.ganancia AS numeric) as ganancia,
+            CAST(q.monto AS numeric) as monto,
+            CAST(q.numerobultos AS numeric) as numerobultos,
+            CAST(q.peso AS numeric) as peso,
+            CAST(q.volumen AS numeric) as volumen,
+            CAST(q.seguro AS numeric) as seguro,
+            true as estadoflag,
+            'Consulta exitosa' as mensaje
+          FROM table_quote q
+          WHERE q.id = $1 AND q.status = 1
+        `;
+        
+        const result = await pool.query(alternativeQuery, [id]);
+        
+        let rows = result.rows;
         res.json({
           status: 200,
           statusBol: true,
-          mensaje: rows[0].mensaje,
-          estadoflag: rows[0].estadoflag,
+          mensaje: "Consulta exitosa",
+          estadoflag: true,
           data: rows,
           token: renewTokenMiddleware(req),
         });
-      } else {
-        console.log(err);
+      } catch (altErr) {
+        console.error("❌ Error en consulta alternativa:", altErr);
+        res.status(500).json({
+          status: 500,
+          statusBol: false,
+          mensaje: "Error al obtener la cotización",
+          estadoflag: false,
+          data: [],
+          error: altErr instanceof Error ? altErr.message : String(altErr),
+        });
       }
+    } else {
+      // Otro tipo de error
+      console.error("❌ Error en getQuoteId:", err);
+      res.status(500).json({
+        status: 500,
+        statusBol: false,
+        mensaje: "Error al obtener la cotización",
+        estadoflag: false,
+        data: [],
+        error: err instanceof Error ? err.message : String(err),
+      });
     }
-  );
+  }
 };
 
 export const delQuote = async (req: Request, res: Response) => {
@@ -763,7 +816,7 @@ export const listadoCotizacionMercadeo = async (
     const lstmarketing = rows;
     const sucursal = rows[0].trade_name_sucursal;
 
-    // Conteo por estado
+    // Conteo por estado (Marketing)
     const countByStatus: Record<string, number> = {};
     for (const item of rows) {
       const status = item.namemarketing;
@@ -774,6 +827,32 @@ export const listadoCotizacionMercadeo = async (
       ([name, cantidad]) => ({ name, cantidad })
     );
 
+    // Calcular totales por cliente
+    const countByClient: any = {};
+    let totalGeneral = 0;
+    let montoTotalGeneral = 0;
+
+    rows.forEach((item) => {
+      const clientId = item.id_entities;
+      const clientName = item.nombres || "Sin cliente";
+      const monto = parseFloat(item.total || 0);
+
+      if (!countByClient[clientId]) {
+        countByClient[clientId] = {
+          nombre: clientName,
+          cantidad: 0,
+          monto_total: 0,
+        };
+      }
+
+      countByClient[clientId].cantidad++;
+      countByClient[clientId].monto_total += monto;
+      totalGeneral++;
+      montoTotalGeneral += monto;
+    });
+
+    const countByClientArray = Object.values(countByClient);
+
     const fecha = moment().format("DD-MM-YYYY");
 
     // Renderizar EJS a HTML
@@ -782,25 +861,30 @@ export const listadoCotizacionMercadeo = async (
       {
         sucursal,
         countByActivosArray,
+        countByClientArray,
+        totalGeneral,
+        montoTotalGeneral,
         lstmarketing,
         fecha,
       }
     );
 
-    // Configurar Puppeteer
-    let browser = null;
-    if (process.env.NODE_ENV === "production") {
-      browser = await puppeteer.launch({
-        executablePath: "/usr/bin/google-chrome",
-        headless: true,
-        args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      });
+    // Configurar Puppeteer con detección automática de navegador
+    const puppeteerConfig = getPuppeteerConfigForPDF();
+    const browserInfo = getBrowserInfo();
+    
+    if (browserInfo) {
+      console.log(`📄 Generando PDF de mercadeo con ${browserInfo.name}`);
     } else {
-      browser = await puppeteer.launch({
-        headless: true,
-        executablePath: process.env.CHROME_PATH || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
-        args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      });
+      console.log(`⚠️ No se detectó navegador, usando Chromium por defecto`);
+    }
+    
+    let browser;
+    try {
+      browser = await puppeteer.launch(puppeteerConfig);
+    } catch (launchError) {
+      console.error("❌ Error al iniciar navegador:", launchError);
+      throw new Error(`No se pudo iniciar el navegador: ${launchError.message}`);
     }
 
     const page = await browser.newPage();
@@ -1092,36 +1176,25 @@ export const quotePreviewTotales = async (req: Request, res: Response) => {
     volumen: volumen,
   });
   let lengthServ = servicios.length;
-  let browser = null;
-  if (process.env.NODE_ENV === "production") {
-    browser = await puppeteer.launch({
-      executablePath: "/usr/bin/google-chrome",
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    });
+  // Configurar Puppeteer con detección automática de navegador
+  const puppeteerConfig = getPuppeteerConfigForPDF();
+  const browserInfo = getBrowserInfo();
+  
+  if (browserInfo) {
+    console.log(`📄 Generando cotización PDF con ${browserInfo.name}`);
   } else {
-    // Intentar usar Chrome o Edge instalado en Windows para evitar descargas de Chromium
-    const findChrome = () => {
-      const candidates = [
-        'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
-        'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
-        process.env.LOCALAPPDATA ? `${process.env.LOCALAPPDATA}\\Google\\Chrome\\Application\\chrome.exe` : undefined,
-        // Fallback a Microsoft Edge si Chrome no existe
-        'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
-        'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
-      ].filter(Boolean);
-      for (const p of candidates as string[]) {
-        try { if (fs.existsSync(p)) return p; } catch {}
-      }
-      return null;
-    };
-    const chromePath = findChrome();
-    const launchOptions: any = {
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    };
-    if (chromePath) launchOptions.executablePath = chromePath;
-    browser = await puppeteer.launch(launchOptions);
+    console.log(`⚠️ No se detectó navegador, usando Chromium por defecto`);
+  }
+  
+  let browser;
+  try {
+    browser = await puppeteer.launch(puppeteerConfig);
+  } catch (launchError) {
+    console.error("❌ Error al iniciar navegador:", launchError);
+    return res.status(500).send({
+      estadoflag: false,
+      msg: `Error al iniciar navegador: ${launchError.message}`,
+    });
   }
 
   try {
@@ -1457,10 +1530,15 @@ export const generarInstructivoQuote = async (req: Request, res: Response) => {
 
         let browser = null;
         try {
-          browser = await puppeteer.launch({
-            headless: true,
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-          });
+          // Configurar Puppeteer con detección automática de navegador
+          const puppeteerConfig = getPuppeteerConfigForPDF();
+          const browserInfo = getBrowserInfo();
+          
+          if (browserInfo) {
+            console.log(`📄 Generando instructivo PDF con ${browserInfo.name}`);
+          }
+          
+          browser = await puppeteer.launch(puppeteerConfig);
           const page = await browser.newPage();
 
           await page.setContent(data, { waitUntil: "networkidle0" });
