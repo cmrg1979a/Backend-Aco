@@ -12,6 +12,7 @@ moment.locale("es");
 import puppeteer from "puppeteer";
 import fs from "fs";
 let ejs = require("ejs");
+import { getPuppeteerConfig, getPuppeteerConfigForPDF, getBrowserInfo } from "../utils/puppeteer-config";
 
 export const getControlFile = async (req: Request, res: Response) => {
   await pool.query(
@@ -311,10 +312,7 @@ export const pdfInstructivo = async (req: Request, res: Response) => {
         return res.send(err);
       }
 
-      const browser = await puppeteer.launch({
-        headless: true,
-        args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      });
+      const browser = await puppeteer.launch(getPuppeteerConfig());
       const page = await browser.newPage();
       await page.setContent(html, { waitUntil: "networkidle0" });
 
@@ -2542,6 +2540,10 @@ export const exportListQuote = async (req: Request, res: Response) => {
 
         const countByClientArray = Object.values(countByClient);
 
+        const fecha = moment().format("YYYY_MM_DD_HHmmss");
+        const fileName = `REPORTE_COTIZACIONES_${fecha}.pdf`;
+        const outputPath = path.join(__dirname, "../../files", fileName);
+
         ejs.renderFile(
           path.join(__dirname, "../views/", "reporteListQuote.ejs"),
           {
@@ -2555,32 +2557,59 @@ export const exportListQuote = async (req: Request, res: Response) => {
           },
           async (err: any, html: any) => {
             if (err) {
-              console.log(err);
+              console.log("❌ Error al renderizar EJS:", err);
               res.status(500).send("Error al renderizar el HTML");
             } else {
-              const browser = await puppeteer.launch({
-                headless: true,
-                args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                ...(process.env.NODE_ENV==='production' && { executablePath: "/usr/bin/google-chrome" }),
-              });
-              const page = await browser.newPage();
-              await page.setContent(html, { waitUntil: "networkidle0" });
+              let browser = null;
+              try {
+                // Configurar Puppeteer con detección automática de navegador
+                const puppeteerConfig = getPuppeteerConfigForPDF();
+                const browserInfo = getBrowserInfo();
+                
+                if (browserInfo) {
+                  console.log(`📄 Generando reporte de cotizaciones con ${browserInfo.name}`);
+                } else {
+                  console.log(`⚠️ No se detectó navegador, usando Chromium por defecto`);
+                }
+                
+                browser = await puppeteer.launch(puppeteerConfig);
+                const page = await browser.newPage();
+                await page.setContent(html, { waitUntil: "networkidle0" });
 
-              const buffer = await page.pdf({
-                format: "A4",
-                landscape: true,
-                printBackground: true,
-                margin: {
-                  top: "10mm",
-                  right: "10mm",
-                  bottom: "10mm",
-                  left: "10mm",
-                },
-              });
+                const pdfBuffer = await page.pdf({
+                  format: "A4",
+                  landscape: true,
+                  printBackground: true,
+                  margin: {
+                    top: "10mm",
+                    right: "10mm",
+                    bottom: "10mm",
+                    left: "10mm",
+                  },
+                });
 
-              await browser.close();
-              res.setHeader("Content-Type", "application/pdf");
-              res.status(200).send(buffer);
+                // Guardar el archivo en el directorio files
+                fs.writeFileSync(outputPath, pdfBuffer);
+
+                await browser.close();
+
+                // Enviar respuesta con la ruta del archivo
+                res.send({
+                  estadoflag: true,
+                  msg: "File created successfully",
+                  path: `files/${fileName}`,
+                });
+              } catch (pdfError) {
+                console.error("❌ Error al generar PDF:", pdfError);
+                if (browser) {
+                  await browser.close();
+                }
+                res.status(500).send({
+                  estadoflag: false,
+                  msg: "Error al generar el PDF",
+                  error: pdfError?.message || String(pdfError)
+                });
+              }
             }
           }
         );
